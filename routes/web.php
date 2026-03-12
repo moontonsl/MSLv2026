@@ -25,3 +25,9 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+
+//TEST PAGE ROUTES
+Route::get('/Testpage', function () {
+    return Inertia::render('Testpage');
+})->name('Testpage');
