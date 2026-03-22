@@ -98,3 +98,10 @@
   }
 
 }
+
+
+@layer utilities {
+  .divider {
+    @apply border-b border-white/10;
+  }
+}

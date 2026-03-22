@@ -31,3 +31,9 @@ require __DIR__.'/auth.php';
 Route::get('/Testpage', function () {
     return Inertia::render('Testpage');
 })->name('Testpage');
+
+
+//LOGIN PAGE ROUTES
+Route::get('/login', function () {
+    return Inertia::render('Login/Login');
+})->name('Login');
