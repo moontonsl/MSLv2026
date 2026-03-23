@@ -7,7 +7,6 @@ export default function LoginForm({ onBack }) {
     const { post, data, setData, reset } = useForm({
         username: '',
         password: '',
-        remember: false,
     });
 
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -24,45 +23,55 @@ export default function LoginForm({ onBack }) {
         post(route('login'), {
             onFinish: () => reset('password'),
             onError: (errors) => {
-                setError(errors.username || errors.password || 'Invalid credentials.');
+                if (errors.message) {
+                    setError(errors.message);
+                } else if (errors.username || errors.password) {
+                    setError(errors.username || errors.password);
+                } else {
+                    setError('⚠️ Wrong username or password.');
+                }
             },
         });
+
+        setError('');
     };
 
     return (
         <div className="min-h-screen flex items-center justify-center px-md">
 
-            {/* SAME CARD AS LANDING */}
+            {/* SAME CARD */}
             <div className="w-full max-w-6xl flex rounded-[28px] border border-white/10 bg-bg-card overflow-hidden">
 
                 {/* ================= LEFT ================= */}
-                <div className="w-[460px] pl-[48px] pr-[24px] py-xl flex flex-col justify-center">
+                <div className="w-[520px] pl-[48px] pr-[24px] py-lg flex flex-col justify-center">
 
                     {/* TITLE */}
-                    <h2 className="text-section font-bold mb-lg">
-                        Sign in to your account
-                    </h2>
+                    <div className="space-y-xs mb-lg">
+                        <h2 className="text-section font-bold leading-[1.1]">
+                            Unlock your path in student esports and leadership.
+                        </h2>
+                    </div>
 
                     {/* FORM */}
                     <form onSubmit={handleSubmit} className="space-y-md">
 
                         {/* USERNAME */}
                         <div>
-                            <label className="block text-sm text-gray-400 mb-xs">
+                            <label className="text-sm text-gray-400 mb-xs block">
                                 Username
                             </label>
                             <input
                                 type="text"
                                 value={data.username}
                                 onChange={(e) => setData('username', e.target.value)}
+                                placeholder="eg. Simeon"
                                 className="input w-full"
-                                placeholder="Enter your username"
                             />
                         </div>
 
                         {/* PASSWORD */}
                         <div>
-                            <label className="block text-sm text-gray-400 mb-xs">
+                            <label className="text-sm text-gray-400 mb-xs block">
                                 Password
                             </label>
 
@@ -71,8 +80,8 @@ export default function LoginForm({ onBack }) {
                                     type={passwordVisible ? 'text' : 'password'}
                                     value={data.password}
                                     onChange={(e) => setData('password', e.target.value)}
+                                    placeholder="********"
                                     className="input w-full pr-10"
-                                    placeholder="Enter your password"
                                 />
 
                                 <button
@@ -87,47 +96,51 @@ export default function LoginForm({ onBack }) {
 
                         {/* ERROR */}
                         {error && (
-                            <div className="text-error-500 text-sm">
+                            <div className="bg-error-500/10 border border-error-500 text-error-500 p-3 rounded-md text-sm">
                                 {error}
                             </div>
                         )}
 
-                        {/* SUBMIT */}
-                        <button
-                            type="submit"
-                            className="w-[354px] py-md px-lg rounded-xl bg-brand-500 text-black font-semibold hover:bg-brand-600 transition"
-                        >
-                            Login
-                        </button>
-
-                        {/* LINKS */}
-                        <div className="text-sm text-gray-400 space-y-xs">
-                            <a href="/forgot-password" className="block hover:text-brand-500">
-                                Forgot Password?
-                            </a>
-
-                            <a href="/register" className="block hover:text-brand-500">
-                                Create an Account
-                            </a>
+                        {/* Footer Container with Login Button and Links */}
+                        <div className="footer-container-login flex flex-col items-center">
+                            <button
+                                type="submit"
+                                className="login-btn-login w-full py-4 rounded-xl bg-brand-500 text-black font-semibold hover:bg-brand-600 transition duration-300 block mx-auto text-base md:py-3"
+                            >
+                                Login
+                            </button>
+                            <p className="footer-text-login text-white text-center mt-4 text-sm">
+                                <a href="/forgot-password" className="forgot-password-link-login text-[#f1c40f] no-underline hover:underline">
+                                    Forgot Password
+                                </a> / {' '}
+                                <a href="/forgot-username" className="forgot-password-link-login text-[#f1c40f] no-underline hover:underline">
+                                    Forgot Username
+                                </a>
+                                <br />
+                                Don't have an account?{' '}
+                                <a href="/register" className="sign-in-link-login text-[#f1c40f] no-underline hover:underline">
+                                    Sign Up
+                                </a>
+                            </p>
                         </div>
 
                     </form>
 
                 </div>
 
-
                 {/* ================= RIGHT ================= */}
-                <div className="flex-1 p-md flex items-center justify-center">
+                <div className="flex-1 relative">
 
-                    <div className="w-full h-[500px] rounded-[24px] border border-white/10 relative overflow-hidden shadow-soft">
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/90">
 
-                        {/* VIDEO */}
-                        <div className="absolute inset-0 bg-bg-card flex items-center justify-center">
-                            🎥 Video Placeholder
-                        </div>
-
-                        {/* OVERLAY */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-bg-cardHover/60 to-bg-card/60" />
+                        <iframe
+                            src="https://player.vimeo.com/video/1091173390?h=b2f78d509b&autoplay=1&loop=1&muted=1&background=1"
+                            title="MSL Video"
+                            frameBorder="0"
+                            allow="autoplay; fullscreen; picture-in-picture"
+                            allowFullScreen
+                            className="w-full h-full border-none"
+                        />
 
                     </div>
 
