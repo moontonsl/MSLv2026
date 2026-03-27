@@ -1,13 +1,17 @@
+import { useState } from "react";
+import StudentTypeModal from "./StudentTypeModal";
+
 export default function LoginLanding({ onSignIn }) {
+    const [showModal, setShowModal] = useState(false);
 
     return (
-        <div className="min-h-screen flex items-center justify-center px-md">
+        <div className="min-h-screen flex items-start md:items-center justify-center px-md pt-[100px] md:pt-0">
 
             {/* MAIN CARD */}
-            <div className="w-full max-w-6xl flex rounded-[28px] border border-white/10 bg-bg-card overflow-hidden">
+            <div className="w-full max-w-6xl flex flex-col md:flex-row gap-[8px] md:gap-[32px] rounded-[28px] border border-white/10 bg-bg-card overflow-hidden min-h-[450px]">
 
                 {/* ================= LEFT ================= */}
-                <div className="w-[520px] pl-[48px] pr-[24px] py-xl flex flex-col justify-center">
+                <div className="w-full md:w-[520px] px-[20px] md:pl-[48px] md:pr-[24px] py-lg md:py-xl flex flex-col justify-center">
 
                     {/* LOGO */}
                     <div className="flex items-center gap-xs mb-md">
@@ -16,19 +20,19 @@ export default function LoginLanding({ onSignIn }) {
                             alt="MSL Logo"
                             className="w-10 h-10"
                         />
-                        <span className="text-white font-bold text-subsection">
+                        <span className="text-sm md:text-subsection font-bold text-white">
                             MSL Philippines
                         </span>
                     </div>
 
                     {/* HERO TEXT */}
-                    <div className="space-y-xs mb-lg">
+                    <div className="space-y-1 md:space-y-xs mb-md md:mb-lg">
 
-                        <h1 className="text-section font-bold leading-[1.1]">
+                        <h1 className="text-xl md:text-section font-bold leading-[1.2]">
                             Where Student Gamers
                         </h1>
 
-                        <h1 className="text-section font-bold text-brand-500 leading-[1.1]">
+                        <h1 className="text-xl md:text-section font-bold text-brand-500 leading-[1.2]">
                             Become Campus Legends
                         </h1>
 
@@ -40,25 +44,39 @@ export default function LoginLanding({ onSignIn }) {
                         {/* SIGN IN */}
                         <button
                             onClick={onSignIn}
-                            className="w-[354px] py-md px-lg rounded-xl bg-brand-500 text-black font-semibold hover:bg-brand-600 transition"
+                            className="w-full md:w-[354px] py-3 md:py-md px-lg rounded-xl bg-brand-500 text-black text-sm md:text-base font-semibold hover:bg-brand-600 transition"
                         >
                             Sign In
                         </button>
 
-                        {/* CREATE ACCOUNT */}
-                        <a
-                            href="/register"
-                            className="w-[354px] py-md px-lg rounded-xl border border-brand-500 text-brand-500 text-center font-semibold hover:bg-brand-500 hover:text-black transition"
+                        <button
+                            onClick={() => setShowModal(true)}
+                            className="w-full md:w-[354px] py-3 md:py-md px-lg rounded-xl border border-brand-500 text-brand-500 text-center font-semibold hover:bg-brand-500 hover:text-black transition"
                         >
                             Create an Account
-                        </a>
+                        </button>
+
+                        {/* STUDENT TYPE MODAL */}
+                        <StudentTypeModal
+                            isOpen={showModal}
+                            onClose={() => setShowModal(false)}
+                            onSelect={(type) => {
+                                setShowModal(false);
+
+                                if (type === 'shs') {
+                                    window.location.href = '/register/shs';
+                                } else {
+                                    window.location.href = '/register/college';
+                                }
+                            }}
+                        />
 
                     </div>
 
                 </div>
 
                 {/* ================= RIGHT ================= */}
-                <div className="flex-1 relative">
+                <div className="w-full md:flex-1 relative aspect-video md:aspect-auto">
 
                     <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/90">
 
@@ -68,7 +86,7 @@ export default function LoginLanding({ onSignIn }) {
                             frameBorder="0"
                             allow="autoplay; fullscreen; picture-in-picture"
                             allowFullScreen
-                            className="w-full h-full border-none"
+                            className="absolute inset-0 w-full h-full object-cover"
                         />
 
                         {/* OPTIONAL OVERLAY */}
@@ -77,6 +95,8 @@ export default function LoginLanding({ onSignIn }) {
                     </div>
 
                 </div>
+
+                
 
             </div>
 

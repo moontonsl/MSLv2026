@@ -11,7 +11,7 @@ export default function Login(props) {
 
     return (
         <AuthenticatedLayout>
-            <Head title="Login | MSL" />
+            <Head title="Login" />
 
             {!showLogin ? (
                 <LoginLanding onSignIn={() => setShowLogin(true)} />
