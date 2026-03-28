@@ -1,6 +1,7 @@
-import { useForm } from "@inertiajs/react";
+import { Link, useForm } from "@inertiajs/react";
 import { useState } from "react";
 import { Eye, EyeOff } from "react-feather";
+import StudentTypeModal from "./StudentTypeModal";
 
 export default function LoginForm({ onBack }) {
 
@@ -11,6 +12,7 @@ export default function LoginForm({ onBack }) {
 
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [error, setError] = useState('');
+    const [showStudentTypeModal, setShowStudentTypeModal] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -110,10 +112,17 @@ export default function LoginForm({ onBack }) {
                                     placeholder="********"
                                     className={`input w-full pr-10 ${
                                         error
-                                            ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                                            ? 'pr-20 border-red-500 focus:ring-red-500 focus:border-red-500'
                                             : 'focus:ring-yellow-500 focus:border-yellow-500'
                                     }`}
                                 />
+
+                                {/* ERROR ICON */}
+                                {error && (
+                                    <div className="absolute right-10 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full border border-red-500 text-red-500 text-xs font-bold">
+                                        !
+                                    </div>
+                                )}
 
                                 {/* TOGGLE ICON */}
                                 <button
@@ -142,17 +151,21 @@ export default function LoginForm({ onBack }) {
                                 LOGIN
                             </button>
                             <p className="text-white text-center mt-4 text-xs md:text-sm">
-                                <a href="/forgot-password" className="forgot-password-link-login text-[#f1c40f] no-underline hover:underline">
+                                <Link href="/forgot-password" className="forgot-password-link-login text-[#f1c40f] no-underline hover:underline">
                                     Forgot Password
-                                </a> / {' '}
-                                <a href="/forgot-username" className="forgot-password-link-login text-[#f1c40f] no-underline hover:underline">
+                                </Link> / {' '}
+                                <Link href="/forgot-username" className="forgot-password-link-login text-[#f1c40f] no-underline hover:underline">
                                     Forgot Username
-                                </a>
+                                </Link>
                                 <br />
                                 Don't have an account?{' '}
-                                <a href="/register" className="sign-in-link-login text-[#f1c40f] no-underline hover:underline">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowStudentTypeModal(true)}
+                                    className="sign-in-link-login inline bg-transparent p-0 border-0 text-[#f1c40f] no-underline hover:underline cursor-pointer"
+                                >
                                     Sign Up
-                                </a>
+                                </button>
                             </p>
                         </div>
 
@@ -179,6 +192,20 @@ export default function LoginForm({ onBack }) {
                 </div>
 
             </div>
+
+            <StudentTypeModal
+                isOpen={showStudentTypeModal}
+                onClose={() => setShowStudentTypeModal(false)}
+                onSelect={(type) => {
+                    setShowStudentTypeModal(false);
+
+                    if (type === 'shs') {
+                        window.location.href = '/register/shs';
+                    } else {
+                        window.location.href = '/register/college';
+                    }
+                }}
+            />
 
         </div>
     );

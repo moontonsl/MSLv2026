@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from '../../register.module.scss';
 import { ChevronDown, Search, UploadCloud } from 'lucide-react';
-import { shsAcademicStrands, shsSchoolOptions } from '../../data/shsOptions';
+import { collegePrograms, collegeSchoolOptions } from '../../data/collegeOptions';
 
 const allowedFileTypes = [
     'application/pdf',
@@ -132,8 +132,8 @@ const Step2EducationDetails = ({ data, handleInputChange, step2ValidationTrigger
     };
 
     const validateStep2 = () => {
-        const schoolOk = validateSelection('university', data.university, 'Name of School');
-        const strandOk = validateSelection('course', data.course, 'Academic Strand');
+        const schoolOk = validateSelection('university', data.university, 'University / College School');
+        const strandOk = validateSelection('course', data.course, 'Course or Programs');
         const yearOk = validateSelection('yearLevel', data.yearLevel, 'Year Level');
         const studentIdOk = validateStudentId(data.studentId);
         const fileOk = validateFile(data.proofOfEnrollment);
@@ -142,7 +142,7 @@ const Step2EducationDetails = ({ data, handleInputChange, step2ValidationTrigger
         return schoolOk && strandOk && yearOk && studentIdOk && fileOk && schoolDependentOk;
     };
 
-    const filteredSchools = shsSchoolOptions.filter((school) => {
+    const filteredSchools = collegeSchoolOptions.filter((school) => {
         const query = schoolSearch.toLowerCase().trim();
         if (!query) return true;
 
@@ -153,7 +153,7 @@ const Step2EducationDetails = ({ data, handleInputChange, step2ValidationTrigger
         );
     });
 
-    const filteredStrands = shsAcademicStrands.filter((strand) => {
+    const filteredStrands = collegePrograms.filter((strand) => {
         const query = strandSearch.toLowerCase().trim();
         if (!query) return true;
 
@@ -381,7 +381,7 @@ const Step2EducationDetails = ({ data, handleInputChange, step2ValidationTrigger
 
             <div className="flex flex-col gap-4 mb-4">
                 {renderSelectBox(
-                    'Senior High School',
+                    'University / College School',
                     data.university,
                     'Select your school',
                     schoolOpen,
@@ -392,7 +392,7 @@ const Step2EducationDetails = ({ data, handleInputChange, step2ValidationTrigger
                     setSchoolSearch,
                     filteredSchools,
                     handleSchoolSelect,
-                    'Search school...'
+                    'Search university / college school...'
                 )}
             </div>
 
@@ -446,7 +446,7 @@ const Step2EducationDetails = ({ data, handleInputChange, step2ValidationTrigger
 
             <div className="flex flex-col gap-4 mb-4">
                 {renderSelectBox(
-                    'Academic Strand',
+                    'Course or Programs',
                     data.course,
                     'Select strand',
                     strandOpen,
@@ -457,7 +457,7 @@ const Step2EducationDetails = ({ data, handleInputChange, step2ValidationTrigger
                     setStrandSearch,
                     filteredStrands.map((strand) => ({ id: strand, name: strand })),
                     handleStrandSelect,
-                    'Search strand...'
+                    'Search course or program...'
                 )}
             </div>
 
@@ -480,8 +480,13 @@ const Step2EducationDetails = ({ data, handleInputChange, step2ValidationTrigger
                         <option value="" disabled>
                             Select year level
                         </option>
-                        <option value="Grade 11">Grade 11</option>
-                        <option value="Grade 12">Grade 12</option>
+                        <option value="Freshmen (1st Yr)">Freshmen (1st Yr)</option>
+                        <option value="Sophomore (2nd Yr)">Sophomore (2nd Yr)</option>
+                        <option value="Junior (3rd Yr)">Junior (3rd Yr)</option>
+                        <option value="Senior (4th Yr Up)">Senior (4th Yr)</option>
+                        <option value="Alumni">Alumni</option>
+                        <option value="Masters">Masters</option>
+                        <option value="Doctorate">Doctorate</option>
                     </select>
                     <ChevronDown className="absolute right-3 top-[45px] h-4 w-4 pointer-events-none text-gray-400" />
                     {errors.yearLevel && (

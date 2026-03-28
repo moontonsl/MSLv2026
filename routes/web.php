@@ -51,3 +51,8 @@ Route::get('/forgot-username', function () {
 Route::get('/register/shs', function () {
     return Inertia::render('AccountCreation/SHSRegister');
 })->name('shs.register');
+
+//ACCOUNT CREATION - COLLEGE DIVISION PAGE ROUTES
+Route::get('/register/college', function () {
+    return Inertia::render('AccountCreation/CollegeRegister');
+})->name('college.register');

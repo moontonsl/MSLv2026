@@ -8,10 +8,10 @@ import React, { useRef, useState } from 'react';
 import { useForm } from '@inertiajs/react';
 
 // ✅ UPDATED IMPORT PATHS (SHS folder)
-import Step1BasicDetails from './components/SHS/Step1BasicDetails.jsx';
-import Step2EducationDetails from './components/SHS/Step2EducationDetails.jsx';
-import Step3GameDetails from './components/SHS/Step3GameDetails.jsx';
-import Step4AccountCredentials from './components/SHS/Step4AccountCredentials.jsx';
+import Step1BasicDetails from './components/College/Step1BasicDetails.jsx';
+import Step2EducationDetails from './components/College/Step2EducationDetails.jsx';
+import Step3GameDetails from './components/College/Step3GameDetails.jsx';
+import Step4AccountCredentials from './components/College/Step4AccountCredentials.jsx';
 
 
 const initialFormData = {
@@ -28,7 +28,7 @@ const initialFormData = {
 const fileTypeIsValid = (file, allowedTypes) =>
     file && allowedTypes.includes(file.type);
 
-const SHSRegister = () => {
+const CollegeRegister = () => {
 
     const { data, setData, processing, errors, reset } = useForm(initialFormData);
     const formData = data;
@@ -222,7 +222,7 @@ const SHSRegister = () => {
 
     return (
         <>
-        <Head title="Register SHS Account" />
+        <Head title="Register College Account" />
 
         <AuthenticatedLayout>
 
@@ -332,4 +332,4 @@ const SHSRegister = () => {
     );
 };
 
-export default SHSRegister;
+export default CollegeRegister;
