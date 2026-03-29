@@ -4,7 +4,6 @@ import { Head, Link } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 export default function ForgotUsername() {
-
     const [email, setEmail] = useState('');
     const [cooldown, setCooldown] = useState(0);
     const [error, setError] = useState('');
@@ -19,7 +18,6 @@ export default function ForgotUsername() {
             return;
         }
 
-        // simulate API check
         const emailNotFound = false;
 
         if (emailNotFound) {
@@ -39,6 +37,7 @@ export default function ForgotUsername() {
                     setSuccess(false);
                     return 0;
                 }
+
                 return prev - 1;
             });
         }, 1000);
@@ -49,52 +48,25 @@ export default function ForgotUsername() {
             <Head title="Forgot Username" />
 
             <div className="min-h-screen flex items-start md:items-center justify-center px-md pt-[70px] md:pt-0">
-
                 <div className="w-full max-w-md md:max-w-6xl flex flex-col md:flex-row gap-[12px] md:gap-[32px] rounded-[28px] border border-white/10 bg-bg-card overflow-hidden min-h-[450px]">
-
-                    {/* LEFT */}
-                    <div className="w-full md:w-[520px] px-[20px] md:pl-[48px] md:pr-[24px] py-lg md:py-xl flex flex-col justify-center">
-
-                        {/* TITLE */}
+                    <div className="w-full md:w-[520px] px-[20px] md:px-[48px] py-lg md:py-xl flex flex-col justify-center">
                         <div className="space-y-xs mb-lg text-center">
                             <h2 className="text-xl md:text-section font-bold leading-[1.1]">
                                 Recover Your Username
                             </h2>
 
                             <p className="text-xs md:text-sm text-white/70">
-                                Enter your email address and we’ll send your username to your email
+                                Enter your email address and we'll send your username to your email
                             </p>
                         </div>
 
-                        {/* NOTE */}
-                        <div className="mb-md">
-                            <div className="flex items-center gap-2 border border-yellow-500/30 bg-yellow-500/10 rounded-xl px-2.5 md:px-3 py-1.5 md:py-2 whitespace-nowrap overflow-hidden">
-
-                                <span className="flex items-center gap-1.5 px-2 py-[2px] rounded-md border border-yellow-400/40 bg-yellow-500/10 text-yellow-300 text-xs md:text-sm font-medium shrink-0">
-                                    <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full"></span>
-                                    Note
-                                </span>
-
-                                <p className="text-[11px] md:text-sm text-yellow-300 truncate">
-                                    You can request a new reset link in{' '}
-                                    <span className="font-semibold text-yellow-200">
-                                        {cooldown > 0 ? `${cooldown}s` : '60s'}
-                                    </span>
-                                </p>
-
-                            </div>
-                        </div>
-
-                        {/* FORM */}
                         <form onSubmit={handleSubmit} className="space-y-3 md:space-y-md">
-
                             <div>
                                 <label className="text-sm text-white mb-[4px] block">
                                     Email Address <span className="text-red-500">*</span>
                                 </label>
 
                                 <div className="relative">
-
                                     <Mail
                                         size={18}
                                         className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
@@ -121,7 +93,6 @@ export default function ForgotUsername() {
                                             !
                                         </div>
                                     )}
-
                                 </div>
 
                                 {error && (
@@ -139,9 +110,23 @@ export default function ForgotUsername() {
                                     </p>
                                 )}
 
+                                <div className="mt-3">
+                                    <div className="flex items-center gap-2 border border-yellow-500/30 bg-yellow-500/10 rounded-xl px-2.5 md:px-3 py-1.5 md:py-2 whitespace-nowrap overflow-hidden">
+                                        <span className="flex items-center gap-1.5 px-2 py-[2px] rounded-md border border-yellow-400/40 bg-yellow-500/10 text-yellow-300 text-xs md:text-sm font-medium shrink-0">
+                                            <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full"></span>
+                                            Note
+                                        </span>
+
+                                        <p className="text-[11px] md:text-sm text-yellow-300 truncate">
+                                            You can request a new reset link in{' '}
+                                            <span className="font-semibold text-yellow-200">
+                                                {cooldown > 0 ? `${cooldown}s` : '60s'}
+                                            </span>.
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
 
-                            {/* BUTTON */}
                             <button
                                 type="submit"
                                 disabled={cooldown > 0}
@@ -154,19 +139,15 @@ export default function ForgotUsername() {
                                 RECOVER USERNAME
                             </button>
 
-                            {/* BACK */}
                             <p className="text-center text-xs md:text-sm text-white/70 mt-md">
                                 Remember username?{' '}
                                 <Link href="/login" className="text-brand-500 hover:underline">
                                     Back to Sign in
                                 </Link>
                             </p>
-
                         </form>
-
                     </div>
 
-                    {/* RIGHT */}
                     <div className="w-full md:flex-1 relative aspect-video md:aspect-auto">
                         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/90">
                             <iframe
@@ -179,9 +160,7 @@ export default function ForgotUsername() {
                             />
                         </div>
                     </div>
-
                 </div>
-
             </div>
         </AuthenticatedLayout>
     );

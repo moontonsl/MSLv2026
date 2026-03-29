@@ -11,7 +11,10 @@ const allowedFileTypes = [
     'image/gif',
 ];
 
-const Step2EducationDetails = ({ data, handleInputChange, step2ValidationTrigger }) => {
+const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
+    { data, handleInputChange, step2ValidationTrigger },
+    ref
+) {
     const schoolDropdownRef = React.useRef(null);
     const strandDropdownRef = React.useRef(null);
     const fileInputRef = React.useRef(null);
@@ -285,6 +288,10 @@ const Step2EducationDetails = ({ data, handleInputChange, step2ValidationTrigger
         }
     }, [data.university, data.course, data.yearLevel, data.studentId, data.proofOfEnrollment]);
 
+    React.useImperativeHandle(ref, () => ({
+        validateStep2,
+    }));
+
     const renderSelectBox = (label, value, placeholder, open, setOpen, ref, errorName, searchValue, setSearchValue, items, onSelect, searchPlaceholder) => (
         <div className="relative" ref={ref}>
             <label className={`${styles['label-register']} block mb-1`}>
@@ -523,7 +530,7 @@ const Step2EducationDetails = ({ data, handleInputChange, step2ValidationTrigger
 
             <div className="mb-6">
                 <label className={`${styles['label-register']} block mb-1`}>
-                    Proof of Enrollment / School ID  with Validation <span className={styles.required}>*</span>
+                    Proof of Enrollment / School ID <span className={styles.required}>*</span>
                 </label>
                 <div className="relative">
                     <input
@@ -546,7 +553,9 @@ const Step2EducationDetails = ({ data, handleInputChange, step2ValidationTrigger
                         style={getFieldStyle('proofOfEnrollment')}
                     >
                         <span className="truncate text-gray-300">
-                            {data.proofOfEnrollment?.name || 'Upload PDF, JPG, JPEG, PNG, or GIF'}
+                            {data.proofOfEnrollment?.name
+                                ? `Selected File : ${data.proofOfEnrollment.name}`
+                                : 'Upload PDF, JPG, JPEG, PNG, or GIF'}
                         </span>
                         <UploadCloud className="h-5 w-5 text-gray-400" />
                     </label>
@@ -556,15 +565,10 @@ const Step2EducationDetails = ({ data, handleInputChange, step2ValidationTrigger
                         </div>
                     )}
                 </div>
-                {/* {data.proofOfEnrollment?.name && (
-                    <p className="mt-2 text-xs text-white/70 break-all">
-                        Selected file: {data.proofOfEnrollment.name}
-                    </p>
-                )} */}
                 {renderFieldError('proofOfEnrollment')}
             </div>
         </div>
     );
-};
+});
 
 export default Step2EducationDetails;

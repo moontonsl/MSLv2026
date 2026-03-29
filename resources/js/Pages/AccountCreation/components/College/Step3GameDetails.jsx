@@ -3,12 +3,15 @@ import styles from '../../register.module.scss';
 import { ChevronDown, Search, X, Gamepad2 } from 'lucide-react';
 import { mlbbHeroes, mlbbRanks, mlbbRoles, mlbbVerificationSample } from '../../data/mlbbOptions';
 
-const Step3GameDetails = ({
-    data,
-    handleInputChange,
-    step3ValidationTrigger,
-    onCancelVerification,
-}) => {
+const Step3GameDetails = React.forwardRef(function Step3GameDetails(
+    {
+        data,
+        handleInputChange,
+        step3ValidationTrigger,
+        onCancelVerification,
+    },
+    ref
+) {
     const rankDropdownRef = React.useRef(null);
     const roleDropdownRef = React.useRef(null);
     const heroDropdownRef = React.useRef(null);
@@ -144,6 +147,10 @@ const Step3GameDetails = ({
 
         validateStep3();
     }, [step3ValidationTrigger]);
+
+    React.useImperativeHandle(ref, () => ({
+        validateStep3,
+    }));
 
     const renderDropdown = (
         label,
@@ -476,6 +483,6 @@ const Step3GameDetails = ({
             </div>
         </div>
     );
-};
+});
 
 export default Step3GameDetails;

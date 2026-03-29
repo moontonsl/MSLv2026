@@ -5,7 +5,7 @@
   --text-default-default: #fff; /* White text color */
   --title-page-size-small: 2.25rem; /* Equivalent to Tailwind's text-4xl or similar */
   --subtitle-size-small: 1.25rem; /* Equivalent to Tailwind's text-xl or similar */
-  --sds-typography-body-font-family: sans-serif; /* Fallback font family */
+  --sds-typography-body-font-family: "Inter", system-ui, sans-serif; /* Match app sans stack */
   --sds-typography-body-font-weight-regular: 400; /* Regular font weight */
   // Add other CSS variables if they exist in your original design
 }
@@ -74,7 +74,7 @@
 .title-register {
     color: var(--text-default-default);
     text-align: center;
-    font-family: "Grostek", sans-serif;
+    font-family: var(--sds-typography-body-font-family);
     // font-size: var(--title-page-size-small);
     font-style: normal;
     font-weight: var(--weight-bold); /* You'd need to define --weight-bold if not already */

@@ -17,11 +17,12 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
     const [confirmPasswordVisible, setConfirmPasswordVisible] = React.useState(false);
     const [codeTimer, setCodeTimer] = React.useState(0);
     const [showCodeNotice, setShowCodeNotice] = React.useState(false);
+    const [hasRequestedCode, setHasRequestedCode] = React.useState(false);
 
     const requiredFields = ['username', 'password', 'confirmPassword', 'email', 'captcha', 'termsAccepted'];
 
-    const setFieldError = (name, error) => {
-        if (!step4ShowErrors) return;
+    const setFieldError = (name, error, force = false) => {
+        if (!step4ShowErrors && !force) return;
         
         setErrors((prev) => ({
             ...prev,
@@ -29,8 +30,8 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
         }));
     };
 
-    const clearFieldError = (name) => {
-        setFieldError(name, '');
+    const clearFieldError = (name, force = false) => {
+        setFieldError(name, '', force);
     };
 
     const clearErrors = () => {
@@ -66,16 +67,16 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
     const renderFieldError = (name) =>
         step4ShowErrors && errors[name] ? <p className="mt-1 text-sm text-red-400">{errors[name]}</p> : null;
 
-    const validateField = (name, value) => {
+    const validateField = (name, value, force = false) => {
         const trimmedValue = value?.toString().trim() ?? '';
         
         if (name === 'termsAccepted') {
             if (value !== true) {
-                setFieldError(name, 'You must accept and agree to the Terms and Conditions.');
+                setFieldError(name, 'You must accept and agree to the Terms and Conditions.', force);
                 return false;
             }
 
-            clearFieldError(name);
+            clearFieldError(name, force);
             return true;
         }
 
@@ -88,64 +89,64 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
                 captcha: 'Verification Code',
             };
 
-            setFieldError(name, `${labels[name] || 'This field'} is required.`);
+            setFieldError(name, `${labels[name] || 'This field'} is required.`, force);
             return false;
         }
 
         if (name === 'username') {
             if (!/^[A-Za-z0-9]+$/.test(trimmedValue)) {
-                setFieldError(name, 'Username can only contain letters and numbers.');
+                setFieldError(name, 'Username can only contain letters and numbers.', force);
                 return false;
             }
 
             if (trimmedValue.length < 5 || trimmedValue.length > 12) {
-                setFieldError(name, 'Username must be 5 to 12 characters.');
+                setFieldError(name, 'Username must be 5 to 12 characters.', force);
                 return false;
             }
         }
 
         if (name === 'password') {
             if (trimmedValue.length < 6 || trimmedValue.length > 16) {
-                setFieldError(name, 'Password must be 6 to 16 characters.');
+                setFieldError(name, 'Password must be 6 to 16 characters.', force);
                 return false;
             }
 
             if (/\s/.test(trimmedValue)) {
-                setFieldError(name, 'Password cannot contain spaces.');
+                setFieldError(name, 'Password cannot contain spaces.', force);
                 return false;
             }
         }
 
         if (name === 'confirmPassword' && trimmedValue !== data.password) {
-            setFieldError(name, 'Passwords do not match.');
+            setFieldError(name, 'Passwords do not match.', force);
             return false;
         }
 
         if (name === 'email') {
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailPattern.test(trimmedValue)) {
-                setFieldError(name, 'Enter a valid email address.');
+                setFieldError(name, 'Enter a valid email address.', force);
                 return false;
             }
         }
 
         if (name === 'captcha' && trimmedValue.length < 4) {
-            setFieldError(name, 'Enter the verification code.');
+            setFieldError(name, 'Enter the verification code.', force);
             return false;
         }
 
         if (name === 'captcha' && verificationCode && trimmedValue !== verificationCode) {
-            setFieldError(name, 'Incorrect code.');
+            setFieldError(name, 'Incorrect code.', force);
             return false;
         }
 
-        clearFieldError(name);
+        clearFieldError(name, force);
         return true;
     };
 
-    const validateStep4 = () => {
+    const validateStep4 = (force = true) => {
         clearErrors();
-        const results = requiredFields.map((field) => validateField(field, data[field]));
+        const results = requiredFields.map((field) => validateField(field, data[field], force));
         return results.every(Boolean);
     };
 
@@ -213,11 +214,12 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
     };
 
     const handleRequestCode = () => {
-        if (!validateField('email', data.email)) {
+        if (!validateField('email', data.email, true)) {
             return;
         }
 
         setShowCodeNotice(true);
+        setHasRequestedCode(true);
         setCodeTimer(60);
         setVerificationCode('123456');
         clearFieldError('email');
@@ -253,7 +255,7 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
     return (
         <div>
             <h1 className={`${styles['title-register']} text-2xl md:text-3xl mb-1`}>
-                Create MSL Account
+                Create Account
             </h1>
 
             <h2 className={`${styles['subtitle-register']} text-[0.45rem] leading-none md:text-sm text-white/60 md:text-white/70 mb-2 md:mb-1 tracking-[0.03em] md:tracking-[0.18em]`}>
@@ -404,7 +406,11 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
                         disabled={codeTimer > 0}
                         className="w-full py-3 rounded-xl border border-yellow-500 text-yellow-400 font-semibold hover:bg-yellow-500 hover:text-black transition disabled:opacity-70 disabled:cursor-not-allowed"
                     >
-                        {codeTimer > 0 ? `${codeTimer}s` : 'Get Code'}
+                        {!hasRequestedCode
+                            ? 'Get Code'
+                            : codeTimer > 0
+                                ? `Resend Code (${codeTimer}s)`
+                                : 'Resend Code'}
                     </button>
                 </div>
             </div>

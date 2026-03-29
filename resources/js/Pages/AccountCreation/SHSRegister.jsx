@@ -16,7 +16,7 @@ import Step4AccountCredentials from './components/SHS/Step4AccountCredentials.js
 
 const initialFormData = {
     // Step 1
-    firstName: '', lastName: '', suffix: '', birthday: '', age: 0, gender: '', contactNo: '', facebookLink: '',
+    firstName: '', lastName: '', suffix: 'N/A', birthday: '', age: 0, gender: '', contactNo: '', facebookLink: '',
     // Step 2
     yearLevel: '', university: '', island: '', region: '', studentId: '', course: '', proofOfEnrollment: null,
     // Step 3
@@ -43,18 +43,36 @@ const SHSRegister = () => {
     const [step4ShowErrors, setStep4ShowErrors] = useState(false);
     const [step4VisitId, setStep4VisitId] = useState(0);
     const [successModalOpen, setSuccessModalOpen] = useState(false);
+    const step1Ref = useRef(null);
+    const step2Ref = useRef(null);
+    const step3Ref = useRef(null);
     const step4Ref = useRef(null);
 
     const handleInputChange = (e) => {
         const { name, value, type, files } = e.target;
 
         setData(name, type === 'file' ? files[0] : value);
-        
     };
 
     const handleNext = () => {
         setErrorMessage("");
         setSuccessMessage("");
+        const stepValidators = {
+            1: () => step1Ref.current?.validateStep1?.() ?? false,
+            2: () => step2Ref.current?.validateStep2?.() ?? false,
+            3: () => step3Ref.current?.validateStep3?.() ?? false,
+        };
+
+        if (currentStep <= 3) {
+            const isStepValid = stepValidators[currentStep]?.() ?? isFormValid(currentStep);
+
+            if (!isStepValid) {
+                return;
+            }
+        } else if (!isFormValid(currentStep)) {
+            return;
+        }
+
         if (currentStep === 1) {
             setStep1ValidationTrigger((prev) => prev + 1);
         }
@@ -64,7 +82,6 @@ const SHSRegister = () => {
         if (currentStep === 3) {
             setStep3ValidationTrigger((prev) => prev + 1);
         }
-        if (!isFormValid(currentStep)) return;
         if (currentStep === 3) {
             setStep4ShowErrors(false);
             setStep4VisitId((prev) => prev + 1);
@@ -85,14 +102,10 @@ const SHSRegister = () => {
         e.preventDefault();
 
         if (currentStep === 4) {
-            setStep4ShowErrors(true);
-            const isStep4Valid = step4Ref.current?.validateStep4?.();
+            const isStep4Valid = handleFinalStep4Submit();
             if (!isStep4Valid) {
                 return;
             }
-            setErrorMessage("");
-            setSuccessMessage("");
-            setSuccessModalOpen(true);
             return;
         }
 
@@ -100,6 +113,20 @@ const SHSRegister = () => {
 
         setErrorMessage("");
         setSuccessMessage("");
+    };
+
+    const handleFinalStep4Submit = () => {
+        setStep4ShowErrors(true);
+        const isStep4Valid = step4Ref.current?.validateStep4?.();
+
+        if (!isStep4Valid) {
+            return false;
+        }
+
+        setErrorMessage("");
+        setSuccessMessage("");
+        setSuccessModalOpen(true);
+        return true;
     };
 
     function isFormValid(step) {
@@ -214,9 +241,9 @@ const SHSRegister = () => {
     };
 
     const stepComponents = {
-        1: <Step1BasicDetails {...stepProps} />,
-        2: <Step2EducationDetails {...stepProps} />,
-        3: <Step3GameDetails {...stepProps} />,
+        1: <Step1BasicDetails ref={step1Ref} {...stepProps} />,
+        2: <Step2EducationDetails ref={step2Ref} {...stepProps} />,
+        3: <Step3GameDetails ref={step3Ref} {...stepProps} />,
         4: <Step4AccountCredentials key={step4VisitId} ref={step4Ref} {...stepProps} />
     };
 
@@ -267,7 +294,8 @@ const SHSRegister = () => {
                         </button>
                     ) : (
                         <button
-                            type="submit"
+                            type="button"
+                            onClick={handleFinalStep4Submit}
                             className="flex-1 py-3 rounded-xl bg-brand-500 text-black font-semibold hover:bg-brand-600 transition"
                         >
                             SUBMIT

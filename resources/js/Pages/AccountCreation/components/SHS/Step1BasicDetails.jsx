@@ -2,7 +2,10 @@ import React from 'react';
 import styles from '../../register.module.scss';
 import { CalendarDays, ChevronDown } from 'lucide-react';
 
-const Step1BasicDetails = ({ data, handleInputChange, validationTrigger }) => {
+const Step1BasicDetails = React.forwardRef(function Step1BasicDetails(
+    { data, handleInputChange, validationTrigger },
+    ref
+) {
     const hiddenDateInputRef = React.useRef(null);
     const requiredFields = [
         'firstName',
@@ -62,8 +65,8 @@ const Step1BasicDetails = ({ data, handleInputChange, validationTrigger }) => {
             error = requiredMessages[name] || 'This field is required.';
         } else {
             // Only run specific regex/logic if there IS a value
-            if (name === 'contactNo' && !/^09\d{9}$/.test(trimmedValue)) {
-                error = 'Enter a valid 11-digit mobile number.';
+            if (name === 'contactNo' && !/^(?:0?9\d{9}|9\d{9})$/.test(trimmedValue)) {
+                error = 'Enter a valid PH mobile number.';
             }
 
             if (
@@ -75,6 +78,7 @@ const Step1BasicDetails = ({ data, handleInputChange, validationTrigger }) => {
         }
 
         setFieldError(name, error);
+        return !error;
     };
 
     const getFieldClassName = (name, extraClasses = '') => {
@@ -228,18 +232,7 @@ const Step1BasicDetails = ({ data, handleInputChange, validationTrigger }) => {
     };
 
     const handleContactChange = (e) => {
-        const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
-        let normalizedValue = digits;
-
-        if (digits) {
-            if (digits.startsWith('09')) {
-                normalizedValue = digits.slice(0, 11);
-            } else if (digits.startsWith('0')) {
-                normalizedValue = `09${digits.slice(1)}`.slice(0, 11);
-            } else {
-                normalizedValue = `09${digits}`.slice(0, 11);
-            }
-        }
+        const normalizedValue = e.target.value.replace(/\D/g, '').slice(0, 11);
 
         handleInputChange({
             target: {
@@ -249,10 +242,14 @@ const Step1BasicDetails = ({ data, handleInputChange, validationTrigger }) => {
         });
         markFieldDirty('contactNo');
 
-        if (/^09\d{9}$/.test(normalizedValue)) {
+        if (/^(?:0?9\d{9}|9\d{9})$/.test(normalizedValue)) {
             clearFieldError('contactNo');
         }
     };
+
+    const displayedContactNo = data.contactNo?.length > 1 && data.contactNo.startsWith('0')
+        ? data.contactNo.slice(1)
+        : data.contactNo;
 
     React.useEffect(() => {
         if (!validationTrigger) return;
@@ -273,10 +270,25 @@ const Step1BasicDetails = ({ data, handleInputChange, validationTrigger }) => {
         validateBirthdayValue(data.birthday);
     }, [validationTrigger]);
 
+    const validateStep1 = () => {
+        const firstNameOk = validateField('firstName', data.firstName);
+        const lastNameOk = validateField('lastName', data.lastName);
+        const genderOk = validateField('gender', data.gender);
+        const contactOk = validateField('contactNo', data.contactNo);
+        const facebookOk = validateField('facebookLink', data.facebookLink);
+        const birthdayOk = validateBirthdayValue(data.birthday);
+
+        return firstNameOk && lastNameOk && genderOk && contactOk && facebookOk && birthdayOk;
+    };
+
+    React.useImperativeHandle(ref, () => ({
+        validateStep1,
+    }));
+
     return (
         <div>
             <h1 className={`${styles['title-register']} text-2xl md:text-3xl mb-1`}>
-                Create MSL Account
+                Create Account
             </h1>
 
             <h2 className={`${styles['subtitle-register']} text-[0.5rem] leading-none md:text-sm text-white/60 md:text-white/70 mb-2 md:mb-1 tracking-[0.04em] md:tracking-[0.18em]`}>
@@ -372,7 +384,7 @@ const Step1BasicDetails = ({ data, handleInputChange, validationTrigger }) => {
                         className={`${styles['input-field-register']} w-full p-3 pr-10 rounded-lg appearance-none border border-gray-600 outline-none transition-all focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400`}
                         style={getFieldStyle('suffix')}
                     >
-                        <option disabled value="">Select suffix</option>
+                        <option value="N/A">N/A</option>
                         <option value="Jr">Jr</option>
                         <option value="Sr">Sr</option>
                         <option value="II">II</option>
@@ -510,10 +522,10 @@ const Step1BasicDetails = ({ data, handleInputChange, validationTrigger }) => {
                     <input
                         type="text"
                         name="contactNo"
-                        value={data.contactNo}
+                        value={displayedContactNo}
                         onChange={handleContactChange}
                         onBlur={(e) => validateField(e.target.name, e.target.value)}
-                        placeholder="e.g. 09123456789"
+                        placeholder="e.g. 9123456789"
                         className={getFieldClassName('contactNo', 'pl-16 pr-10')}
                         style={getFieldStyle('contactNo')}
                     />
@@ -557,6 +569,6 @@ const Step1BasicDetails = ({ data, handleInputChange, validationTrigger }) => {
             </div>
         </div>
     );
-};
+});
 
 export default Step1BasicDetails;

@@ -11,28 +11,16 @@ export default function LoginLanding({ onSignIn }) {
             <div className="w-full max-w-6xl flex flex-col md:flex-row gap-[8px] md:gap-[32px] rounded-[28px] border border-white/10 bg-bg-card overflow-hidden min-h-[450px]">
 
                 {/* ================= LEFT ================= */}
-                <div className="w-full md:w-[520px] px-[20px] md:pl-[48px] md:pr-[24px] py-lg md:py-xl flex flex-col justify-center">
-
-                    {/* LOGO */}
-                    <div className="flex items-center gap-xs mb-md">
-                        <img
-                            src="MSL_LOGO.png"
-                            alt="MSL Logo"
-                            className="w-10 h-10"
-                        />
-                        <span className="text-sm md:text-subsection font-bold text-white">
-                            MSL Philippines
-                        </span>
-                    </div>
+                <div className="w-full md:w-[520px] px-[20px] md:px-[48px] py-lg md:py-xl flex flex-col justify-center">
 
                     {/* HERO TEXT */}
                     <div className="space-y-1 md:space-y-xs mb-md md:mb-lg">
 
-                        <h1 className="text-xl md:text-section font-bold leading-[1.2]">
+                        <h1 className="text-xl md:text-section font-bold leading-[1.2] md:whitespace-nowrap">
                             Where Student Gamers
                         </h1>
 
-                        <h1 className="text-xl md:text-section font-bold text-brand-500 leading-[1.2]">
+                        <h1 className="text-xl md:text-section font-bold text-brand-500 leading-[1.2] md:whitespace-nowrap">
                             Become Campus Legends
                         </h1>
 
