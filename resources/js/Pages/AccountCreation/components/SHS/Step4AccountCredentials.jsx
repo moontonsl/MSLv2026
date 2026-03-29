@@ -252,12 +252,12 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
 
     return (
         <div>
-            <h1 className={`${styles['title-register']} text-xl md:text-3xl mb-1`}>
+            <h1 className={`${styles['title-register']} text-2xl md:text-3xl mb-1`}>
                 Create MSL Account
             </h1>
 
-            <h2 className={`${styles['subtitle-register']} text-xs md:text-sm text-white/70 mb-1`}>
-                ACCOUNT CREDENTIALS
+            <h2 className={`${styles['subtitle-register']} text-[0.45rem] leading-none md:text-sm text-white/60 md:text-white/70 mb-2 md:mb-1 tracking-[0.03em] md:tracking-[0.18em]`}>
+                ACCOUNT SETUP
             </h2>
 
             {(() => {
@@ -402,7 +402,7 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
                         type="button"
                         onClick={handleRequestCode}
                         disabled={codeTimer > 0}
-                        className="w-full py-3 rounded-xl bg-yellow-500 text-black font-semibold hover:bg-yellow-400 transition disabled:opacity-70 disabled:cursor-not-allowed"
+                        className="w-full py-3 rounded-xl border border-yellow-500 text-yellow-400 font-semibold hover:bg-yellow-500 hover:text-black transition disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                         {codeTimer > 0 ? `${codeTimer}s` : 'Get Code'}
                     </button>

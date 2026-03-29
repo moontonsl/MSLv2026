@@ -238,11 +238,11 @@ const Step3GameDetails = ({
 
     return (
         <div className="relative">
-            <h1 className={`${styles['title-register']} text-xl md:text-3xl mb-1`}>
+            <h1 className={`${styles['title-register']} text-2xl md:text-3xl mb-1`}>
                 Create MSL Account
             </h1>
 
-            <h2 className={`${styles['subtitle-register']} text-xs md:text-sm text-white/70 mb-1`}>
+            <h2 className={`${styles['subtitle-register']} text-[0.5rem] leading-none md:text-sm text-white/60 md:text-white/70 mb-2 md:mb-1 tracking-[0.04em] md:tracking-[0.18em]`}>
                 MLBB DETAILS
             </h2>
 
@@ -319,8 +319,8 @@ const Step3GameDetails = ({
                 </div>
             )}
 
-            <div className="flex flex-col md:flex-row justify-between mb-4 gap-4">
-                <div className="w-full md:w-1/2">
+            <div className="flex flex-row justify-between mb-4 gap-3 md:gap-4">
+                <div className="w-[60%] md:w-1/2 min-w-0">
                     <label className={`${styles['label-register']} block mb-1`}>
                         MLBB User ID <span className={styles.required}>*</span>
                     </label>
@@ -343,7 +343,7 @@ const Step3GameDetails = ({
                     {renderFieldError('userId')}
                 </div>
 
-                <div className="w-full md:w-1/2">
+                <div className="w-[40%] md:w-1/2 min-w-0">
                     <label className={`${styles['label-register']} block mb-1`}>
                         MLBB Server <span className={styles.required}>*</span>
                     </label>

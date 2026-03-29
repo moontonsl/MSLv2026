@@ -50,7 +50,7 @@ export default function LoginForm({ onBack }) {
                     {/* TITLE */}
                     <div className="space-y-xs mb-lg text-center">
 
-                        <h2 className="text-xl md:text-section font-bold leading-[1.1]">
+                        <h2 className="text-2xl md:text-section font-bold leading-[1.1]">
                             Account Login
                         </h2>
 

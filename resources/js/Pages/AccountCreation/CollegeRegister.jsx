@@ -243,14 +243,14 @@ const CollegeRegister = () => {
                 )}
 
                 {/* NAV BUTTONS */}
-                <div className="flex flex-col md:flex-row gap-3 mt-6">
+                <div className="flex flex-row gap-3 mt-6">
 
                     {/* PREV */}
                     {currentStep > 1 && (
                         <button
                             type="button"
                             onClick={handlePrev}
-                            className="w-full md:w-1/2 py-3 rounded-xl bg-gray-700 text-white hover:bg-yellow-500 transition"
+                            className="flex-1 py-3 rounded-xl bg-gray-700 text-white hover:bg-yellow-500 transition"
                         >
                             PREVIOUS
                         </button>
@@ -261,18 +261,14 @@ const CollegeRegister = () => {
                         <button
                             type="button"
                             onClick={handleNext}
-                            className={`w-full ${
-                                currentStep > 1 ? 'md:w-1/2' : ''
-                            } py-3 rounded-xl bg-brand-500 text-black font-semibold hover:bg-brand-600 transition`}
+                            className="flex-1 py-3 rounded-xl bg-brand-500 text-black font-semibold hover:bg-brand-600 transition"
                         >
                             NEXT
                         </button>
                     ) : (
                         <button
                             type="submit"
-                            className={`w-full ${
-                                currentStep > 1 ? 'md:w-1/2' : ''
-                            } py-3 rounded-xl bg-brand-500 text-black font-semibold hover:bg-brand-600 transition`}
+                            className="flex-1 py-3 rounded-xl bg-brand-500 text-black font-semibold hover:bg-brand-600 transition"
                         >
                             SUBMIT
                         </button>

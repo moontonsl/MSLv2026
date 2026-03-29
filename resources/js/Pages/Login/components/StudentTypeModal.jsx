@@ -5,7 +5,7 @@ export default function StudentTypeModal({ isOpen, onClose, onSelect }) {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[10010] flex items-center justify-center bg-black/70 backdrop-blur-sm">
 
             <div className="w-full max-w-md bg-[#0b0b0b] border border-white/10 rounded-2xl p-6 relative">
 
