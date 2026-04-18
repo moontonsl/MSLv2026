@@ -27,8 +27,27 @@ Route::get('/Testpage', function () {
     return Inertia::render('Testpage');
 })->name('Testpage');
 
-
 //LOGIN PAGE ROUTES
 Route::get('/login', function () {
     return Inertia::render('Login/Login');
 })->name('Login');
+
+//FORGOT PASSWORD PAGE ROUTES
+Route::get('/forgot-password', function () {
+    return Inertia::render('Login/components/ForgotPassword');
+})->name('reset.password');
+
+//FORGOT USERNAME PAGE ROUTES
+Route::get('/forgot-username', function () {
+    return Inertia::render('Login/components/ForgotUsername');
+})->name('forgot.username');
+
+//ACCOUNT CREATION - SHS DIVISION PAGE ROUTES
+Route::get('/register/shs', function () {
+    return Inertia::render('AccountCreation/SHSRegister');
+})->name('shs.register');
+
+//ACCOUNT CREATION - COLLEGE DIVISION PAGE ROUTES
+Route::get('/register/college', function () {
+    return Inertia::render('AccountCreation/CollegeRegister');
+})->name('college.register');
