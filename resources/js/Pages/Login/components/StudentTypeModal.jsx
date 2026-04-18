@@ -27,10 +27,10 @@ export default function StudentTypeModal({ isOpen, onClose, onSelect }) {
                 {/* TITLE */}
                 <div className="text-center mb-6">
                     <h2 className="text-xl font-semibold text-white">
-                        Type of Student
+                        Where are you in your journey?
                     </h2>
                     <p className="text-sm text-white/60">
-                        Select your current academic level
+                        Pick your current level to personalize your experience.
                     </p>
                 </div>
 

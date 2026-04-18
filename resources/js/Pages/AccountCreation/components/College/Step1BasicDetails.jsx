@@ -288,7 +288,7 @@ const Step1BasicDetails = React.forwardRef(function Step1BasicDetails(
     return (
         <div>
             <h1 className={`${styles['title-register']} text-2xl md:text-3xl mb-1`}>
-                Create Account
+                Account Creation
             </h1>
 
             <h2 className={`${styles['subtitle-register']} text-[0.5rem] leading-none md:text-sm text-white/60 md:text-white/70 mb-2 md:mb-1 tracking-[0.04em] md:tracking-[0.18em]`}>
