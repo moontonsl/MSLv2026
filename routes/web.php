@@ -23,6 +23,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Temporary bypass:
+// The student portal is public for now because the login backend/database flow is not ready yet.
+// Once authentication is available, move this route back inside the auth middleware group.
+Route::get('/studentportal', function () {
+    return Inertia::render('StudentProfile/Index');
+})->name('student.portal');
+
 require __DIR__.'/auth.php';
 
 
