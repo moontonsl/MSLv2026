@@ -1,13 +1,13 @@
 import React from "react";
 import { Head } from "@inertiajs/react";
 import { Helmet } from "react-helmet";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import MainLayout from "@/Layouts/MainLayout";
 
 export default function TestPage() {
 
     return (
         
-        <AuthenticatedLayout>
+        <MainLayout>
             <div className="bg-bg min-h-screen text-white">
 
                 <Head title="Design System Test | MPL Philippines v26" />
@@ -237,6 +237,6 @@ export default function TestPage() {
                 </div>
 
             </div>
-        </AuthenticatedLayout>
+        </MainLayout>
     );
 }

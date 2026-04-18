@@ -1,5 +1,5 @@
 import { Head } from "@inertiajs/react";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import MainLayout from "@/Layouts/MainLayout";
 import { useState } from "react";
 
 import LoginLanding from "./components/LoginLanding";
@@ -10,7 +10,7 @@ export default function Login(props) {
     const [showLogin, setShowLogin] = useState(false);
 
     return (
-        <AuthenticatedLayout>
+        <MainLayout>
             <Head title="Login | MSL" />
 
             {!showLogin ? (
@@ -19,6 +19,6 @@ export default function Login(props) {
                 <LoginForm {...props} />
             )}
 
-        </AuthenticatedLayout>
+        </MainLayout>
     );
 }

@@ -96,6 +96,7 @@ export default {
 
             fontFamily: {
                 sans: ['Inter', 'system-ui', 'sans-serif', ...defaultTheme.fontFamily.sans],
+                orbitron: ['Orbitron', 'sans-serif'],
             },
 
             fontSize: {

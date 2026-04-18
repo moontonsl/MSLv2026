@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,7 +16,14 @@
   }
 
   body {
-    @apply bg-bg text-white font-sans antialiased;
+    background-color: #0a0a0a;
+    color: white;
+    @apply font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Orbitron', sans-serif !important;
+    letter-spacing: 0.02em;
   }
 
   h1 {
@@ -45,6 +54,11 @@
 ========================= */
 
 @layer components {
+
+  .stat-number {
+    font-family: 'Orbitron', sans-serif !important;
+    font-weight: 700;
+  }
 
   .btn-primary {
     @apply bg-brand-500 hover:bg-brand-600 text-black font-semibold px-lg py-sm rounded-xl transition;
@@ -84,7 +98,7 @@
 @layer utilities {
 
   .container-page {
-    @apply max-w-7xl mx-auto px-lg;
+    @apply max-w-7xl mx-auto px-4 sm:px-6;
   }
 
   .section {
@@ -105,3 +119,23 @@
     @apply border-b border-white/10;
   }
 }
+
+/* ==========================================================================
+   🛠️ FRONTEND DEBUGGING UTILITIES
+   Uncomment the blocks below to enable "X-Ray Vision" for layout testing.
+   Using 'outline' instead of 'border' so it doesn't affect the box model.
+   ========================================================================== */
+
+/* --- Option 1: Wireframe Mode (Just Outlines) --- */
+/* 
+*, *::before, *::after {
+  outline: 1px solid rgba(255, 0, 0, 0.5) !important;
+} */
+
+
+/* --- Option 2: X-Ray Mode (Outlines + Translucent Fills) --- */
+
+/* *, *::before, *::after {
+  background: rgba(0, 150, 255, 0.05) !important;
+  outline: 1px solid rgba(0, 150, 255, 0.4) !important;
+} */
