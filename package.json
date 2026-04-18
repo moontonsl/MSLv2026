@@ -4,6 +4,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
+        "build:ngrok": "vite build && rm -f public/hot",
         "dev": "vite"
     },
     "devDependencies": {

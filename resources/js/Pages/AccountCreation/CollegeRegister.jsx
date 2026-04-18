@@ -1,7 +1,7 @@
 import { BadgeCheck } from 'lucide-react';
 import styles from "./register.module.scss";
 
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
+import MainLayout from "@/Layouts/MainLayout";
 import { Head } from '@inertiajs/react';
 
 import React, { useRef, useState } from 'react';
@@ -251,7 +251,7 @@ const CollegeRegister = () => {
         <>
         <Head title="Register College Account" />
 
-        <AuthenticatedLayout>
+        <MainLayout>
 
             <div className="min-h-screen flex items-start md:items-center justify-center px-md pt-10 md:pt-0">
 
@@ -351,7 +351,7 @@ const CollegeRegister = () => {
 
             </div>
 
-        </AuthenticatedLayout>
+        </MainLayout>
         </>
     );
 };

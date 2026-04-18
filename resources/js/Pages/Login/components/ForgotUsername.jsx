@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Mail } from "react-feather";
 import { Head, Link } from "@inertiajs/react";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import MainLayout from "@/Layouts/MainLayout";
 
 export default function ForgotUsername() {
     const [email, setEmail] = useState('');
@@ -44,7 +44,7 @@ export default function ForgotUsername() {
     };
 
     return (
-        <AuthenticatedLayout>
+        <MainLayout>
             <Head title="Forgot Username" />
 
             <div className="min-h-screen flex items-start md:items-center justify-center px-md pt-[70px] md:pt-0">
@@ -162,6 +162,6 @@ export default function ForgotUsername() {
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </MainLayout>
     );
 }
