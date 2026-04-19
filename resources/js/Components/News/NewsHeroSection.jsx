@@ -55,11 +55,11 @@ export default function NewsHeroSection({
 
     return (
         <div className="flex w-full flex-col items-center bg-[#0A0A0A] px-4 py-16 text-white md:px-8">
-            <h1 className="mb-4 text-center text-4xl font-black tracking-tight md:text-5xl">
+            <h1 className="mb-4 text-center font-heading text-4xl font-black tracking-tighter text-white md:text-5xl lg:text-6xl">
                 News <span className="text-[#FFC107]">&</span> Updates
             </h1>
 
-            <p className="max-w-2xl text-center text-sm leading-relaxed text-gray-400 md:text-base">
+            <p className="max-w-2xl text-center font-sans text-sm leading-relaxed text-gray-400 md:text-base">
                 Stay ahead of the meta. The latest stories, tournament results, and community
                 highlights from MSL Philippines.
             </p>
@@ -91,24 +91,24 @@ export default function NewsHeroSection({
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
 
                                 <div className="absolute bottom-0 left-0 flex w-full flex-col items-start p-6 md:w-3/4 md:p-10">
-                                    <span className="mb-4 rounded-md bg-[#FFC107] px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-black">
+                                    <span className="mb-4 rounded-md bg-[#FFC107] px-3 py-1 text-xs font-bold uppercase tracking-wider text-black">
                                         FEATURED
                                     </span>
 
-                                    <h2 className="mb-3 text-2xl font-bold leading-tight text-white md:text-4xl">
+                                    <h2 className="mb-3 font-heading text-2xl font-black tracking-tight leading-tight text-white md:text-4xl">
                                         {slide.title ?? featuredTitle}
                                     </h2>
 
-                                    <p className="mb-6 overflow-hidden text-sm text-gray-300 md:text-base [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:3]">
+                                    <p className="mb-6 overflow-hidden font-sans text-sm text-gray-300 md:text-base [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:3]">
                                         {slide.excerpt ?? featuredExcerpt}
                                     </p>
 
                                     <div className="flex flex-wrap items-center gap-3">
-                                        <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-black/50 px-3 py-1.5 text-xs font-medium text-gray-300 backdrop-blur-sm">
+                                        <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-black/50 px-3 py-1.5 font-sans text-xs font-medium text-gray-300 backdrop-blur-sm">
                                             <CalendarDays className="h-4 w-4 shrink-0 text-[#FFC107]" />
                                             <span>{slide.date ?? featuredDate}</span>
                                         </div>
-                                        <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-black/50 px-3 py-1.5 text-xs font-medium text-gray-300 backdrop-blur-sm">
+                                        <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-black/50 px-3 py-1.5 font-sans text-xs font-medium text-gray-300 backdrop-blur-sm">
                                             <User className="h-4 w-4 shrink-0 text-[#FFC107]" />
                                             <span>{slide.author ?? featuredAuthor}</span>
                                         </div>

@@ -69,13 +69,13 @@ function HomeHero() {
                 <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
                     {/* Left column */}
                     <div className="mx-auto max-w-xl text-center md:mx-0 md:text-left">
-                        <h1 className="text-4xl leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-6xl">
+                        <h1 className="font-heading text-4xl font-black leading-[1.05] tracking-tighter text-white md:text-[56px] lg:text-[64px]">
                             Empowering{' '}
-                            <span className="text-[#FFC107]">student-gamers</span>
+                            <span className="text-[#FFC107]">Student-Gamers</span>
                             <br />
-                            to become the next
+                            to <span className="text-[#FFC107]">Become</span> the Next
                             <br />
-                            generation leaders
+                            Generation Leaders
                         </h1>
 
                         <p className="mt-6 text-base leading-relaxed text-gray-400 sm:text-lg">
@@ -126,7 +126,7 @@ function HomeHero() {
                                         {active.badge}
                                     </div>
 
-                                    <div className="font-orbitron mt-2 text-2xl font-bold leading-tight text-white sm:text-3xl">
+                                    <div className="mt-2 font-heading text-2xl font-bold leading-tight text-white sm:text-3xl">
                                         {active.title}
                                     </div>
 
@@ -197,11 +197,11 @@ function AboutMSLSection() {
             />
             <div className="relative z-10 container-page">
                 <div className="mx-auto max-w-4xl text-center">
-                    <h2 className="text-4xl text-white sm:text-5xl">
+                    <h2 className="text-center font-heading text-2xl font-black uppercase tracking-wide text-white md:text-3xl">
                         About MSL Philippines
                     </h2>
 
-                    <p className="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-gray-300 sm:text-lg">
+                    <p className="mx-auto mt-3 max-w-2xl text-center font-sans text-sm leading-relaxed text-gray-400 md:text-base">
                         We are the official student leader body of Mobile Legends:
                         Bang Bang in the Philippines. Guided by Moonton, we create
                         inclusive campus initiatives that unite players, boost school
@@ -267,7 +267,7 @@ function NetworkOrganizationsSection() {
             `}</style>
 
             <div className="container-page mb-12">
-                <h2 className="mb-12 text-center text-3xl text-white sm:text-4xl">
+                <h2 className="mb-12 text-center font-heading text-2xl font-black uppercase tracking-wide text-white md:text-3xl">
                     MSL Network Organizations
                 </h2>
             </div>
@@ -412,10 +412,10 @@ function ProgramsSection() {
             <div className="container-page">
                 <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                     <div className="text-center md:text-left">
-                        <h2 className="text-4xl text-white sm:text-5xl">
+                        <h2 className="text-center font-heading text-2xl font-black uppercase tracking-wide text-white md:text-left md:text-3xl">
                             Our Programs
                         </h2>
-                        <p className="mt-4 max-w-xl text-base leading-relaxed text-gray-400 sm:text-lg">
+                        <p className="mx-auto mt-3 max-w-2xl text-center font-sans text-sm leading-relaxed text-gray-400 md:mx-0 md:text-left md:text-base">
                             Building opportunities for student leaders through
                             events, training, and nationwide esports initiatives.
                         </p>
@@ -628,10 +628,10 @@ function CommunityVoicesSection() {
             />
             <div className="relative z-10 container-page">
                 <div className="text-center md:text-left">
-                    <h2 className="text-4xl text-white sm:text-5xl">
+                    <h2 className="text-center font-heading text-2xl font-black uppercase tracking-wide text-white md:text-left md:text-3xl">
                         Community Voices
                     </h2>
-                    <p className="mt-4 max-w-2xl text-base leading-relaxed text-gray-400 sm:text-lg">
+                    <p className="mx-auto mt-3 max-w-2xl text-center font-sans text-sm leading-relaxed text-gray-400 md:mx-0 md:text-left md:text-base">
                         Hear from the student leaders, campus organizers, and
                         partners who are driving the MSL Philippines movement
                         forward.
@@ -732,10 +732,10 @@ function ChooseYourPathSection() {
         <section className="bg-[#0a0a0a] py-16 md:py-24">
             <div className="container-page">
                 <div className="text-center">
-                    <h2 className="text-4xl text-white sm:text-5xl">
+                    <h2 className="text-center font-heading text-2xl font-black uppercase tracking-wide text-white md:text-3xl">
                         Choose Your Path
                     </h2>
-                    <p className="mt-4 text-base text-gray-400 sm:text-lg">
+                    <p className="mx-auto mt-3 max-w-2xl text-center font-sans text-sm leading-relaxed text-gray-400 md:text-base">
                         Select how you want to get involved with MSL Philippines.
                     </p>
                 </div>
@@ -846,10 +846,10 @@ function FAQSection() {
         <section className="bg-[#0a0a0a] py-16 md:py-24">
             <div className="container-page">
                 <div className="text-center">
-                    <h2 className="text-2xl uppercase text-white sm:text-3xl md:text-5xl">
-                        FREQUENTLY ASKED QUESTIONS
+                    <h2 className="text-center font-heading text-2xl font-black uppercase tracking-wide text-white md:text-3xl">
+                        Frequently Asked Questions
                     </h2>
-                    <p className="mt-4 text-gray-300">
+                    <p className="mx-auto mt-3 max-w-2xl text-center font-sans text-sm leading-relaxed text-gray-400 md:text-base">
                         Everything you need to know about joining and partnering
                         with us.
                     </p>

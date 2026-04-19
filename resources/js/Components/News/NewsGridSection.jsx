@@ -94,14 +94,14 @@ function ArticleCard({ article, layout = 'grid' }) {
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                         loading="lazy"
                     />
-                    <div className="absolute left-4 top-4 flex items-center gap-1.5 rounded-full border border-white/10 bg-black/70 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+                    <div className="absolute left-4 top-4 flex items-center gap-1.5 rounded-full border border-white/10 bg-black/70 px-3 py-1 font-sans text-xs font-medium text-white backdrop-blur-sm">
                         <Tag className="h-3 w-3 shrink-0 text-[#FFC107]" />
                         <span>{article.category}</span>
                     </div>
                 </div>
 
                 <div className="flex flex-1 flex-col p-6">
-                    <div className="mb-3 flex items-center gap-4 text-xs text-gray-500">
+                    <div className="mb-3 flex items-center gap-4 font-sans text-xs font-normal text-gray-500">
                         <span className="inline-flex items-center gap-1.5">
                             <Calendar className="h-3.5 w-3.5 shrink-0" />
                             {article.date}
@@ -112,15 +112,15 @@ function ArticleCard({ article, layout = 'grid' }) {
                         </span>
                     </div>
 
-                    <h3 className="mb-2 overflow-hidden text-xl font-bold leading-tight text-white transition-colors [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] group-hover:text-[#FFC107]">
+                    <h3 className="mb-2 line-clamp-2 font-heading text-xl font-black tracking-tight leading-snug text-white transition-colors group-hover:text-[#FFC107] md:text-2xl">
                         {article.title}
                     </h3>
 
-                    <p className="mb-6 overflow-hidden text-sm text-gray-400 [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:3]">
+                    <p className="mb-6 overflow-hidden font-sans text-sm text-gray-400 [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:3]">
                         {article.excerpt}
                     </p>
 
-                    <div className="mt-auto flex items-center gap-2 text-sm font-bold text-[#FFC107]">
+                    <div className="mt-auto flex items-center gap-2 font-sans text-sm font-bold text-[#FFC107]">
                         Read Article
                         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </div>
@@ -133,7 +133,9 @@ function ArticleCard({ article, layout = 'grid' }) {
 function MobileCategoryCarousel({ category, articles, isLast }) {
     return (
         <div className={`w-full ${isLast ? 'mb-0' : 'mb-6'}`}>
-            <h3 className="mb-3 px-4 text-lg font-bold text-[#FFC107] md:px-8">{category}</h3>
+            <h3 className="mb-3 px-4 font-heading text-lg font-black text-[#FFC107] md:px-8">
+                {category}
+            </h3>
             <div
                 className={`hide-scrollbar flex snap-x snap-mandatory flex-row gap-4 overflow-x-auto px-4 md:gap-6 md:px-8 ${
                     isLast ? 'pb-2 md:pb-6' : 'pb-6'

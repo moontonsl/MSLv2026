@@ -1,4 +1,3 @@
-import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
 
 /** @type {import('tailwindcss').Config} */
@@ -95,8 +94,8 @@ export default {
             ========================= */
 
             fontFamily: {
-                sans: ['Inter', 'system-ui', 'sans-serif', ...defaultTheme.fontFamily.sans],
-                orbitron: ['Orbitron', 'sans-serif'],
+                sans: ['var(--font-inter)', 'sans-serif'],
+                heading: ['var(--font-league-spartan)', 'sans-serif'],
             },
 
             fontSize: {
