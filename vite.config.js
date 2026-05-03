@@ -22,7 +22,7 @@ export default defineConfig({
 
         //php artisan serve --host=0.0.0.0 --port=8000
         //host: '10.10.120.31', // your PC's local IP
-        host: '192.168.1.8',  //
+        host: '192.168.1.15',  //
         port: 5173,
         strictPort: true,
         cors: {
