@@ -20,6 +20,9 @@ import toast from 'react-hot-toast';
 import { announcementData as announcements } from './announcementData';
 import EditProfileModal from './EditProfileModal';
 import { studentProfileData as data } from './studentProfileData';
+import AccountRenewalModal from '@/Pages/Login/components/AccountRenewalModal';
+import AccountRenewalReviewModal from '@/Pages/Login/components/AccountRenewalReviewModal';
+import { getAccountRenewalRequirements } from '@/Pages/Login/components/AccountRenewalLists';
 
 function SurfaceCard({ className = '', children }) {
     return (
@@ -50,6 +53,8 @@ function seasonWithCurrent(label) {
 }
 
 const reactionStorageKey = 'student-profile-announcement-reactions';
+const accountRenewalStatusKey = 'msl-account-renewal-status';
+const accountRenewalSubmissionKey = 'msl-account-renewal-submission';
 
 function loadSavedAnnouncementItems(items) {
     if (typeof window === 'undefined') {
@@ -238,16 +243,39 @@ function HeroRow({ rank, image, name, matches, wr }) {
     );
 }
 
-export default function Index() {
+export default function Index(props) {
     const [profile, setProfile] = useState(data);
     const [announcementItems, setAnnouncementItems] = useState(() => loadSavedAnnouncementItems(announcements));
     const [reactionBursts, setReactionBursts] = useState({});
     const [activeMobileTab, setActiveMobileTab] = useState('about');
     const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+    const [renewalStatus, setRenewalStatus] = useState(() => {
+        if (typeof window === 'undefined') return '';
+        return window.localStorage.getItem(accountRenewalStatusKey) ?? '';
+    });
+    const [showRenewalThankYou, setShowRenewalThankYou] = useState(false);
+    const renewalStatuses = props.accountRenewal ?? props.accountRenewalStatuses ?? props.auth?.user?.accountRenewal ?? profile.accountRenewal ?? {};
+    const renewalRequirements = getAccountRenewalRequirements(renewalStatuses);
+    const isRenewalPending = renewalStatus === 'pending-review';
+    const [showRenewalModal, setShowRenewalModal] = useState(renewalRequirements.length > 0 && !isRenewalPending);
 
     useEffect(() => {
         saveAnnouncementReactionCounts(announcementItems);
     }, [announcementItems]);
+
+    useEffect(() => {
+        setShowRenewalModal(renewalRequirements.length > 0 && !isRenewalPending);
+    }, [renewalRequirements.length, isRenewalPending]);
+
+    useEffect(() => {
+        if (!showRenewalThankYou) return undefined;
+
+        const redirectTimer = window.setTimeout(() => {
+            window.location.href = '/';
+        }, 5000);
+
+        return () => window.clearTimeout(redirectTimer);
+    }, [showRenewalThankYou]);
 
     function handleReaction(announcementId, reactionId) {
         const announcement = announcementItems.find((item) => item.id === announcementId);
@@ -292,7 +320,7 @@ export default function Index() {
                 ...current,
                 [announcementId]: [],
             }));
-        }, 2200);
+        }, 5000);
     }
 
     function handleMobileTabClick(tab) {
@@ -845,6 +873,51 @@ export default function Index() {
                                 ...updates.playerInformation,
                             },
                         }));
+                    }}
+                />
+            ) : null}
+
+            <AccountRenewalModal
+                isOpen={showRenewalModal}
+                renewalStatuses={renewalStatuses}
+                profile={{
+                    fullName: props.accountRenewalProfile?.fullName ?? props.auth?.user?.name ?? profile.playerName,
+                    username: props.accountRenewalProfile?.username ?? props.auth?.user?.username ?? profile.playerUsername,
+                    email: props.accountRenewalProfile?.email ?? props.auth?.user?.email ?? profile.editableProfile?.email,
+                    school: props.accountRenewalProfile?.school ?? props.auth?.user?.school ?? profile.schoolName,
+                    ign: props.accountRenewalProfile?.ign ?? props.auth?.user?.ign ?? profile.playerInformation?.ign,
+                    status: 'Renewal Required',
+                }}
+                onSubmit={(payload) => {
+                    console.log('Student portal account renewal payload', payload);
+                    window.localStorage.setItem(accountRenewalStatusKey, 'pending-review');
+                    window.localStorage.setItem(
+                        accountRenewalSubmissionKey,
+                        JSON.stringify({
+                            ...payload,
+                            submittedAt: new Date().toISOString(),
+                        }),
+                    );
+                    setRenewalStatus('pending-review');
+                    setShowRenewalModal(false);
+                    setShowRenewalThankYou(true);
+                }}
+            />
+
+            {showRenewalThankYou ? (
+                <AccountRenewalReviewModal
+                    type="thank-you"
+                    onGoHome={() => {
+                        window.location.href = '/';
+                    }}
+                />
+            ) : null}
+
+            {!showRenewalThankYou && isRenewalPending ? (
+                <AccountRenewalReviewModal
+                    type="reviewing"
+                    onGoHome={() => {
+                        window.location.href = '/';
                     }}
                 />
             ) : null}

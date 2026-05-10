@@ -11,6 +11,14 @@ export const studentProfileData = {
     courseName: 'Master in Information Technology',
     profileEditLabel: 'Edit Profile',
     syncNotice: 'Please note that real-time updates are subject to provider synchronization schedules.',
+    accountRenewal: {
+        // school: 'needupdate',
+        // course: 'needupdate',
+        // yearLevel: 'needupdate',
+        // schoolId: 'needupdate',
+        fullName: 'needupdate',
+        // document: 'needupdate',
+    },
     editableProfile: {
         contactNo: '09123456789',
         facebookLink: 'https://facebook.com/urjaijai',

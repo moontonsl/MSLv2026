@@ -13,6 +13,10 @@ Route::get('/news', function () {
     return Inertia::render('News');
 })->name('news');
 
+Route::get('/events', function () {
+    return Inertia::render('Events/Index');
+})->name('events');
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
