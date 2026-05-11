@@ -31,3 +31,4 @@ require __DIR__.'/auth.php';
 Route::get('/Testpage', function () {
     return Inertia::render('Testpage');
 })->name('Testpage');
+//test
