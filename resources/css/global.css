@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=League+Spartan:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=League+Spartan:wght@400;500;600;700;800;900&family=Orbitron:wght@700;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -140,8 +140,8 @@
    ========================================================================== */
 
 /* --- Option 1: Wireframe Mode (Just Outlines) --- */
-/* 
-*, *::before, *::after {
+
+/* *, *::before, *::after {
   outline: 1px solid rgba(255, 0, 0, 0.5) !important;
 } */
 

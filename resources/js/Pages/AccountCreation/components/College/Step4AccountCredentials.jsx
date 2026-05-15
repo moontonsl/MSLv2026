@@ -255,7 +255,7 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
     return (
         <div>
             <h1 className={`${styles['title-register']} text-2xl md:text-3xl mb-1`}>
-                Create Account
+                Account Creation
             </h1>
 
             <h2 className={`${styles['subtitle-register']} text-[0.45rem] leading-none md:text-sm text-white/60 md:text-white/70 mb-2 md:mb-1 tracking-[0.03em] md:tracking-[0.18em]`}>
@@ -453,9 +453,9 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
                         className="h-4 w-4 rounded border-gray-500 bg-transparent text-yellow-500 focus:ring-yellow-400"
                     />
                     <span>
-                        I accept and agree with{' '}
+                        I agree with the MSL{' '}
                         <button type="button" className="text-yellow-400 hover:underline">
-                            Terms and Conditions
+                            Terms and Conditions and Privacy Policy
                         </button>
                     </span>
                 </label>

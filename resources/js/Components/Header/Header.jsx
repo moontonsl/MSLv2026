@@ -104,6 +104,9 @@ function DesktopNavigation({
             <Link href="/careers" className={navLinkClass}>
                 Careers
             </Link>
+            <Link href="/events" className={navLinkClass}>
+                Events
+            </Link>
             <Link href="/news" className={navLinkClass}>
                 News
             </Link>
@@ -414,6 +417,13 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                             onClick={() => setMobileMenuOpen(false)}
                         >
                             Careers
+                        </Link>
+                        <Link
+                            href="/events"
+                            className={`${navLinkClass} py-2`}
+                            onClick={() => setMobileMenuOpen(false)}
+                        >
+                            Events
                         </Link>
                         <Link
                             href="/news"
