@@ -2,11 +2,11 @@ export default function NewsletterSection() {
     return (
         <section className="flex w-full justify-center bg-[#0A0A0A] px-4 pb-8 pt-2 md:px-8 md:py-16">
             <div className="flex w-full max-w-5xl flex-col items-center rounded-3xl border border-white/5 bg-gradient-to-br from-[#1A1825] to-[#111111] p-8 text-center shadow-2xl md:p-16">
-                <h2 className="mb-4 text-3xl font-black tracking-tight text-white md:text-5xl">
+                <h2 className="mb-4 font-heading text-3xl font-black tracking-tighter text-white md:text-4xl lg:text-5xl">
                     Never Miss an Update
                 </h2>
 
-                <p className="mb-8 max-w-2xl text-sm leading-relaxed text-gray-300 md:text-base">
+                <p className="mb-8 max-w-2xl font-sans text-sm leading-relaxed text-gray-300 md:text-base">
                     Subscribe to our{' '}
                     <span className="font-bold text-white">monthly digest</span> for the latest
                     tournament announcements, community spotlights, and game updates directly to your
@@ -27,7 +27,7 @@ export default function NewsletterSection() {
                     />
                     <button
                         type="submit"
-                        className="w-full shrink-0 rounded-xl bg-[#FFC107] px-8 py-3 font-bold text-black transition-all hover:bg-yellow-400 active:scale-95 sm:w-auto md:py-3.5"
+                        className="w-full shrink-0 rounded-xl bg-[#FFC107] px-8 py-3 font-sans font-bold text-black transition-all hover:bg-yellow-400 active:scale-95 sm:w-auto md:py-3.5"
                     >
                         Subscribe
                     </button>
