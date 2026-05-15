@@ -72,5 +72,3 @@ Route::get('/register/shs', function () {
 Route::get('/register/college', function () {
     return Inertia::render('AccountCreation/CollegeRegister');
 })->name('college.register');
-
-//test
