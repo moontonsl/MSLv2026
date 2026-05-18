@@ -38,32 +38,32 @@ function EventCard({ event }) {
     const canAct = event.status !== 'ended';
 
     return (
-        <article className={`flex w-full max-w-sm flex-col overflow-hidden rounded-xl border bg-[#0b0b0b] pb-3.5 ${event.featured ? styles.border : 'border-gray-500/70'}`}>
-            <div className="relative h-52 overflow-hidden rounded-t-xl bg-[#111111]">
+        <article className={`flex w-full flex-col overflow-hidden rounded-xl border bg-[#0b0b0b] pb-2.5 sm:max-w-sm sm:pb-3.5 ${event.featured ? styles.border : 'border-gray-500/70'}`}>
+            <div className="relative aspect-[4/3] overflow-hidden rounded-t-xl bg-[#111111] sm:h-52 sm:aspect-auto">
                 <img src={event.image} alt="" className="absolute inset-0 h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/20 to-black" />
-                <div className={`absolute left-0 top-3.5 rounded-r-md border border-white/10 px-3 py-2 text-sm font-semibold leading-5 shadow-sm ${styles.badge}`}>
+                <div className={`absolute left-0 top-2 rounded-r-md border border-white/10 px-2 py-1 text-[0.625rem] font-semibold leading-4 shadow-sm sm:top-3.5 sm:px-3 sm:py-2 sm:text-sm sm:leading-5 ${styles.badge}`}>
                     {event.statusLabel}
                 </div>
             </div>
 
-            <div className="flex h-64 flex-col gap-5 px-3.5 pt-3.5">
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold leading-5 text-gray-500">
-                    <span className="inline-flex items-center gap-1">
-                        <CalendarDays className="h-4 w-4" />
-                        {event.date}
+            <div className="flex flex-1 flex-col gap-3 px-2.5 pt-3 sm:min-h-64 sm:gap-5 sm:px-3.5 sm:pt-3.5">
+                <div className="flex flex-col gap-1 text-[0.6875rem] font-semibold leading-4 text-gray-500 min-[420px]:flex-row min-[420px]:flex-wrap min-[420px]:items-center min-[420px]:gap-x-2 sm:gap-x-3 sm:text-sm sm:leading-5">
+                    <span className="inline-flex min-w-0 items-center gap-1">
+                        <CalendarDays className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+                        <span className="truncate">{event.date}</span>
                     </span>
-                    <span className="inline-flex items-center gap-1">
-                        <MapPin className="h-4 w-4" />
-                        {event.location}
+                    <span className="inline-flex min-w-0 items-center gap-1">
+                        <MapPin className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+                        <span className="truncate">{event.location}</span>
                     </span>
                 </div>
 
-                <div className="flex h-32 flex-col gap-1.5">
-                    <h2 className="font-['League_Spartan'] text-2xl font-black leading-6 text-white">
+                <div className="flex flex-col gap-1.5">
+                    <h2 className="line-clamp-2 font-['League_Spartan'] text-lg font-black leading-5 text-white min-[420px]:text-xl min-[420px]:leading-6 sm:text-2xl sm:leading-6">
                         {event.title}
                     </h2>
-                    <p className="line-clamp-5 text-xs font-normal leading-4 text-gray-300">
+                    <p className="line-clamp-3 text-[0.6875rem] font-normal leading-4 text-gray-300 sm:line-clamp-5 sm:text-xs sm:leading-4">
                         {event.description}
                     </p>
                 </div>
@@ -71,10 +71,10 @@ function EventCard({ event }) {
                 <button
                     type="button"
                     disabled={!canAct}
-                    className={`mt-auto flex min-h-14 w-full items-center justify-center gap-5 rounded-[10px] border px-6 py-3 text-xl font-semibold leading-8 transition ${styles.button}`}
+                    className={`mt-auto flex min-h-10 w-full items-center justify-center gap-2 rounded-[10px] border px-2.5 py-2 text-xs font-semibold leading-5 transition sm:min-h-14 sm:gap-5 sm:px-6 sm:py-3 sm:text-xl sm:leading-8 ${styles.button}`}
                 >
                     {event.action}
-                    {canAct ? <ArrowUpRight className="h-5 w-5" /> : null}
+                    {canAct ? <ArrowUpRight className="h-4 w-4 shrink-0 sm:h-5 sm:w-5" /> : null}
                 </button>
             </div>
         </article>
@@ -107,12 +107,12 @@ export default function Events() {
             <Head title="Events" />
 
             <div className="overflow-hidden bg-[#0a0a0a] px-4 pb-12 text-white sm:px-6 lg:px-12">
-                <section className="mx-auto flex max-w-[1446px] flex-col items-center gap-20 pt-24">
+                <section className="mx-auto flex max-w-[1446px] flex-col items-center gap-12 pt-20 sm:gap-20 sm:pt-24">
                     <div className="flex w-full max-w-xl flex-col items-center gap-2.5">
-                        <h1 className="text-center font-['League_Spartan'] text-5xl font-black leading-[52px] sm:text-6xl sm:leading-[60px]">
+                        <h1 className="text-center font-['League_Spartan'] text-4xl font-black leading-10 sm:text-6xl sm:leading-[60px]">
                             Our <span className="text-brand-400">Events</span>
                         </h1>
-                        <p className="text-center text-lg font-normal leading-7 text-white">
+                        <p className="text-center text-base font-normal leading-6 text-white sm:text-lg sm:leading-7">
                             Catch the latest events, tournaments, and upcoming activities. Stay informed and never miss out on rewards and challenges.
                         </p>
                     </div>
@@ -123,9 +123,9 @@ export default function Events() {
                     </div>
                 </section>
 
-                <section className="relative z-10 mx-auto flex max-w-[1288px] flex-col gap-10 py-16 lg:gap-20 lg:py-20">
+                <section className="relative z-10 mx-auto flex max-w-[1288px] flex-col gap-8 py-10 sm:gap-10 sm:py-16 lg:gap-20 lg:py-20">
                     <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-                        <div className="flex flex-wrap items-center gap-3 lg:gap-5">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 lg:gap-5">
                             {eventFilters.map((filter) => {
                                 const isActive = filter.key === activeFilter;
                                 const count = getFilterCount(filter.key);
@@ -135,7 +135,7 @@ export default function Events() {
                                         key={filter.key}
                                         type="button"
                                         onClick={() => setActiveFilter(filter.key)}
-                                        className={`inline-flex items-center gap-2 rounded-xl border px-3.5 py-2.5 text-base font-semibold leading-6 transition lg:text-xl lg:leading-8 ${
+                                        className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold leading-5 transition sm:px-3.5 sm:py-2.5 sm:text-base sm:leading-6 lg:text-xl lg:leading-8 ${
                                             isActive
                                                 ? 'border-brand-500/20 bg-brand-600 text-black'
                                                 : 'border-gray-500 bg-zinc-400/10 text-gray-500 hover:border-brand-500/40 hover:text-gray-300'
@@ -150,7 +150,7 @@ export default function Events() {
                             })}
                         </div>
 
-                        <label className="flex h-12 w-full max-w-sm items-center gap-2.5 rounded-xl border border-gray-300 bg-zinc-400/10 px-3 text-gray-500">
+                        <label className="flex h-12 w-full items-center gap-2.5 rounded-xl border border-gray-300 bg-zinc-400/10 px-3 text-gray-500 sm:max-w-sm">
                             <Search className="h-5 w-5 shrink-0" />
                             <input
                                 type="search"
@@ -168,7 +168,7 @@ export default function Events() {
                                 filteredEvents.length === 1
                                     ? 'grid-cols-1'
                                     : 'grid-cols-2'
-                            } xl:grid-cols-3`}
+                            } justify-items-stretch sm:justify-items-center xl:grid-cols-3`}
                         >
                             {filteredEvents.map((event) => (
                                 <EventCard key={event.id} event={event} />
