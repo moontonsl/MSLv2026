@@ -7,9 +7,7 @@ import { Calendar, ChevronLeft, Clock, Share2, User } from 'lucide-react';
 const articleBodyTypography =
     '[&_p]:mb-6 [&_p]:leading-relaxed [&_p]:text-gray-300 [&_ul]:mb-6 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:text-gray-300 [&_li]:mb-2 [&_strong]:font-bold [&_strong]:text-white';
 
-export default function ArticleDetail({ slug }) {
-    const article = newsArticles.find((a) => a.slug === slug);
-
+export default function ArticleDetail({ article, readNext = [] }) {
     if (!article) {
         return (
             <MainLayout>
@@ -23,8 +21,6 @@ export default function ArticleDetail({ slug }) {
             </MainLayout>
         );
     }
-
-    const readNext = newsArticles.filter((a) => a.slug !== slug).slice(0, 3);
 
     const handleShare = async () => {
         const url = typeof window !== 'undefined' ? window.location.href : '';
