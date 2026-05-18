@@ -1,5 +1,4 @@
 import ArticleCard from '@/Components/ArticleCard';
-import { buildFeaturedSlides, newsArticles } from '@/data/newsData';
 import { Link } from '@inertiajs/react';
 import { Clock, Search, User } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -102,8 +101,56 @@ function FeaturedSlideCard({ slide, reserveDotsSpace = false }) {
 export default function NewsUpdatesFullPage() {
     const [activeFilter, setActiveFilter] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
+    const [articlesData, setArticlesData] = useState([]);
+    const [highlightsData, setHighlightsData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const FEATURED_SLIDES = useMemo(() => buildFeaturedSlides(), []);
+    useEffect(() => {
+        Promise.all([
+            fetch('/api/news/articles').then((res) => res.json()),
+            fetch('/api/news/highlights').then((res) => res.json()),
+        ]).then(([articles, highlights]) => {
+            // Map backend data to frontend schema if necessary
+            const mappedArticles = articles.map((a) => ({
+                slug: a.canonical,
+                title: a.title,
+                excerpt: a.subtitle,
+                date: new Date(a.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+                author: a.author,
+                category: a.category,
+                readTime: '3 min read', // Placeholder or add to backend
+                imageSrc: a.image,
+                href: a.link,
+            }));
+
+            const mappedHighlights = highlights.map((h) => ({
+                title: h.title,
+                excerpt: '', // Add subtitle to highlights endpoint if needed
+                date: new Date(h.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+                author: h.author,
+                imageSrc: h.src,
+                href: h.link,
+            }));
+
+            setArticlesData(mappedArticles);
+            setHighlightsData(mappedHighlights.length > 0 ? mappedHighlights : [
+                 {
+                     title: 'Welcome to MSL News',
+                     excerpt: 'Check back soon for featured stories.',
+                     date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+                     author: 'MSL Admin',
+                     imageSrc: '/images/default-news-placeholder.jpg',
+                     href: '#',
+                 }
+            ]);
+            setIsLoading(false);
+        }).catch((err) => {
+            console.error("Failed to fetch news:", err);
+            setIsLoading(false);
+        });
+    }, []);
+
+    const FEATURED_SLIDES = highlightsData;
 
     const featuredScrollerRef = useRef(null);
     const featuredActive = useCarouselActiveIndex(
@@ -113,7 +160,7 @@ export default function NewsUpdatesFullPage() {
     );
 
     const filteredArticles = useMemo(() => {
-        let list = newsArticles;
+        let list = articlesData;
         if (activeFilter !== 'All') {
             list = list.filter((a) => a.category === activeFilter);
         }
@@ -127,7 +174,7 @@ export default function NewsUpdatesFullPage() {
             );
         }
         return list;
-    }, [activeFilter, searchQuery]);
+    }, [activeFilter, searchQuery, articlesData]);
 
     const mobileGrouped = useMemo(() => {
         const map = new Map();
@@ -160,6 +207,10 @@ export default function NewsUpdatesFullPage() {
                 </div>
             </section>
 
+            {isLoading ? (
+                <div className="flex justify-center py-20 text-white">Loading news...</div>
+            ) : (
+                <>
             {/* Featured article — mobile carousel */}
             <section className="w-full px-4 md:hidden">
                 <div className="relative mx-auto max-w-6xl">
@@ -311,6 +362,8 @@ export default function NewsUpdatesFullPage() {
                     </p>
                 </div>
             </section>
+            </>
+            )}
         </div>
     );
 }
