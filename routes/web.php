@@ -19,6 +19,10 @@ Route::get('/news/{slug}', function (string $slug) {
     ]);
 })->name('news.show');
 
+Route::get('/admin/account-creation', function () {
+    return Inertia::render('Admin/AccountCreation');
+})->name('admin.account-creation');
+
 Route::get('/events', function () {
     return Inertia::render('Events/Index');
 })->name('events');
