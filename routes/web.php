@@ -9,15 +9,8 @@ Route::get('/', function () {
     return Inertia::render('Home');
 });
 
-Route::get('/news', function () {
-    return Inertia::render('News');
-})->name('news');
-
-Route::get('/news/{slug}', function (string $slug) {
-    return Inertia::render('News/ArticleDetail', [
-        'slug' => $slug,
-    ]);
-})->name('news.show');
+Route::get('/news', [\App\Http\Controllers\NewsController::class, 'index'])->name('news.index');
+Route::get('/news/{canonical}', [\App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
 
 Route::get('/admin/account-creation', function () {
     return Inertia::render('Admin/AccountCreation');
@@ -88,3 +81,8 @@ Route::get('/register/shs', function () {
 Route::get('/register/college', function () {
     return Inertia::render('AccountCreation/CollegeRegister');
 })->name('college.register');
+
+// Public routes to fetch news data
+Route::get('/api/news/articles', [\App\Http\Controllers\NewsController::class, 'getArticles']);
+Route::get('/api/news/highlights', [\App\Http\Controllers\NewsController::class, 'getHighlights']);
+Route::get('/api/news/related', [\App\Http\Controllers\NewsController::class, 'getRelatedArticles']);
