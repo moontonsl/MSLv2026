@@ -5,9 +5,9 @@ const ACCENT = '#FBBF24';
 
 const NAV_ITEMS = [
     { id: 'account-creation', label: 'Account Creation', href: '/admin/account-creation', icon: UserPlus },
-    { id: 'home', label: 'Home Page', href: '/', icon: LayoutGrid },
-    { id: 'faq', label: 'FAQ', href: '#', icon: MessageSquare },
-    { id: 'news', label: 'News & Updates', href: '/news', icon: Megaphone },
+    { id: 'home-page', label: 'Home Page', href: '/admin/home-page', icon: LayoutGrid },
+    { id: 'faq', label: 'FAQ', href: '/admin/faq', icon: MessageSquare },
+    { id: 'news', label: 'News & Updates', href: '/admin/news-updates', icon: Megaphone },
 ];
 
 export default function AdminSidebar({ activeId = 'account-creation' }) {

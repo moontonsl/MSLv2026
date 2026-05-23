@@ -23,6 +23,18 @@ Route::get('/admin/account-creation', function () {
     return Inertia::render('Admin/AccountCreation');
 })->name('admin.account-creation');
 
+Route::get('/admin/home-page', function () {
+    return Inertia::render('Admin/HomePage');
+})->name('admin.home-page');
+
+Route::get('/admin/faq', function () {
+    return Inertia::render('Admin/Faq');
+})->name('admin.faq');
+
+Route::get('/admin/news-updates', function () {
+    return Inertia::render('Admin/NewsUpdates');
+})->name('admin.news-updates');
+
 Route::get('/events', function () {
     return Inertia::render('Events/Index');
 })->name('events');

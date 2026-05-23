@@ -21,6 +21,27 @@ export const STRAND_FORM_FIELDS = [
     },
 ];
 
+export const FAQ_FORM_FIELDS = [
+    {
+        name: 'category',
+        label: 'Category',
+        type: 'select',
+        options: ['General', 'Registration', 'Events', 'Account'],
+    },
+    {
+        name: 'question',
+        label: 'Question',
+        type: 'text',
+        placeholder: 'Enter question',
+    },
+    {
+        name: 'answer',
+        label: 'Answer',
+        type: 'textarea',
+        placeholder: 'Enter text here...',
+    },
+];
+
 export const FORM_MODAL_CONFIG = {
     'add-school': {
         title: 'Add School',
@@ -58,6 +79,12 @@ export const FORM_MODAL_CONFIG = {
         submitLabel: 'Update',
         successType: 'success-strand-updated',
     },
+    'add-faq': {
+        title: 'Add Frequently Asked Question',
+        fields: FAQ_FORM_FIELDS,
+        submitLabel: 'Submit',
+        successType: 'success-faq-added',
+    },
 };
 
 export const SUCCESS_MESSAGES = {
@@ -67,6 +94,8 @@ export const SUCCESS_MESSAGES = {
     'success-course-updated': 'Updated Successfully!',
     'success-strand-added': 'Strand Successfully Added!',
     'success-strand-updated': 'Updated Successfully!',
+    'success-faq-added': 'Successfully Added!',
+    'success-news-added': 'Successfully Added!',
 };
 
 export function isFormModal(type) {

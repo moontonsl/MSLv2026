@@ -12,7 +12,13 @@ const submitClassName =
  *   isOpen: boolean;
  *   onClose: () => void;
  *   title: string;
- *   fields: { name: string; label: string; placeholder: string }[];
+ *   fields: {
+ *     name: string;
+ *     label: string;
+ *     type?: 'text' | 'select' | 'textarea';
+ *     placeholder?: string;
+ *     options?: string[];
+ *   }[];
  *   initialValues?: Record<string, string>;
  *   submitLabel: string;
  *   onSubmit: (values: Record<string, string>) => void;
@@ -43,26 +49,73 @@ export default function AdminFormModal({
         onSubmit(values);
     };
 
+    const renderField = ({ name, label, type = 'text', placeholder, options = [] }) => {
+        const value = values[name] ?? '';
+
+        if (type === 'select') {
+            return (
+                <select
+                    id={name}
+                    name={name}
+                    value={value}
+                    onChange={(e) =>
+                        setValues((prev) => ({ ...prev, [name]: e.target.value }))
+                    }
+                    className={inputClassName}
+                >
+                    <option value="" disabled>
+                        Select {label.toLowerCase()}
+                    </option>
+                    {options.map((option) => (
+                        <option key={option} value={option}>
+                            {option}
+                        </option>
+                    ))}
+                </select>
+            );
+        }
+
+        if (type === 'textarea') {
+            return (
+                <textarea
+                    id={name}
+                    name={name}
+                    value={value}
+                    onChange={(e) =>
+                        setValues((prev) => ({ ...prev, [name]: e.target.value }))
+                    }
+                    placeholder={placeholder}
+                    rows={5}
+                    className={`${inputClassName} h-32 resize-none`}
+                />
+            );
+        }
+
+        return (
+            <input
+                id={name}
+                name={name}
+                type="text"
+                value={value}
+                onChange={(e) =>
+                    setValues((prev) => ({ ...prev, [name]: e.target.value }))
+                }
+                placeholder={placeholder}
+                className={inputClassName}
+            />
+        );
+    };
+
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <h2 className="mb-6 text-xl font-bold text-[#FBBF24]">{title}</h2>
             <form onSubmit={handleSubmit}>
-                {fields.map(({ name, label, placeholder }) => (
-                    <div key={name} className="mb-4 last:mb-0">
-                        <label htmlFor={name} className="mb-2 block text-sm text-gray-400">
-                            {label}
+                {fields.map((field) => (
+                    <div key={field.name} className="mb-4 last:mb-0">
+                        <label htmlFor={field.name} className="mb-2 block text-sm text-gray-400">
+                            {field.label}
                         </label>
-                        <input
-                            id={name}
-                            name={name}
-                            type="text"
-                            value={values[name] ?? ''}
-                            onChange={(e) =>
-                                setValues((prev) => ({ ...prev, [name]: e.target.value }))
-                            }
-                            placeholder={placeholder}
-                            className={inputClassName}
-                        />
+                        {renderField(field)}
                     </div>
                 ))}
                 <button type="submit" className={submitClassName}>
