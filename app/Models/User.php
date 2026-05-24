@@ -21,6 +21,41 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'username',
+        'first_name',
+        // MLBB fields
+        'ml_id',
+        'ml_server',
+        'ml_ign',
+        'ml_avatar',
+        'ml_level',
+        'ml_rank_level',
+        'is_mlbb_verified',
+        'status',
+        // Personal details
+        'surname',
+        'suffix',
+        'birthday',
+        'age',
+        'gender',
+        'contact_number',
+        'facebook_link',
+        // Academic details
+        'course',
+        'university',
+        'year_level',
+        'studentId',
+        'proofOfEnrollment',
+        // Location details
+        'region',
+        'island',
+        // Squad/Game details
+        'squadAbbreviation',
+        'squadName',
+        'inGameRole',
+        'mainHero',
+        // User type
+        'user_type',
     ];
 
     /**
@@ -43,6 +78,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_mlbb_verified' => 'boolean',
         ];
     }
 }

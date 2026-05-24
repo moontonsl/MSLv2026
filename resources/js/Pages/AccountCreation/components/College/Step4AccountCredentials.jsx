@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from '../../register.module.scss';
 import { Eye, EyeOff } from 'lucide-react';
+import axios from 'axios';
 
 const Step4AccountCredentials = React.forwardRef(function Step4AccountCredentials(
     {
@@ -130,13 +131,8 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
             }
         }
 
-        if (name === 'captcha' && trimmedValue.length < 4) {
-            setFieldError(name, 'Enter the verification code.', force);
-            return false;
-        }
-
-        if (name === 'captcha' && verificationCode && trimmedValue !== verificationCode) {
-            setFieldError(name, 'Incorrect code.', force);
+        if (name === 'captcha' && trimmedValue.length < 6) {
+            setFieldError(name, 'Enter the 6-digit verification code.', force);
             return false;
         }
 
@@ -213,16 +209,31 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
         setShowCodeNotice(false);
     };
 
-    const handleRequestCode = () => {
+    const handleRequestCode = async () => {
         if (!validateField('email', data.email, true)) {
             return;
         }
 
-        setShowCodeNotice(true);
-        setHasRequestedCode(true);
-        setCodeTimer(60);
-        setVerificationCode('123456');
-        clearFieldError('email');
+        try {
+            const response = await axios.post(route('email.send-code'), {
+                email: data.email,
+            });
+
+            if (response.data.success) {
+                setShowCodeNotice(true);
+                setHasRequestedCode(true);
+                setCodeTimer(60);
+                clearFieldError('email');
+                if (errors.captcha) {
+                    clearFieldError('captcha');
+                }
+            } else {
+                setFieldError('email', response.data.message || 'Failed to send verification code.', true);
+            }
+        } catch (error) {
+            const msg = error.response?.data?.message || 'Failed to send verification code.';
+            setFieldError('email', msg, true);
+        }
     };
 
     const handleCheckboxChange = (e) => {

@@ -21,8 +21,10 @@ const initialFormData = {
     yearLevel: '', university: '', island: '', region: '', studentId: '', course: '', proofOfEnrollment: null,
     // Step 3
     userId: '', serverId: '', ign: '', squadName: '', squadAbbreviation: '', rank: '', inGameRole: '', mainHero: '',
+    isMlbbVerified: false,
     // Step 4
-    username: '', password: '', confirmPassword: '', email: '', captcha: '', termsAccepted: false
+    username: '', password: '', confirmPassword: '', email: '', captcha: '', termsAccepted: false,
+    user_type: 'college'
 };
 
 const fileTypeIsValid = (file, allowedTypes) =>
@@ -30,7 +32,7 @@ const fileTypeIsValid = (file, allowedTypes) =>
 
 const CollegeRegister = () => {
 
-    const { data, setData, processing, errors, reset } = useForm(initialFormData);
+    const { data, setData, post, processing, errors, reset } = useForm(initialFormData);
     const formData = data;
 
     const [currentStep, setCurrentStep] = useState(1);
@@ -125,7 +127,19 @@ const CollegeRegister = () => {
 
         setErrorMessage("");
         setSuccessMessage("");
-        setSuccessModalOpen(true);
+
+        post(route('register'), {
+            onSuccess: () => {
+                setSuccessModalOpen(true);
+            },
+            onError: (err) => {
+                if (err.userId) setErrorMessage("⚠️ " + err.userId);
+                else if (err.username) setErrorMessage("⚠️ " + err.username);
+                else if (err.email) setErrorMessage("⚠️ " + err.email);
+                else if (err.message) setErrorMessage("⚠️ " + err.message);
+                else setErrorMessage("⚠️ Registration failed. Please check details.");
+            }
+        });
         return true;
     };
 
@@ -165,7 +179,7 @@ const CollegeRegister = () => {
 
         case 3: {
 
-            if (!formData.userId || !formData.serverId || !formData.ign) {
+            if (!formData.userId || !formData.serverId || !formData.ign || !formData.isMlbbVerified) {
                 setErrorMessage("⚠️ Please verify your MLBB account first.");
                 return false;
             }
@@ -209,11 +223,6 @@ const CollegeRegister = () => {
             if (password !== confirmPassword) {
             return false;
             }
-
-            if (captcha != verificationCode) {
-            return false;
-            }
-
             break;
         }
 
@@ -266,6 +275,14 @@ const CollegeRegister = () => {
                     <div className="bg-green-500/10 border border-green-500 text-green-400 p-3 mt-4 rounded-md text-sm flex items-center gap-2">
                     <BadgeCheck size={18} />
                     {successMessage}
+                    </div>
+                )}
+
+                {/* ERROR */}
+                {errorMessage && (
+                    <div className="bg-red-500/10 border border-red-500 text-red-400 p-3 mt-4 rounded-md text-sm flex items-center gap-2">
+                    <div className="flex h-5 w-5 items-center justify-center rounded-full border border-red-500 text-xs font-bold text-red-500">!</div>
+                    {errorMessage}
                     </div>
                 )}
 
