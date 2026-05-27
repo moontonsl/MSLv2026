@@ -134,7 +134,7 @@ export default function AdminDashboard({ auth, students, filters }) {
     // Stats calculations from the full search/division-filtered students list
     const pendingCount = students.filter(s => s.user_type === 'Student' && (s.status === 'pending' || s.status === 'pending-review')).length;
     const renewalCount = students.filter(s => s.user_type === 'Student' && s.status === 'renewal-required').length;
-    const activeCount = students.length;
+    const activeCount = students.filter(s => s.user_type === 'Student' && s.status === 'active').length;
     const rejectedCount = students.filter(s => s.user_type === 'Student' && s.status === 'rejected').length;
     const blockedCount = rejectedCount;
     const studentLeaderCount = students.filter(s => s.user_type === 'Student Leader').length;
@@ -148,7 +148,7 @@ export default function AdminDashboard({ auth, students, filters }) {
             return student.user_type === 'Student' && student.status === 'renewal-required';
         }
         if (activeTab === "active") {
-            return true;
+            return student.user_type === 'Student' && student.status === 'active';
         }
         if (activeTab === "rejected") {
             return student.user_type === 'Student' && student.status === 'rejected';
@@ -306,7 +306,7 @@ export default function AdminDashboard({ auth, students, filters }) {
                             </div>
                         </button>
 
-                        {/* New Card */}
+                        {/* Pending Card */}
                         <button
                             onClick={() => handleTabChange("pending")}
                             className={`group relative rounded-2xl border p-5 flex flex-col justify-between text-left transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:scale-[1.02] active:scale-[0.98] ${
@@ -319,7 +319,7 @@ export default function AdminDashboard({ auth, students, filters }) {
                                 <Users className={`h-6 w-6 transition-colors ${
                                     activeTab === "pending" ? "text-blue-400" : "text-blue-500 group-hover:text-blue-400"
                                 }`} />
-                                <span className="text-gray-400 text-xs font-semibold tracking-wider">New</span>
+                                <span className="text-gray-400 text-xs font-semibold tracking-wider">Pending</span>
                             </div>
                             <div className="mt-5">
                                 <span className="text-3xl md:text-4xl font-extrabold text-white leading-none font-display block">

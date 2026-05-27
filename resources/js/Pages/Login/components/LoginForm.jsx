@@ -1,7 +1,6 @@
 import { Link, useForm } from "@inertiajs/react";
 import { useState } from "react";
 import { Eye, EyeOff } from "react-feather";
-import StudentTypeModal from "./StudentTypeModal";
 
 export default function LoginForm({ onBack }) {
 
@@ -12,7 +11,6 @@ export default function LoginForm({ onBack }) {
 
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [error, setError] = useState('');
-    const [showStudentTypeModal, setShowStudentTypeModal] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -159,13 +157,12 @@ export default function LoginForm({ onBack }) {
                                 </Link>
                                 <br />
                                 Don't have an account?{' '}
-                                <button
-                                    type="button"
-                                    onClick={() => setShowStudentTypeModal(true)}
+                                <Link
+                                    href="/register"
                                     className="sign-in-link-login inline bg-transparent p-0 border-0 text-[#f1c40f] no-underline hover:underline cursor-pointer"
                                 >
                                     Sign Up
-                                </button>
+                                </Link>
                             </p>
                         </div>
 
@@ -193,19 +190,7 @@ export default function LoginForm({ onBack }) {
 
             </div>
 
-            <StudentTypeModal
-                isOpen={showStudentTypeModal}
-                onClose={() => setShowStudentTypeModal(false)}
-                onSelect={(type) => {
-                    setShowStudentTypeModal(false);
-
-                    if (type === 'shs') {
-                        window.location.href = '/register/shs';
-                    } else {
-                        window.location.href = '/register/college';
-                    }
-                }}
-            />
+            
 
         </div>
     );

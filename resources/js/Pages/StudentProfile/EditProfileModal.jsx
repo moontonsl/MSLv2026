@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState, useRef } from 'react';
 import { CheckCircle2, ChevronDown, ShieldCheck, Search, X } from 'lucide-react';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 import {
     collegeCoursePrograms,
     collegeYearLevels,
@@ -326,7 +328,7 @@ export default function EditProfileModal({ profile, onClose, onSave }) {
         return Object.keys(nextErrors).length === 0;
     }
 
-    function handleGetCode() {
+    async function handleGetCode() {
         const email = form.email.trim();
 
         if (!emailRegex.test(email)) {
@@ -337,31 +339,63 @@ export default function EditProfileModal({ profile, onClose, onSave }) {
             return;
         }
 
-        setHasRequestedCode(true);
-        setCodeTimer(60);
+        try {
+            const loadingToast = toast.loading('Sending verification code...');
+            const response = await axios.post('/email/send-code', { email });
+            toast.dismiss(loadingToast);
+
+            if (response.data.success) {
+                toast.success('Verification code sent to your email.');
+                setHasRequestedCode(true);
+                setCodeTimer(60);
+            } else {
+                toast.error(response.data.message || 'Failed to send verification code.');
+            }
+        } catch (error) {
+            console.error(error);
+            const msg = error.response?.data?.message || 'Failed to send verification code.';
+            toast.error(msg);
+        }
     }
 
-    function handleVerify() {
+    async function handleVerify() {
+        const email = form.email.trim();
         const code = form.verificationCode.trim();
         
-        if (!code) {
+        if (!code || code.length !== 6) {
             setErrors((current) => ({
                 ...current,
-                verificationCode: 'Please enter the verification code.',
+                verificationCode: 'Please enter the 6-digit verification code.',
             }));
             setVerificationStatus('default');
             return;
         }
 
-        if (code === simulatedCode) {
-            setVerificationStatus('success');
-            setErrors((current) => ({ ...current, verificationCode: '' }));
-        } else {
+        try {
+            const loadingToast = toast.loading('Checking code...');
+            const response = await axios.post('/email/verify-code', { email, code });
+            toast.dismiss(loadingToast);
+
+            if (response.data.success) {
+                setVerificationStatus('success');
+                setErrors((current) => ({ ...current, verificationCode: '' }));
+                toast.success('Email verified successfully!');
+            } else {
+                setVerificationStatus('error');
+                setErrors((current) => ({
+                    ...current,
+                    verificationCode: response.data.message || 'Incorrect code.',
+                }));
+            }
+        } catch (error) {
+            console.error(error);
             setVerificationStatus('error');
+            const msg = error.response?.data?.message || 'Verification failed. Please try again.';
             setErrors((current) => ({
                 ...current,
-                verificationCode: 'Incorrect code. Please check your email and try again.',
+                verificationCode: msg,
             }));
+            toast.error(msg);
         }
     }
 

@@ -158,14 +158,19 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
 
             if (response.data.success) {
                 const verifiedIgn = response.data.profile.ign;
+                const verifiedRank = response.data.profile.rank;
                 
                 // Update parent states
                 handleInputChange({ target: { name: 'ign', value: verifiedIgn } });
+                if (verifiedRank) {
+                    handleInputChange({ target: { name: 'rank', value: verifiedRank } });
+                }
                 handleInputChange({ target: { name: 'isMlbbVerified', value: true } });
                 
                 clearFieldError('userId');
                 clearFieldError('serverId');
                 clearFieldError('ign');
+                clearFieldError('rank');
             } else {
                 setVerificationError(response.data.message || 'Invalid verification code.');
             }
@@ -252,7 +257,8 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
         setSearchValue,
         items,
         onSelect,
-        searchPlaceholder
+        searchPlaceholder,
+        disabled = false
     ) => (
         <div className="relative" ref={ref}>
             <label className={`${styles['label-register']} block mb-1`}>
@@ -261,8 +267,9 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
 
             <button
                 type="button"
-                onClick={() => setOpen((prev) => !prev)}
-                className={getFieldClassName(errorName, 'flex items-center justify-between text-left')}
+                onClick={() => !disabled && setOpen((prev) => !prev)}
+                disabled={disabled}
+                className={getFieldClassName(errorName, `flex items-center justify-between text-left ${disabled ? 'opacity-80 cursor-not-allowed bg-gray-800' : ''}`)}
                 style={getFieldStyle(errorName)}
             >
                 <span className={`${value ? 'text-white' : 'text-gray-500'} truncate`}>
@@ -521,7 +528,8 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                         setRankSearch,
                         filteredRanks,
                         (value) => handleSelect('rank', value, setRankOpen, setRankSearch),
-                        'Search rank...'
+                        'Search rank...',
+                        data.isMlbbVerified
                     )}
                 </div>
 

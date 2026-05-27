@@ -26,6 +26,9 @@ Route::middleware('guest')->group(function () {
     Route::post('email/send-code', [\App\Http\Controllers\Auth\EmailVerificationController::class, 'sendCode'])
         ->name('email.send-code');
 
+    Route::post('email/verify-code', [\App\Http\Controllers\Auth\EmailVerificationController::class, 'verifyCode'])
+        ->name('email.verify-code');
+
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 

@@ -40,7 +40,7 @@ class MLBBService
         $response = Http::post("{$this->baseUrl}/user/auth/login", [
             'role_id' => $roleId,
             'zone_id' => $zoneId,
-            'vc' => $vc,
+            'vc' => (int) $vc,
         ]);
 
         if ($response->failed()) {

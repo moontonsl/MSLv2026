@@ -1,5 +1,5 @@
 import MainLayout from '@/Layouts/MainLayout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import {
     Award,
@@ -244,28 +244,77 @@ function HeroRow({ rank, image, name, matches, wr }) {
 }
 
 export default function Index(props) {
-    const [profile, setProfile] = useState(data);
+    const [profile, setProfile] = useState(() => {
+        const user = props.auth?.user;
+        if (!user) return data;
+
+        const dynamicAvatar = user.ml_avatar 
+            ? `https://api.dicebear.com/7.x/adventurer/svg?seed=avatar-${user.ml_avatar}` 
+            : `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(user.name || '')}`;
+
+        return {
+            ...data,
+            playerName: user.name || `${user.first_name || ''} ${user.surname || ''}`.trim(),
+            playerUsername: user.username ? `@${user.username}` : data.playerUsername,
+            playerGender: user.gender || data.playerGender,
+            isVerified: user.status === 'active',
+            playerLevel: user.ml_level ? `LVL ${user.ml_level}` : data.playerLevel,
+            featuredIcon: dynamicAvatar,
+            schoolName: user.university || data.schoolName,
+            yearLevel: user.year_level || data.yearLevel,
+            courseName: user.course || data.courseName,
+            editableProfile: {
+                ...data.editableProfile,
+                contactNo: user.contact_number || data.editableProfile.contactNo,
+                facebookLink: user.facebook_link || data.editableProfile.facebookLink,
+                email: user.email || data.editableProfile.email,
+                squadAbbreviation: user.squadAbbreviation || data.editableProfile.squadAbbreviation,
+            },
+            playerInformation: {
+                ...data.playerInformation,
+                ign: user.ml_ign || data.playerInformation.ign,
+                uid: user.ml_id || data.playerInformation.uid,
+                server: user.ml_server || data.playerInformation.server,
+                squad: user.squadName || data.playerInformation.squad,
+                role: user.inGameRole || data.playerInformation.role,
+                rankImage: data.playerInformation.rankImage,
+            },
+            mostUsedHero: {
+                ...data.mostUsedHero,
+                name: user.mainHero || data.mostUsedHero.name,
+                image: `/most used hero.png`,
+            }
+        };
+    });
     const [announcementItems, setAnnouncementItems] = useState(() => loadSavedAnnouncementItems(announcements));
     const [reactionBursts, setReactionBursts] = useState({});
     const [activeMobileTab, setActiveMobileTab] = useState('about');
     const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
     const [renewalStatus, setRenewalStatus] = useState(() => {
-        if (typeof window === 'undefined') return '';
-        return window.localStorage.getItem(accountRenewalStatusKey) ?? '';
+        return props.auth?.user?.status ?? profile.status ?? '';
     });
     const [showRenewalThankYou, setShowRenewalThankYou] = useState(false);
-    const renewalStatuses = props.accountRenewal ?? props.accountRenewalStatuses ?? props.auth?.user?.accountRenewal ?? profile.accountRenewal ?? {};
+    
+    const isRenewalStatus = ['renewal-required', 'renewal_required', 'needupdate'].includes(props.auth?.user?.status);
+    const renewalStatuses = isRenewalStatus
+        ? (props.accountRenewal ?? props.accountRenewalStatuses ?? props.auth?.accountRenewal ?? props.auth?.user?.accountRenewal ?? profile.accountRenewal ?? {})
+        : {};
     const renewalRequirements = getAccountRenewalRequirements(renewalStatuses);
     const isRenewalPending = renewalStatus === 'pending-review';
-    const [showRenewalModal, setShowRenewalModal] = useState(renewalRequirements.length > 0 && !isRenewalPending);
+    const [showRenewalModal, setShowRenewalModal] = useState(isRenewalStatus && renewalRequirements.length > 0 && !isRenewalPending);
+
+    useEffect(() => {
+        setRenewalStatus(props.auth?.user?.status ?? profile.status ?? '');
+    }, [props.auth?.user?.status, profile.status]);
 
     useEffect(() => {
         saveAnnouncementReactionCounts(announcementItems);
     }, [announcementItems]);
 
     useEffect(() => {
-        setShowRenewalModal(renewalRequirements.length > 0 && !isRenewalPending);
-    }, [renewalRequirements.length, isRenewalPending]);
+        const isRenewalStatus = ['renewal-required', 'renewal_required', 'needupdate'].includes(props.auth?.user?.status);
+        setShowRenewalModal(isRenewalStatus && renewalRequirements.length > 0 && !isRenewalPending);
+    }, [renewalRequirements.length, isRenewalPending, props.auth?.user?.status]);
 
     useEffect(() => {
         if (!showRenewalThankYou) return undefined;
@@ -861,18 +910,37 @@ export default function Index(props) {
                     profile={profile}
                     onClose={() => setIsEditProfileOpen(false)}
                     onSave={(updates) => {
-                        setProfile((current) => ({
-                            ...current,
-                            ...updates,
-                            editableProfile: {
-                                ...current.editableProfile,
-                                ...updates.editableProfile,
+                        router.post(route('student.profile.update'), {
+                            yearLevel: updates.yearLevel,
+                            courseName: updates.courseName,
+                            contactNo: updates.editableProfile?.contactNo,
+                            facebookLink: updates.editableProfile?.facebookLink,
+                            email: updates.editableProfile?.email,
+                            squad: updates.playerInformation?.squad,
+                            squadAbbreviation: updates.editableProfile?.squadAbbreviation,
+                        }, {
+                            onSuccess: () => {
+                                setProfile((current) => ({
+                                    ...current,
+                                    ...updates,
+                                    editableProfile: {
+                                        ...current.editableProfile,
+                                        ...updates.editableProfile,
+                                    },
+                                    playerInformation: {
+                                        ...current.playerInformation,
+                                        ...updates.playerInformation,
+                                    },
+                                }));
+                                setIsEditProfileOpen(false);
+                                toast.success('Profile updated successfully!');
                             },
-                            playerInformation: {
-                                ...current.playerInformation,
-                                ...updates.playerInformation,
-                            },
-                        }));
+                            onError: (errors) => {
+                                console.error('Failed to save profile', errors);
+                                const errorMsg = Object.values(errors).join('\n') || 'Failed to save changes.';
+                                toast.error(errorMsg);
+                            }
+                        });
                     }}
                 />
             ) : null}
@@ -890,17 +958,21 @@ export default function Index(props) {
                 }}
                 onSubmit={(payload) => {
                     console.log('Student portal account renewal payload', payload);
-                    window.localStorage.setItem(accountRenewalStatusKey, 'pending-review');
-                    window.localStorage.setItem(
-                        accountRenewalSubmissionKey,
-                        JSON.stringify({
-                            ...payload,
-                            submittedAt: new Date().toISOString(),
-                        }),
-                    );
-                    setRenewalStatus('pending-review');
-                    setShowRenewalModal(false);
-                    setShowRenewalThankYou(true);
+                    router.post('/studentportal/renew', {
+                        yearLevel: payload.yearLevel,
+                        age: payload.age,
+                        documentFile: payload.documentFile,
+                    }, {
+                        onSuccess: () => {
+                            setRenewalStatus('pending-review');
+                            setShowRenewalModal(false);
+                            setShowRenewalThankYou(true);
+                        },
+                        onError: (errors) => {
+                            console.error('Renewal submission failed', errors);
+                            toast.error('Renewal submission failed. Please check the fields.');
+                        }
+                    });
                 }}
             />
 

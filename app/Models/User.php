@@ -29,6 +29,7 @@ class User extends Authenticatable
         'ml_ign',
         'ml_avatar',
         'ml_level',
+        'ml_rank',
         'ml_rank_level',
         'is_mlbb_verified',
         'status',
@@ -56,6 +57,14 @@ class User extends Authenticatable
         'mainHero',
         // User type
         'user_type',
+        'division',
+        // Renewal dates
+        'renewal_requested_at',
+        'renewal_submitted_at',
+        'renewal_approved_at',
+        // Rejection fields
+        'rejection_reason',
+        'rejection_checklist',
     ];
 
     /**
@@ -79,6 +88,31 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_mlbb_verified' => 'boolean',
+            'renewal_requested_at' => 'datetime',
+            'renewal_submitted_at' => 'datetime',
+            'renewal_approved_at' => 'datetime',
+            'rejection_checklist' => 'array',
         ];
+    }
+
+    /**
+     * The permissions assigned to the user.
+     */
+    public function permissions(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class);
+    }
+
+    /**
+     * Check if the user has a specific permission slug.
+     */
+    public function hasPermission(string $slug): bool
+    {
+        // Super Admins automatically bypass all permission checks
+        if ($this->user_type === 'Super Admin') {
+            return true;
+        }
+
+        return $this->permissions()->where('slug', $slug)->exists();
     }
 }

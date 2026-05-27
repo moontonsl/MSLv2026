@@ -137,7 +137,14 @@ const CollegeRegister = () => {
                 else if (err.username) setErrorMessage("⚠️ " + err.username);
                 else if (err.email) setErrorMessage("⚠️ " + err.email);
                 else if (err.message) setErrorMessage("⚠️ " + err.message);
-                else setErrorMessage("⚠️ Registration failed. Please check details.");
+                else {
+                    const errorMsgs = Object.values(err);
+                    if (errorMsgs.length > 0) {
+                        setErrorMessage("⚠️ " + errorMsgs.join(" "));
+                    } else {
+                        setErrorMessage("⚠️ Registration failed. Please check details.");
+                    }
+                }
             }
         });
         return true;

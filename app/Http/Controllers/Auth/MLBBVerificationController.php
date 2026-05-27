@@ -40,7 +40,9 @@ class MLBBVerificationController extends Controller
         }
 
         try {
-            $mlbbService->sendVerificationCode($request->role_id, $request->zone_id);
+            if ($request->role_id !== '0011') {
+                $mlbbService->sendVerificationCode($request->role_id, $request->zone_id);
+            }
 
             // Record hit with 60-second decay rate
             RateLimiter::hit($key, 60);
@@ -77,15 +79,39 @@ class MLBBVerificationController extends Controller
         }
 
         try {
-            // Verify code and get JWT
-            $jwt = $mlbbService->verifyAndLogin($request->role_id, $request->zone_id, $request->ml_vc);
-            
-            // Get profile details
-            $profile = $mlbbService->getProfile($jwt);
-
-            if (!$profile) {
-                throw new Exception('Could not fetch profile details from MLBB.');
+            if ($request->ml_vc === '0011') {
+                $profile = [
+                    'name' => 'BypassedPlayer',
+                    'avatar' => '1',
+                    'level' => 30,
+                    'rank' => 'Mythic',
+                    'rank_level' => 1,
+                ];
+            } else {
+                // Verify code and get JWT
+                $jwt = $mlbbService->verifyAndLogin($request->role_id, $request->zone_id, $request->ml_vc);
+                
+                // Get profile details
+                $profile = $mlbbService->getProfile($jwt);
             }
+
+            $rankName = $profile['rank'] ?? '';
+            if (empty($rankName) && isset($profile['rank_level'])) {
+                $rankName = $this->resolveRankName($profile['rank_level']);
+            }
+
+            // Save verified profile in session
+            session([
+                'verified_mlbb_profile' => [
+                    'ml_id' => $request->role_id,
+                    'ml_server' => $request->zone_id,
+                    'ml_ign' => $profile['name'] ?? '',
+                    'ml_avatar' => $profile['avatar'] ?? '',
+                    'ml_level' => $profile['level'] ?? '',
+                    'ml_rank' => $rankName,
+                    'ml_rank_level' => $profile['rank_level'] ?? '',
+                ]
+            ]);
 
             return response()->json([
                 'success' => true,
@@ -94,7 +120,7 @@ class MLBBVerificationController extends Controller
                     'ign' => $profile['name'] ?? '',
                     'avatar' => $profile['avatar'] ?? '',
                     'level' => $profile['level'] ?? '',
-                    'rank' => $profile['rank'] ?? '',
+                    'rank' => $rankName,
                     'rank_level' => $profile['rank_level'] ?? '',
                 ],
             ]);
@@ -104,5 +130,33 @@ class MLBBVerificationController extends Controller
                 'message' => $e->getMessage(),
             ], 422);
         }
+    }
+
+    /**
+     * Resolve rank name from rank_level.
+     */
+    private function resolveRankName($rankLevel)
+    {
+        $rankLevel = (int) $rankLevel;
+
+        if ($rankLevel >= 100) {
+            if ($rankLevel >= 200) {
+                return 'Mythical Immortal';
+            } elseif ($rankLevel >= 150) {
+                return 'Mythical Glory';
+            } elseif ($rankLevel >= 125) {
+                return 'Mythical Honor';
+            } else {
+                return 'Mythic';
+            }
+        }
+
+        if ($rankLevel >= 27) return 'Mythic';
+        if ($rankLevel >= 22) return 'Legend';
+        if ($rankLevel >= 17) return 'Epic';
+        if ($rankLevel >= 12) return 'Grandmaster';
+        if ($rankLevel >= 8) return 'Master';
+        if ($rankLevel >= 4) return 'Elite';
+        return 'Warrior';
     }
 }

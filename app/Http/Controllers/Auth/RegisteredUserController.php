@@ -37,9 +37,9 @@ class RegisteredUserController extends Controller
             'lastName' => 'required|string|max:255',
             'suffix' => 'nullable|string|max:10',
             'gender' => 'required|string',
-            'birthday' => 'required|string|regex:/^\d{2}\/\d{2}\/\d{4}$/', // MM/DD/YYYY
+            'birthday' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'], // MM/DD/YYYY
             'age' => 'required|integer|min:13',
-            'contactNo' => 'required|string|regex:/^(?:0?9\d{9}|9\d{9})$/',
+            'contactNo' => ['required', 'string', 'regex:/^(?:0?9\d{9}|9\d{9})$/'],
             'facebookLink' => 'required|string|url',
 
             // Step 2: Academic Details
@@ -64,7 +64,7 @@ class RegisteredUserController extends Controller
             // Step 4: Account Credentials
             'username' => 'required|string|alpha_num|min:5|max:12|unique:users,username',
             'email' => 'required|string|lowercase|email|max:255|unique:users,email',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', $request->has('confirmPassword') ? 'same:confirmPassword' : 'same:password_confirmation', Rules\Password::defaults()],
             'user_type' => 'required|string|in:shs,college',
         ]);
 
@@ -79,19 +79,11 @@ class RegisteredUserController extends Controller
         }
 
         // Security Check: Re-verify against server-side session verified email code
-        $storedCode = session('email_verification_code');
-        $storedEmail = session('email_verification_email');
-        $storedExpiry = session('email_verification_expires_at');
+        $isEmailVerified = session('email_verification_verified');
+        $verifiedEmail = session('email_verification_verified_email');
 
-        if (
-            !$storedCode ||
-            !$storedEmail ||
-            !$storedExpiry ||
-            $storedEmail !== $request->email ||
-            $storedCode !== $request->captcha ||
-            now()->greaterThan($storedExpiry)
-        ) {
-            return back()->withErrors(['captcha' => 'The email verification code is incorrect or has expired.']);
+        if (!$isEmailVerified || $verifiedEmail !== $request->email) {
+            return back()->withErrors(['captcha' => 'The email verification code has not been verified or does not match.']);
         }
 
         // 3. Handle File Upload (Proof of Enrollment)
@@ -141,9 +133,10 @@ class RegisteredUserController extends Controller
             'ml_ign' => $verifiedProfile['ml_ign'] ?? $request->ign,
             'ml_avatar' => $verifiedProfile['ml_avatar'] ?? null,
             'ml_level' => isset($verifiedProfile['ml_level']) ? (int) $verifiedProfile['ml_level'] : null,
+            'ml_rank' => $verifiedProfile['ml_rank'] ?? $request->rank,
             'ml_rank_level' => isset($verifiedProfile['ml_rank_level']) ? (int) $verifiedProfile['ml_rank_level'] : null,
             'is_mlbb_verified' => true,
-            'status' => 'active',
+            'status' => 'pending',
 
             // Squad / Team details
             'squadName' => $request->squadName,
@@ -152,7 +145,8 @@ class RegisteredUserController extends Controller
             'mainHero' => $request->mainHero,
             
             // User Division type
-            'user_type' => $request->user_type,
+            'user_type' => 'Student',
+            'division' => $request->user_type,
         ]);
 
         // 6. Clean up verification session
@@ -160,13 +154,115 @@ class RegisteredUserController extends Controller
             'verified_mlbb_profile',
             'email_verification_code',
             'email_verification_email',
-            'email_verification_expires_at'
+            'email_verification_expires_at',
+            'email_verification_verified',
+            'email_verification_verified_email',
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->route('pending.verification');
+    }
+
+    /**
+     * Handle user re-application after registration rejection.
+     */
+    public function reapply(Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+        if (!$user || $user->status !== 'rejected') {
+            return redirect()->route('student.portal');
+        }
+
+        // Perform validation
+        $request->validate([
+            // Step 1: Basic Details
+            'firstName' => 'required|string|max:255',
+            'lastName' => 'required|string|max:255',
+            'suffix' => 'nullable|string|max:10',
+            'gender' => 'required|string',
+            'birthday' => ['required', 'string', 'regex:/^\d{2}\/\d{2}\/\d{4}$/'], // MM/DD/YYYY
+            'age' => 'required|integer|min:13',
+            'contactNo' => ['required', 'string', 'regex:/^(?:0?9\d{9}|9\d{9})$/'],
+            'facebookLink' => 'required|string|url',
+
+            // Step 2: Academic Details
+            'yearLevel' => 'required|string|max:255',
+            'university' => 'required|string|max:255',
+            'island' => 'required|string|max:255',
+            'region' => 'required|string|max:255',
+            'studentId' => 'required|string|max:255',
+            'course' => 'required|string|max:255',
+            'proofOfEnrollment' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120', // Nullable on re-apply
+
+            // Step 3: Game Details
+            'userId' => ['required', 'string', \Illuminate\Validation\Rule::unique('users', 'ml_id')->ignore($user->id)],
+            'serverId' => 'required|string|max:10',
+            'ign' => 'required|string|max:255',
+            'squadName' => 'nullable|string|max:255',
+            'squadAbbreviation' => 'nullable|string|max:10',
+            'rank' => 'required|string|max:255',
+            'inGameRole' => 'required|string|max:255',
+            'mainHero' => 'required|string|max:255',
+
+            // Step 4: Account Credentials
+            'username' => ['required', 'string', 'alpha_num', 'min:5', 'max:12', \Illuminate\Validation\Rule::unique('users', 'username')->ignore($user->id)],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', \Illuminate\Validation\Rule::unique('users', 'email')->ignore($user->id)],
+        ]);
+
+        // Handle File Upload (Proof of Enrollment)
+        if ($request->hasFile('proofOfEnrollment')) {
+            $proofPath = $request->file('proofOfEnrollment')->store('proofs', 'public');
+            $user->proofOfEnrollment = $proofPath;
+        }
+
+        // Parse birthday to YYYY-MM-DD
+        $birthdayDate = null;
+        if ($request->filled('birthday')) {
+            $parts = explode('/', $request->birthday);
+            if (count($parts) === 3) {
+                $birthdayDate = "{$parts[2]}-{$parts[0]}-{$parts[1]}";
+            }
+        }
+
+        // Update user fields
+        $user->name = $request->firstName . ' ' . $request->lastName;
+        $user->email = $request->email;
+        $user->username = $request->username;
+        $user->first_name = $request->firstName;
+        $user->surname = $request->lastName;
+        $user->suffix = $request->suffix ?? 'N/A';
+        $user->gender = $request->gender;
+        $user->birthday = $birthdayDate;
+        $user->age = (int) $request->age;
+        $user->contact_number = $request->contactNo;
+        $user->facebook_link = $request->facebookLink;
+
+        $user->course = $request->course;
+        $user->university = $request->university;
+        $user->year_level = $request->yearLevel;
+        $user->studentId = $request->studentId;
+        $user->region = $request->region;
+        $user->island = $request->island;
+
+        $user->ml_id = $request->userId;
+        $user->ml_server = $request->serverId;
+        $user->ml_ign = $request->ign;
+        $user->ml_rank = $request->rank;
+        $user->squadName = $request->squadName;
+        $user->squadAbbreviation = $request->squadAbbreviation;
+        $user->inGameRole = $request->inGameRole;
+        $user->mainHero = $request->mainHero;
+
+        // Reset status to pending and clear rejection info
+        $user->status = 'pending';
+        $user->rejection_reason = null;
+        $user->rejection_checklist = null;
+
+        $user->save();
+
+        return redirect()->route('pending.verification');
     }
 }

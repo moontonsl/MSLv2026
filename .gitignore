@@ -27,3 +27,4 @@ Thumbs.db
 *.sql
 *.xslx
 /docs
+.agent
