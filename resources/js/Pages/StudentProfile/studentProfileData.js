@@ -14,10 +14,11 @@ export const studentProfileData = {
     accountRenewal: {
         // school: 'needupdate',
         // course: 'needupdate',
-        // yearLevel: 'needupdate',
+        yearLevel: 'needupdate',
         // schoolId: 'needupdate',
-        fullName: 'needupdate',
-        // document: 'needupdate',
+        // fullName: 'needupdate',
+        age: 'needupdate',
+        document: 'needupdate',
     },
     editableProfile: {
         contactNo: '09123456789',

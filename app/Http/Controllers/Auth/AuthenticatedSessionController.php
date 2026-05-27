@@ -33,6 +33,22 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $user = Auth::user();
+
+        if (in_array($user->user_type, ['Super Admin', 'Regional Admin', 'Student Leader'])) {
+            return redirect()->intended(route('admin.dashboard'));
+        }
+
+        if ($user->user_type === 'Student') {
+            if ($user->status === 'pending') {
+                return redirect()->route('pending.verification');
+            }
+            if ($user->status === 'rejected') {
+                return redirect()->route('rejected.verification');
+            }
+            return redirect()->intended(route('student.portal'));
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

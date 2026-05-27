@@ -29,11 +29,27 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+        $accountRenewal = null;
+        if ($user && in_array($user->status, ['renewal-required', 'renewal_required', 'needupdate'])) {
+            $accountRenewal = [
+                'yearLevel' => 'needupdate',
+                'age' => 'needupdate',
+                'document' => 'needupdate',
+            ];
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
+                'permissions' => $user 
+                    ? ($user->user_type === 'Super Admin' 
+                        ? \App\Models\Permission::pluck('slug')->toArray() 
+                        : $user->permissions->pluck('slug')->toArray()) 
+                    : [],
             ],
+            'accountRenewal' => $accountRenewal,
         ];
     }
 }

@@ -1,14 +1,14 @@
 import React from 'react';
+import axios from 'axios';
 import styles from '../../register.module.scss';
-import { ChevronDown, Search, X, Gamepad2 } from 'lucide-react';
-import { mlbbHeroes, mlbbRanks, mlbbRoles, mlbbVerificationSample } from '../../data/mlbbOptions';
+import { ChevronDown, Search, Gamepad2, RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react';
+import { mlbbHeroes, mlbbRanks, mlbbRoles } from '../../data/mlbbOptions';
 
 const Step3GameDetails = React.forwardRef(function Step3GameDetails(
     {
         data,
         handleInputChange,
         step3ValidationTrigger,
-        onCancelVerification,
     },
     ref
 ) {
@@ -24,9 +24,25 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
     const [rankSearch, setRankSearch] = React.useState('');
     const [roleSearch, setRoleSearch] = React.useState('');
     const [heroSearch, setHeroSearch] = React.useState('');
-    const [showVerificationModal, setShowVerificationModal] = React.useState(true);
+
+    // Verification states
+    const [timer, setTimer] = React.useState(0);
+    const [sendingCode, setSendingCode] = React.useState(false);
+    const [codeSent, setCodeSent] = React.useState(false);
+    const [verifying, setVerifying] = React.useState(false);
+    const [vc, setVc] = React.useState('');
+    const [verificationError, setVerificationError] = React.useState('');
 
     const requiredFields = ['userId', 'serverId', 'ign', 'rank', 'inGameRole', 'mainHero'];
+
+    // Cooldown countdown timer
+    React.useEffect(() => {
+        if (timer <= 0) return;
+        const interval = setInterval(() => {
+            setTimer((prev) => prev - 1);
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [timer]);
 
     const setFieldError = (name, error) => {
         setErrors((prev) => ({
@@ -59,7 +75,6 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                 boxShadow: '0 0 0 1px #ef4444',
             };
         }
-
         return {};
     };
 
@@ -71,12 +86,17 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
             setFieldError(name, `${label} is required.`);
             return false;
         }
-
         clearFieldError(name);
         return true;
     };
 
     const validateStep3 = () => {
+        if (!data.isMlbbVerified) {
+            setVerificationError('Please verify your Mobile Legends account to proceed.');
+            setFieldError('userId', 'Verification required.');
+            return false;
+        }
+
         const results = requiredFields.map((field) => {
             const labels = {
                 userId: 'MLBB User ID',
@@ -86,11 +106,89 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                 inGameRole: 'MLBB Role',
                 mainHero: 'Main Hero',
             };
-
             return validateField(field, data[field], labels[field]);
         });
 
         return results.every(Boolean);
+    };
+
+    const handleSendCode = async () => {
+        if (!data.userId || !data.serverId) {
+            setVerificationError('Please enter both MLBB User ID and Server ID.');
+            return;
+        }
+
+        setSendingCode(true);
+        setVerificationError('');
+
+        try {
+            const response = await axios.post(route('mlbb.send-vc'), {
+                role_id: data.userId,
+                zone_id: data.serverId,
+            });
+
+            if (response.data.success) {
+                setCodeSent(true);
+                setTimer(60);
+            } else {
+                setVerificationError(response.data.message || 'Failed to send verification code.');
+            }
+        } catch (error) {
+            setVerificationError(error.response?.data?.message || 'Failed to send verification code.');
+        } finally {
+            setSendingCode(false);
+        }
+    };
+
+    const handleVerifyCode = async () => {
+        if (!vc) {
+            setVerificationError('Please enter the 6-digit verification code.');
+            return;
+        }
+
+        setVerifying(true);
+        setVerificationError('');
+
+        try {
+            const response = await axios.post(route('mlbb.verify-vc'), {
+                role_id: data.userId,
+                zone_id: data.serverId,
+                ml_vc: vc,
+            });
+
+            if (response.data.success) {
+                const verifiedIgn = response.data.profile.ign;
+                const verifiedRank = response.data.profile.rank;
+                
+                // Update parent states
+                handleInputChange({ target: { name: 'ign', value: verifiedIgn } });
+                if (verifiedRank) {
+                    handleInputChange({ target: { name: 'rank', value: verifiedRank } });
+                }
+                handleInputChange({ target: { name: 'isMlbbVerified', value: true } });
+                
+                clearFieldError('userId');
+                clearFieldError('serverId');
+                clearFieldError('ign');
+                clearFieldError('rank');
+            } else {
+                setVerificationError(response.data.message || 'Invalid verification code.');
+            }
+        } catch (error) {
+            setVerificationError(error.response?.data?.message || 'Verification failed.');
+        } finally {
+            setVerifying(false);
+        }
+    };
+
+    const handleReset = () => {
+        handleInputChange({ target: { name: 'userId', value: '' } });
+        handleInputChange({ target: { name: 'serverId', value: '' } });
+        handleInputChange({ target: { name: 'ign', value: '' } });
+        handleInputChange({ target: { name: 'isMlbbVerified', value: false } });
+        setCodeSent(false);
+        setVc('');
+        setVerificationError('');
     };
 
     const filteredRanks = mlbbRanks.filter((rank) => {
@@ -119,11 +217,9 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
         if (rankDropdownRef.current && !rankDropdownRef.current.contains(event.target)) {
             setRankOpen(false);
         }
-
         if (roleDropdownRef.current && !roleDropdownRef.current.contains(event.target)) {
             setRoleOpen(false);
         }
-
         if (heroDropdownRef.current && !heroDropdownRef.current.contains(event.target)) {
             setHeroOpen(false);
         }
@@ -138,13 +234,10 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
         if (previousValidationTriggerRef.current === step3ValidationTrigger) {
             return;
         }
-
         previousValidationTriggerRef.current = step3ValidationTrigger;
-
         if (!step3ValidationTrigger) {
             return;
         }
-
         validateStep3();
     }, [step3ValidationTrigger]);
 
@@ -164,7 +257,8 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
         setSearchValue,
         items,
         onSelect,
-        searchPlaceholder
+        searchPlaceholder,
+        disabled = false
     ) => (
         <div className="relative" ref={ref}>
             <label className={`${styles['label-register']} block mb-1`}>
@@ -173,8 +267,9 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
 
             <button
                 type="button"
-                onClick={() => setOpen((prev) => !prev)}
-                className={getFieldClassName(errorName, 'flex items-center justify-between text-left')}
+                onClick={() => !disabled && setOpen((prev) => !prev)}
+                disabled={disabled}
+                className={getFieldClassName(errorName, `flex items-center justify-between text-left ${disabled ? 'opacity-80 cursor-not-allowed bg-gray-800' : ''}`)}
                 style={getFieldStyle(errorName)}
             >
                 <span className={`${value ? 'text-white' : 'text-gray-500'} truncate`}>
@@ -226,23 +321,6 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
         </div>
     );
 
-    const handleVerificationContinue = () => {
-        handleInputChange({ target: { name: 'userId', value: mlbbVerificationSample.userId } });
-        handleInputChange({ target: { name: 'serverId', value: mlbbVerificationSample.serverId } });
-        handleInputChange({ target: { name: 'ign', value: mlbbVerificationSample.ign } });
-        clearFieldError('userId');
-        clearFieldError('serverId');
-        clearFieldError('ign');
-        setShowVerificationModal(false);
-    };
-
-    const handleVerificationCancel = () => {
-        setShowVerificationModal(false);
-        if (onCancelVerification) {
-            onCancelVerification();
-        }
-    };
-
     return (
         <div className="relative">
             <h1 className={`${styles['title-register']} text-2xl md:text-3xl mb-1`}>
@@ -274,55 +352,11 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                 );
             })()}
 
-            {showVerificationModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
-                    <div className="w-full max-w-md bg-[#0b0b0b] border border-white/10 rounded-2xl p-6 relative shadow-2xl">
-                        <button
-                            type="button"
-                            onClick={handleVerificationCancel}
-                            className="absolute right-4 top-4 text-white/60 hover:text-white"
-                        >
-                            <X size={20} />
-                        </button>
-
-                        <div className="flex justify-center mb-4">
-                            <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-xl">
-                                <Gamepad2 className="h-6 w-6" />
-                            </div>
-                        </div>
-
-                        <div className="text-center mb-6">
-                            <h3 className="text-xl font-semibold text-white">
-                                Verify your MLBB Account
-                            </h3>
-                            <p className="text-sm text-white/60 mt-2">
-                                You will be redirected to log in and verify your Mobile Legends account.
-                                This step confirms your MLBB profile before submitting your entry.
-                            </p>
-                        </div>
-
-                        <div className="flex flex-col gap-3">
-                            <button
-                                type="button"
-                                onClick={handleVerificationContinue}
-                                className="w-full py-3 rounded-xl bg-yellow-500 text-black font-semibold hover:bg-yellow-400 transition"
-                            >
-                                Continue
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={handleVerificationCancel}
-                                className="w-full py-3 rounded-xl border border-yellow-500 text-yellow-400 font-semibold hover:bg-yellow-500 hover:text-black transition"
-                            >
-                                Cancel
-                            </button>
-                        </div>
-
-                        {/* <div className="mt-4 text-xs text-white/40 text-center">
-                            MLBB verification is handled in the background.
-                        </div> */}
-                    </div>
+            {/* ERROR SUMMARY */}
+            {verificationError && (
+                <div className="mb-4 bg-red-500/10 border border-red-500/30 text-red-400 p-3 rounded-lg flex items-start gap-2 text-sm">
+                    <AlertCircle className="h-5 w-5 shrink-0" />
+                    <span>{verificationError}</span>
                 </div>
             )}
 
@@ -336,9 +370,10 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                             type="text"
                             name="userId"
                             value={data.userId}
-                            readOnly
-                            placeholder="Auto-confirmed"
-                            className={getFieldClassName('userId', 'pr-10 bg-gray-800 cursor-not-allowed')}
+                            onChange={handleInputChange}
+                            disabled={data.isMlbbVerified}
+                            placeholder="e.g. 123456789"
+                            className={getFieldClassName('userId', data.isMlbbVerified ? 'bg-gray-800 cursor-not-allowed opacity-80' : '')}
                             style={getFieldStyle('userId')}
                         />
                         {errors.userId && (
@@ -359,9 +394,10 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                             type="text"
                             name="serverId"
                             value={data.serverId}
-                            readOnly
-                            placeholder="Auto-confirmed"
-                            className={getFieldClassName('serverId', 'pr-10 bg-gray-800 cursor-not-allowed')}
+                            onChange={handleInputChange}
+                            disabled={data.isMlbbVerified}
+                            placeholder="e.g. 1234"
+                            className={getFieldClassName('serverId', data.isMlbbVerified ? 'bg-gray-800 cursor-not-allowed opacity-80' : '')}
                             style={getFieldStyle('serverId')}
                         />
                         {errors.serverId && (
@@ -374,6 +410,87 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                 </div>
             </div>
 
+            {/* VERIFICATION ACTIONS */}
+            {!data.isMlbbVerified ? (
+                <div className="mb-5">
+                    {!codeSent ? (
+                        <button
+                            type="button"
+                            onClick={handleSendCode}
+                            disabled={sendingCode || !data.userId || !data.serverId}
+                            className="w-full py-3 rounded-xl bg-yellow-500 text-black font-semibold hover:bg-yellow-400 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        >
+                            {sendingCode ? (
+                                <>
+                                    <RefreshCw className="animate-spin h-4 w-4" />
+                                    Sending Code...
+                                </>
+                            ) : (
+                                <>
+                                    <Gamepad2 className="h-4 w-4" />
+                                    Send Verification Code to Mailbox
+                                </>
+                            )}
+                        </button>
+                    ) : (
+                        <div className="bg-[#111111] p-4 rounded-xl border border-white/10">
+                            <p className="text-xs text-green-400 mb-3 flex items-center gap-1.5">
+                                <CheckCircle2 size={14} />
+                                Code sent to your in-game mailbox! Check your MLBB mail.
+                            </p>
+                            <div className="flex gap-2.5">
+                                <input
+                                    type="text"
+                                    value={vc}
+                                    onChange={(e) => setVc(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                                    placeholder="Enter code"
+                                    className="flex-1 p-3 rounded-lg bg-black border border-gray-600 text-white outline-none focus:border-yellow-400 text-center tracking-[0.2em] font-bold"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleVerifyCode}
+                                    disabled={verifying || vc.length < 4}
+                                    className="px-6 rounded-lg bg-yellow-500 text-black font-semibold hover:bg-yellow-400 transition disabled:opacity-50"
+                                >
+                                    {verifying ? 'Verifying...' : 'Verify'}
+                                </button>
+                            </div>
+                            <div className="mt-3 flex justify-between items-center">
+                                <button
+                                    type="button"
+                                    onClick={handleSendCode}
+                                    disabled={timer > 0 || sendingCode}
+                                    className="text-xs text-yellow-400 hover:underline disabled:text-gray-500 disabled:no-underline"
+                                >
+                                    {timer > 0 ? `Resend code in ${timer}s` : 'Resend Code'}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setCodeSent(false)}
+                                    className="text-xs text-gray-400 hover:text-white"
+                                >
+                                    Change details
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <div className="mb-5 bg-green-500/10 border border-green-500/30 p-4 rounded-xl flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-green-400">
+                        <CheckCircle2 className="h-5 w-5 shrink-0" />
+                        <span className="text-sm font-semibold">Verified Player: {data.ign}</span>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={handleReset}
+                        className="text-xs text-yellow-400 hover:underline"
+                    >
+                        Change Account
+                    </button>
+                </div>
+            )}
+
             <div className="mb-4">
                 <label className={`${styles['label-register']} block mb-1`}>
                     In-Game Name <span className={styles.required}>*</span>
@@ -384,8 +501,8 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                         name="ign"
                         value={data.ign}
                         readOnly
-                        placeholder="Auto-confirmed"
-                        className={getFieldClassName('ign', 'pr-10 bg-gray-800 cursor-not-allowed')}
+                        placeholder={data.isMlbbVerified ? "" : "Will auto-populate after verification"}
+                        className={getFieldClassName('ign', 'pr-10 bg-gray-800 cursor-not-allowed opacity-80')}
                         style={getFieldStyle('ign')}
                     />
                     {errors.ign && (
@@ -411,7 +528,8 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                         setRankSearch,
                         filteredRanks,
                         (value) => handleSelect('rank', value, setRankOpen, setRankSearch),
-                        'Search rank...'
+                        'Search rank...',
+                        data.isMlbbVerified
                     )}
                 </div>
 
