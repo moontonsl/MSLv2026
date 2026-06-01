@@ -16,6 +16,10 @@ Route::get('/events', function () {
     return Inertia::render('Events/Index');
 })->name('events');
 
+Route::get('/BuffsAndSupport', function () {
+    return Inertia::render('Buffs and Support/Index');
+})->name('buffs.support');
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
