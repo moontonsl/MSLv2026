@@ -278,8 +278,8 @@ export default function SLAdmin() {
                             </button>
                         </div>
 
-                        <div className="flex flex-col items-center gap-8 px-5 py-6 sm:px-10 lg:flex-row lg:items-start lg:justify-between lg:px-12 lg:pr-40">
-                            <div className="flex min-w-0 flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:gap-2.5 sm:text-left">
+                        <div className="flex flex-col items-center gap-8 px-5 py-6 sm:px-10 lg:flex-row lg:items-start lg:justify-between lg:gap-12 lg:px-12 xl:gap-16 xl:pr-32">
+                            <div className="flex min-w-0 w-full flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:gap-2.5 sm:text-left lg:flex-1">
                                 <div className="relative -mt-20 h-[150px] w-[150px] shrink-0 self-center sm:-mt-24 lg:mt-0">
                                     <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-3xl border-[3px] border-brand-700 bg-[#111111] shadow-sm">
                                         <img
@@ -293,11 +293,34 @@ export default function SLAdmin() {
                                     </span>
                                 </div>
 
-                                <div className="min-w-0 px-0 py-3 sm:px-6">
-                                    <div className="flex flex-wrap items-center justify-center gap-2.5 sm:justify-start">
-                                        <h1 className="font-['Manrope'] text-4xl font-extrabold leading-tight text-brand-400 sm:text-5xl lg:text-[60px] lg:leading-[72px]">
+                                <div className="grid w-full min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 px-0 py-3 sm:px-6">
+                                    <div className="min-w-0">
+                                        <h1 className="line-clamp-2 break-words font-['Manrope'] text-4xl font-extrabold leading-tight text-brand-400 sm:text-5xl lg:text-[60px] lg:leading-[64px]">
                                             {slAdminProfile.name}
                                         </h1>
+
+                                        <div className="mt-1 flex items-center justify-center gap-2 text-xs font-bold leading-[18px] text-gray-500 sm:justify-start">
+                                            <span>{slAdminProfile.username}</span>
+                                            <Copy className="h-4 w-4" />
+                                            {slAdminProfile.verified ? (
+                                                <span className="inline-flex items-center gap-1 rounded-md bg-green-950/60 px-2 py-0.5 font-medium text-green-500">
+                                                    <Check className="h-3 w-3" />
+                                                    Verified
+                                                </span>
+                                            ) : null}
+                                        </div>
+
+                                        <div className="mt-2 text-center sm:text-left">
+                                            <div className="text-base font-semibold leading-[26px] text-gray-400">
+                                                {slAdminProfile.campus}
+                                            </div>
+                                            <div className="text-sm font-semibold leading-[22px] text-gray-500">
+                                                {slAdminProfile.course}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex shrink-0 items-center gap-2 pt-2">
                                         <GenderIcon gender={slAdminProfile.gender} />
                                         <button
                                             type="button"
@@ -307,30 +330,10 @@ export default function SLAdmin() {
                                             <Pencil className="h-5 w-5" />
                                         </button>
                                     </div>
-
-                                    <div className="flex items-center justify-center gap-2 text-xs font-bold leading-[18px] text-gray-500 sm:justify-start">
-                                        <span>{slAdminProfile.username}</span>
-                                        <Copy className="h-4 w-4" />
-                                        {slAdminProfile.verified ? (
-                                            <span className="inline-flex items-center gap-1 rounded-md bg-green-950/60 px-2 py-0.5 font-medium text-green-500">
-                                                <Check className="h-3 w-3" />
-                                                Verified
-                                            </span>
-                                        ) : null}
-                                    </div>
-
-                                    <div className="mt-2 text-center sm:text-left">
-                                        <div className="text-base font-semibold leading-[26px] text-gray-400">
-                                            {slAdminProfile.campus}
-                                        </div>
-                                        <div className="text-sm font-semibold leading-[22px] text-gray-500">
-                                            {slAdminProfile.course}
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
 
-                            <div className="grid w-full shrink-0 grid-cols-2 gap-x-8 gap-y-3 rounded-[32px] border border-brand-500/20 bg-[#0B0B0B] p-6 backdrop-blur-xl sm:w-auto">
+                            <div className="grid w-full shrink-0 grid-cols-2 gap-x-8 gap-y-3 rounded-[32px] border border-brand-500/20 bg-[#0B0B0B] p-6 backdrop-blur-xl sm:w-auto lg:ml-4 xl:ml-8">
                                 <ProfileMeta label="ROLE" value={slAdminProfile.role} />
                                 <ProfileMeta label="YEAR LEVEL" value={slAdminProfile.yearLevel} />
                                 <ProfileMeta label="AREA" value={slAdminProfile.area} />
