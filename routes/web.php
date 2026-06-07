@@ -37,6 +37,10 @@ Route::get('/studentportal', function () {
     return Inertia::render('StudentProfile/Index');
 })->name('student.portal');
 
+Route::get('/sl-admin', function () {
+    return Inertia::render('SL-Admin/Index');
+})->name('sl.admin');
+
 require __DIR__.'/auth.php';
 
 
