@@ -117,6 +117,9 @@ Route::middleware(['auth'])->group(function () {
 
 require __DIR__.'/auth.php';
 
+Route::get('/sl-admin', function () {
+    return Inertia::render('SL-Admin/Index');
+})->name('sl.admin');
 
 //TEST PAGE ROUTES
 Route::get('/Testpage', function () {
