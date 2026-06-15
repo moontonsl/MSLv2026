@@ -95,7 +95,7 @@ export default {
 
             fontFamily: {
                 sans: ['var(--font-inter)', 'sans-serif'],
-                heading: ['var(--font-league-spartan)', 'sans-serif'],
+                heading: ['var(--font-manrope)', 'sans-serif'],
             },
 
             fontSize: {

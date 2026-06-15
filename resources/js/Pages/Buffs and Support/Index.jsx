@@ -117,7 +117,7 @@ function PrimaryButton({ children, purple = false, href = null }) {
     const className = `inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl px-6 py-3 text-base font-semibold transition duration-300 hover:scale-105 sm:min-h-14 sm:w-auto sm:py-4 sm:text-lg ${
         purple
             ? 'bg-gradient-to-r from-dept-purple-500 to-indigo-500 text-white hover:shadow-[0_0_28px_rgba(168,85,247,.55)]'
-            : 'bg-brand-500 text-black shadow-glow hover:bg-brand-400 hover:shadow-[0_0_32px_rgba(242,194,26,.55)]'
+            : 'bg-brand-500 text-black shadow-glow hover:bg-brand-400 hover:text-black hover:shadow-[0_0_32px_rgba(242,194,26,.55)]'
     }`;
 
     if (href) {
@@ -291,25 +291,6 @@ function DiamondSupportCard({ item }) {
                 </div>
 
                 <div className="space-y-6">
-                    <div>
-                        <div className="mb-4 text-xs font-bold text-[#808080]">SCOPE OF EVENT</div>
-                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                            {item.chips.map((chip, index) => (
-                                <button
-                                    key={chip}
-                                    type="button"
-                                    className={`rounded-lg border px-3 py-2.5 text-sm font-semibold ${
-                                        index === 0
-                                            ? 'border-brand-500 bg-brand-500 text-black'
-                                            : 'border-white/10 bg-bg-card text-gray-400'
-                                    }`}
-                                >
-                                    {chip}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
                     <div className="grid gap-4">
                         <DropdownField
                             label="EVENT CATEGORY / RANK"
@@ -922,24 +903,50 @@ export default function BuffsAndSupport() {
                     <div className="mx-auto max-w-4xl text-center">
                         <h2 className="text-3xl font-bold text-white sm:text-4xl">Sponsorship Roadmap</h2>
                         <p className="mt-2 text-base text-gray-400">Step-by-step process to secure your support.</p>
+
                         <div className="relative mt-14 space-y-3 text-left">
                             {roadmap.map(([title, description], index) => (
-                                <div key={title} className="relative grid grid-cols-[56px_1fr] items-stretch gap-4">
+                                <div
+                                    key={title}
+                                    className="group relative grid grid-cols-[56px_1fr] items-stretch gap-4"
+                                >
+                                    {/* LEFT SIDE (NUMBER + LINE) */}
                                     <div className="relative flex items-center justify-center">
                                         {index < roadmap.length - 1 ? (
-                                            <div className="absolute left-1/2 top-1/2 h-[calc(100%+0.75rem)] w-px -translate-x-1/2 bg-white/10" />
+                                            <div className="absolute left-1/2 top-1/2 h-[calc(100%+0.75rem)] w-px -translate-x-1/2 bg-white/10 transition duration-300 group-hover:bg-brand-500/40" />
                                         ) : null}
-                                        <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-bg-card text-2xl font-black text-white sm:h-14 sm:w-14 sm:text-3xl">
+
+                                        <div
+                                            className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-bg-card text-2xl font-black text-white sm:h-14 sm:w-14 sm:text-3xl
+                                            transition duration-300 ease-out
+                                            group-hover:scale-110
+                                            group-hover:border-brand-500
+                                            group-hover:bg-brand-500
+                                            group-hover:text-black
+                                            group-hover:shadow-[0_0_20px_rgba(242,194,26,.5)]"
+                                        >
                                             {index + 1}
                                         </div>
                                     </div>
-                                    <div className="rounded-xl border border-white/10 bg-bg-cardHover p-6">
+
+                                    {/* RIGHT SIDE (CARD) */}
+                                    <div
+                                        className="rounded-xl border border-white/10 bg-bg-cardHover p-6
+                                        transition duration-300 ease-out
+                                        group-hover:-translate-y-1
+                                        group-hover:scale-[1.02]
+                                        group-hover:border-brand-500/40
+                                        group-hover:shadow-[0_0_28px_rgba(242,194,26,.2)]"
+                                    >
                                         <h3 className="text-lg font-bold text-white">{title}</h3>
-                                        <p className="mt-2 text-sm leading-6 text-[#A0A0A0]">{description}</p>
+                                        <p className="mt-2 text-sm leading-6 text-[#A0A0A0]">
+                                            {description}
+                                        </p>
                                     </div>
                                 </div>
                             ))}
                         </div>
+
                         <div className="mt-14 flex flex-col justify-center gap-4 sm:flex-row">
                             <PrimaryButton href="https://forms.gle/fpaS8gRR61VgTdY26">
                                 Apply for Buffs Now

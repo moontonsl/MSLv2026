@@ -85,7 +85,7 @@ function ProfileMeta({ label, value }) {
     return (
         <div>
             <div className="text-sm font-bold leading-[22px] text-brand-300">{label}</div>
-            <div className="mt-1 font-['Manrope'] text-base font-bold leading-[26px] text-gray-300 sm:text-lg">
+            <div className="mt-1 font-heading text-base font-bold leading-[26px] text-gray-300 sm:text-lg">
                 {value}
             </div>
         </div>
@@ -295,7 +295,7 @@ export default function SLAdmin() {
 
                                 <div className="grid w-full min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 px-0 py-3 sm:px-6">
                                     <div className="min-w-0">
-                                        <h1 className="line-clamp-2 break-words font-['Manrope'] text-4xl font-extrabold leading-tight text-brand-400 sm:text-5xl lg:text-[60px] lg:leading-[64px]">
+                                        <h1 className="line-clamp-2 break-words font-heading text-4xl font-extrabold leading-tight text-brand-400 sm:text-5xl lg:text-[60px] lg:leading-[64px]">
                                             {slAdminProfile.name}
                                         </h1>
 
@@ -353,7 +353,7 @@ export default function SLAdmin() {
                                         <Icon className="h-4 w-4" />
                                     </div>
                                     <div>
-                                        <div className="font-['Manrope'] text-lg font-bold uppercase leading-[26px] text-brand-500">{label}</div>
+                                        <div className="font-heading text-lg font-bold uppercase leading-[26px] text-brand-500">{label}</div>
                                         <div className="mt-2 text-xl font-bold leading-7 text-white">{value.toLocaleString()}</div>
                                     </div>
                                 </div>

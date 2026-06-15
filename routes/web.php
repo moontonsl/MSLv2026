@@ -12,13 +12,17 @@ Route::get('/', function () {
 Route::get('/news', [\App\Http\Controllers\NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{canonical}', [\App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
 
-Route::get('/events', function () {
+Route::get('/Events', function () {
     return Inertia::render('Events/Index');
 })->name('events');
 
-Route::get('/BuffsAndSupport', function () {
+Route::get('/Buffs&Support', function () {
     return Inertia::render('Buffs and Support/Index');
 })->name('buffs.support');
+
+Route::get('/Campus', function () {
+    return Inertia::render('Campus/Index');
+})->name('campus');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -33,13 +37,13 @@ Route::middleware('auth')->group(function () {
 // Temporary bypass:
 // The student portal is public for now because the login backend/database flow is not ready yet.
 // Once authentication is available, move this route back inside the auth middleware group.
-Route::get('/studentportal', function () {
+Route::get('/studentportal', function () { //put the username - for backend tasks
     return Inertia::render('StudentProfile/Index');
 })->name('student.portal');
 
 require __DIR__.'/auth.php';
 
-Route::get('/sl-admin', function () {
+Route::get('/SL-Admin', function () {
     return Inertia::render('SL-Admin/Index');
 })->name('sl.admin');
 
@@ -49,27 +53,27 @@ Route::get('/Testpage', function () {
 })->name('Testpage');
 
 //LOGIN PAGE ROUTES
-Route::get('/login', function () {
+Route::get('/Login', function () {
     return Inertia::render('Login/Login');
 })->name('Login');
 
 //FORGOT PASSWORD PAGE ROUTES
-Route::get('/forgot-password', function () {
+Route::get('/ForgotPassword', function () {
     return Inertia::render('Login/components/ForgotPassword');
 })->name('reset.password');
 
 //FORGOT USERNAME PAGE ROUTES
-Route::get('/forgot-username', function () {
+Route::get('/ForgotUsername', function () {
     return Inertia::render('Login/components/ForgotUsername');
 })->name('forgot.username');
 
 //ACCOUNT CREATION - SHS DIVISION PAGE ROUTES
-Route::get('/register/shs', function () {
+Route::get('/AccountCreation/SHS', function () {
     return Inertia::render('AccountCreation/SHSRegister');
 })->name('shs.register');
 
 //ACCOUNT CREATION - COLLEGE DIVISION PAGE ROUTES
-Route::get('/register/college', function () {
+Route::get('/AccountCreation/College', function () {
     return Inertia::render('AccountCreation/CollegeRegister');
 })->name('college.register');
 
