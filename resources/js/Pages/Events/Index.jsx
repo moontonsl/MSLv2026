@@ -60,7 +60,7 @@ function EventCard({ event }) {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                    <h2 className="line-clamp-2 font-['League_Spartan'] text-lg font-black leading-5 text-white min-[420px]:text-xl min-[420px]:leading-6 sm:text-2xl sm:leading-6">
+                    <h2 className="line-clamp-2 font-heading text-lg font-black leading-5 text-white min-[420px]:text-xl min-[420px]:leading-6 sm:text-2xl sm:leading-6">
                         {event.title}
                     </h2>
                     <p className="line-clamp-3 text-[0.6875rem] font-normal leading-4 text-gray-300 sm:line-clamp-5 sm:text-xs sm:leading-4">
@@ -109,7 +109,7 @@ export default function Events() {
             <div className="overflow-hidden bg-[#0a0a0a] px-4 pb-12 text-white sm:px-6 lg:px-12">
                 <section className="mx-auto flex max-w-[1446px] flex-col items-center gap-12 pt-20 sm:gap-20 sm:pt-24">
                     <div className="flex w-full max-w-xl flex-col items-center gap-2.5">
-                        <h1 className="text-center font-['League_Spartan'] text-4xl font-black leading-10 sm:text-6xl sm:leading-[60px]">
+                        <h1 className="text-center font-heading text-4xl font-black leading-10 sm:text-6xl sm:leading-[60px]">
                             Our <span className="text-brand-400">Events</span>
                         </h1>
                         <p className="text-center text-base font-normal leading-6 text-white sm:text-lg sm:leading-7">
@@ -177,7 +177,7 @@ export default function Events() {
                     ) : (
                         <div className="flex flex-col items-center gap-4 rounded-xl border border-white/10 bg-white/5 px-6 py-12 text-center">
                             <div>
-                                <div className="font-['League_Spartan'] text-2xl font-black leading-6 text-white">
+                                <div className="font-heading text-2xl font-black leading-6 text-white">
                                     No {activeFilterLabel.toLowerCase()} events found
                                 </div>
                                 <p className="mt-2 max-w-md text-sm leading-5 text-gray-300">
@@ -206,7 +206,7 @@ export default function Events() {
                         <div className="pointer-events-none absolute left-1/3 -top-24 h-[420px] w-[420px] rotate-[-25deg] bg-red-600/10" />
                         <div className="relative z-10 mx-auto flex max-w-[912px] flex-col items-center justify-center gap-12 text-center">
                             <div className="flex flex-col gap-2.5">
-                                <h2 className="font-['League_Spartan'] text-4xl font-black leading-[42px] text-white sm:text-5xl sm:leading-[48px]">
+                                <h2 className="font-heading text-4xl font-black leading-[42px] text-white sm:text-5xl sm:leading-[48px]">
                                     Don&apos;t see a tournament for your school?
                                 </h2>
                                 <p className="text-lg font-normal leading-8 text-gray-300 sm:text-xl">

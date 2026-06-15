@@ -42,6 +42,21 @@ export default function LoginLanding({ onSignIn }) {
                             Create an Account
                         </Link>
 
+                        {/* STUDENT TYPE MODAL */}
+                        <StudentTypeModal
+                            isOpen={showModal}
+                            onClose={() => setShowModal(false)}
+                            onSelect={(type) => {
+                                setShowModal(false);
+
+                                if (type === 'shs') {
+                                    window.location.href = '/AccountCreation/SHS';
+                                } else {
+                                    window.location.href = '/AccountCreation/College';
+                                }
+                            }}
+                        />
+
                     </div>
 
                 </div>

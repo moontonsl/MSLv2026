@@ -331,7 +331,7 @@ const CollegeRegister = () => {
                 {/* FOOTER */}
                 <div className="mt-6 text-center text-sm text-white/70">
                     Already have an account?{' '}
-                    <a href="/login" className="text-yellow-400 hover:underline">
+                    <a href="/Login" className="text-yellow-400 hover:underline">
                     Sign In
                     </a>
                 </div>

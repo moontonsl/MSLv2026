@@ -149,10 +149,10 @@ export default function LoginForm({ onBack }) {
                                 LOGIN
                             </button>
                             <p className="text-white text-center mt-4 text-xs md:text-sm">
-                                <Link href="/forgot-password" className="forgot-password-link-login text-[#f1c40f] no-underline hover:underline">
+                                <Link href="/ForgotPassword" className="forgot-password-link-login text-[#f1c40f] no-underline hover:underline">
                                     Forgot Password
                                 </Link> / {' '}
-                                <Link href="/forgot-username" className="forgot-password-link-login text-[#f1c40f] no-underline hover:underline">
+                                <Link href="/ForgotUsername" className="forgot-password-link-login text-[#f1c40f] no-underline hover:underline">
                                     Forgot Username
                                 </Link>
                                 <br />
@@ -190,7 +190,19 @@ export default function LoginForm({ onBack }) {
 
             </div>
 
-            
+            <StudentTypeModal
+                isOpen={showStudentTypeModal}
+                onClose={() => setShowStudentTypeModal(false)}
+                onSelect={(type) => {
+                    setShowStudentTypeModal(false);
+
+                    if (type === 'shs') {
+                        window.location.href = '/AccountCreation/SHS';
+                    } else {
+                        window.location.href = '/AccountCreation/College';
+                    }
+                }}
+            />
 
         </div>
     );

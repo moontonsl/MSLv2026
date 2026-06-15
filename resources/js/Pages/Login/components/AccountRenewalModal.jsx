@@ -28,9 +28,9 @@ function FieldShell({ label, hint, error, children }) {
             <span className="text-sm font-semibold leading-5 text-white">{label}</span>
             {children}
             {error ? (
-                <span className="font-['Figtree'] text-sm font-medium leading-5 text-red-400">{error}</span>
+                <span className="font-sans text-sm font-medium leading-5 text-red-400">{error}</span>
             ) : hint ? (
-                <span className="font-['Figtree'] text-sm leading-5 text-gray-400">{hint}</span>
+                <span className="font-sans text-sm leading-5 text-gray-400">{hint}</span>
             ) : null}
         </label>
     );
@@ -40,7 +40,7 @@ function TextInput(props) {
     return (
         <input
             {...props}
-            className="w-full rounded-xl border border-white/10 bg-[#111111] px-3.5 py-2.5 font-['Figtree'] text-base leading-6 text-white outline-none transition placeholder:text-gray-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+            className="w-full rounded-xl border border-white/10 bg-[#111111] px-3.5 py-2.5 font-sans text-base leading-6 text-white outline-none transition placeholder:text-gray-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
         />
     );
 }
@@ -50,7 +50,7 @@ function SelectInput({ children, ...props }) {
         <div className="relative">
             <select
                 {...props}
-                className="w-full appearance-none rounded-xl border border-white/10 bg-[#111111] px-3.5 py-2.5 pr-10 font-['Figtree'] text-base leading-6 text-white outline-none transition focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+                className="w-full appearance-none rounded-xl border border-white/10 bg-[#111111] px-3.5 py-2.5 pr-10 font-sans text-base leading-6 text-white outline-none transition focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
             >
                 {children}
             </select>
@@ -108,7 +108,7 @@ function SearchableSelect({
             <button
                 type="button"
                 onClick={() => setIsOpen((current) => !current)}
-                className={`flex w-full items-center justify-between rounded-xl border bg-[#111111] px-3.5 py-2.5 text-left font-['Figtree'] text-base leading-6 outline-none transition ${
+                className={`flex w-full items-center justify-between rounded-xl border bg-[#111111] px-3.5 py-2.5 text-left font-sans text-base leading-6 outline-none transition ${
                     error
                         ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
                         : 'border-white/10 focus:border-brand-500 focus:ring-1 focus:ring-brand-500'
@@ -130,7 +130,7 @@ function SearchableSelect({
                                 value={searchValue}
                                 onChange={(event) => setSearchValue(event.target.value)}
                                 placeholder={searchPlaceholder}
-                                className="w-full rounded-lg border border-white/10 bg-[#0b0b0b] px-3.5 py-2.5 pl-10 font-['Figtree'] text-base leading-6 text-white outline-none placeholder:text-gray-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+                                className="w-full rounded-lg border border-white/10 bg-[#0b0b0b] px-3.5 py-2.5 pl-10 font-sans text-base leading-6 text-white outline-none placeholder:text-gray-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
                             />
                         </div>
                     </div>
@@ -176,7 +176,7 @@ function RequirementPanel({ title, children }) {
 function FileUpload({ id, label, file, error, onChange }) {
     return (
         <div className="flex flex-col gap-2">
-            <div className="text-xl font-bold leading-5 text-white font-['League_Spartan']">{label}</div>
+            <div className="font-heading text-xl font-bold leading-5 text-white">{label}</div>
             <label
                 htmlFor={id}
                 onDragOver={(event) => event.preventDefault()}
@@ -364,7 +364,7 @@ export default function AccountRenewalModal({
                 ) : null}
 
                 <div className="px-6 text-center md:px-8">
-                    <h2 className="text-3xl font-black leading-8 text-white font-['League_Spartan']">
+                    <h2 className="font-heading text-3xl font-black leading-8 text-white">
                         Account Renewal Required
                     </h2>
                     <p className="mt-3 text-base leading-6 text-gray-300">
@@ -382,7 +382,7 @@ export default function AccountRenewalModal({
                     </div>
 
                     <section className="border-b border-white/10 px-3 pb-5">
-                        <h3 className="text-xl font-bold leading-5 text-white font-['League_Spartan']">
+                        <h3 className="font-heading text-xl font-bold leading-5 text-white">
                             Account Details
                         </h3>
                         <div className="mt-4 grid gap-4 text-base md:grid-cols-2">

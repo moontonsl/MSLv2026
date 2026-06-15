@@ -28,7 +28,7 @@ function TextInput({ error, className = '', ...props }) {
     return (
         <input
             {...props}
-            className={`w-full rounded-xl border bg-[#111111] px-3.5 py-2.5 font-['Figtree'] text-base leading-6 text-white outline-none transition placeholder:text-gray-500 focus:outline-none focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-70 ${
+            className={`w-full rounded-xl border bg-[#111111] px-3.5 py-2.5 font-sans text-base leading-6 text-white outline-none transition placeholder:text-gray-500 focus:outline-none focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-70 ${
                 error
                     ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
                     : 'border-white/10 focus:border-brand-500 focus:ring-1 focus:ring-brand-500'
@@ -42,7 +42,7 @@ function SelectInput({ error, children, ...props }) {
         <div className="relative w-full">
             <select
                 {...props}
-                className={`w-full appearance-none rounded-xl border bg-[#111111] px-3.5 py-2.5 pr-10 font-['Figtree'] text-base leading-6 text-white outline-none transition ${
+                className={`w-full appearance-none rounded-xl border bg-[#111111] px-3.5 py-2.5 pr-10 font-sans text-base leading-6 text-white outline-none transition ${
                     error
                         ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
                         : 'border-white/10 focus:border-brand-500 focus:ring-1 focus:ring-brand-500'
@@ -84,7 +84,7 @@ function SearchableSelect({ error, value, onChange, placeholder, options, ...pro
             <button
                 type="button"
                 onClick={() => setIsOpen((prev) => !prev)}
-                className={`relative w-full rounded-xl border bg-[#111111] px-3.5 py-2.5 font-['Figtree'] text-base leading-6 text-white outline-none transition text-left ${
+                className={`relative w-full rounded-xl border bg-[#111111] px-3.5 py-2.5 font-sans text-base leading-6 text-white outline-none transition text-left ${
                     error
                         ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
                         : 'border-white/10 focus:border-white/10'
@@ -104,7 +104,7 @@ function SearchableSelect({ error, value, onChange, placeholder, options, ...pro
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Search courses..."
-                                className="w-full rounded-lg border border-white/10 bg-[#0a0a0a] px-3.5 py-2.5 pl-10 font-['Figtree'] text-base leading-6 text-white outline-none transition placeholder:text-gray-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+                                className="w-full rounded-lg border border-white/10 bg-[#0a0a0a] px-3.5 py-2.5 pl-10 font-sans text-base leading-6 text-white outline-none transition placeholder:text-gray-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
                             />
                         </div>
                     </div>
@@ -185,7 +185,7 @@ function StatusDialog({
                     >
                         <X className="h-5 w-5" />
                     </button>
-                    <div className="text-lg font-bold leading-6 text-white font-['League_Spartan'] sm:whitespace-nowrap">
+                    <div className="font-heading text-lg font-bold leading-6 text-white sm:whitespace-nowrap">
                         {title}
                     </div>
                     {description ? (
@@ -460,7 +460,7 @@ export default function EditProfileModal({ profile, onClose, onSave }) {
                 </button>
 
                 <div className="px-6 pb-1.5 md:px-8 md:pb-6">
-                    <div className="text-2xl font-black leading-6 text-white md:text-3xl md:leading-8 font-['League_Spartan']">
+                    <div className="font-heading text-2xl font-black leading-6 text-white md:text-3xl md:leading-8">
                         Edit Profile
                     </div>
                 </div>
@@ -522,7 +522,7 @@ export default function EditProfileModal({ profile, onClose, onSave }) {
                                             value={form.contactNo}
                                             onChange={(event) => updateField('contactNo', event.target.value.replace(/\D/g, '').slice(0, 11))}
                                             placeholder="9123456789"
-                                            className={`w-full rounded-xl border bg-[#111111] px-3.5 py-2.5 pl-20 font-['Figtree'] text-base leading-6 text-white outline-none transition placeholder:text-gray-500 focus:outline-none focus-visible:outline-none ${
+                                            className={`w-full rounded-xl border bg-[#111111] px-3.5 py-2.5 pl-20 font-sans text-base leading-6 text-white outline-none transition placeholder:text-gray-500 focus:outline-none focus-visible:outline-none ${
                                                 errors.contactNo
                                                     ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
                                                     : 'border-gray-600 focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400'
@@ -883,7 +883,7 @@ export default function EditProfileModal({ profile, onClose, onSave }) {
                             value={deleteConfirmation}
                             onChange={(event) => setDeleteConfirmation(event.target.value)}
                             placeholder="DELETE"
-                            className="rounded-xl border border-white/10 bg-[#0b0b0b] px-3.5 py-2.5 font-['Figtree'] text-base leading-6 text-white outline-none placeholder:text-gray-500 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 focus-visible:outline-none"
+                            className="rounded-xl border border-white/10 bg-[#0b0b0b] px-3.5 py-2.5 font-sans text-base leading-6 text-white outline-none placeholder:text-gray-500 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 focus-visible:outline-none"
                         />
                         {deleteConfirmation && deleteConfirmation.trim() !== 'DELETE' ? (
                             <div className="text-xs font-medium text-red-400">
@@ -899,7 +899,7 @@ export default function EditProfileModal({ profile, onClose, onSave }) {
                     title="MSL Account deleted successfully!"
                     centered
                     onConfirm={() => {
-                        window.location.href = '/login';
+                        window.location.href = '/Login';
                     }}
                 />
             ) : null}

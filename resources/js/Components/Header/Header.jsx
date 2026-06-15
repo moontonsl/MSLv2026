@@ -4,7 +4,7 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 import AccountModificationModal from './AccountModificationModal';
 
 const ABOUT_ITEMS = [
-    { label: 'Campus', href: '/about/campus' },
+    { label: 'Campus', href: '/Campus' },
     { label: 'Contents & Social Media', href: '/about/contents-social-media' },
     { label: 'Partnerships', href: '/about/partnerships' },
     { label: 'General Affairs', href: '/about/general-affairs' },
@@ -14,7 +14,7 @@ const PROGRAMS_ITEMS = [
     { label: 'The MSL Network', href: '/programs/msl-network' },
     { label: 'MSL Collegiate Cup', href: '/programs/collegiate-cup' },
     { label: 'Campus Tournaments', href: '/programs/campus-tournaments' },
-    { label: 'Buffs & Support', href: '/BuffsAndSupport' },
+    { label: 'Buffs & Support', href: '/Buffs&Support' },
     { label: 'Referral Program', href: '/programs/referral' },
 ];
 
@@ -104,7 +104,7 @@ function DesktopNavigation({
             <Link href="/careers" className={navLinkClass}>
                 Careers
             </Link>
-            <Link href="/events" className={navLinkClass}>
+            <Link href="/Events" className={navLinkClass}>
                 Events
             </Link>
             <Link href="/news" className={navLinkClass}>
@@ -211,8 +211,8 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                 <div className="relative z-[61] flex shrink-0 items-center justify-end">
                     {!loggedIn ? (
                         <Link
-                            href="/login"
-                            className="rounded-full bg-[#FFC107] px-6 py-2 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                            href="/Login"
+                            className="rounded-full bg-[#FFC107] px-6 py-2 text-sm font-bold text-black transition duration-300 hover:bg-yellow-400 hover:text-black hover:shadow-[0_0_20px_rgba(255,193,7,.5)]"
                         >
                             Log In
                         </Link>
@@ -247,7 +247,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                         user.role === 'Super Admin' ||
                                         user.role === 'Regional Admin') && (
                                         <Link
-                                            href="/sl-admin"
+                                            href="/SL-Admin"
                                             className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
                                             onClick={() => setIsAccountDropdownOpen(false)}
                                         >
@@ -419,7 +419,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                             Careers
                         </Link>
                         <Link
-                            href="/events"
+                            href="/Events"
                             className={`${navLinkClass} py-2`}
                             onClick={() => setMobileMenuOpen(false)}
                         >
