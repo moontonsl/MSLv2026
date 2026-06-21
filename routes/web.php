@@ -53,9 +53,9 @@ Route::get('/Testpage', function () {
 })->name('Testpage');
 
 //LOGIN PAGE ROUTES
-Route::get('/Login', function () {
-    return Inertia::render('Login/Login');
-})->name('login');
+// Route::get('/Login', function () {
+//     return Inertia::render('Login/Login');
+// })->name('login');
 
 //FORGOT PASSWORD PAGE ROUTES
 Route::get('/ForgotPassword', function () {
