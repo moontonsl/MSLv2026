@@ -52,10 +52,10 @@ Route::get('/Testpage', function () {
     return Inertia::render('Testpage');
 })->name('Testpage');
 
-//LOGIN PAGE ROUTES
-Route::get('/Login', function () {
-    return Inertia::render('Login/Login');
-})->name('login');
+// //LOGIN PAGE ROUTES
+// Route::get('/Login', function () {
+//     return Inertia::render('Login/Login');
+// })->name('login');
 
 //FORGOT PASSWORD PAGE ROUTES
 Route::get('/ForgotPassword', function () {
