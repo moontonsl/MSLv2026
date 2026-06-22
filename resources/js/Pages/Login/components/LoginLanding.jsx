@@ -1,6 +1,8 @@
-import { Link } from "@inertiajs/react";
+import { useState } from "react";
+import StudentTypeModal from "./StudentTypeModal";
 
 export default function LoginLanding({ onSignIn }) {
+    const [showModal, setShowModal] = useState(false);
 
     return (
         <div className="min-h-screen flex items-start md:items-center justify-center px-md pt-[100px] md:pt-0">
@@ -35,12 +37,12 @@ export default function LoginLanding({ onSignIn }) {
                             Sign In
                         </button>
 
-                        <Link
-                            href="/register"
-                            className="w-full md:w-[354px] py-3 md:py-md px-lg rounded-xl border border-brand-500 text-brand-500 text-center font-semibold hover:bg-brand-500 hover:text-black transition flex items-center justify-center"
+                        <button
+                            onClick={() => setShowModal(true)}
+                            className="w-full md:w-[354px] py-3 md:py-md px-lg rounded-xl border border-brand-500 text-brand-500 text-center font-semibold hover:bg-brand-500 hover:text-black transition"
                         >
                             Create an Account
-                        </Link>
+                        </button>
 
                         {/* STUDENT TYPE MODAL */}
                         <StudentTypeModal

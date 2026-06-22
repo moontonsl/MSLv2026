@@ -240,7 +240,6 @@ export default function AccountRenewalModal({
         firstName: '',
         lastName: '',
         documentFile: null,
-        age: '',
     });
     const [errors, setErrors] = useState({});
     const profileDetails = {
@@ -282,13 +281,6 @@ export default function AccountRenewalModal({
             if (!form.firstName.trim()) nextErrors.firstName = 'First name is required.';
             if (!form.lastName.trim()) nextErrors.lastName = 'Last name is required.';
         }
-        if (requiredKeys.has('age')) {
-            if (!form.age) {
-                nextErrors.age = 'Age is required.';
-            } else if (isNaN(form.age) || parseInt(form.age) <= 0) {
-                nextErrors.age = 'Please enter a valid age.';
-            }
-        }
         if (requiredKeys.has('document')) {
             const documentError = validateFile('documentFile', 'Document');
             if (documentError) nextErrors.documentFile = documentError;
@@ -312,7 +304,6 @@ export default function AccountRenewalModal({
             firstName: form.firstName,
             lastName: form.lastName,
             documentFile: form.documentFile,
-            age: form.age,
         };
 
         if (onSubmit) {
@@ -467,19 +458,6 @@ export default function AccountRenewalModal({
                                             <option key={yearLevel} value={yearLevel}>{yearLevel}</option>
                                         ))}
                                     </SelectInput>
-                                </FieldShell>
-                            </RequirementPanel>
-                        ) : null}
-
-                        {requiredKeys.has('age') ? (
-                            <RequirementPanel title="Update your Age">
-                                <FieldShell label="Age" error={errors.age}>
-                                    <TextInput
-                                        type="number"
-                                        value={form.age}
-                                        onChange={(event) => updateField('age', event.target.value)}
-                                        placeholder="e.g. 21"
-                                    />
                                 </FieldShell>
                             </RequirementPanel>
                         ) : null}

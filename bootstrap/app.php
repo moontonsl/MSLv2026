@@ -16,11 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
-        $middleware->alias([
-            'active.student' => \App\Http\Middleware\EnsureActiveStudent::class,
-            'redirect.status' => \App\Http\Middleware\RedirectIfAuthenticatedByStatus::class,
-            'permission' => \App\Http\Middleware\CheckPermission::class,
-        ]);
+        //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
