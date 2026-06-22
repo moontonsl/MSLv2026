@@ -22,9 +22,3 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
-
-*.md
-*.sql
-*.xslx
-/docs
-.agent

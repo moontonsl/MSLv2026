@@ -29,11 +29,6 @@ export const accountRenewalFields = {
         title: 'Update your Full Name',
         reason: 'Wrong name',
     },
-    age: {
-        key: 'age',
-        title: 'Update your Age',
-        reason: 'Wrong age',
-    },
     document: {
         key: 'document',
         aliases: ['proofOfEnrollment', 'proof_of_enrollment', 'file'],
