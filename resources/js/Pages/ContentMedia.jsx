@@ -25,7 +25,7 @@ import {
     Video,
 } from 'lucide-react';
 
-export default function ContentsSocialMedia() {
+export default function ContentMedia() {
     return (
         <MainLayout fullWidth>
             <Head title="Contents & Social Media" />

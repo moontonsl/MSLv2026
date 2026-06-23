@@ -13,9 +13,11 @@ Route::get('/about', function () {
     return Inertia::render('About');
 })->name('about');
 
-Route::get('/about/contents-social-media', function () {
-    return Inertia::render('About/ContentsSocialMedia');
-})->name('about.contents-social-media');
+Route::get('/content-media', function () {
+    return Inertia::render('ContentMedia');
+})->name('content-media');
+
+Route::redirect('/about/contents-social-media', '/content-media');
 
 Route::get('/news', [\App\Http\Controllers\NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{canonical}', [\App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
