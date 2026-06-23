@@ -5,7 +5,7 @@ import AccountModificationModal from './AccountModificationModal';
 
 const ABOUT_ITEMS = [
     { label: 'Campus', href: '/about/campus' },
-    { label: 'Contents & Social Media', href: '/about/contents-social-media' },
+    { label: 'Contents & Social Media', href: '/content-media' },
     { label: 'Partnerships', href: '/about/partnerships' },
     { label: 'General Affairs', href: '/about/general-affairs' },
 ];

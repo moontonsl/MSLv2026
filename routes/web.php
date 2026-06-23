@@ -9,8 +9,34 @@ Route::get('/', function () {
     return Inertia::render('Home');
 });
 
+Route::get('/about', function () {
+    return Inertia::render('About');
+})->name('about');
+
+Route::get('/content-media', function () {
+    return Inertia::render('ContentMedia');
+})->name('content-media');
+
+Route::redirect('/about/contents-social-media', '/content-media');
+
 Route::get('/news', [\App\Http\Controllers\NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{canonical}', [\App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
+
+Route::get('/admin/account-creation', function () {
+    return Inertia::render('Admin/AccountCreation');
+})->name('admin.account-creation');
+
+Route::get('/admin/home-page', function () {
+    return Inertia::render('Admin/HomePage');
+})->name('admin.home-page');
+
+Route::get('/admin/faq', function () {
+    return Inertia::render('Admin/Faq');
+})->name('admin.faq');
+
+Route::get('/admin/news-updates', function () {
+    return Inertia::render('Admin/NewsUpdates');
+})->name('admin.news-updates');
 
 Route::get('/events', function () {
     return Inertia::render('Events/Index');
