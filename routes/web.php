@@ -22,7 +22,7 @@ Route::redirect('/about/contents-social-media', '/content-media');
 Route::get('/news', [\App\Http\Controllers\NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{canonical}', [\App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
 
-Route::get('/events', function () {
+Route::get('/Events', function () {
     return Inertia::render('Events/Index');
 })->name('events');
 
