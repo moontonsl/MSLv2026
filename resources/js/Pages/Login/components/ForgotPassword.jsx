@@ -141,7 +141,7 @@ export default function ForgotPassword({ onBack }) {
 
                             <p className="text-center text-xs md:text-sm text-white/70 mt-md">
                                 Remember password?{' '}
-                                <a href="/login" className="text-brand-500 hover:underline">
+                                <a href="/Login" className="text-brand-500 hover:underline">
                                     Back to Sign in
                                 </a>
                             </p>

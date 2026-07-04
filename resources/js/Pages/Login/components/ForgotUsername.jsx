@@ -141,7 +141,7 @@ export default function ForgotUsername() {
 
                             <p className="text-center text-xs md:text-sm text-white/70 mt-md">
                                 Remember username?{' '}
-                                <Link href="/login" className="text-brand-500 hover:underline">
+                                <Link href="/Login" className="text-brand-500 hover:underline">
                                     Back to Sign in
                                 </Link>
                             </p>

@@ -1,7 +1,6 @@
 import React from 'react';
 import styles from '../../register.module.scss';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
-import axios from 'axios';
+import { Eye, EyeOff } from 'lucide-react';
 
 const Step4AccountCredentials = React.forwardRef(function Step4AccountCredentials(
     {
@@ -19,13 +18,6 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
     const [codeTimer, setCodeTimer] = React.useState(0);
     const [showCodeNotice, setShowCodeNotice] = React.useState(false);
     const [hasRequestedCode, setHasRequestedCode] = React.useState(false);
-    const [isSendingCode, setIsSendingCode] = React.useState(false);
-
-    // New state variables for premium 6-digit PIN code input
-    const [pinCode, setPinCode] = React.useState(['', '', '', '', '', '']);
-    const [verificationStatus, setVerificationStatus] = React.useState('idle'); // idle, checking, success, error
-    const [verificationError, setVerificationError] = React.useState('');
-    const inputRefs = React.useRef([]);
 
     const requiredFields = ['username', 'password', 'confirmPassword', 'email', 'captcha', 'termsAccepted'];
 
@@ -88,12 +80,13 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
             return true;
         }
 
-        if (!trimmedValue && name !== 'captcha') {
+        if (!trimmedValue) {
             const labels = {
                 username: 'Username',
                 password: 'Password',
                 confirmPassword: 'Confirm Password',
                 email: 'Email Address',
+                captcha: 'Verification Code',
             };
 
             setFieldError(name, `${labels[name] || 'This field'} is required.`, force);
@@ -137,11 +130,14 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
             }
         }
 
-        if (name === 'captcha') {
-            if (verificationStatus !== 'success') {
-                setFieldError(name, 'Please verify your email address.', force);
-                return false;
-            }
+        if (name === 'captcha' && trimmedValue.length < 4) {
+            setFieldError(name, 'Enter the verification code.', force);
+            return false;
+        }
+
+        if (name === 'captcha' && verificationCode && trimmedValue !== verificationCode) {
+            setFieldError(name, 'Incorrect code.', force);
+            return false;
         }
 
         clearFieldError(name, force);
@@ -214,139 +210,19 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
         if (e.target.value) {
             clearFieldError('email');
         }
-        // If email is modified, reset verification state
         setShowCodeNotice(false);
-        setHasRequestedCode(false);
-        setCodeTimer(0);
-        setPinCode(['', '', '', '', '', '']);
-        setVerificationStatus('idle');
-        setVerificationError('');
-        handleInputChange({ target: { name: 'captcha', value: '' } });
     };
 
-    const handleRequestCode = async () => {
+    const handleRequestCode = () => {
         if (!validateField('email', data.email, true)) {
             return;
         }
 
-        setIsSendingCode(true);
-        try {
-            const response = await axios.post(route('email.send-code'), {
-                email: data.email,
-            });
-
-            if (response.data.success) {
-                setShowCodeNotice(true);
-                setHasRequestedCode(true);
-                setCodeTimer(60);
-                clearFieldError('email');
-                if (errors.captcha) {
-                    clearFieldError('captcha');
-                }
-            } else {
-                setFieldError('email', response.data.message || 'Failed to send verification code.', true);
-            }
-        } catch (error) {
-            const msg = error.response?.data?.message || 'Failed to send verification code.';
-            setFieldError('email', msg, true);
-        } finally {
-            setIsSendingCode(false);
-        }
-    };
-
-    // Premium 6-digit interactive code inputs handlers
-    const handlePinChange = (index, value) => {
-        const val = value.replace(/[^0-9]/g, '');
-        const newPinCode = [...pinCode];
-
-        if (val.length > 1) {
-            // Handle paste / multiple characters
-            const digits = val.slice(0, 6).split('');
-            for (let i = 0; i < 6; i++) {
-                newPinCode[i] = digits[i] || '';
-            }
-            setPinCode(newPinCode);
-            handleInputChange({ target: { name: 'captcha', value: newPinCode.join('') } });
-            
-            const nextFocusIndex = Math.min(digits.length, 5);
-            inputRefs.current[nextFocusIndex]?.focus();
-            return;
-        }
-
-        newPinCode[index] = val;
-        setPinCode(newPinCode);
-        handleInputChange({ target: { name: 'captcha', value: newPinCode.join('') } });
-
-        if (val && index < 5) {
-            inputRefs.current[index + 1]?.focus();
-        }
-    };
-
-    const handlePinKeyDown = (index, e) => {
-        if (e.key === 'Backspace' && !pinCode[index] && index > 0) {
-            inputRefs.current[index - 1]?.focus();
-        }
-    };
-
-    const handlePinPaste = (e) => {
-        e.preventDefault();
-        const pasteData = e.clipboardData.getData('text').trim().replace(/[^0-9]/g, '').slice(0, 6);
-        if (pasteData) {
-            const newPinCode = [...pinCode];
-            const digits = pasteData.split('');
-            for (let i = 0; i < 6; i++) {
-                newPinCode[i] = digits[i] || '';
-            }
-            setPinCode(newPinCode);
-            handleInputChange({ target: { name: 'captcha', value: newPinCode.join('') } });
-
-            const focusIdx = Math.min(digits.length, 5);
-            inputRefs.current[focusIdx]?.focus();
-        }
-    };
-
-    const handleVerifyCode = async () => {
-        const codeString = pinCode.join('');
-        if (codeString.length < 6) {
-            setFieldError('captcha', 'Enter the 6-digit verification code.', true);
-            setVerificationStatus('error');
-            setVerificationError('Enter the 6-digit verification code.');
-            return;
-        }
-
-        setVerificationStatus('checking');
-        setVerificationError('');
-
-        try {
-            const response = await axios.post(route('email.verify-code'), {
-                email: data.email,
-                code: codeString,
-            });
-
-            if (response.data.success) {
-                setVerificationStatus('success');
-                clearFieldError('captcha');
-                clearFieldError('email');
-            } else {
-                setVerificationStatus('error');
-                setVerificationError(response.data.message || 'Incorrect code. Please try again.');
-                setFieldError('captcha', response.data.message || 'Incorrect code.', true);
-            }
-        } catch (error) {
-            setVerificationStatus('error');
-            const msg = error.response?.data?.message || 'Incorrect code. Please try again.';
-            setVerificationError(msg);
-            setFieldError('captcha', msg, true);
-        }
-    };
-
-    const handleEditEmail = () => {
-        setVerificationStatus('idle');
-        setHasRequestedCode(false);
-        setCodeTimer(0);
-        setShowCodeNotice(false);
-        setPinCode(['', '', '', '', '', '']);
-        handleInputChange({ target: { name: 'captcha', value: '' } });
+        setShowCodeNotice(true);
+        setHasRequestedCode(true);
+        setCodeTimer(60);
+        setVerificationCode('123456');
+        clearFieldError('email');
     };
 
     const handleCheckboxChange = (e) => {
@@ -508,7 +384,6 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
                             placeholder="you@example.com"
                             className={getFieldClassName('email', 'pr-10')}
                             style={getFieldStyle('email')}
-                            disabled={verificationStatus === 'success'}
                         />
                         {step4ShowErrors && errors.email && (
                             <div className="absolute right-3 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full border border-red-500 text-xs font-bold text-red-500 pointer-events-none">
@@ -516,131 +391,58 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
                             </div>
                         )}
                     </div>
+                    {showCodeNotice && (
+                        <p className="mt-1 text-xs text-green-400">
+                            Verification code requested. Check your email to continue.
+                        </p>
+                    )}
                     {renderFieldError('email')}
                 </div>
 
                 <div className="w-full md:w-1/4 md:pt-[31px]">
-                    {verificationStatus === 'success' ? (
-                        <button
-                            type="button"
-                            onClick={handleEditEmail}
-                            className="w-full py-3 rounded-xl border border-gray-600 text-gray-400 font-semibold hover:bg-gray-600 hover:text-white transition"
-                        >
-                            Edit Email
-                        </button>
-                    ) : (
-                        <button
-                            type="button"
-                            onClick={handleRequestCode}
-                            disabled={codeTimer > 0 || isSendingCode}
-                            className="w-full py-3 rounded-xl border border-yellow-500 text-yellow-400 font-semibold hover:bg-yellow-500 hover:text-black transition disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                        >
-                            {isSendingCode ? (
-                                <>
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                    <span>Sending...</span>
-                                </>
-                            ) : !hasRequestedCode ? (
-                                'Get Code'
-                            ) : codeTimer > 0 ? (
-                                `Resend Code (${codeTimer}s)`
-                            ) : (
-                                'Resend Code'
-                            )}
-                        </button>
-                    )}
+                    <button
+                        type="button"
+                        onClick={handleRequestCode}
+                        disabled={codeTimer > 0}
+                        className="w-full py-3 rounded-xl border border-yellow-500 text-yellow-400 font-semibold hover:bg-yellow-500 hover:text-black transition disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                        {!hasRequestedCode
+                            ? 'Get Code'
+                            : codeTimer > 0
+                                ? `Resend Code (${codeTimer}s)`
+                                : 'Resend Code'}
+                    </button>
                 </div>
             </div>
 
-            {/* Premium 6-Digit Verification UI */}
-            {hasRequestedCode && (
-                <div className="mb-6 p-4 rounded-xl border border-[#242424] bg-white/[0.02] backdrop-blur-sm">
-                    {/* EMAIL VERIFICATION NOTE */}
-                    <div className="self-stretch pl-2 pr-3 py-2 bg-white/5 rounded-[10px] shadow-sm border border-yellow-500/20 flex justify-start items-start gap-2 mb-4">
-                        <div className="flex justify-start items-center gap-1">
-                            <div>
-                                <span className="text-yellow-500 text-xs font-semibold font-sans leading-4">Email Verification Required</span>
-                                <span className="text-white/70 text-xs font-normal font-sans leading-4"> — Please check your email address for the verification code.</span>
-                            </div>
+            <div className="mb-4">
+                <label className={`${styles['label-register']} block mb-1`}>
+                    Verification Code <span className={styles.required}>*</span>
+                </label>
+                <div className="relative">
+                        <input
+                            type="text"
+                            name="captcha"
+                            value={data.captcha}
+                            onChange={(e) => {
+                                handleInputChange(e);
+                                setShowCodeNotice(false);
+                                if (e.target.value) {
+                                    clearFieldError('captcha');
+                                }
+                            }}
+                            placeholder="Enter code"
+                            className={getFieldClassName('captcha')}
+                            style={getFieldStyle('captcha')}
+                        />
+                    {step4ShowErrors && errors.captcha && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full border border-red-500 text-xs font-bold text-red-500 pointer-events-none">
+                            !
                         </div>
-                    </div>
-
-                    <div className="flex flex-col gap-1.5">
-                        <div className="inline-flex justify-start items-center gap-0.5">
-                            <div className="text-white text-sm font-semibold font-sans leading-5">Enter Verification Code</div>
-                            <div className="text-red-500 text-sm font-medium font-sans leading-5">*</div>
-                        </div>
-                        
-                        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
-                            <div className="flex items-center gap-1.5 justify-between">
-                                {pinCode.map((digit, index) => (
-                                    <React.Fragment key={index}>
-                                        <input
-                                            ref={(el) => (inputRefs.current[index] = el)}
-                                            type="text"
-                                            maxLength={1}
-                                            value={digit}
-                                            onChange={(e) => handlePinChange(index, e.target.value)}
-                                            onKeyDown={(e) => handlePinKeyDown(index, e)}
-                                            onPaste={handlePinPaste}
-                                            disabled={verificationStatus === 'success'}
-                                            className={`w-11 h-11 text-center bg-black/20 rounded-md text-2xl font-extrabold text-white transition-all outline-none border
-                                                ${verificationStatus === 'success'
-                                                    ? 'border-green-500 bg-green-500/10 text-green-400'
-                                                    : verificationStatus === 'error'
-                                                        ? 'border-red-500 bg-red-500/10 text-red-400'
-                                                        : 'border-gray-600 focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400'
-                                                }`}
-                                        />
-                                        {index === 2 && (
-                                            <span className="text-gray-500 text-2xl font-medium">-</span>
-                                        )}
-                                    </React.Fragment>
-                                ))}
-                            </div>
-
-                            <button
-                                type="button"
-                                onClick={handleVerifyCode}
-                                disabled={verificationStatus === 'success' || verificationStatus === 'checking'}
-                                className={`flex-1 h-11 px-4 py-2.5 rounded-xl font-semibold flex justify-center items-center transition-all border
-                                    ${verificationStatus === 'success'
-                                        ? 'bg-green-500/20 text-green-400 border-green-500'
-                                        : verificationStatus === 'error'
-                                            ? 'bg-red-500/20 text-red-400 border-red-500 hover:bg-red-500/30'
-                                            : 'bg-yellow-500/10 text-yellow-400 border-yellow-500 hover:bg-yellow-500/20'
-                                    }`}
-                            >
-                                {verificationStatus === 'success'
-                                    ? 'Verified ✓'
-                                    : verificationStatus === 'checking'
-                                        ? 'Verifying...'
-                                        : verificationStatus === 'error'
-                                            ? 'Try Again'
-                                            : 'Verify'}
-                            </button>
-                        </div>
-
-                        {/* Helper Texts */}
-                        {verificationStatus === 'idle' && (
-                            <p className="mt-2 text-xs text-gray-500">
-                                Verification code sent to email.
-                            </p>
-                        )}
-                        {verificationStatus === 'error' && (
-                            <p className="mt-2 text-xs text-red-400">
-                                {verificationError || 'Incorrect code. Please check your email and try again.'}
-                            </p>
-                        )}
-                        {verificationStatus === 'success' && (
-                            <p className="mt-2 text-xs text-green-400">
-                                Email verified successfully! Your profile is ready.
-                            </p>
-                        )}
-                        {renderFieldError('captcha')}
-                    </div>
+                    )}
                 </div>
-            )}
+                {renderFieldError('captcha')}
+            </div>
 
             <div className="mb-2 flex justify-center">
                 <label className="flex items-center gap-2 text-white/80 text-sm cursor-pointer select-none">

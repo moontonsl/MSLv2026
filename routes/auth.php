@@ -17,18 +17,6 @@ Route::middleware('guest')->group(function () {
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
-    Route::post('mlbb/send-vc', [\App\Http\Controllers\Auth\MLBBVerificationController::class, 'sendCode'])
-        ->name('mlbb.send-vc');
-
-    Route::post('mlbb/verify-vc', [\App\Http\Controllers\Auth\MLBBVerificationController::class, 'verifyCode'])
-        ->name('mlbb.verify-vc');
-
-    Route::post('email/send-code', [\App\Http\Controllers\Auth\EmailVerificationController::class, 'sendCode'])
-        ->name('email.send-code');
-
-    Route::post('email/verify-code', [\App\Http\Controllers\Auth\EmailVerificationController::class, 'verifyCode'])
-        ->name('email.verify-code');
-
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 

@@ -1,6 +1,7 @@
 import { Link, useForm } from "@inertiajs/react";
 import { useState } from "react";
 import { Eye, EyeOff } from "react-feather";
+import StudentTypeModal from "./StudentTypeModal";
 
 export default function LoginForm({ onBack }) {
 
@@ -11,6 +12,7 @@ export default function LoginForm({ onBack }) {
 
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [error, setError] = useState('');
+    const [showStudentTypeModal, setShowStudentTypeModal] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -149,20 +151,21 @@ export default function LoginForm({ onBack }) {
                                 LOGIN
                             </button>
                             <p className="text-white text-center mt-4 text-xs md:text-sm">
-                                <Link href="/forgot-password" className="forgot-password-link-login text-[#f1c40f] no-underline hover:underline">
+                                <Link href="/ForgotPassword" className="forgot-password-link-login text-[#f1c40f] no-underline hover:underline">
                                     Forgot Password
                                 </Link> / {' '}
-                                <Link href="/forgot-username" className="forgot-password-link-login text-[#f1c40f] no-underline hover:underline">
+                                <Link href="/ForgotUsername" className="forgot-password-link-login text-[#f1c40f] no-underline hover:underline">
                                     Forgot Username
                                 </Link>
                                 <br />
                                 Don't have an account?{' '}
-                                <Link
-                                    href="/register"
+                                <button
+                                    type="button"
+                                    onClick={() => setShowStudentTypeModal(true)}
                                     className="sign-in-link-login inline bg-transparent p-0 border-0 text-[#f1c40f] no-underline hover:underline cursor-pointer"
                                 >
                                     Sign Up
-                                </Link>
+                                </button>
                             </p>
                         </div>
 
@@ -190,7 +193,19 @@ export default function LoginForm({ onBack }) {
 
             </div>
 
-            
+            <StudentTypeModal
+                isOpen={showStudentTypeModal}
+                onClose={() => setShowStudentTypeModal(false)}
+                onSelect={(type) => {
+                    setShowStudentTypeModal(false);
+
+                    if (type === 'shs') {
+                        window.location.href = '/AccountCreation/SHS';
+                    } else {
+                        window.location.href = '/AccountCreation/College';
+                    }
+                }}
+            />
 
         </div>
     );

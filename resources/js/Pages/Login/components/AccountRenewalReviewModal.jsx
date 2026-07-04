@@ -22,7 +22,7 @@ export default function AccountRenewalReviewModal({
                             {isThankYou ? <CheckCircle2 className="h-8 w-8" /> : <Clock3 className="h-8 w-8" />}
                         </div>
 
-                        <h2 className="font-['League_Spartan'] text-3xl font-black leading-8 text-white">
+                        <h2 className="font-heading text-3xl font-black leading-8 text-white">
                             {isThankYou
                                 ? 'Thank you for renewing your MSL Account.'
                                 : 'Account Renewal is being reviewed.'}
