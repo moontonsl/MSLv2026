@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { CheckCircle, Star, Wallet, Shield } from 'lucide-react';
 import { Facebook } from 'lucide-react';
@@ -7,6 +7,8 @@ import {
     Building2,
     Check,
     ChevronDown,
+    ChevronLeft,
+    ChevronRight,
     Globe2,
     MapPin,
     Search,
@@ -28,6 +30,8 @@ import {
     regionalAdmins,
 } from './campusData';
 
+const PAGE_SIZE = 6;
+
 const sectionTitleClass =
     'font-heading text-4xl font-bold leading-[44px] text-white sm:text-4xl lg:text-5xl lg:font-extrabold lg:leading-tight';
 
@@ -36,6 +40,73 @@ const tierStyles = {
     'Tier B': 'border-teal-400/40 bg-teal-500/10 text-teal-300',
     'Tier C': 'border-white/15 bg-white/5 text-gray-300',
 };
+
+function Pagination({ currentPage, pageCount, onChange }) {
+    const groupSize = Math.min(3, pageCount);
+    const firstGroup = Array.from({ length: groupSize }, (_, index) => index + 1);
+    const lastGroup = Array.from(
+        { length: groupSize },
+        (_, index) => pageCount - groupSize + index + 1,
+    );
+    const isInEdgeGroup = currentPage <= groupSize || currentPage >= pageCount - groupSize + 1;
+    const currentGroup = isInEdgeGroup
+        ? firstGroup
+        : Array.from({ length: groupSize }, (_, index) => currentPage - groupSize + index + 1);
+    const hasGap = currentGroup[currentGroup.length - 1] < lastGroup[0] - 1;
+    const combinedPages = [...new Set([...currentGroup, ...lastGroup])].sort((first, second) => first - second);
+    const pages = hasGap
+        ? [...currentGroup, 'ellipsis', ...lastGroup]
+        : combinedPages;
+
+    return (
+        <div className="grid w-full grid-cols-2 items-center gap-3 lg:grid-cols-[1fr_auto_1fr] lg:gap-4">
+            <button
+                type="button"
+                disabled={currentPage === 1}
+                onClick={() => onChange(currentPage - 1)}
+                className="col-start-1 row-start-1 inline-flex h-9 w-fit items-center justify-center gap-1 rounded-lg border border-blue-500 bg-blue-600 px-3 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+                <ChevronLeft className="h-5 w-5" />
+                Previous
+            </button>
+
+            <nav
+                className="col-span-2 row-start-2 flex flex-wrap items-center justify-center gap-0.5 lg:col-span-1 lg:col-start-2 lg:row-start-1"
+                aria-label="Community directory pagination"
+            >
+                {pages.map((page, index) => page === 'ellipsis' ? (
+                    <span key={`ellipsis-${index}`} className="flex h-10 w-10 items-center justify-center text-sm text-gray-300">
+                        ...
+                    </span>
+                ) : (
+                    <button
+                        key={page}
+                        type="button"
+                        onClick={() => onChange(page)}
+                        aria-current={currentPage === page ? 'page' : undefined}
+                        className={`h-10 w-10 rounded-lg text-sm font-medium transition ${
+                            currentPage === page
+                                ? 'bg-blue-600 text-white'
+                                : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                        }`}
+                    >
+                        {page}
+                    </button>
+                ))}
+            </nav>
+
+            <button
+                type="button"
+                disabled={currentPage === pageCount}
+                onClick={() => onChange(currentPage + 1)}
+                className="col-start-2 row-start-1 inline-flex h-9 w-fit items-center justify-center justify-self-end gap-1 rounded-lg border border-blue-500 bg-blue-600 px-3 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40 lg:col-start-3"
+            >
+                Next
+                <ChevronRight className="h-5 w-5" />
+            </button>
+        </div>
+    );
+}
 
 function SectionHeading({ title, description, centered = true }) {
     return (
@@ -49,6 +120,7 @@ function SectionHeading({ title, description, centered = true }) {
 export default function Campus() {
     const [search, setSearch] = useState('');
     const [region, setRegion] = useState('All Regions');
+    const [currentPage, setCurrentPage] = useState(1);
 
     const regions = useMemo(
         () => ['All Regions', ...new Set(campusCommunities.map((community) => community.region))],
@@ -70,6 +142,22 @@ export default function Campus() {
             return matchesRegion && matchesQuery;
         });
     }, [region, search]);
+
+    const pageCount = Math.max(1, Math.ceil(filteredCommunities.length / PAGE_SIZE));
+    const pageCommunities = filteredCommunities.slice(
+        (currentPage - 1) * PAGE_SIZE,
+        currentPage * PAGE_SIZE,
+    );
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [region, search]);
+
+    useEffect(() => {
+        if (currentPage > pageCount) {
+            setCurrentPage(pageCount);
+        }
+    }, [currentPage, pageCount]);
 
     return (
         <>
@@ -533,7 +621,7 @@ export default function Campus() {
                                     </div>
 
                                     {filteredCommunities.length ? (
-                                        filteredCommunities.map((community) => (
+                                        pageCommunities.map((community) => (
                                             <article
                                                 key={community.school}
                                                 className="relative grid gap-3 border-t border-white/10 bg-[#121212] px-6 py-4 first:border-t-0 md:grid-cols-[2fr_1fr_0.7fr_0.6fr_0.8fr] md:items-center md:gap-4 md:bg-[#111111] md:p-5 md:px-6"
@@ -592,6 +680,12 @@ export default function Campus() {
                                         </div>
                                     )}
                                 </div>
+
+                                {filteredCommunities.length ? (
+                                    <div className="border-x border-b border-white/10 px-4 py-4 sm:px-6">
+                                        <Pagination currentPage={currentPage} pageCount={pageCount} onChange={setCurrentPage} />
+                                    </div>
+                                ) : null}
                         </div>
                     </section>
 
