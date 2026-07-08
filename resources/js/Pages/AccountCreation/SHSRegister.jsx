@@ -16,7 +16,7 @@ import Step4AccountCredentials from './components/SHS/Step4AccountCredentials.js
 
 const initialFormData = {
     // Step 1
-    firstName: '', lastName: '', suffix: 'N/A', birthday: '', age: 0, gender: '', contactNo: '', facebookLink: '',
+    firstName: '', lastName: '', suffix: 'N/A', birthday: '', age: 0, gender: '', contactNo: '', facebookLink: '', referralCode: '',
     // Step 2
     yearLevel: '', university: '', island: '', region: '', studentId: '', course: '', proofOfEnrollment: null,
     // Step 3

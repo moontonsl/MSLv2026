@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from '../../register.module.scss';
-import { ChevronDown, Search, UploadCloud } from 'lucide-react';
+import { ChevronDown, HelpCircle, Search, UploadCloud } from 'lucide-react';
 import { collegePrograms, collegeSchoolOptions } from '../../data/collegeOptions';
 
 const allowedFileTypes = [
@@ -118,7 +118,7 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
 
     const validateFile = (file) => {
         if (!file) {
-            setFieldError('proofOfEnrollment', 'Proof of Enrollment / School ID is required.');
+            setFieldError('proofOfEnrollment', 'Proof of Enrollment / School ID with Validation is required.');
             return false;
         }
 
@@ -226,7 +226,7 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
 
         if (!file) {
             handleInputChange({ target: { name: 'proofOfEnrollment', value: null } });
-            setFieldError('proofOfEnrollment', 'Proof of Enrollment / School ID is required.');
+            setFieldError('proofOfEnrollment', 'Proof of Enrollment / School ID with Validation is required.');
             return;
         }
 
@@ -535,7 +535,7 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
 
             <div className="mb-6">
                 <label className={`${styles['label-register']} block mb-1`}>
-                    Proof of Enrollment / School ID <span className={styles.required}>*</span>
+                    Proof of Enrollment / School ID with Validation <span className={styles.required}>*</span>
                 </label>
                 <div className="relative">
                     <input
@@ -562,7 +562,29 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
                                 ? `Selected File : ${data.proofOfEnrollment.name}`
                                 : 'Upload PDF, JPG, JPEG, PNG, or GIF'}
                         </span>
-                        <UploadCloud className="h-5 w-5 text-gray-400" />
+                        <span className="flex shrink-0 items-center gap-2">
+                            <span className="group relative inline-flex text-gray-500 transition hover:text-brand-500 focus-within:text-brand-500">
+                                <span
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={(event) => {
+                                        event.preventDefault();
+                                        event.stopPropagation();
+                                    }}
+                                    className="focus:outline-none"
+                                    aria-label="Proof of enrollment upload note"
+                                >
+                                    <HelpCircle className="h-4 w-4" />
+                                </span>
+                                <span className="pointer-events-none absolute bottom-full right-0 z-20 mb-2 hidden w-[230px] rounded-lg border border-white/10 bg-[#0B0B0B] px-3 py-2 text-left text-xs leading-[18px] shadow-xl group-hover:block group-focus-within:block">
+                                    <span className="font-semibold text-brand-500">Note:</span>{' '}
+                                    <span className="font-normal text-gray-400">
+                                        When Uploading, make sure to compile documents in one file to avoid confusion.
+                                    </span>
+                                </span>
+                            </span>
+                            <UploadCloud className="h-5 w-5 text-gray-400" />
+                        </span>
                     </label>
                     {errors.proofOfEnrollment && (
                         <div className="absolute right-12 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full border border-red-500 text-xs font-bold text-red-500 pointer-events-none">

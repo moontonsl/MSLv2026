@@ -212,9 +212,18 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                     {!loggedIn ? (
                         <Link
                             href="/Login"
-                            className="rounded-full bg-[#FFC107] px-6 py-2 text-sm font-bold text-black transition duration-300 hover:bg-yellow-400 hover:text-black hover:shadow-[0_0_20px_rgba(255,193,7,.5)]"
+                            className="inline-flex items-center justify-center gap-2.5 px-[23px]"
+                            aria-label="Log in"
                         >
-                            Log In
+                            <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-brand-500 transition duration-300 hover:bg-brand-400 hover:shadow-[0_0_20px_rgba(242,194,26,.45)]">
+                                <span className="absolute inset-0 rounded-full border border-black/10" />
+                                <img
+                                    src="/user-01.svg"
+                                    alt=""
+                                    className="relative h-6 w-6"
+                                    aria-hidden="true"
+                                />
+                            </span>
                         </Link>
                     ) : (
                         <div className="relative" ref={accountRef}>

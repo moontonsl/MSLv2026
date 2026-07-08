@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from '../../register.module.scss';
-import { CalendarDays, ChevronDown } from 'lucide-react';
+import { CalendarDays, ChevronDown, HelpCircle } from 'lucide-react';
 
 const Step1BasicDetails = React.forwardRef(function Step1BasicDetails(
     { data, handleInputChange, validationTrigger },
@@ -540,7 +540,7 @@ const Step1BasicDetails = React.forwardRef(function Step1BasicDetails(
                 {renderFieldError('contactNo')}
             </div>
 
-            <div className="mb-6 relative">
+            <div className="mb-4 relative">
                 <label className={`${styles['label-register']} block mb-1`}>
                     Facebook Profile Link <span className={styles.required}>*</span>
                 </label>
@@ -566,6 +566,35 @@ const Step1BasicDetails = React.forwardRef(function Step1BasicDetails(
                 )}
 
                 {renderFieldError('facebookLink')}
+            </div>
+
+            <div className="mb-6 relative">
+                <div className="mb-1 flex items-center justify-between gap-2">
+                    <label className={`${styles['label-register']} block`}>
+                        Referral Code
+                    </label>
+                </div>
+
+                <div className="relative">
+                    <input
+                        type="text"
+                        name="referralCode"
+                        value={data.referralCode || ''}
+                        onChange={handleInputChange}
+                        className={`${styles['input-field-register']} w-full rounded-xl border border-white/10 bg-[#0B0B0B] px-3.5 py-2.5 pr-10 text-base leading-6 text-white shadow-sm outline-none transition-all placeholder:text-[#71717B] focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400`}
+                        placeholder="e.g. DAKI"
+                    />
+                    <button
+                        type="button"
+                        className="group absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 transition hover:text-brand-500 focus:text-brand-500 focus:outline-none"
+                        aria-label="Referral code help"
+                    >
+                        <HelpCircle className="h-4 w-4" />
+                        <span className="pointer-events-none absolute bottom-full right-0 z-20 mb-2 hidden w-max max-w-[180px] rounded-lg border border-white/10 bg-[#0B0B0B] px-3 py-2 text-left text-xs font-semibold leading-[18px] text-brand-500 shadow-xl group-hover:block group-focus:block">
+                            This Part is Optional
+                        </span>
+                    </button>
+                </div>
             </div>
         </div>
     );
