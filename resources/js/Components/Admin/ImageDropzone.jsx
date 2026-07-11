@@ -9,7 +9,7 @@ export default function ImageDropzone({
         <button
             type="button"
             onClick={onClick}
-            className={`flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-neutral-700 bg-[#1A1A1A] p-8 text-gray-400 transition-colors hover:border-[#FBBF24] ${className}`}
+            className={`flex min-h-[120px] w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-neutral-700 bg-[#1A1A1A] p-4 text-gray-400 transition-colors hover:border-[#FBBF24] sm:min-h-[150px] sm:p-8 ${className}`}
         >
             <CloudUpload className="mb-3 h-8 w-8" />
             <span className="text-center text-sm font-medium text-gray-300">
