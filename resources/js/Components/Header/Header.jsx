@@ -4,7 +4,7 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 import AccountModificationModal from './AccountModificationModal';
 
 const ABOUT_ITEMS = [
-    { label: 'Campus', href: '/about/campus' },
+    { label: 'Campus', href: '/about/Campus' },
     { label: 'Contents & Social Media', href: '/about/contents-social-media' },
     { label: 'Partnerships', href: '/about/partnerships' },
     { label: 'General Affairs', href: '/about/general-affairs' },
