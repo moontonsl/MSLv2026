@@ -152,3 +152,22 @@
   background: rgba(0, 150, 255, 0.05) !important;
   outline: 1px solid rgba(0, 150, 255, 0.4) !important;
 } */
+
+/* Admin FAQ list scrollbar */
+.admin-faq-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #fbbf24 transparent;
+}
+
+.admin-faq-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.admin-faq-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-faq-scroll::-webkit-scrollbar-thumb {
+  background-color: #fbbf24;
+  border-radius: 9999px;
+}

@@ -1,6 +1,6 @@
 import AnnouncementBanner from '@/Components/AnnouncementBanner';
 import MainLayout from '@/Layouts/MainLayout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import {
     ArrowRight,
     ArrowUpRight,
@@ -209,13 +209,13 @@ function AboutMSLSection() {
                         academic success.
                     </p>
 
-                    <button
-                        type="button"
+                    <Link
+                        href="/about"
                         className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-[#FFC107] transition hover:text-yellow-300 sm:text-base"
                     >
                         Learn More About Us
                         <ArrowRight className="h-4 w-4" />
-                    </button>
+                    </Link>
                 </div>
 
                 <div className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-4">

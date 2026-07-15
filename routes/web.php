@@ -9,6 +9,16 @@ Route::get('/', function () {
     return Inertia::render('Home');
 });
 
+Route::get('/about', function () {
+    return Inertia::render('About');
+})->name('about');
+
+Route::get('/content-media', function () {
+    return Inertia::render('ContentMedia');
+})->name('content-media');
+
+Route::redirect('/about/contents-social-media', '/content-media');
+
 Route::get('/news', [\App\Http\Controllers\NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{canonical}', [\App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
 
