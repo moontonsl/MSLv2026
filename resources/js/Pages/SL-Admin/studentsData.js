@@ -32,12 +32,10 @@ const yearLevels = [
 ];
 
 const getStatus = (index) => {
-    const position = index % 10;
-
-    if (position <= 4) return 'Verified';
-    if (position <= 7) return 'Renew';
-    return 'Blocked';
+    return ['New', 'Verified', 'Pending', 'Blocked', 'Inactive'][index % 5];
 };
+
+const getRole = (index) => ['Student', 'Student Leader', 'Regional'][index % 3];
 
 export const students = Array.from({ length: 100 }, (_, index) => {
     const firstName = firstNames[index % firstNames.length];
@@ -55,6 +53,6 @@ export const students = Array.from({ length: 100 }, (_, index) => {
         campus: campuses[(index * 4 + 2) % campuses.length],
         yearLevel: yearLevels[index % yearLevels.length],
         status: getStatus(index),
-        isNew: index % 5 === 0,
+        role: getRole(index),
     };
 });

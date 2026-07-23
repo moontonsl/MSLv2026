@@ -23,10 +23,18 @@ export const accountCounts = {
     blocked: 20,
 };
 
-export const categoryOptions = [
-    { value: 'all', label: 'All Categories' },
-    { value: 'verified', label: 'Verified' },
+export const statusOptions = [
+    { value: 'all', label: 'All Status' },
     { value: 'new', label: 'New' },
-    { value: 'renew', label: 'Renewal' },
+    { value: 'verified', label: 'Verified' },
+    { value: 'pending', label: 'Pending' },
     { value: 'blocked', label: 'Blocked' },
+    { value: 'inactive', label: 'Inactive' },
+];
+
+export const roleOptions = [
+    { value: 'all', label: 'All Roles' },
+    { value: 'student', label: 'Student' },
+    { value: 'student-leader', label: 'Student Leader' },
+    { value: 'regional', label: 'Regional Admin' },
 ];
