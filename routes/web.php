@@ -9,22 +9,25 @@ Route::get('/', function () {
     return Inertia::render('Home');
 });
 
-Route::get('/about', function () {
+Route::get('/About', function () {
     return Inertia::render('About');
 })->name('about');
+Route::redirect('/about', '/About');
 
-Route::get('/content-media', function () {
+Route::get('/Contents&SocialMedia', function () {
     return Inertia::render('ContentMedia');
-})->name('content-media');
+})->name('contents.social.media');
+Route::redirect('/content-media', '/Contents&SocialMedia');
+Route::redirect('/about/contents-social-media', '/Contents&SocialMedia');
 
-Route::redirect('/about/contents-social-media', '/content-media');
+Route::get('/News', [\App\Http\Controllers\NewsController::class, 'index'])->name('news.index');
+Route::get('/News/{canonical}', [\App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
+Route::redirect('/news', '/News');
 
-Route::get('/news', [\App\Http\Controllers\NewsController::class, 'index'])->name('news.index');
-Route::get('/news/{canonical}', [\App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
-
-Route::get('/Events', function () {
+Route::get('/Event', function () {
     return Inertia::render('Events/Index');
 })->name('events');
+Route::redirect('/Events', '/Event');
 
 Route::get('/Buffs&Support', function () {
     return Inertia::render('Buffs and Support/Index');
@@ -33,6 +36,48 @@ Route::get('/Buffs&Support', function () {
 Route::get('/Campus', function () {
     return Inertia::render('Campus/Index');
 })->name('campus');
+
+Route::get('/CampusTournament', function () {
+    return Inertia::render('Campus/Index');
+})->name('campus.tournament');
+
+Route::get('/Programs', function () {
+    return Inertia::render('Home');
+})->name('programs');
+
+Route::get('/Partnerships', function () {
+    return Inertia::render('About');
+})->name('partnerships');
+
+Route::get('/GeneralAffairs', function () {
+    return Inertia::render('About');
+})->name('general.affairs');
+
+Route::get('/AdminLogIn', function () {
+    return Inertia::render('Login/Login');
+})->name('admin.login');
+Route::redirect('/Login', '/AdminLogIn');
+
+Route::get('/WebAdmin', function () {
+    return Inertia::render('SL-Admin/Index');
+})->name('web.admin');
+Route::redirect('/SL-Admin', '/WebAdmin');
+
+Route::get('/CampusAdmin', function () {
+    return Inertia::render('SL-Admin/Index');
+})->name('campus.admin');
+
+Route::get('/CSMAdmin', function () {
+    return Inertia::render('SL-Admin/Index');
+})->name('csm.admin');
+
+Route::get('/GenAdAdmin', function () {
+    return Inertia::render('SL-Admin/Index');
+})->name('genad.admin');
+
+Route::get('/MSLNetAdmin', function () {
+    return Inertia::render('SL-Admin/Index');
+})->name('mslnet.admin');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -53,19 +98,10 @@ Route::get('/studentportal', function () { //put the username - for backend task
 
 require __DIR__.'/auth.php';
 
-Route::get('/SL-Admin', function () {
-    return Inertia::render('SL-Admin/Index');
-})->name('sl.admin');
-
 //TEST PAGE ROUTES
 Route::get('/Testpage', function () {
     return Inertia::render('Testpage');
 })->name('Testpage');
-
-//LOGIN PAGE ROUTES
-Route::get('/Login', function () {
-    return Inertia::render('Login/Login');
-})->name('Login');
 
 //FORGOT PASSWORD PAGE ROUTES
 Route::get('/ForgotPassword', function () {
@@ -91,3 +127,4 @@ Route::get('/AccountCreation/College', function () {
 Route::get('/api/news/articles', [\App\Http\Controllers\NewsController::class, 'getArticles']);
 Route::get('/api/news/highlights', [\App\Http\Controllers\NewsController::class, 'getHighlights']);
 Route::get('/api/news/related', [\App\Http\Controllers\NewsController::class, 'getRelatedArticles']);
+

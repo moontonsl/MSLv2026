@@ -210,7 +210,7 @@ function AboutMSLSection() {
                     </p>
 
                     <Link
-                        href="/about"
+                        href="/About"
                         className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-[#FFC107] transition hover:text-yellow-300 sm:text-base"
                     >
                         Learn More About Us
