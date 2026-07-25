@@ -865,7 +865,7 @@ export default function EditProfileModal({ profile, onClose, onSave }) {
                     title="MSL Account deleted successfully!"
                     centered
                     onConfirm={() => {
-                        window.location.href = '/Login';
+                        window.location.href = '/AdminLogIn';
                     }}
                 />
             ) : null}

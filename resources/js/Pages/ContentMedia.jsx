@@ -411,7 +411,7 @@ export default function ContentMedia() {
                         </p>
                         <div className="flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4">
                             <Link
-                                href="/about"
+                                href="/About"
                                 className="w-full rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-3 text-sm font-bold transition-opacity hover:opacity-90 sm:w-auto sm:px-8"
                             >
                                 View Open Roles
