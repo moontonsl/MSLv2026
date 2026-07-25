@@ -11,17 +11,17 @@ import {
 } from 'lucide-react';
 
 const PROGRAM_LINKS = [
-    { label: 'The MSL Network', href: '/programs/msl-network' },
-    { label: 'Campus Tournaments', href: '/programs/campus-tournaments' },
+    { label: 'The MSL Network', href: '/Programs' },
+    { label: 'Campus Tournaments', href: '/CampusTournament' },
     { label: 'MCC League', href: '/programs/mcc-league' },
     { label: 'Leadership Summit', href: '/programs/leadership-summit' },
     { label: 'Community Grants', href: '/programs/community-grants' },
 ];
 
 const RESOURCE_LINKS = [
-    { label: 'Partner With Us', href: '/partner' },
+    { label: 'Partner With Us', href: '/Partnerships' },
     { label: 'Join the Team', href: '/careers' },
-    { label: 'News & Updates', href: '/news' },
+    { label: 'News & Updates', href: '/News' },
 ];
 
 const TRUST_BADGES = [

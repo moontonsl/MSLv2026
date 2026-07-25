@@ -5,15 +5,15 @@ import AccountModificationModal from './AccountModificationModal';
 
 const ABOUT_ITEMS = [
     { label: 'Campus', href: '/Campus' },
-    { label: 'Contents & Social Media', href: '/about/contents-social-media' },
-    { label: 'Partnerships', href: '/about/partnerships' },
-    { label: 'General Affairs', href: '/about/general-affairs' },
+    { label: 'Contents & Social Media', href: '/Contents&SocialMedia' },
+    { label: 'Partnerships', href: '/Partnerships' },
+    { label: 'General Affairs', href: '/GeneralAffairs' },
 ];
 
 const PROGRAMS_ITEMS = [
-    { label: 'The MSL Network', href: '/programs/msl-network' },
+    { label: 'The MSL Network', href: '/MSLNetAdmin' },
     { label: 'MSL Collegiate Cup', href: '/programs/collegiate-cup' },
-    { label: 'Campus Tournaments', href: '/programs/campus-tournaments' },
+    { label: 'Campus Tournaments', href: '/CampusTournament' },
     { label: 'Buffs & Support', href: '/Buffs&Support' },
     { label: 'Referral Program', href: '/programs/referral' },
 ];
@@ -104,10 +104,10 @@ function DesktopNavigation({
             <Link href="/careers" className={navLinkClass}>
                 Careers
             </Link>
-            <Link href="/Events" className={navLinkClass}>
+            <Link href="/Event" className={navLinkClass}>
                 Events
             </Link>
-            <Link href="/news" className={navLinkClass}>
+            <Link href="/News" className={navLinkClass}>
                 News
             </Link>
         </nav>
@@ -211,7 +211,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                 <div className="relative z-[61] flex shrink-0 items-center justify-end">
                     {!loggedIn ? (
                         <Link
-                            href="/Login"
+                            href="/AdminLogIn"
                             className="inline-flex items-center justify-center gap-2.5 px-[23px]"
                             aria-label="Log in"
                         >
@@ -256,7 +256,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                         user.role === 'Super Admin' ||
                                         user.role === 'Regional Admin') && (
                                         <Link
-                                            href="/SL-Admin"
+                                            href="/WebAdmin"
                                             className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
                                             onClick={() => setIsAccountDropdownOpen(false)}
                                         >
@@ -267,7 +267,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                         user.role === 'Regional Admin' ||
                                         user.role === 'Super Admin') && (
                                         <a
-                                            href="/campus-tournament"
+                                            href="/CampusTournament"
                                             className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
                                             onClick={() => setIsAccountDropdownOpen(false)}
                                         >
@@ -428,14 +428,14 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                             Careers
                         </Link>
                         <Link
-                            href="/Events"
+                            href="/Event"
                             className={`${navLinkClass} py-2`}
                             onClick={() => setMobileMenuOpen(false)}
                         >
                             Events
                         </Link>
                         <Link
-                            href="/news"
+                            href="/News"
                             className={`${navLinkClass} py-2`}
                             onClick={() => setMobileMenuOpen(false)}
                         >

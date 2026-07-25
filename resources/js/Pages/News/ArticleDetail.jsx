@@ -14,7 +14,7 @@ export default function ArticleDetail({ article, readNext = [] }) {
                 <Head title="Article not found" />
                 <div className="min-h-[50vh] bg-[#0A0A0A] px-4 py-24 text-center text-white">
                     <p className="mb-6 text-gray-400">This article could not be found.</p>
-                    <Link href="/news" className="font-bold text-[#FBBF24] hover:underline">
+                    <Link href="/News" className="font-bold text-[#FBBF24] hover:underline">
                         Back to News
                     </Link>
                 </div>

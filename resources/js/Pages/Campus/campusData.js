@@ -44,7 +44,7 @@ export const campusPrograms = [
         description:
             "Compete for school pride in our official competitive circuits. Whether it's the Monthly Online Tournaments for remote play or the Onsite Events held within campus premises.",
         action: 'Find Your Tournament',
-        href: '/Events',
+        href: '/Event',
         Icon: Trophy,
     },
     {
