@@ -1,7 +1,9 @@
 import React from 'react';
 import styles from '../../register.module.scss';
-import { ChevronDown, Search, X, Gamepad2 } from 'lucide-react';
+import { ChevronDown, Search, X, Gamepad2, AlertTriangle, KeyRound } from 'lucide-react';
 import { mlbbHeroes, mlbbRanks, mlbbRoles, mlbbVerificationSample } from '../../data/mlbbOptions';
+import axios from 'axios';
+import { usePage } from '@inertiajs/react';
 
 const Step3GameDetails = React.forwardRef(function Step3GameDetails(
     {
@@ -25,6 +27,24 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
     const [roleSearch, setRoleSearch] = React.useState('');
     const [heroSearch, setHeroSearch] = React.useState('');
     const [showVerificationModal, setShowVerificationModal] = React.useState(true);
+    const { props } = usePage();
+    const mlbbBypass = props.mlbb_bypass;
+
+    // Real verification states
+    const [verificationStep, setVerificationStep] = React.useState(1); // 1 = input details, 2 = verify code
+    const [mlId, setMlId] = React.useState('');
+    const [mlServer, setMlServer] = React.useState('');
+    const [otp, setOtp] = React.useState('');
+    const [verificationLoading, setVerificationLoading] = React.useState(false);
+    const [verificationError, setVerificationError] = React.useState('');
+    const [cooldown, setCooldown] = React.useState(0);
+
+    React.useEffect(() => {
+        if (cooldown > 0) {
+            const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [cooldown]);
 
     const requiredFields = ['userId', 'serverId', 'ign', 'rank', 'inGameRole', 'mainHero'];
 
@@ -230,10 +250,77 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
         handleInputChange({ target: { name: 'userId', value: mlbbVerificationSample.userId } });
         handleInputChange({ target: { name: 'serverId', value: mlbbVerificationSample.serverId } });
         handleInputChange({ target: { name: 'ign', value: mlbbVerificationSample.ign } });
+        if (mlbbVerificationSample.rank) {
+            handleInputChange({ target: { name: 'rank', value: mlbbVerificationSample.rank } });
+        }
         clearFieldError('userId');
         clearFieldError('serverId');
         clearFieldError('ign');
         setShowVerificationModal(false);
+    };
+
+    const handleSendCode = async (e) => {
+        if (e) e.preventDefault();
+        if (!mlId || !mlServer) {
+            setVerificationError('Please enter both User ID and Server ID.');
+            return;
+        }
+
+        setVerificationLoading(true);
+        setVerificationError('');
+        try {
+            const response = await axios.post(route('mlbb.send-vc'), {
+                role_id: mlId,
+                zone_id: mlServer,
+            });
+            if (response.data.success) {
+                setVerificationStep(2);
+                setCooldown(60);
+            } else {
+                setVerificationError(response.data.message || 'Failed to send verification code.');
+            }
+        } catch (err) {
+            setVerificationError(err.response?.data?.message || 'Error sending verification code.');
+        } finally {
+            setVerificationLoading(false);
+        }
+    };
+
+    const handleVerifyCode = async (e) => {
+        if (e) e.preventDefault();
+        if (!otp) {
+            setVerificationError('Please enter the verification code.');
+            return;
+        }
+
+        setVerificationLoading(true);
+        setVerificationError('');
+        try {
+            const response = await axios.post(route('mlbb.verify-vc'), {
+                role_id: mlId,
+                zone_id: mlServer,
+                ml_vc: otp,
+            });
+            if (response.data.success) {
+                const profile = response.data.profile;
+                handleInputChange({ target: { name: 'userId', value: mlId } });
+                handleInputChange({ target: { name: 'serverId', value: mlServer } });
+                handleInputChange({ target: { name: 'ign', value: profile.ign } });
+                if (profile.rank) {
+                    handleInputChange({ target: { name: 'rank', value: profile.rank } });
+                }
+                clearFieldError('userId');
+                clearFieldError('serverId');
+                clearFieldError('ign');
+                setShowVerificationModal(false);
+            } else {
+                setVerificationError(response.data.message || 'Invalid verification code.');
+            }
+        } catch (err) {
+            setVerificationError(err.response?.data?.message || 'Error verifying code.');
+        } finally {
+            setVerificationLoading(false);
+        }
     };
 
     const handleVerificationCancel = () => {
@@ -291,37 +378,147 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                             </div>
                         </div>
 
-                        <div className="text-center mb-6">
+                        <div className="text-center mb-4">
                             <h3 className="text-xl font-semibold text-white">
                                 Verify your MLBB Account
                             </h3>
                             <p className="text-sm text-white/60 mt-2">
-                                You will be redirected to log in and verify your Mobile Legends account.
-                                This step confirms your MLBB profile before submitting your entry.
+                                Confirm your Mobile Legends account by sending a verification code to your in-game mailbox.
                             </p>
                         </div>
 
-                        <div className="flex flex-col gap-3">
-                            <button
-                                type="button"
-                                onClick={handleVerificationContinue}
-                                className="w-full py-3 rounded-xl bg-yellow-500 text-black font-semibold hover:bg-yellow-400 transition"
-                            >
-                                Continue
-                            </button>
+                        {/* BYPASS ACTIVE BANNER */}
+                        {mlbbBypass ? (
+                            <div className="mb-5 bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 text-xs text-amber-400 text-left flex items-start gap-2.5">
+                                <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5" />
+                                <div>
+                                    <span className="font-semibold block mb-0.5">Bypass Mode Active</span>
+                                    You can skip the real verification code check. Clicking continue will auto-fill mock user credentials.
+                                </div>
+                            </div>
+                        ) : null}
 
-                            <button
-                                type="button"
-                                onClick={handleVerificationCancel}
-                                className="w-full py-3 rounded-xl border border-yellow-500 text-yellow-400 font-semibold hover:bg-yellow-500 hover:text-black transition"
-                            >
-                                Cancel
-                            </button>
-                        </div>
+                        {verificationError && (
+                            <div className="mb-4 bg-red-500/10 border border-red-500/20 rounded-xl p-3 text-xs text-red-400 text-center">
+                                {verificationError}
+                            </div>
+                        )}
 
-                        {/* <div className="mt-4 text-xs text-white/40 text-center">
-                            MLBB verification is handled in the background.
-                        </div> */}
+                        {mlbbBypass ? (
+                            /* BYPASS / MOCK ACTION */
+                            <div className="flex flex-col gap-3">
+                                <button
+                                    type="button"
+                                    onClick={handleVerificationContinue}
+                                    className="w-full py-3 rounded-xl bg-yellow-500 text-black font-semibold hover:bg-yellow-400 transition"
+                                >
+                                    Continue (Bypass)
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleVerificationCancel}
+                                    className="w-full py-3 rounded-xl border border-yellow-500 text-yellow-400 font-semibold hover:bg-yellow-500 hover:text-black transition"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        ) : (
+                            /* REAL FLOW / INTERACTIVE API ACTIONS */
+                            <form onSubmit={verificationStep === 1 ? handleSendCode : handleVerifyCode} className="space-y-4">
+                                {verificationStep === 1 ? (
+                                    <>
+                                        <div className="space-y-3">
+                                            <div>
+                                                <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                                                    MLBB User ID <span className="text-red-500">*</span>
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={mlId}
+                                                    onChange={(e) => setMlId(e.target.value)}
+                                                    placeholder="e.g. 123456789"
+                                                    className="w-full p-3 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 outline-none text-white transition-all text-sm"
+                                                    required
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                                                    MLBB Server ID <span className="text-red-500">*</span>
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={mlServer}
+                                                    onChange={(e) => setMlServer(e.target.value)}
+                                                    placeholder="e.g. 1234"
+                                                    className="w-full p-3 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 outline-none text-white transition-all text-sm"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            type="submit"
+                                            disabled={verificationLoading}
+                                            className="w-full py-3 mt-2 rounded-xl bg-yellow-500 text-black font-semibold hover:bg-yellow-400 transition disabled:opacity-50"
+                                        >
+                                            {verificationLoading ? "Sending..." : "Send Verification Code"}
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="space-y-3">
+                                            <div className="bg-zinc-900 rounded-lg p-3 border border-zinc-800 text-xs text-gray-400 flex items-center justify-between">
+                                                <span>Target ID: {mlId} ({mlServer})</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setVerificationStep(1);
+                                                        setVerificationError('');
+                                                    }}
+                                                    className="text-yellow-500 hover:underline font-semibold"
+                                                >
+                                                    Change
+                                                </button>
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
+                                                    Enter Verification Code <span className="text-red-500">*</span>
+                                                </label>
+                                                <div className="relative">
+                                                    <input
+                                                        type="text"
+                                                        value={otp}
+                                                        onChange={(e) => setOtp(e.target.value)}
+                                                        placeholder="Check in-game mail"
+                                                        className="w-full p-3 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 outline-none text-white transition-all text-sm text-center font-bold tracking-widest"
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col gap-2 mt-2">
+                                            <button
+                                                type="submit"
+                                                disabled={verificationLoading}
+                                                className="w-full py-3 rounded-xl bg-yellow-500 text-black font-semibold hover:bg-yellow-400 transition disabled:opacity-50"
+                                            >
+                                                {verificationLoading ? "Verifying..." : "Verify Code"}
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={handleSendCode}
+                                                disabled={verificationLoading || cooldown > 0}
+                                                className="w-full py-2 text-xs font-medium text-gray-400 hover:text-white transition disabled:opacity-50"
+                                            >
+                                                {cooldown > 0 ? `Resend Code in ${cooldown}s` : "Resend Verification Code"}
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
+                            </form>
+                        )}
                     </div>
                 </div>
             )}
