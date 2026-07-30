@@ -53,15 +53,13 @@ Route::get('/GeneralAffairs', function () {
     return Inertia::render('About');
 })->name('general.affairs');
 
-Route::get('/AdminLogIn', function () {
+Route::get('/Login', function () {
     return Inertia::render('Login/Login');
-})->name('admin.login');
-Route::redirect('/Login', '/AdminLogIn');
+})->name('Login');
 
-Route::get('/WebAdmin', function () {
+Route::get('/SL-Admin', function () {
     return Inertia::render('SL-Admin/Index');
-})->name('web.admin');
-Route::redirect('/SL-Admin', '/WebAdmin');
+})->name('sl.admin');
 
 Route::get('/CampusAdmin', function () {
     return Inertia::render('SL-Admin/Index');
