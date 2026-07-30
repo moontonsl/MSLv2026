@@ -34,6 +34,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'mlbb_bypass' => (bool) session('mlbb_bypass', false),
         ];
     }
 }
