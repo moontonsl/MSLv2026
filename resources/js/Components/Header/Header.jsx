@@ -211,7 +211,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                 <div className="relative z-[61] flex shrink-0 items-center justify-end">
                     {!loggedIn ? (
                         <Link
-                            href="/AdminLogIn"
+                            href="/Login"
                             className="inline-flex items-center justify-center gap-2.5 px-[23px]"
                             aria-label="Log in"
                         >
@@ -256,7 +256,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                         user.role === 'Super Admin' ||
                                         user.role === 'Regional Admin') && (
                                         <Link
-                                            href="/WebAdmin"
+                                            href="/SL-Admin"
                                             className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
                                             onClick={() => setIsAccountDropdownOpen(false)}
                                         >

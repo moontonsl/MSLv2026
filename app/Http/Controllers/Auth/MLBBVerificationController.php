@@ -21,6 +21,13 @@ class MLBBVerificationController extends Controller
             'zone_id' => 'required|string',
         ]);
 
+        if (session('mlbb_bypass', false)) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Bypass active: Verification code sent successfully (Mocked).',
+            ]);
+        }
+
         // Enforce strict unique constraint: one MLBB account per user
         if (User::where('ml_id', $request->role_id)->exists()) {
             return response()->json([
@@ -69,6 +76,33 @@ class MLBBVerificationController extends Controller
             'zone_id' => 'required|string',
             'ml_vc' => 'required|string',
         ]);
+
+        if (session('mlbb_bypass', false)) {
+            $mockIgn = $request->role_id === '0011' ? 'BypassedPlayer' : 'Player_' . $request->role_id;
+            session([
+                'verified_mlbb_profile' => [
+                    'ml_id' => $request->role_id,
+                    'ml_server' => $request->zone_id,
+                    'ml_ign' => $mockIgn,
+                    'ml_avatar' => '1',
+                    'ml_level' => 30,
+                    'ml_rank' => 'Mythic',
+                    'ml_rank_level' => 1,
+                ]
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Bypass active: Verification successful.',
+                'profile' => [
+                    'ign' => $mockIgn,
+                    'avatar' => '1',
+                    'level' => 30,
+                    'rank' => 'Mythic',
+                    'rank_level' => 1,
+                ],
+            ]);
+        }
 
         // Re-verify strict unique constraint
         if (User::where('ml_id', $request->role_id)->exists()) {
