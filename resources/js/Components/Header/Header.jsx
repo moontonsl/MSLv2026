@@ -256,7 +256,13 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                         user.role === 'Super Admin' ||
                                         user.role === 'Regional Admin') && (
                                         <Link
-                                            href="/SL-Admin"
+                                            href={
+                                                user.role === 'Super Admin'
+                                                    ? '/CoreAdmin'
+                                                    : user.role === 'Regional Admin'
+                                                        ? '/RegionalAdmin'
+                                                        : '/StudentLeader'
+                                            }
                                             className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
                                             onClick={() => setIsAccountDropdownOpen(false)}
                                         >

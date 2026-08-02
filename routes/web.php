@@ -174,6 +174,18 @@ Route::middleware(['auth'])->group(function () {
 
 require __DIR__.'/auth.php';
 
+Route::get('/StudentLeader', function () {
+    return Inertia::render('VerificationPages/StudentLeader');
+})->name('student.leader');
+
+Route::get('/RegionalAdmin', function () {
+    return Inertia::render('VerificationPages/RegionalAdmin');
+})->name('regional.admin');
+
+Route::get('/CoreAdmin', function () {
+    return Inertia::render('VerificationPages/CoreAdmin');
+})->name('core.admin');
+
 //TEST PAGE ROUTES
 Route::get('/Testpage', function () {
     return Inertia::render('Testpage');
