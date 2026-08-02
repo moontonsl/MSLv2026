@@ -27,6 +27,31 @@ The implemented database includes:
 
 It also uses the existing `users`, `cities`, and `barangays` tables.
 
+## Current implementation status
+
+The normalized tournament schema is implemented and applied to the configured
+MySQL `mslv2026` database through these migrations:
+
+| Migration | Tables or changes |
+|---|---|
+| `2026_07_30_000005_create_tournament_reference_and_region_admin_tables` | Tournament lookup tables, current Regional Admin assignments, and assignment history |
+| `2026_07_30_000006_create_campus_tournament_tables` | Tournaments, review history, and schedule revision history |
+| `2026_07_30_000007_create_tournament_roster_tables` | Teams, participants, invitations, join codes, merge runs, and assignment history |
+| `2026_07_30_000008_create_tournament_result_tables` | Result revisions, result entries, and the current-result pointer |
+
+Verification on 2026-07-30 confirmed:
+
+- all migrations are recorded as applied;
+- `tournament_types` contains 2 seeded records;
+- `lane_roles` contains 5 seeded records;
+- `tournament_placements` contains 5 seeded records;
+- operational Regional Admin and tournament tables contain no invented sample
+  records.
+
+Only the database layer is implemented for the tournament module. Tournament
+Eloquent models, policies, services, scheduled merging, controllers, exports,
+and user interfaces have not been added.
+
 ## Entity relationships
 
 ```mermaid
@@ -86,8 +111,8 @@ Relationship summary:
 - A user has at most one participant record per tournament.
 - A team has at most one player assigned to each fixed lane role.
 - A tournament has at most one roster-merge run.
-- Tournament results are immutable revisions; a tournament points to its
-  current revision.
+- Tournament results are represented as revisions, and a tournament can point
+  to its current revision.
 
 ## Tables
 
@@ -397,8 +422,9 @@ Plain-text join codes must never be stored.
 ## Automatic solo-roster merging
 
 `tournament_roster_merge_runs` has a unique `tournament_id`, making roster
-locking idempotent at the database level. It stores run state and summary
-counts.
+merge-run creation idempotent at the database level. It stores run state and
+summary counts. The application must still make the complete merge transaction
+safe to retry.
 
 `tournament_roster_assignment_history` records each pooled participant's source
 team, final team, preferred/previous/final role, FCFS ordering position, and
@@ -419,9 +445,10 @@ The future application transaction must:
 
 ## Revisioned results
 
-`tournament_result_revisions` stores an immutable version number, submitter,
-reason, and submission timestamp. `UNIQUE (tournament_id, version)` preserves
-revision ordering.
+`tournament_result_revisions` stores a version number, submitter, reason, and
+submission timestamp. `UNIQUE (tournament_id, version)` preserves revision
+ordering. The schema supports revision history, but the application must
+prohibit updates and deletes that would violate immutability.
 
 `tournament_result_entries` stores one row per team and revision, its placement,
 team-name snapshot, and JSON roster snapshot. Placement is intentionally not
@@ -454,6 +481,34 @@ Date casts currently implemented:
 
 Tournament Eloquent models and application behavior are intentionally deferred.
 This phase implements only the normalized database.
+
+## Database-enforced tournament rules
+
+The implemented tournament schema currently enforces:
+
+- one current Regional Admin row per official region;
+- foreign-key references to official regions, campuses, users, teams, lookup
+  values, revisions, and history records;
+- restrictive deletion for tournament and administrative history;
+- tournament approval values: `pending`, `approved`, `rejected`, `cancelled`;
+- review decisions: `approved`, `rejected`;
+- team formation methods: `premade`, `solo`;
+- team statuses: `assembling`, `registered`, `merged`, `withdrawn`,
+  `not_qualified`;
+- participant entry methods, roster roles, and participation statuses;
+- invitation, merge-run, and merge-outcome values;
+- one participant record per `(tournament_id, user_id)`;
+- one non-null assigned lane role per team;
+- one active team name per tournament when `active_name` is populated;
+- one merge run per tournament;
+- one merge-history row per participant and merge run;
+- one result revision version per tournament;
+- one result entry per team and revision;
+- seeded foreign-key values for tournament type, lane role, and placement.
+
+MySQL does not provide partial unique indexes in this design. Consequently,
+`active_name` must be set to `NULL` when a team becomes inactive so its name can
+be reused.
 
 ## Migration order
 
@@ -513,11 +568,10 @@ php artisan db:seed --class=InstitutionSeeder
 
 ## Current enforcement boundaries
 
-The database currently enforces foreign keys, uniqueness, and deletion
-behavior. The following rules still require Laravel enums, validation, policies,
-or services:
+The following rules are not fully enforced by the database and require later
+Laravel validation, policies, or transactional services:
 
-- Allowed status and role values
+- Allowed string status and role values on the campus-foundation tables
 - Barangay must belong to the selected city
 - Affiliation end time must not precede its start time
 - Approval metadata must match the affiliation status
@@ -530,14 +584,22 @@ or services:
 - Tournament reviewers must be the current administrator for the campus's
   derived official region.
 - Participants must have an active affiliation with the host campus.
+- A participant's `team_id` must belong to the same tournament as the
+  participant.
+- A team's `captain_user_id` must identify its active captain participant.
 - Invitation and join-code actions must occur before roster lock.
 - Registered teams must have exactly five active participants and one captain.
+- Inactive participants must not retain an assigned lane role that blocks an
+  active player through the team/role unique constraint.
 - Only one invitation may be pending for a user/team at a time.
 - Only one active join code may exist for a team.
 - Solo merging must run transactionally and lock relevant tournament,
   participant, and team rows.
 - Result corrections after version 1 require a reason.
 - A current result revision must belong to the same tournament.
+- A result entry's revision and team must belong to the same tournament.
+- Result-revision and result-entry rows must be treated as immutable after
+  submission.
 
 These application rules must be implemented before exposing campus-management
 write operations.
