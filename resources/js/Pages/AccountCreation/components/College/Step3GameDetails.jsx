@@ -1,9 +1,7 @@
 import React from 'react';
 import styles from '../../register.module.scss';
-import { ChevronDown, Search, X, Gamepad2, AlertTriangle, KeyRound } from 'lucide-react';
-import { mlbbHeroes, mlbbRanks, mlbbRoles, mlbbVerificationSample } from '../../data/mlbbOptions';
-import axios from 'axios';
-import { usePage } from '@inertiajs/react';
+import { ChevronDown, Search, X, Gamepad2 } from 'lucide-react';
+import { mlbbRanks, mlbbRoles, mlbbVerificationSample } from '../../data/mlbbOptions';
 
 const Step3GameDetails = React.forwardRef(function Step3GameDetails(
     {
@@ -16,16 +14,13 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
 ) {
     const rankDropdownRef = React.useRef(null);
     const roleDropdownRef = React.useRef(null);
-    const heroDropdownRef = React.useRef(null);
     const previousValidationTriggerRef = React.useRef(step3ValidationTrigger);
 
     const [errors, setErrors] = React.useState({});
     const [rankOpen, setRankOpen] = React.useState(false);
     const [roleOpen, setRoleOpen] = React.useState(false);
-    const [heroOpen, setHeroOpen] = React.useState(false);
     const [rankSearch, setRankSearch] = React.useState('');
     const [roleSearch, setRoleSearch] = React.useState('');
-    const [heroSearch, setHeroSearch] = React.useState('');
     const [showVerificationModal, setShowVerificationModal] = React.useState(true);
     const { props } = usePage();
     const mlbbBypass = props.mlbb_bypass;
@@ -46,7 +41,7 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
         }
     }, [cooldown]);
 
-    const requiredFields = ['userId', 'serverId', 'ign', 'rank', 'inGameRole', 'mainHero'];
+    const requiredFields = ['userId', 'serverId', 'ign', 'rank', 'inGameRole'];
 
     const setFieldError = (name, error) => {
         setErrors((prev) => ({
@@ -104,7 +99,6 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                 ign: 'In-Game Name',
                 rank: 'Current Rank',
                 inGameRole: 'MLBB Role',
-                mainHero: 'Main Hero',
             };
 
             return validateField(field, data[field], labels[field]);
@@ -123,11 +117,6 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
         return !query || role.toLowerCase().includes(query);
     });
 
-    const filteredHeroes = mlbbHeroes.filter((hero) => {
-        const query = heroSearch.toLowerCase().trim();
-        return !query || hero.toLowerCase().includes(query);
-    });
-
     const handleSelect = (name, value, closeDropdown, clearSearch) => {
         handleInputChange({ target: { name, value } });
         clearFieldError(name);
@@ -142,10 +131,6 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
 
         if (roleDropdownRef.current && !roleDropdownRef.current.contains(event.target)) {
             setRoleOpen(false);
-        }
-
-        if (heroDropdownRef.current && !heroDropdownRef.current.contains(event.target)) {
-            setHeroOpen(false);
         }
     }, []);
 
@@ -660,23 +645,6 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                         style={getFieldStyle('squadAbbreviation')}
                     />
                 </div>
-            </div>
-
-            <div className="mb-6">
-                {renderDropdown(
-                    'Main Hero',
-                    data.mainHero,
-                    'Select hero',
-                    heroOpen,
-                    setHeroOpen,
-                    heroDropdownRef,
-                    'mainHero',
-                    heroSearch,
-                    setHeroSearch,
-                    filteredHeroes,
-                    (value) => handleSelect('mainHero', value, setHeroOpen, setHeroSearch),
-                    'Search hero...'
-                )}
             </div>
         </div>
     );

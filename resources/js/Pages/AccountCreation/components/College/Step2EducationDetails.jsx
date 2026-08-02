@@ -102,16 +102,6 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
             return false;
         }
 
-        if (!/^[A-Za-z0-9-]+$/.test(value)) {
-            setFieldError('studentId', 'Student ID can only contain letters, numbers, and dashes.');
-            return false;
-        }
-
-        if (!/[A-Za-z]/.test(value) || !/\d/.test(value) || !/-/.test(value)) {
-            setFieldError('studentId', 'Student ID must include letters, numbers, and a dash.');
-            return false;
-        }
-
         clearFieldError('studentId');
         return true;
     };
@@ -184,41 +174,14 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
     };
 
     const handleStudentIdChange = (e) => {
-        const rawValue = e.target.value;
         handleInputChange(e);
 
-        if (!rawValue) {
+        if (!e.target.value.trim()) {
             clearFieldError('studentId');
             return;
         }
 
-        if (/^[A-Za-z0-9-]+$/.test(rawValue) && /[A-Za-z]/.test(rawValue) && /\d/.test(rawValue) && /-/.test(rawValue)) {
-            clearFieldError('studentId');
-            return;
-        }
-
-        setFieldError('studentId', 'Student ID must include letters, numbers, and a dash.');
-    };
-
-    const handleStudentIdPaste = (e) => {
-        e.preventDefault();
-
-        const pastedValue = e.clipboardData.getData('text');
-
-        if (/^[A-Za-z0-9-]+$/.test(pastedValue) && /[A-Za-z]/.test(pastedValue) && /\d/.test(pastedValue) && /-/.test(pastedValue)) {
-            handleInputChange({
-                target: {
-                    name: 'studentId',
-                    value: pastedValue,
-                },
-            });
-            clearFieldError('studentId');
-            return;
-        }
-
-        if (pastedValue.trim()) {
-            setFieldError('studentId', 'Student ID must include letters, numbers, and a dash.');
-        }
+        clearFieldError('studentId');
     };
 
     const handleFileChange = (e) => {
@@ -514,12 +477,9 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
                         name="studentId"
                         value={data.studentId}
                         onChange={handleStudentIdChange}
-                        onPaste={handleStudentIdPaste}
                         onBlur={(e) => validateStudentId(e.target.value)}
                         inputMode="text"
-                        pattern="[A-Za-z0-9-]*"
-                        maxLength={20}
-                        placeholder="Letters, numbers, and dashes only"
+                        placeholder="Enter your student ID"
                         className={getFieldClassName('studentId', 'pr-10')}
                         style={getFieldStyle('studentId')}
                     />
