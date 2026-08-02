@@ -14,15 +14,6 @@ export const slAdminProfile = {
     verified: true,
 };
 
-export const studentCount = 100;
-
-export const accountCounts = {
-    verified: 50,
-    new: 20,
-    renewal: 30,
-    blocked: 20,
-};
-
 export const statusOptions = [
     { value: 'all', label: 'All Status' },
     { value: 'new', label: 'New' },
@@ -30,11 +21,4 @@ export const statusOptions = [
     { value: 'pending', label: 'Pending' },
     { value: 'blocked', label: 'Blocked' },
     { value: 'inactive', label: 'Inactive' },
-];
-
-export const roleOptions = [
-    { value: 'all', label: 'All Roles' },
-    { value: 'student', label: 'Student' },
-    { value: 'student-leader', label: 'Student Leader' },
-    { value: 'regional', label: 'Regional Admin' },
 ];

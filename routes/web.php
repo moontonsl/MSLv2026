@@ -43,9 +43,17 @@ Route::get('/studentportal', function () { //put the username - for backend task
 
 require __DIR__.'/auth.php';
 
-Route::get('/SL-Admin', function () {
-    return Inertia::render('SL-Admin/Index');
-})->name('sl.admin');
+Route::get('/StudentLeader', function () {
+    return Inertia::render('VerificationPages/StudentLeader');
+})->name('student.leader');
+
+Route::get('/RegionalAdmin', function () {
+    return Inertia::render('VerificationPages/RegionalAdmin');
+})->name('regional.admin');
+
+Route::get('/CoreAdmin', function () {
+    return Inertia::render('VerificationPages/CoreAdmin');
+})->name('core.admin');
 
 //TEST PAGE ROUTES
 Route::get('/Testpage', function () {

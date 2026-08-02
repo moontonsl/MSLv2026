@@ -35,7 +35,7 @@ const getStatus = (index) => {
     return ['New', 'Verified', 'Pending', 'Blocked', 'Inactive'][index % 5];
 };
 
-const getRole = (index) => ['Student', 'Student Leader', 'Regional'][index % 3];
+const getRole = (index) => ['Student', 'Student Leader', 'Regional Admin'][index % 3];
 
 export const students = Array.from({ length: 100 }, (_, index) => {
     const firstName = firstNames[index % firstNames.length];

@@ -1,4 +1,6 @@
 import { CheckCircle2, Copy, FileText, Mars, Venus, X } from 'lucide-react';
+import AccountActionButton from './AccountActionDialog';
+import PromoteUserButton from './PromoteUserDialog';
 import { slAdminProfile } from '../slAdminData';
 
 function GenderIcon({ gender, className = 'h-5 w-5' }) {
@@ -18,7 +20,10 @@ function DetailCard({ label, value }) {
 export default function VerifiedStudentProfileModal({ student, accountView, onClose }) {
     if (!student) return null;
 
-    const canPromote = accountView === 'Regional View' || accountView === 'Core View';
+    const targetPromotionRole = student.role === 'Student Leader' ? 'Regional Admin' : 'Student Leader';
+    const canPromote =
+        student.role === 'Student' && (accountView === 'Regional View' || accountView === 'Core View')
+        || student.role === 'Student Leader' && accountView === 'Core View';
     const canDemote = accountView === 'Core View' && student.role === 'Student Leader';
     const studentNumber = `2026-${String(student.id).padStart(5, '0')}`;
     const joinedDate = new Date(2026, 2, 14 + (student.id % 7)).toLocaleDateString('en-US');
@@ -38,7 +43,15 @@ export default function VerifiedStudentProfileModal({ student, accountView, onCl
                     <div className="space-y-3 px-6 pt-5"><DetailCard label="Role" value={student.role} /><DetailCard label="MLBB ID" value={student.uid} /><DetailCard label="Server" value={student.server} /><DetailCard label="IGN" value={student.ign} /></div>
                     {(canDemote || canPromote) && <div className="space-y-3 px-6 pt-5">
                         {canDemote && <button type="button" className="w-full rounded-xl border border-red-500 bg-red-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600">Demote from SL</button>}
-                        {canPromote && <button type="button" className="w-full rounded-lg border border-brand-500 bg-brand-500 px-4 py-3 text-sm font-semibold text-black transition hover:bg-brand-400">Promote to SL</button>}
+                        {canPromote && (
+                            <PromoteUserButton
+                                student={student}
+                                targetRole={targetPromotionRole}
+                                className="w-full rounded-lg border border-brand-500 bg-brand-500 px-4 py-3 text-sm font-semibold text-black transition hover:bg-brand-400"
+                            >
+                                Promote to {targetPromotionRole}
+                            </PromoteUserButton>
+                        )}
                     </div>}
                 </aside>
 
@@ -51,7 +64,10 @@ export default function VerifiedStudentProfileModal({ student, accountView, onCl
                         </div>
                         <div className="border-t border-white/10 pt-6"><h3 className="font-heading text-lg font-bold text-brand-500">Verification Details</h3><div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><DetailCard label="Joined" value={joinedDate} /><DetailCard label="Verified by" value="Jose Rizal" /><DetailCard label="Verified on" value={verifiedDate} /><DetailCard label="Validity" value="10/14/2026" /></div></div>
                         <button type="button" className="flex w-full items-center justify-center gap-2 rounded-xl border border-brand-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/10"><FileText className="h-5 w-5" />View Attachment</button>
-                        <div className="grid gap-3 sm:grid-cols-2"><button type="button" className="rounded-xl border border-brand-500 bg-brand-500/30 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/40">Renew</button><button type="button" className="rounded-xl border border-red-500 bg-red-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600">Block User</button></div>
+                        <div className="grid gap-3 sm:grid-cols-2">
+                            <AccountActionButton action="renew" className="rounded-xl border border-brand-500 bg-brand-500/30 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/40">Renew</AccountActionButton>
+                            <AccountActionButton action="block" className="rounded-xl border border-red-500 bg-red-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600">Block User</AccountActionButton>
+                        </div>
                     </div>
                 </section>
             </div>

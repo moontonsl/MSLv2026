@@ -1,4 +1,5 @@
 import { Copy, FileText, Mars, Sparkles, Venus, X } from 'lucide-react';
+import AccountActionButton from './AccountActionDialog';
 import { slAdminProfile } from '../slAdminData';
 
 function GenderIcon({ gender, className = 'h-5 w-5' }) {
@@ -45,7 +46,11 @@ export default function NewStudentProfileModal({ student, accountView, onClose }
                         </div>
                         <div className="border-t border-white/10 pt-6"><h3 className="font-heading text-lg font-bold text-brand-500">Verification Details</h3><div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><DetailCard label="Joined" value={joinedDate} /><DetailCard label="Verified by" value="Awaiting review" /><DetailCard label="Verified on" value="—" /><DetailCard label="Validity" value="—" /></div></div>
                         <button type="button" className="flex w-full items-center justify-center gap-2 rounded-xl border border-brand-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/10"><FileText className="h-5 w-5" />View Attachment</button>
-                        <div className="grid gap-3 sm:grid-cols-3"><button type="button" className="rounded-lg border border-green-500 bg-green-500/30 px-4 py-3 text-sm font-semibold text-gray-50 transition hover:bg-green-500/40">Verify</button><button type="button" className="rounded-xl border border-brand-500 bg-brand-500/30 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/40">Renew</button><button type="button" className="rounded-xl border border-red-500 bg-red-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600">Block User</button></div>
+                        <div className="grid gap-3 sm:grid-cols-3">
+                            <AccountActionButton action="verify" className="rounded-lg border border-green-500 bg-green-500/30 px-4 py-3 text-sm font-semibold text-gray-50 transition hover:bg-green-500/40">Verify</AccountActionButton>
+                            <AccountActionButton action="renew" className="rounded-xl border border-brand-500 bg-brand-500/30 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/40">Renew</AccountActionButton>
+                            <AccountActionButton action="block" className="rounded-xl border border-red-500 bg-red-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600">Block User</AccountActionButton>
+                        </div>
                     </div>
                 </section>
             </div>

@@ -1,4 +1,5 @@
 import { Clock3, Copy, FileText, Mars, Venus, X } from 'lucide-react';
+import AccountActionButton from './AccountActionDialog';
 import { slAdminProfile } from '../slAdminData';
 
 function GenderIcon({ gender, className = 'h-5 w-5' }) {
@@ -13,7 +14,7 @@ function DetailCard({ label, value }) {
 export default function PendingStudentProfileModal({ student, accountView, onClose }) {
     if (!student) return null;
 
-    const canDemoteRegional = accountView === 'Core View' && student.role === 'Regional';
+    const canDemoteRegional = accountView === 'Core View' && student.role === 'Regional Admin';
     const studentNumber = `2026-${String(student.id).padStart(5, '0')}`;
     const joinedDate = new Date(2026, 2, 21 + (student.id % 7)).toLocaleDateString('en-US');
 
@@ -36,7 +37,10 @@ export default function PendingStudentProfileModal({ student, accountView, onClo
                         <div className="grid gap-6 md:grid-cols-2"><div className="space-y-4"><h3 className="font-heading text-lg font-bold text-brand-500">School Information</h3><div className="space-y-3"><DetailCard label="School" value={student.campus} /><DetailCard label="Year Level" value={student.yearLevel} /><DetailCard label="Course" value="Bachelor of Science in Computer Science" /></div></div><div className="space-y-4"><h3 className="font-heading text-lg font-bold text-brand-500">Contact Details</h3><div className="space-y-3"><DetailCard label="Email" value={`${student.ign.toLowerCase()}@schoolemail.edu.ph`} /><DetailCard label="Phone" value="+63 991 883 9321" /><DetailCard label="Student ID" value={studentNumber} /></div></div></div>
                         <div className="border-t border-white/10 pt-6"><h3 className="font-heading text-lg font-bold text-brand-500">Verification Details</h3><div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><DetailCard label="Joined" value={joinedDate} /><DetailCard label="Verified by" value="Awaiting review" /><DetailCard label="Verified on" value="—" /><DetailCard label="Validity" value="—" /></div></div>
                         <button type="button" className="flex w-full items-center justify-center gap-2 rounded-xl border border-brand-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/10"><FileText className="h-5 w-5" />View Attachment</button>
-                        <div className="grid gap-3 sm:grid-cols-2"><button type="button" className="rounded-xl border border-brand-500 bg-brand-500/30 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/40">Renew</button><button type="button" className="rounded-xl border border-red-500 bg-red-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600">Block User</button></div>
+                        <div className="grid gap-3 sm:grid-cols-2">
+                            <AccountActionButton action="renew" className="rounded-xl border border-brand-500 bg-brand-500/30 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/40">Renew</AccountActionButton>
+                            <AccountActionButton action="block" className="rounded-xl border border-red-500 bg-red-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600">Block User</AccountActionButton>
+                        </div>
                     </div>
                 </section>
             </div>

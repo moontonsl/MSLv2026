@@ -25,16 +25,19 @@ import InactiveStudentProfileModal from './modals/InactiveStudentProfileModal';
 import PendingStudentProfileModal from './modals/PendingStudentProfileModal';
 import VerifiedStudentProfileModal from './modals/VerifiedStudentProfileModal';
 import {
-    accountCounts,
     slAdminProfile,
-    studentCount,
-    roleOptions,
     statusOptions,
 } from './slAdminData';
 import { students } from './studentsData';
-import { getTemporaryAccountView } from './temporarySession';
 
 const PAGE_SIZE = 10;
+const ROLE_OPTIONS = [
+    { value: 'student', label: 'Student' },
+    { value: 'student-leader', label: 'Student Leader' },
+    { value: 'regional-admin', label: 'Regional Admin' },
+];
+
+const roleToValue = (role) => role.toLowerCase().replace(/\s+/g, '-');
 
 const statusStyles = {
     Verified: {
@@ -58,37 +61,6 @@ const statusStyles = {
         className: 'bg-gray-800 text-gray-400',
     },
 };
-
-const statCards = [
-    {
-        label: 'Verified',
-        value: accountCounts.verified,
-        icon: CheckCircle2,
-        color: 'text-green-500',
-        background: 'bg-green-500/10',
-    },
-    {
-        label: 'New',
-        value: accountCounts.new,
-        icon: Sparkles,
-        color: 'text-blue-500',
-        background: 'bg-blue-500/10',
-    },
-    {
-        label: 'Renewal',
-        value: accountCounts.renewal,
-        icon: RefreshCw,
-        color: 'text-brand-600',
-        background: 'bg-brand-500/20',
-    },
-    {
-        label: 'Blocked',
-        value: accountCounts.blocked,
-        icon: Ban,
-        color: 'text-red-500',
-        background: 'bg-red-500/10',
-    },
-];
 
 function GenderIcon({ gender, className = 'h-5 w-5' }) {
     const Icon = gender === 'female' ? Venus : Mars;
@@ -332,23 +304,61 @@ function Pagination({ currentPage, pageCount, onChange }) {
     );
 }
 
-export default function SLAdmin() {
+export default function AccountManagementPage({ accountView, allowedRoles, title }) {
     const [statusFilter, setStatusFilter] = useState('all');
     const [roleFilter, setRoleFilter] = useState('all');
     const [query, setQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [sort, setSort] = useState({ column: 'account', direction: 'asc' });
     const [selectedStudent, setSelectedStudent] = useState(null);
-    const [accountView] = useState(getTemporaryAccountView);
     const searchRef = useRef(null);
+    const allowedRoleValues = useMemo(() => allowedRoles.map(roleToValue), [allowedRoles]);
+    const visibleRoleOptions = useMemo(() => [
+        { value: 'all', label: 'All Roles' },
+        ...ROLE_OPTIONS.filter((option) => allowedRoleValues.includes(option.value)),
+    ], [allowedRoleValues]);
+    const visibleStudents = useMemo(
+        () => students.filter((student) => allowedRoleValues.includes(roleToValue(student.role))),
+        [allowedRoleValues],
+    );
+    const statCards = useMemo(() => [
+        {
+            label: 'Verified',
+            value: visibleStudents.filter((student) => student.status === 'Verified').length,
+            icon: CheckCircle2,
+            color: 'text-green-500',
+            background: 'bg-green-500/10',
+        },
+        {
+            label: 'New',
+            value: visibleStudents.filter((student) => student.status === 'New').length,
+            icon: Sparkles,
+            color: 'text-blue-500',
+            background: 'bg-blue-500/10',
+        },
+        {
+            label: 'Renewal',
+            value: visibleStudents.filter((student) => student.status === 'Pending').length,
+            icon: RefreshCw,
+            color: 'text-brand-600',
+            background: 'bg-brand-500/20',
+        },
+        {
+            label: 'Blocked',
+            value: visibleStudents.filter((student) => student.status === 'Blocked').length,
+            icon: Ban,
+            color: 'text-red-500',
+            background: 'bg-red-500/10',
+        },
+    ], [visibleStudents]);
 
     const filteredStudents = useMemo(() => {
         const normalizedQuery = query.trim().toLowerCase();
-        const filtered = students.filter((student) => {
+        const filtered = visibleStudents.filter((student) => {
             const matchesStatus =
                 statusFilter === 'all' || student.status.toLowerCase() === statusFilter;
             const matchesRole =
-                roleFilter === 'all' || student.role.toLowerCase().replace(' ', '-') === roleFilter;
+                roleFilter === 'all' || roleToValue(student.role) === roleFilter;
             const matchesSearch =
                 !normalizedQuery
                 || [
@@ -372,7 +382,7 @@ export default function SLAdmin() {
 
             return sort.direction === 'asc' ? comparison : -comparison;
         });
-    }, [statusFilter, roleFilter, query, sort]);
+    }, [statusFilter, roleFilter, query, sort, visibleStudents]);
 
     const pageCount = Math.max(1, Math.ceil(filteredStudents.length / PAGE_SIZE));
     const pageStudents = filteredStudents.slice(
@@ -404,7 +414,7 @@ export default function SLAdmin() {
 
     return (
         <MainLayout fullWidth>
-            <Head title="SL Admin" />
+            <Head title={title} />
 
             <div className="min-h-screen bg-[#050505] px-4 py-8 text-white sm:px-6 lg:px-10">
                 <div className="mx-auto flex max-w-[1360px] flex-col gap-2.5">
@@ -530,7 +540,7 @@ export default function SLAdmin() {
                         <div className="grid w-full grid-cols-1 gap-3 md:w-auto md:grid-cols-[auto_minmax(160px,1fr)_minmax(160px,1fr)] md:items-center">
                             <div className="text-center text-sm leading-[26px] text-gray-300 sm:text-base md:text-left">
                                 <span className="font-semibold">Student Count:</span>{' '}
-                                <span>{studentCount}</span>
+                                <span>{visibleStudents.length}</span>
                             </div>
                             <label className="relative block min-w-0">
                                 <span className="sr-only">Status</span>
@@ -554,7 +564,7 @@ export default function SLAdmin() {
                                     onChange={(event) => setRoleFilter(event.target.value)}
                                     className="h-10 w-full appearance-none rounded-lg border border-white/10 bg-black/20 py-2 pl-4 pr-10 text-sm font-semibold text-gray-300 shadow-[0_1px_2px_rgba(10,13,18,.05),inset_0_-2px_0_rgba(10,13,18,.05)] focus:border-brand-500 focus:ring-brand-500"
                                 >
-                                    {roleOptions.map((option) => (
+                                    {visibleRoleOptions.map((option) => (
                                         <option key={option.value} value={option.value} className="bg-[#0B0B0B]">
                                             {option.label}
                                         </option>

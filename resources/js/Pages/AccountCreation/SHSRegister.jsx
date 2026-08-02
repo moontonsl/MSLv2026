@@ -20,7 +20,7 @@ const initialFormData = {
     // Step 2
     yearLevel: '', university: '', island: '', region: '', studentId: '', course: '', proofOfEnrollment: null,
     // Step 3
-    userId: '', serverId: '', ign: '', squadName: '', squadAbbreviation: '', rank: '', inGameRole: '', mainHero: '',
+    userId: '', serverId: '', ign: '', squadName: '', squadAbbreviation: '', rank: '', inGameRole: '',
     // Step 4
     username: '', password: '', confirmPassword: '', email: '', captcha: '', termsAccepted: false
 };
@@ -170,7 +170,7 @@ const SHSRegister = () => {
                 return false;
             }
             
-            const required = ['userId', 'serverId', 'rank', 'inGameRole', 'mainHero'];
+            const required = ['userId', 'serverId', 'rank', 'inGameRole'];
 
             if (!requireFields(required)) {
             setErrorMessage("⚠️ Please fill in all the required fields.");
