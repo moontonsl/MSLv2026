@@ -1,5 +1,7 @@
 import { Copy, FileText, Mars, Moon, Venus, X } from 'lucide-react';
+import { useState } from 'react';
 import AccountActionButton from './AccountActionDialog';
+import AttachmentPreviewModal from './AttachmentPreviewModal';
 import { slAdminProfile } from '../slAdminData';
 
 function GenderIcon({ gender, className = 'h-5 w-5' }) {
@@ -16,6 +18,7 @@ export default function InactiveStudentProfileModal({ student, accountView, onCl
 
     const studentNumber = `2026-${String(student.id).padStart(5, '0')}`;
     const joinedDate = new Date(2026, 2, 7 + (student.id % 7)).toLocaleDateString('en-US');
+    const [isAttachmentOpen, setIsAttachmentOpen] = useState(false);
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-3 backdrop-blur-sm sm:p-6" role="dialog" aria-modal="true" aria-labelledby="inactive-student-profile-title" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
@@ -34,11 +37,12 @@ export default function InactiveStudentProfileModal({ student, accountView, onCl
                     <div className="space-y-6 px-5 py-6 sm:px-8">
                         <div className="grid gap-6 md:grid-cols-2"><div className="space-y-4"><h3 className="font-heading text-lg font-bold text-brand-500">School Information</h3><div className="space-y-3"><DetailCard label="School" value={student.campus} /><DetailCard label="Year Level" value={student.yearLevel} /><DetailCard label="Course" value="Bachelor of Science in Computer Science" /></div></div><div className="space-y-4"><h3 className="font-heading text-lg font-bold text-brand-500">Contact Details</h3><div className="space-y-3"><DetailCard label="Email" value={`${student.ign.toLowerCase()}@schoolemail.edu.ph`} /><DetailCard label="Phone" value="+63 991 883 9321" /><DetailCard label="Student ID" value={studentNumber} /></div></div></div>
                         <div className="border-t border-white/10 pt-6"><h3 className="font-heading text-lg font-bold text-brand-500">Verification Details</h3><div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><DetailCard label="Joined" value={joinedDate} /><DetailCard label="Verified by" value="Jose Rizal" /><DetailCard label="Verified on" value="3/14/2026" /><DetailCard label="Last Activity" value="10/14/2026" /></div></div>
-                        <button type="button" className="flex w-full items-center justify-center gap-2 rounded-xl border border-brand-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/10"><FileText className="h-5 w-5" />View Attachment</button>
+                        <button type="button" onClick={() => setIsAttachmentOpen(true)} className="flex w-full items-center justify-center gap-2 rounded-xl border border-brand-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/10"><FileText className="h-5 w-5" />View Attachment</button>
                         <AccountActionButton action="verify" className="w-full rounded-xl border border-brand-500 bg-brand-500/30 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/40">Activate Account</AccountActionButton>
                     </div>
                 </section>
             </div>
+            <AttachmentPreviewModal isOpen={isAttachmentOpen} onClose={() => setIsAttachmentOpen(false)} student={student} />
         </div>
     );
 }
