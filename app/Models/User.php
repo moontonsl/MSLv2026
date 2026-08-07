@@ -3,13 +3,16 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     /**
@@ -95,10 +98,20 @@ class User extends Authenticatable
         ];
     }
 
+    public function campusAffiliations(): HasMany
+    {
+        return $this->hasMany(CampusAffiliation::class);
+    }
+
+    public function approvedCampusAffiliations(): HasMany
+    {
+        return $this->hasMany(CampusAffiliation::class, 'approved_by_user_id');
+    }
+
     /**
      * The permissions assigned to the user.
      */
-    public function permissions(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function permissions(): BelongsToMany
     {
         return $this->belongsToMany(Permission::class);
     }
