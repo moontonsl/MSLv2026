@@ -1,7 +1,13 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminManagementController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\CampusTournamentController;
+use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\Student\StudentPortalController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -20,8 +26,8 @@ Route::get('/Contents&SocialMedia', function () {
 Route::redirect('/content-media', '/Contents&SocialMedia');
 Route::redirect('/about/contents-social-media', '/Contents&SocialMedia');
 
-Route::get('/News', [\App\Http\Controllers\NewsController::class, 'index'])->name('news.index');
-Route::get('/News/{canonical}', [\App\Http\Controllers\NewsController::class, 'show'])->name('news.show');
+Route::get('/News', [NewsController::class, 'index'])->name('news.index');
+Route::get('/News/{canonical}', [NewsController::class, 'show'])->name('news.show');
 Route::redirect('/news', '/News');
 
 Route::get('/Event', function () {
@@ -85,14 +91,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::post('/campus-tournaments', [CampusTournamentController::class, 'store'])
+        ->name('campus-tournaments.store');
+    Route::put('/campus-tournaments/{tournament}/resubmit', [CampusTournamentController::class, 'resubmit'])
+        ->name('campus-tournaments.resubmit');
+    Route::post('/campus-tournaments/{tournament}/approve', [CampusTournamentController::class, 'approve'])
+        ->name('campus-tournaments.approve');
+    Route::post('/campus-tournaments/{tournament}/reject', [CampusTournamentController::class, 'reject'])
+        ->name('campus-tournaments.reject');
+    Route::delete('/campus-tournaments/{tournament}', [CampusTournamentController::class, 'destroy'])
+        ->name('campus-tournaments.destroy');
 });
 
 // Protect the student portal with active student checks
 Route::middleware(['auth', 'active.student'])->group(function () {
-    Route::get('/studentportal', [\App\Http\Controllers\Student\StudentPortalController::class, 'index'])->name('student.portal');
-    Route::post('/studentportal/profile', [\App\Http\Controllers\Student\StudentPortalController::class, 'updateProfile'])->name('student.profile.update');
+    Route::get('/studentportal', [StudentPortalController::class, 'index'])->name('student.portal');
+    Route::post('/studentportal/profile', [StudentPortalController::class, 'updateProfile'])->name('student.profile.update');
 
-    Route::post('/studentportal/renew', function (\Illuminate\Http\Request $request) {
+    Route::post('/studentportal/renew', function (Request $request) {
         $request->validate([
             'yearLevel' => 'required|string',
             'age' => 'required|integer|min:1',
@@ -103,25 +120,25 @@ Route::middleware(['auth', 'active.student'])->group(function () {
 
         if ($request->hasFile('documentFile')) {
             $file = $request->file('documentFile');
-            $filename = time() . '_' . $file->getClientOriginalName();
+            $filename = time().'_'.$file->getClientOriginalName();
             $destinationPath = public_path('uploads/proofs');
-            if (!file_exists($destinationPath)) {
+            if (! file_exists($destinationPath)) {
                 mkdir($destinationPath, 0755, true);
             }
             $file->move($destinationPath, $filename);
-            $user->proofOfEnrollment = '/uploads/proofs/' . $filename;
+            $user->proofOfEnrollment = '/uploads/proofs/'.$filename;
         }
 
         $user->year_level = $request->input('yearLevel');
-        $user->age = (int)$request->input('age');
+        $user->age = (int) $request->input('age');
         $user->status = 'pending-review';
-        
+
         // Record timestamps
-        if (!$user->renewal_requested_at) {
+        if (! $user->renewal_requested_at) {
             $user->renewal_requested_at = now()->subDays(1); // default to 1 day before submission if not set
         }
         $user->renewal_submitted_at = now();
-        
+
         $user->save();
 
         return redirect()->back()->with('status', 'Renewal submitted successfully.');
@@ -144,30 +161,30 @@ Route::middleware(['auth', 'redirect.status'])->group(function () {
 });
 
 // Re-apply route for rejected student
-Route::post('/reapply', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'reapply'])
+Route::post('/reapply', [RegisteredUserController::class, 'reapply'])
     ->middleware('auth')
     ->name('reapply');
 
 // Admin actions (protected by auth and custom permissions)
 Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])
+    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])
         ->middleware('permission:access_admin_dashboard')
         ->name('admin.dashboard');
-        
-    Route::post('/admin/users/{id}/approve', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'approve'])
+
+    Route::post('/admin/users/{id}/approve', [AdminDashboardController::class, 'approve'])
         ->middleware('permission:approve_students')
         ->name('admin.users.approve');
-        
-    Route::post('/admin/users/{id}/reject', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'reject'])
+
+    Route::post('/admin/users/{id}/reject', [AdminDashboardController::class, 'reject'])
         ->middleware('permission:reject_students')
         ->name('admin.users.reject');
 
     // Admin Management Page
-    Route::get('/admin/management', [\App\Http\Controllers\Admin\AdminManagementController::class, 'index'])
+    Route::get('/admin/management', [AdminManagementController::class, 'index'])
         ->middleware('permission:access_admin_management')
         ->name('admin.management');
 
-    Route::post('/admin/users/{user}/permissions', [\App\Http\Controllers\Admin\AdminManagementController::class, 'updatePermissions'])
+    Route::post('/admin/users/{user}/permissions', [AdminManagementController::class, 'updatePermissions'])
         ->middleware('permission:access_admin_management')
         ->name('admin.users.permissions.update');
 });
@@ -186,33 +203,32 @@ Route::get('/CoreAdmin', function () {
     return Inertia::render('VerificationPages/CoreAdmin');
 })->name('core.admin');
 
-//TEST PAGE ROUTES
+// TEST PAGE ROUTES
 Route::get('/Testpage', function () {
     return Inertia::render('Testpage');
 })->name('Testpage');
 
-//FORGOT PASSWORD PAGE ROUTES
+// FORGOT PASSWORD PAGE ROUTES
 Route::get('/ForgotPassword', function () {
     return Inertia::render('Login/components/ForgotPassword');
 })->name('reset.password');
 
-//FORGOT USERNAME PAGE ROUTES
+// FORGOT USERNAME PAGE ROUTES
 Route::get('/ForgotUsername', function () {
     return Inertia::render('Login/components/ForgotUsername');
 })->name('forgot.username');
 
-//ACCOUNT CREATION - SHS DIVISION PAGE ROUTES
+// ACCOUNT CREATION - SHS DIVISION PAGE ROUTES
 Route::get('/AccountCreation/SHS', function () {
     return Inertia::render('AccountCreation/SHSRegister');
 })->name('shs.register');
 
-//ACCOUNT CREATION - COLLEGE DIVISION PAGE ROUTES
+// ACCOUNT CREATION - COLLEGE DIVISION PAGE ROUTES
 Route::get('/AccountCreation/College', function () {
     return Inertia::render('AccountCreation/CollegeRegister');
 })->name('college.register');
 
 // Public routes to fetch news data
-Route::get('/api/news/articles', [\App\Http\Controllers\NewsController::class, 'getArticles']);
-Route::get('/api/news/highlights', [\App\Http\Controllers\NewsController::class, 'getHighlights']);
-Route::get('/api/news/related', [\App\Http\Controllers\NewsController::class, 'getRelatedArticles']);
-
+Route::get('/api/news/articles', [NewsController::class, 'getArticles']);
+Route::get('/api/news/highlights', [NewsController::class, 'getHighlights']);
+Route::get('/api/news/related', [NewsController::class, 'getRelatedArticles']);

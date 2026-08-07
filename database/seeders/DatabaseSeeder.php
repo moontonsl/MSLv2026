@@ -24,13 +24,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             CampusTypeSeeder::class,
-            InstitutionSeeder::class,
-            CampusSeeder::class,
             CommunityTierSeeder::class,
-            CampusCommunitySeeder::class,
-            CampusAffiliationSeeder::class,
             TournamentReferenceSeeder::class,
-            CampusTournamentSeeder::class,
         ]);
     }
 }

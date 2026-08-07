@@ -51,4 +51,9 @@ class Campus extends Model
     {
         return $this->hasMany(CampusAffiliation::class);
     }
+
+    public function tournaments(): HasMany
+    {
+        return $this->hasMany(CampusTournament::class);
+    }
 }

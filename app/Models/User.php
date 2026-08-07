@@ -108,6 +108,26 @@ class User extends Authenticatable
         return $this->hasMany(CampusAffiliation::class, 'approved_by_user_id');
     }
 
+    public function createdCampusTournaments(): HasMany
+    {
+        return $this->hasMany(CampusTournament::class, 'created_by_user_id');
+    }
+
+    public function tournamentSubmissions(): HasMany
+    {
+        return $this->hasMany(CampusTournamentSubmission::class, 'submitted_by_user_id');
+    }
+
+    public function tournamentReviews(): HasMany
+    {
+        return $this->hasMany(CampusTournamentReview::class, 'reviewer_user_id');
+    }
+
+    public function regionAdminAssignments(): HasMany
+    {
+        return $this->hasMany(RegionAdmin::class);
+    }
+
     /**
      * The permissions assigned to the user.
      */

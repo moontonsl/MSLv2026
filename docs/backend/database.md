@@ -1,6 +1,6 @@
 # Campus and Tournament Database
 
-Last updated: 2026-07-30
+Last updated: 2026-08-07
 
 This document describes the normalized campus and campus-tournament database
 implemented in MSLv2026.
@@ -21,6 +21,7 @@ The implemented database includes:
 - tournament reference tables
 - regional-administrator assignments and history
 - campus tournaments, reviews, and schedule history
+- immutable campus-tournament submission history
 - teams, participants, invitations, and join codes
 - solo-roster merge runs and assignment history
 - revisioned tournament results
@@ -38,6 +39,7 @@ MySQL `mslv2026` database through these migrations:
 | `2026_07_30_000006_create_campus_tournament_tables` | Tournaments, review history, and schedule revision history |
 | `2026_07_30_000007_create_tournament_roster_tables` | Teams, participants, invitations, join codes, merge runs, and assignment history |
 | `2026_07_30_000008_create_tournament_result_tables` | Result revisions, result entries, and the current-result pointer |
+| `2026_08_07_000001_add_campus_tournament_submission_history` | Immutable request submissions, current-submission pointer, and review-to-submission linkage |
 
 Verification on 2026-07-30 confirmed:
 
@@ -48,9 +50,11 @@ Verification on 2026-07-30 confirmed:
 - operational Regional Admin and tournament tables contain no invented sample
   records.
 
-Only the database layer is implemented for the tournament module. Tournament
-Eloquent models, policies, services, scheduled merging, controllers, exports,
-and user interfaces have not been added.
+The Student Leader creation/resubmission/cancellation and Regional Admin
+approval/rejection backend is implemented with authenticated web actions,
+policies, validation, transactions, immutable submission snapshots, and tests.
+Tournament user interfaces, team workflows, scheduled merging, result services,
+rescheduling, notifications, and exports have not been added.
 
 ## Entity relationships
 
@@ -75,6 +79,8 @@ erDiagram
     CAMPUSES ||--o{ CAMPUS_TOURNAMENTS : hosts
     USERS ||--o{ CAMPUS_TOURNAMENTS : creates
     TOURNAMENT_TYPES ||--o{ CAMPUS_TOURNAMENTS : classifies
+    CAMPUS_TOURNAMENTS ||--o{ CAMPUS_TOURNAMENT_SUBMISSIONS : submitted_as
+    CAMPUS_TOURNAMENT_SUBMISSIONS ||--o| CAMPUS_TOURNAMENT_REVIEWS : receives
     CAMPUS_TOURNAMENTS ||--o{ CAMPUS_TOURNAMENT_REVIEWS : reviewed_by
     CAMPUS_TOURNAMENTS ||--o{ CAMPUS_TOURNAMENT_SCHEDULE_REVISIONS : rescheduled
 
@@ -108,6 +114,9 @@ Relationship summary:
 - A campus derives its official region through its required city.
 - Each official region has at most one current Regional Admin.
 - A campus tournament has separate registration and event periods.
+- A tournament has immutable numbered submissions and points to its current
+  submission.
+- Every new review identifies the exact submission that was reviewed.
 - A user has at most one participant record per tournament.
 - A team has at most one player assigned to each fixed lane role.
 - A tournament has at most one roster-merge run.
@@ -345,6 +354,7 @@ Stores:
 - hosting `campus_id` and `created_by_user_id`
 - tournament `name` and normalized `tournament_type_code`
 - approval status: `pending`, `approved`, `rejected`, or `cancelled`
+- nullable `current_submission_id` pointing to the latest submitted version
 - `registration_opens_at` and `registration_closes_at`
 - event `starts_at` and `ends_at`
 - nullable `roster_locked_at`
@@ -353,6 +363,20 @@ Stores:
 
 The tournament does not store `school_name`, `sl_name`, region, or other
 duplicated descriptive fields. Those values are obtained through relationships.
+
+### `campus_tournament_submissions`
+
+Stores an immutable snapshot for every initial submission and resubmission:
+
+- tournament, submitter, and per-tournament version number
+- campus, tournament name, and normalized tournament type
+- registration and event timestamps exactly as submitted
+- nullable resubmission reason, required by the application after version 1
+- submission timestamp
+
+`UNIQUE (tournament_id, version)` prevents duplicate version numbers. The
+Eloquent model rejects updates and deletes. Existing tournaments are backfilled
+as version 1 when the migration is applied.
 
 The application must derive operational state:
 
@@ -367,8 +391,11 @@ The application must derive operational state:
 
 ### Reviews and schedule revisions
 
-`campus_tournament_reviews` records every approving or rejecting Regional
-Admin, decision, optional reason, and timestamp.
+`campus_tournament_reviews` records every approving or rejecting reviewer,
+decision, optional reason, and timestamp. New rows reference a unique
+`submission_id`, preventing the same submission from being reviewed twice.
+The foreign key remains nullable only so pre-implementation review data can be
+retained when its exact historic submission cannot be reconstructed.
 
 `campus_tournament_schedule_revisions` records the previous and replacement
 registration/event timestamps, changing user, reason, and timestamp. Current
@@ -471,6 +498,10 @@ provide one. That conditional rule requires application validation.
 | `User` | has many campus affiliations and approved campus affiliations |
 | `City` | has many campuses |
 | `Barangay` | has many campuses |
+| `CampusTournament` | belongs to campus, creator, type, and current submission; has many submissions, reviews, and schedule revisions |
+| `CampusTournamentSubmission` | belongs to tournament, submitter, campus, and type; has one review |
+| `CampusTournamentReview` | belongs to tournament, submission, and reviewer |
+| `RegionAdmin` | belongs to its official region, assigned user, and assigning user |
 
 Date casts currently implemented:
 
@@ -479,8 +510,37 @@ Date casts currently implemented:
 - `CampusAffiliation.ended_at`
 - `CampusAffiliation.approved_at`
 
-Tournament Eloquent models and application behavior are intentionally deferred.
-This phase implements only the normalized database.
+Tournament creation and approval timestamps are cast to datetimes. Incoming
+web-action timestamps are interpreted as `Asia/Manila`, converted to UTC, and
+stored through a UTC MySQL/MariaDB session (`DB_TIMEZONE=+00:00` by default).
+
+## Creation and approval behavior
+
+Authenticated Inertia-compatible web actions support creation, resubmission,
+approval, rejection, and audited cancellation. They return redirects with
+Laravel validation errors or status flash messages; the tournament UI remains
+deferred.
+
+- Creation requires an active campus and an active `student_leader`
+  affiliation for the selected campus.
+- Registration and event dates must satisfy
+  `registration_open < registration_close <= event_start < event_end`.
+- A campus cannot have overlapping pending or approved tournaments. Touching
+  boundaries are allowed.
+- Only the original creator may resubmit a rejected request or cancel a pending
+  request, and both actions require reasons.
+- Review authority comes from the current `region_admins` row for the region
+  reached through `campus -> city -> region`. An active Super Admin is the only
+  override.
+- The `pendingForReviewer` query scope applies the same official-region rule
+  when loading a Regional Admin's pending queue.
+- Rejection requires a reason; approval notes are optional.
+- Approval rechecks campus state, creator affiliation, and schedule conflicts.
+- Mutations use transactions and row locks. Status conflicts return HTTP 409.
+
+Operational lifecycle is derived with half-open boundaries: `scheduled`,
+`registration_open`, `registration_closed`, `ongoing`, and `completed`.
+Approval remains a separate stored state.
 
 ## Database-enforced tournament rules
 
@@ -492,6 +552,8 @@ The implemented tournament schema currently enforces:
 - restrictive deletion for tournament and administrative history;
 - tournament approval values: `pending`, `approved`, `rejected`, `cancelled`;
 - review decisions: `approved`, `rejected`;
+- one submission version per `(tournament_id, version)`;
+- at most one review for each non-null submission reference;
 - team formation methods: `premade`, `solo`;
 - team statuses: `assembling`, `registered`, `merged`, `withdrawn`,
   `not_qualified`;
@@ -521,6 +583,7 @@ The tables are created in this dependency order:
 5. Teams, participants, invitations, join codes, and merge history
 6. Result revisions and entries
 7. The current-result foreign key on `campus_tournaments`
+8. Tournament submission history, current-submission pointer, and review link
 
 The existing `users`, `cities`, and `barangays` migrations must run before the
 campus migrations.
@@ -539,9 +602,24 @@ campus migrations.
 8. `CampusTournamentSeeder`
 
 `CampusSeeder`, `CampusCommunitySeeder`, and `CampusAffiliationSeeder` are
-intentionally empty. `CampusTournamentSeeder` is also intentionally empty.
-These tables contain operational data and must not be populated with invented
-records.
+intentionally empty. `CampusTournamentSeeder` is a development-only unified
+fixture that creates the LSPU institution and Los Baños Campus, an active
+CALABARZON Regional Admin assignment with history, and an active Student Leader
+affiliation. It does not create a tournament, allowing the creation workflow to
+be tested through Postman or the application. It refuses to run in production.
+
+Run the unified development fixture with:
+
+```bash
+php artisan db:seed --class=CampusTournamentSeeder
+```
+
+Development logins:
+
+| Role | Username | Password |
+|---|---|---|
+| Regional Admin | `lspu_regional_admin` | `password` |
+| Student Leader | `lspu_student_leader` | `password` |
 
 The current `DatabaseSeeder` also creates `test@example.com`. Do not run the
 default seeder in a production environment.

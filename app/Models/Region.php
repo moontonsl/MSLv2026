@@ -10,7 +10,9 @@ class Region extends Model
     use HasFactory;
 
     protected $primaryKey = 'code';
+
     protected $keyType = 'string';
+
     public $incrementing = false;
 
     protected $fillable = [
@@ -34,5 +36,10 @@ class Region extends Model
     public function cities()
     {
         return $this->hasMany(City::class, 'region_code', 'code');
+    }
+
+    public function currentAdmin()
+    {
+        return $this->hasOne(RegionAdmin::class, 'region_code', 'code');
     }
 }
