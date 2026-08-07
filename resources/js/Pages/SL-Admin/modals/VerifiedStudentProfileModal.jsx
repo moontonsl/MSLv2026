@@ -1,5 +1,7 @@
 import { CheckCircle2, Copy, FileText, Mars, Venus, X } from 'lucide-react';
+import { useState } from 'react';
 import AccountActionButton from './AccountActionDialog';
+import AttachmentPreviewModal from './AttachmentPreviewModal';
 import PromoteUserButton from './PromoteUserDialog';
 import { slAdminProfile } from '../slAdminData';
 
@@ -28,6 +30,7 @@ export default function VerifiedStudentProfileModal({ student, accountView, onCl
     const studentNumber = `2026-${String(student.id).padStart(5, '0')}`;
     const joinedDate = new Date(2026, 2, 14 + (student.id % 7)).toLocaleDateString('en-US');
     const verifiedDate = new Date(2026, 2, 14).toLocaleDateString('en-US');
+    const [isAttachmentOpen, setIsAttachmentOpen] = useState(false);
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-3 backdrop-blur-sm sm:p-6" role="dialog" aria-modal="true" aria-labelledby="verified-student-profile-title" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
@@ -63,7 +66,7 @@ export default function VerifiedStudentProfileModal({ student, accountView, onCl
                             <div className="space-y-4"><h3 className="font-heading text-lg font-bold text-brand-500">Contact Details</h3><div className="space-y-3"><DetailCard label="Email" value={`${student.ign.toLowerCase()}@schoolemail.edu.ph`} /><DetailCard label="Phone" value="+63 991 883 9321" /><DetailCard label="Student ID" value={studentNumber} /></div></div>
                         </div>
                         <div className="border-t border-white/10 pt-6"><h3 className="font-heading text-lg font-bold text-brand-500">Verification Details</h3><div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><DetailCard label="Joined" value={joinedDate} /><DetailCard label="Verified by" value="Jose Rizal" /><DetailCard label="Verified on" value={verifiedDate} /><DetailCard label="Validity" value="10/14/2026" /></div></div>
-                        <button type="button" className="flex w-full items-center justify-center gap-2 rounded-xl border border-brand-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/10"><FileText className="h-5 w-5" />View Attachment</button>
+                        <button type="button" onClick={() => setIsAttachmentOpen(true)} className="flex w-full items-center justify-center gap-2 rounded-xl border border-brand-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/10"><FileText className="h-5 w-5" />View Attachment</button>
                         <div className="grid gap-3 sm:grid-cols-2">
                             <AccountActionButton action="renew" className="rounded-xl border border-brand-500 bg-brand-500/30 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/40">Renew</AccountActionButton>
                             <AccountActionButton action="block" className="rounded-xl border border-red-500 bg-red-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600">Block User</AccountActionButton>
@@ -71,6 +74,7 @@ export default function VerifiedStudentProfileModal({ student, accountView, onCl
                     </div>
                 </section>
             </div>
+            <AttachmentPreviewModal isOpen={isAttachmentOpen} onClose={() => setIsAttachmentOpen(false)} student={student} />
         </div>
     );
 }
