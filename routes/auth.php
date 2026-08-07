@@ -17,6 +17,32 @@ Route::middleware('guest')->group(function () {
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
+    // MLBB & Email Verification routes
+    Route::post('mlbb/send-vc', [\App\Http\Controllers\Auth\MLBBVerificationController::class, 'sendCode'])
+        ->name('mlbb.send-vc');
+
+    Route::post('mlbb/verify-vc', [\App\Http\Controllers\Auth\MLBBVerificationController::class, 'verifyCode'])
+        ->name('mlbb.verify-vc');
+
+    Route::post('email/send-code', [\App\Http\Controllers\Auth\EmailVerificationController::class, 'sendCode'])
+        ->name('email.send-code');
+
+    Route::post('email/verify-code', [\App\Http\Controllers\Auth\EmailVerificationController::class, 'verifyCode'])
+        ->name('email.verify-code');
+
+    // Bypass Gate routes
+    Route::get('bypass-gate', [\App\Http\Controllers\Auth\BypassGateController::class, 'show'])
+        ->name('bypass.gate');
+
+    Route::post('bypass-gate/login', [\App\Http\Controllers\Auth\BypassGateController::class, 'login'])
+        ->name('bypass.gate.login');
+
+    Route::post('bypass-gate/toggle', [\App\Http\Controllers\Auth\BypassGateController::class, 'toggle'])
+        ->name('bypass.gate.toggle');
+
+    Route::post('bypass-gate/logout', [\App\Http\Controllers\Auth\BypassGateController::class, 'logout'])
+        ->name('bypass.gate.logout');
+
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 

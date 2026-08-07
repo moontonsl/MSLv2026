@@ -14,19 +14,11 @@ export const slAdminProfile = {
     verified: true,
 };
 
-export const studentCount = 100;
-
-export const accountCounts = {
-    verified: 50,
-    new: 20,
-    renewal: 30,
-    blocked: 20,
-};
-
-export const categoryOptions = [
-    { value: 'all', label: 'All Categories' },
-    { value: 'verified', label: 'Verified' },
+export const statusOptions = [
+    { value: 'all', label: 'All Status' },
     { value: 'new', label: 'New' },
-    { value: 'renew', label: 'Renewal' },
+    { value: 'verified', label: 'Verified' },
+    { value: 'pending', label: 'Pending' },
     { value: 'blocked', label: 'Blocked' },
+    { value: 'inactive', label: 'Inactive' },
 ];

@@ -53,15 +53,13 @@ Route::get('/GeneralAffairs', function () {
     return Inertia::render('About');
 })->name('general.affairs');
 
-Route::get('/AdminLogIn', function () {
+Route::get('/Login', function () {
     return Inertia::render('Login/Login');
-})->name('admin.login');
-Route::redirect('/Login', '/AdminLogIn');
+})->name('Login');
 
-Route::get('/WebAdmin', function () {
+Route::get('/SL-Admin', function () {
     return Inertia::render('SL-Admin/Index');
-})->name('web.admin');
-Route::redirect('/SL-Admin', '/WebAdmin');
+})->name('sl.admin');
 
 Route::get('/CampusAdmin', function () {
     return Inertia::render('SL-Admin/Index');
@@ -89,14 +87,104 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Temporary bypass:
-// The student portal is public for now because the login backend/database flow is not ready yet.
-// Once authentication is available, move this route back inside the auth middleware group.
-Route::get('/studentportal', function () { //put the username - for backend tasks
-    return Inertia::render('StudentProfile/Index');
-})->name('student.portal');
+// Protect the student portal with active student checks
+Route::middleware(['auth', 'active.student'])->group(function () {
+    Route::get('/studentportal', [\App\Http\Controllers\Student\StudentPortalController::class, 'index'])->name('student.portal');
+    Route::post('/studentportal/profile', [\App\Http\Controllers\Student\StudentPortalController::class, 'updateProfile'])->name('student.profile.update');
+
+    Route::post('/studentportal/renew', function (\Illuminate\Http\Request $request) {
+        $request->validate([
+            'yearLevel' => 'required|string',
+            'age' => 'required|integer|min:1',
+            'documentFile' => 'required|file|mimes:jpeg,png,gif,pdf|max:2048',
+        ]);
+
+        $user = Auth::user();
+
+        if ($request->hasFile('documentFile')) {
+            $file = $request->file('documentFile');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $destinationPath = public_path('uploads/proofs');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+            $file->move($destinationPath, $filename);
+            $user->proofOfEnrollment = '/uploads/proofs/' . $filename;
+        }
+
+        $user->year_level = $request->input('yearLevel');
+        $user->age = (int)$request->input('age');
+        $user->status = 'pending-review';
+        
+        // Record timestamps
+        if (!$user->renewal_requested_at) {
+            $user->renewal_requested_at = now()->subDays(1); // default to 1 day before submission if not set
+        }
+        $user->renewal_submitted_at = now();
+        
+        $user->save();
+
+        return redirect()->back()->with('status', 'Renewal submitted successfully.');
+    })->name('student.portal.renew');
+});
+
+// Verification status pages
+Route::middleware(['auth', 'redirect.status'])->group(function () {
+    Route::get('/pending-verification', function () {
+        return Inertia::render('Auth/PendingVerification');
+    })->name('pending.verification');
+
+    Route::get('/rejected-verification', function () {
+        return Inertia::render('Auth/RejectedVerification', [
+            'rejectionReason' => Auth::user()->rejection_reason,
+            'rejectionChecklist' => Auth::user()->rejection_checklist ?? [],
+            'userData' => Auth::user(),
+        ]);
+    })->name('rejected.verification');
+});
+
+// Re-apply route for rejected student
+Route::post('/reapply', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'reapply'])
+    ->middleware('auth')
+    ->name('reapply');
+
+// Admin actions (protected by auth and custom permissions)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])
+        ->middleware('permission:access_admin_dashboard')
+        ->name('admin.dashboard');
+        
+    Route::post('/admin/users/{id}/approve', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'approve'])
+        ->middleware('permission:approve_students')
+        ->name('admin.users.approve');
+        
+    Route::post('/admin/users/{id}/reject', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'reject'])
+        ->middleware('permission:reject_students')
+        ->name('admin.users.reject');
+
+    // Admin Management Page
+    Route::get('/admin/management', [\App\Http\Controllers\Admin\AdminManagementController::class, 'index'])
+        ->middleware('permission:access_admin_management')
+        ->name('admin.management');
+
+    Route::post('/admin/users/{user}/permissions', [\App\Http\Controllers\Admin\AdminManagementController::class, 'updatePermissions'])
+        ->middleware('permission:access_admin_management')
+        ->name('admin.users.permissions.update');
+});
 
 require __DIR__.'/auth.php';
+
+Route::get('/StudentLeader', function () {
+    return Inertia::render('VerificationPages/StudentLeader');
+})->name('student.leader');
+
+Route::get('/RegionalAdmin', function () {
+    return Inertia::render('VerificationPages/RegionalAdmin');
+})->name('regional.admin');
+
+Route::get('/CoreAdmin', function () {
+    return Inertia::render('VerificationPages/CoreAdmin');
+})->name('core.admin');
 
 //TEST PAGE ROUTES
 Route::get('/Testpage', function () {

@@ -20,7 +20,7 @@ const initialFormData = {
     // Step 2
     yearLevel: '', university: '', island: '', region: '', studentId: '', course: '', proofOfEnrollment: null,
     // Step 3
-    userId: '', serverId: '', ign: '', squadName: '', squadAbbreviation: '', rank: '', inGameRole: '', mainHero: '',
+    userId: '', serverId: '', ign: '', squadName: '', squadAbbreviation: '', rank: '', inGameRole: '',
     // Step 4
     username: '', password: '', confirmPassword: '', email: '', captcha: '', termsAccepted: false
 };
@@ -170,7 +170,7 @@ const CollegeRegister = () => {
                 return false;
             }
             
-            const required = ['userId', 'serverId', 'rank', 'inGameRole', 'mainHero'];
+            const required = ['userId', 'serverId', 'rank', 'inGameRole'];
 
             if (!requireFields(required)) {
             setErrorMessage("⚠️ Please fill in all the required fields.");
@@ -307,7 +307,7 @@ const CollegeRegister = () => {
                 {/* FOOTER */}
                 <div className="mt-6 text-center text-sm text-white/70">
                     Already have an account?{' '}
-                    <a href="/AdminLogIn" className="text-yellow-400 hover:underline">
+                    <a href="/Login" className="text-yellow-400 hover:underline">
                     Sign In
                     </a>
                 </div>

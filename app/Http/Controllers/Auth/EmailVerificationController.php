@@ -22,6 +22,18 @@ class EmailVerificationController extends Controller
             'email' => 'required|string|lowercase|email|max:255',
         ]);
 
+        if (session('mlbb_bypass', false)) {
+            session([
+                'email_verification_code' => '000000',
+                'email_verification_email' => $request->email,
+                'email_verification_expires_at' => now()->addMinutes(10),
+            ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Bypass active: Verification code sent successfully (Mocked: Use 000000 or any code).',
+            ]);
+        }
+
         $email = $request->email;
 
         // Strict unique constraint: check if the email is already registered
@@ -108,6 +120,18 @@ class EmailVerificationController extends Controller
             'email' => 'required|string|lowercase|email|max:255',
             'code' => 'required|string|size:6',
         ]);
+
+        if (session('mlbb_bypass', false)) {
+            session([
+                'email_verification_verified' => true,
+                'email_verification_verified_email' => $request->email,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Bypass active: Email verified successfully.',
+            ]);
+        }
 
         $email = $request->email;
         $code = $request->code;
