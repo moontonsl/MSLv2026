@@ -10,7 +10,9 @@ class City extends Model
     use HasFactory;
 
     protected $primaryKey = 'code';
+
     protected $keyType = 'string';
+
     public $incrementing = false;
 
     protected $fillable = [
@@ -34,5 +36,10 @@ class City extends Model
     public function barangays()
     {
         return $this->hasMany(Barangay::class, 'city_code', 'code');
+    }
+
+    public function campuses()
+    {
+        return $this->hasMany(Campus::class, 'city_code', 'code');
     }
 }

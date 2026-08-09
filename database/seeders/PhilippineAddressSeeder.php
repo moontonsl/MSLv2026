@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Island;
-use App\Models\Region;
-use App\Models\Province;
-use App\Models\City;
 use App\Models\Barangay;
+use App\Models\City;
+use App\Models\Island;
+use App\Models\Province;
+use App\Models\Region;
+use Illuminate\Database\Seeder;
 
 class PhilippineAddressSeeder extends Seeder
 {
@@ -62,7 +62,7 @@ class PhilippineAddressSeeder extends Seeder
             // Metro Manila
             ['code' => '133901000', 'name' => 'Manila', 'zip_code' => '1000', 'province_code' => '133900000', 'region_code' => '130000000'],
             ['code' => '133902000', 'name' => 'Quezon City', 'zip_code' => '1100', 'province_code' => '133900000', 'region_code' => '130000000'],
-            
+
             // Cavite
             ['code' => '042101000', 'name' => 'Bacoor', 'zip_code' => '4102', 'province_code' => '042100000', 'region_code' => '040000000'],
             ['code' => '042102000', 'name' => 'Imus', 'zip_code' => '4103', 'province_code' => '042100000', 'region_code' => '040000000'],
@@ -70,7 +70,7 @@ class PhilippineAddressSeeder extends Seeder
 
             // Laguna
             ['code' => '043401000', 'name' => 'Calamba', 'zip_code' => '4027', 'province_code' => '043400000', 'region_code' => '040000000'],
-            ['code' => '043402000', 'name' => 'Los Baños', 'zip_code' => '4030', 'province_code' => '043400000', 'region_code' => '040000000'],
+            ['code' => '043411000', 'name' => 'Los Baños', 'zip_code' => '4030', 'province_code' => '043400000', 'region_code' => '040000000'],
             ['code' => '043403000', 'name' => 'Santa Rosa', 'zip_code' => '4026', 'province_code' => '043400000', 'region_code' => '040000000'],
 
             // Rizal
@@ -92,7 +92,7 @@ class PhilippineAddressSeeder extends Seeder
             // Manila
             ['code' => '133901001', 'name' => 'Intramuros', 'city_code' => '133901000', 'province_code' => '133900000'],
             ['code' => '133901002', 'name' => 'Binondo', 'city_code' => '133901000', 'province_code' => '133900000'],
-            
+
             // Quezon City
             ['code' => '133902001', 'name' => 'Batasan Hills', 'city_code' => '133902000', 'province_code' => '133900000'],
             ['code' => '133902002', 'name' => 'Diliman', 'city_code' => '133902000', 'province_code' => '133900000'],
@@ -102,9 +102,10 @@ class PhilippineAddressSeeder extends Seeder
             ['code' => '043401002', 'name' => 'Bucal', 'city_code' => '043401000', 'province_code' => '043400000'],
             ['code' => '043401003', 'name' => 'Pansol', 'city_code' => '043401000', 'province_code' => '043400000'],
 
-            // Los Banos
-            ['code' => '043402001', 'name' => 'Batong Malake', 'city_code' => '043402000', 'province_code' => '043400000'],
-            ['code' => '043402002', 'name' => 'Poblacion', 'city_code' => '043402000', 'province_code' => '043400000'],
+            // Los Baños — PSA PSGC correspondence codes as of 31 July 2025:
+            // https://psa.gov.ph/classification/psgc/barangays/0403411011
+            ['code' => '043411004', 'name' => 'Batong Malake', 'city_code' => '043411000', 'province_code' => '043400000'],
+            ['code' => '043411010', 'name' => 'Mayondon', 'city_code' => '043411000', 'province_code' => '043400000'],
 
             // Cebu City
             ['code' => '072201001', 'name' => 'Lahug', 'city_code' => '072201000', 'province_code' => '072200000'],

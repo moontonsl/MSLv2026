@@ -3,13 +3,16 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     /**
@@ -95,10 +98,40 @@ class User extends Authenticatable
         ];
     }
 
+    public function campusAffiliations(): HasMany
+    {
+        return $this->hasMany(CampusAffiliation::class);
+    }
+
+    public function approvedCampusAffiliations(): HasMany
+    {
+        return $this->hasMany(CampusAffiliation::class, 'approved_by_user_id');
+    }
+
+    public function createdCampusTournaments(): HasMany
+    {
+        return $this->hasMany(CampusTournament::class, 'created_by_user_id');
+    }
+
+    public function tournamentSubmissions(): HasMany
+    {
+        return $this->hasMany(CampusTournamentSubmission::class, 'submitted_by_user_id');
+    }
+
+    public function tournamentReviews(): HasMany
+    {
+        return $this->hasMany(CampusTournamentReview::class, 'reviewer_user_id');
+    }
+
+    public function regionAdminAssignments(): HasMany
+    {
+        return $this->hasMany(RegionAdmin::class);
+    }
+
     /**
      * The permissions assigned to the user.
      */
-    public function permissions(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function permissions(): BelongsToMany
     {
         return $this->belongsToMany(Permission::class);
     }
