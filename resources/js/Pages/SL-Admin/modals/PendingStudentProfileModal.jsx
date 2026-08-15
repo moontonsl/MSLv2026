@@ -1,5 +1,7 @@
 import { Clock3, Copy, FileText, Mars, Venus, X } from 'lucide-react';
+import { useState } from 'react';
 import AccountActionButton from './AccountActionDialog';
+import AttachmentPreviewModal from './AttachmentPreviewModal';
 import { slAdminProfile } from '../slAdminData';
 
 function GenderIcon({ gender, className = 'h-5 w-5' }) {
@@ -11,7 +13,7 @@ function DetailCard({ label, value }) {
     return <div className="rounded-xl bg-[#121212] px-3 py-2"><div className="text-sm leading-6 text-gray-400">{label}</div><div className="break-words text-sm font-semibold leading-6 text-gray-300">{value}</div></div>;
 }
 
-export default function PendingStudentProfileModal({ student, accountView, onClose }) {
+export default function PendingStudentProfileModal({ student, accountView, onClose, onRenew, onVerify, onBlock }) {
     if (!student) return null;
 
     const canDemoteRegional = accountView === 'Core View' && student.role === 'Regional Admin';
@@ -39,8 +41,12 @@ export default function PendingStudentProfileModal({ student, accountView, onClo
                         <div className="border-t border-white/10 pt-6"><h3 className="font-heading text-lg font-bold text-brand-500">Verification Details</h3><div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><DetailCard label="Joined" value={joinedDate} /><DetailCard label="Verified by" value="Awaiting review" /><DetailCard label="Verified on" value="—" /><DetailCard label="Validity" value="—" /></div></div>
                         <button type="button" onClick={() => setIsAttachmentOpen(true)} className="flex w-full items-center justify-center gap-2 rounded-xl border border-brand-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/10"><FileText className="h-5 w-5" />View Attachment</button>
                         <div className="grid gap-3 sm:grid-cols-2">
-                            <AccountActionButton action="renew" className="rounded-xl border border-brand-500 bg-brand-500/30 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/40">Renew</AccountActionButton>
-                            <AccountActionButton action="block" className="rounded-xl border border-red-500 bg-red-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600">Block User</AccountActionButton>
+                            {student.isRenewal ? (
+                                <AccountActionButton action="verify" onComplete={() => onVerify?.(student)} className="rounded-xl border border-green-500 bg-green-500/30 px-4 py-3 text-sm font-semibold text-white transition hover:bg-green-500/40">Verify</AccountActionButton>
+                            ) : (
+                                <AccountActionButton action="renew" onComplete={() => onRenew?.(student)} className="rounded-xl border border-brand-500 bg-brand-500/30 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/40">Renew</AccountActionButton>
+                            )}
+                            <AccountActionButton action="block" onComplete={(reason) => onBlock?.(student, reason)} className="rounded-xl border border-red-500 bg-red-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600">Block User</AccountActionButton>
                         </div>
                     </div>
                 </section>

@@ -19,6 +19,7 @@ export const statusOptions = [
     { value: 'new', label: 'New' },
     { value: 'verified', label: 'Verified' },
     { value: 'pending', label: 'Pending' },
+    { value: 'renewal', label: 'Renewal' },
     { value: 'blocked', label: 'Blocked' },
     { value: 'inactive', label: 'Inactive' },
 ];

@@ -31,7 +31,57 @@ class StudentPortalController extends Controller
     {
         $this->checkStudentPrivilege();
 
-        return Inertia::render('StudentProfile/Index');
+        $user = Auth::user();
+        $renewalRequirements = collect($user->renewal_requirements ?? [])
+            ->mapWithKeys(fn (string $requirement) => [$requirement => 'needupdate'])
+            ->all();
+
+        return Inertia::render('StudentProfile/Index', [
+            'profile' => [
+                'playerName' => $user->name,
+                'playerUsername' => '@' . $user->username,
+                'playerGender' => strtolower($user->gender ?: 'male'),
+                'isVerified' => $user->status === 'active',
+                'playerLevel' => 'LVL ' . ($user->ml_level ?: 1),
+                'profileBackground' => $user->profile_background ?: '/profile-background.jpg',
+                'schoolName' => $user->university ?: 'N/A',
+                'yearLevel' => $user->year_level ?: 'N/A',
+                'courseName' => $user->course ?: 'N/A',
+                'editableProfile' => [
+                    'contactNo' => $user->contact_number,
+                    'facebookLink' => $user->facebook_link,
+                    'email' => $user->email,
+                    'squadAbbreviation' => $user->squadAbbreviation,
+                ],
+                'playerInformation' => [
+                    'ign' => $user->ml_ign ?: 'N/A',
+                    'uid' => $user->ml_id ?: 'N/A',
+                    'server' => $user->ml_server ?: 'N/A',
+                    'squad' => $user->squadName ?: 'N/A',
+                    'role' => $user->inGameRole ?: 'N/A',
+                ],
+            ],
+            'accountRenewal' => $renewalRequirements,
+            'accountRenewalProfile' => [
+                'fullName' => $user->name,
+                'username' => $user->username,
+                'email' => $user->email,
+                'school' => $user->university,
+                'ign' => $user->ml_ign,
+            ],
+            'renewalApprovalNotice' => (bool) ($user->renewal_approved_at && !$user->renewal_notice_dismissed_at),
+        ]);
+    }
+
+    public function acknowledgeRenewalApproval(Request $request): RedirectResponse
+    {
+        $this->checkStudentPrivilege();
+
+        $user = Auth::user();
+        $user->renewal_notice_dismissed_at = now();
+        $user->save();
+
+        return redirect()->back();
     }
 
     /**

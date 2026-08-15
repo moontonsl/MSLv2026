@@ -1,5 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AlertCircle, ChevronDown, Info, Search, X } from 'lucide-react';
+import {
+    AlertCircle,
+    CheckCircle2,
+    ChevronDown,
+    FileText,
+    Info,
+    Search,
+    Trash2,
+    UploadCloud,
+    X,
+} from 'lucide-react';
 import { collegeSchoolOptions } from '@/Pages/AccountCreation/data/collegeOptions';
 import { shsSchoolOptions } from '@/Pages/AccountCreation/data/shsOptions';
 import {
@@ -170,6 +180,110 @@ function RequirementPanel({ title, children }) {
     );
 }
 
+function formatFileSize(size) {
+    if (!size) return '0 KB';
+    if (size < 1024 * 1024) return `${Math.max(1, Math.round(size / 1024))} KB`;
+    return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function ProofUploadField({ file, error, onChange, onRemove }) {
+    const inputRef = useRef(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [previewUrl, setPreviewUrl] = useState(null);
+
+    useEffect(() => {
+        if (!file || !file.type?.startsWith('image/')) {
+            setPreviewUrl(null);
+            return undefined;
+        }
+
+        const objectUrl = URL.createObjectURL(file);
+        setPreviewUrl(objectUrl);
+
+        return () => URL.revokeObjectURL(objectUrl);
+    }, [file]);
+
+    const chooseFile = (nextFile) => {
+        if (nextFile) onChange(nextFile);
+    };
+
+    const handleDrop = (event) => {
+        event.preventDefault();
+        setIsDragging(false);
+        chooseFile(event.dataTransfer.files?.[0]);
+    };
+
+    return (
+        <div className="space-y-3">
+            <input
+                ref={inputRef}
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={(event) => chooseFile(event.target.files?.[0])}
+                className="hidden"
+            />
+
+            {file ? (
+                <div className="flex items-center gap-3 rounded-2xl border border-emerald-400/30 bg-emerald-400/[0.08] p-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-black/30">
+                        {previewUrl ? (
+                            <img src={previewUrl} alt="Proof preview" className="h-full w-full object-cover" />
+                        ) : (
+                            <FileText className="h-6 w-6 text-brand-400" />
+                        )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm font-semibold text-white">{file.name}</div>
+                        <div className="mt-0.5 flex items-center gap-1.5 text-xs text-emerald-300">
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            Ready to upload · {formatFileSize(file.size)}
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={onRemove}
+                        className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-500/10 hover:text-red-400"
+                        aria-label="Remove selected proof of enrollment"
+                    >
+                        <Trash2 className="h-4 w-4" />
+                    </button>
+                </div>
+            ) : (
+                <button
+                    type="button"
+                    onClick={() => inputRef.current?.click()}
+                    onDragEnter={(event) => {
+                        event.preventDefault();
+                        setIsDragging(true);
+                    }}
+                    onDragOver={(event) => event.preventDefault()}
+                    onDragLeave={(event) => {
+                        if (event.currentTarget === event.target) setIsDragging(false);
+                    }}
+                    onDrop={handleDrop}
+                    className={`group flex min-h-[170px] w-full flex-col items-center justify-center rounded-2xl border border-dashed px-5 py-6 text-center transition ${
+                        error
+                            ? 'border-red-500/70 bg-red-500/[0.06]'
+                            : isDragging
+                                ? 'border-brand-400 bg-brand-500/[0.12]'
+                                : 'border-white/20 bg-white/[0.025] hover:border-brand-400/70 hover:bg-brand-500/[0.06]'
+                    }`}
+                >
+                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-brand-400/30 bg-brand-500/10 text-brand-400 transition group-hover:scale-105">
+                        <UploadCloud className="h-6 w-6" />
+                    </span>
+                    <span className="mt-3 text-sm font-semibold text-white">
+                        {isDragging ? 'Drop your file here' : 'Click to upload or drag and drop'}
+                    </span>
+                    <span className="mt-1 text-xs text-gray-400">PDF, JPG, JPEG, or PNG · Maximum 2 MB</span>
+                </button>
+            )}
+
+            {error ? <span className="block text-sm font-medium leading-5 text-red-400">{error}</span> : null}
+        </div>
+    );
+}
+
 export default function AccountRenewalModal({
     isOpen,
     onClose,
@@ -196,6 +310,7 @@ export default function AccountRenewalModal({
         course: '',
         yearLevel: '',
         studentId: '',
+        proofOfEnrollment: null,
         firstName: '',
         lastName: '',
     });
@@ -225,6 +340,9 @@ export default function AccountRenewalModal({
         if (requiredKeys.has('schoolId') || requiredKeys.has('document')) {
             if (!form.studentId.trim()) nextErrors.studentId = 'Student ID number is required.';
         }
+        if (requiredKeys.has('document') && !form.proofOfEnrollment) {
+            nextErrors.proofOfEnrollment = 'Proof of enrollment is required.';
+        }
         if (requiredKeys.has('fullName')) {
             if (!form.firstName.trim()) nextErrors.firstName = 'First name is required.';
             if (!form.lastName.trim()) nextErrors.lastName = 'Last name is required.';
@@ -245,6 +363,7 @@ export default function AccountRenewalModal({
             course: form.course,
             yearLevel: form.yearLevel,
             studentId: form.studentId,
+            proofOfEnrollment: form.proofOfEnrollment,
             firstName: form.firstName,
             lastName: form.lastName,
         };
@@ -349,6 +468,19 @@ export default function AccountRenewalModal({
                                         value={form.studentId}
                                         onChange={(event) => updateField('studentId', event.target.value)}
                                         placeholder="e.g. 2026-0001"
+                                    />
+                                </FieldShell>
+                            </RequirementPanel>
+                        ) : null}
+
+                        {requiredKeys.has('document') ? (
+                            <RequirementPanel title="Proof of Enrollment">
+                                <FieldShell label="Upload Proof of Enrollment">
+                                    <ProofUploadField
+                                        file={form.proofOfEnrollment}
+                                        error={errors.proofOfEnrollment}
+                                        onChange={(file) => updateField('proofOfEnrollment', file)}
+                                        onRemove={() => updateField('proofOfEnrollment', null)}
                                     />
                                 </FieldShell>
                             </RequirementPanel>

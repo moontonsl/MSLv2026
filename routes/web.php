@@ -8,7 +8,10 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student\StudentPortalController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -59,9 +62,7 @@ Route::get('/GeneralAffairs', function () {
     return Inertia::render('About');
 })->name('general.affairs');
 
-Route::get('/Login', function () {
-    return Inertia::render('Login/Login');
-})->name('Login');
+Route::redirect('/Login', '/login')->name('Login');
 
 Route::get('/SL-Admin', function () {
     return Inertia::render('SL-Admin/Index');
@@ -83,9 +84,7 @@ Route::get('/MSLNetAdmin', function () {
     return Inertia::render('SL-Admin/Index');
 })->name('mslnet.admin');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::redirect('/dashboard', '/')->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -108,45 +107,86 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'active.student'])->group(function () {
     Route::get('/studentportal', [StudentPortalController::class, 'index'])->name('student.portal');
     Route::post('/studentportal/profile', [StudentPortalController::class, 'updateProfile'])->name('student.profile.update');
+    Route::post('/studentportal/renewal-approval/acknowledge', [StudentPortalController::class, 'acknowledgeRenewalApproval'])->name('student.renewal.approval.acknowledge');
 
     Route::post('/studentportal/renew', function (Request $request) {
         $request->validate([
-            'yearLevel' => 'required|string',
-            'age' => 'required|integer|min:1',
-            'documentFile' => 'required|file|mimes:jpeg,png,gif,pdf|max:2048',
+            'studentId' => 'required|string|max:255',
+            'proofOfEnrollment' => 'required|file|mimes:jpeg,jpg,png,pdf|max:2048',
+            'school' => 'nullable|string|max:255',
+            'course' => 'nullable|string|max:255',
+            'yearLevel' => 'nullable|string|max:255',
+            'firstName' => 'nullable|string|max:255',
+            'lastName' => 'nullable|string|max:255',
         ]);
 
         $user = Auth::user();
+        $oldProofPath = $user->proofOfEnrollment;
+        $newProofPath = null;
 
-        if ($request->hasFile('documentFile')) {
-            $file = $request->file('documentFile');
-            $filename = time().'_'.$file->getClientOriginalName();
+        try {
+            $file = $request->file('proofOfEnrollment');
+            $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
             $destinationPath = public_path('uploads/proofs');
-            if (! file_exists($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
-            }
+            File::ensureDirectoryExists($destinationPath);
             $file->move($destinationPath, $filename);
-            $user->proofOfEnrollment = '/uploads/proofs/'.$filename;
+            $newProofPath = '/uploads/proofs/' . $filename;
+            $user->proofOfEnrollment = $newProofPath;
+
+            $user->studentId = $request->input('studentId');
+            $user->university = $request->input('school', $user->university);
+            $user->course = $request->input('course', $user->course);
+            $user->year_level = $request->input('yearLevel', $user->year_level);
+            $user->first_name = $request->input('firstName', $user->first_name);
+            $user->surname = $request->input('lastName', $user->surname);
+            $user->status = 'pending-review';
+
+            if (!$user->renewal_requested_at) {
+                $user->renewal_requested_at = now()->subDays(1);
+            }
+            $user->renewal_submitted_at = now();
+            $user->save();
+
+            if ($oldProofPath && $oldProofPath !== $newProofPath) {
+                $oldAbsolutePath = public_path(ltrim($oldProofPath, '/'));
+
+                if (File::exists($oldAbsolutePath)) {
+                    File::delete($oldAbsolutePath);
+                }
+            }
+        } catch (\Throwable $exception) {
+            if ($newProofPath) {
+                $newAbsolutePath = public_path(ltrim($newProofPath, '/'));
+
+                if (File::exists($newAbsolutePath)) {
+                    File::delete($newAbsolutePath);
+                }
+            }
+
+            throw $exception;
         }
-
-        $user->year_level = $request->input('yearLevel');
-        $user->age = (int) $request->input('age');
-        $user->status = 'pending-review';
-
-        // Record timestamps
-        if (! $user->renewal_requested_at) {
-            $user->renewal_requested_at = now()->subDays(1); // default to 1 day before submission if not set
-        }
-        $user->renewal_submitted_at = now();
-
-        $user->save();
 
         return redirect()->back()->with('status', 'Renewal submitted successfully.');
     })->name('student.portal.renew');
 });
 
+Route::get('/renewal-review', function () {
+    $user = Auth::user();
+
+    abort_unless($user?->user_type === 'Student', 404);
+
+    if ($user->status === 'active') {
+        return redirect()->route('student.portal');
+    }
+
+    abort_unless($user->status === 'pending-review', 404);
+
+    return Inertia::render('Auth/RenewalReview');
+})->middleware('auth')->name('renewal.review');
+
 // Verification status pages
 Route::middleware(['auth', 'redirect.status'])->group(function () {
+
     Route::get('/pending-verification', function () {
         return Inertia::render('Auth/PendingVerification');
     })->name('pending.verification');
@@ -170,7 +210,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])
         ->middleware('permission:access_admin_dashboard')
         ->name('admin.dashboard');
-
     Route::post('/admin/users/{id}/approve', [AdminDashboardController::class, 'approve'])
         ->middleware('permission:approve_students')
         ->name('admin.users.approve');
@@ -178,6 +217,15 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/users/{id}/reject', [AdminDashboardController::class, 'reject'])
         ->middleware('permission:reject_students')
         ->name('admin.users.reject');
+
+    Route::post('/admin/users/{id}/renewal', [AdminDashboardController::class, 'markRenewal'])
+        ->name('admin.users.renewal');
+
+    Route::post('/admin/users/{id}/block', [AdminDashboardController::class, 'block'])
+        ->name('admin.users.block');
+
+    Route::post('/admin/users/{id}/promote', [AdminDashboardController::class, 'promote'])
+        ->name('admin.users.promote');
 
     // Admin Management Page
     Route::get('/admin/management', [AdminManagementController::class, 'index'])
@@ -195,9 +243,13 @@ Route::get('/StudentLeader', function () {
     return Inertia::render('VerificationPages/StudentLeader');
 })->name('student.leader');
 
-Route::get('/RegionalAdmin', function () {
-    return Inertia::render('VerificationPages/RegionalAdmin');
-})->name('regional.admin');
+Route::get('/RegionalAdmin', [\App\Http\Controllers\Admin\RegionalAdminController::class, 'index'])
+    ->middleware('auth')
+    ->name('regional.admin');
+
+Route::post('/RegionalAdmin/background', [\App\Http\Controllers\Admin\RegionalAdminController::class, 'updateBackground'])
+    ->middleware('auth')
+    ->name('regional.admin.background');
 
 Route::get('/CoreAdmin', function () {
     return Inertia::render('VerificationPages/CoreAdmin');

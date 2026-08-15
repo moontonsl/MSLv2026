@@ -19,7 +19,7 @@ function DetailCard({ label, value }) {
     );
 }
 
-export default function VerifiedStudentProfileModal({ student, accountView, onClose }) {
+export default function VerifiedStudentProfileModal({ student, accountView, onClose, onRenew, onBlock }) {
     if (!student) return null;
 
     const targetPromotionRole = student.role === 'Student Leader' ? 'Regional Admin' : 'Student Leader';
@@ -68,8 +68,8 @@ export default function VerifiedStudentProfileModal({ student, accountView, onCl
                         <div className="border-t border-white/10 pt-6"><h3 className="font-heading text-lg font-bold text-brand-500">Verification Details</h3><div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><DetailCard label="Joined" value={joinedDate} /><DetailCard label="Verified by" value="Jose Rizal" /><DetailCard label="Verified on" value={verifiedDate} /><DetailCard label="Validity" value="10/14/2026" /></div></div>
                         <button type="button" onClick={() => setIsAttachmentOpen(true)} className="flex w-full items-center justify-center gap-2 rounded-xl border border-brand-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/10"><FileText className="h-5 w-5" />View Attachment</button>
                         <div className="grid gap-3 sm:grid-cols-2">
-                            <AccountActionButton action="renew" className="rounded-xl border border-brand-500 bg-brand-500/30 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/40">Renew</AccountActionButton>
-                            <AccountActionButton action="block" className="rounded-xl border border-red-500 bg-red-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600">Block User</AccountActionButton>
+                            <AccountActionButton action="renew" onComplete={() => onRenew?.(student)} className="rounded-xl border border-brand-500 bg-brand-500/30 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-500/40">Renew</AccountActionButton>
+                            <AccountActionButton action="block" onComplete={(reason) => onBlock?.(student, reason)} className="rounded-xl border border-red-500 bg-red-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600">Block User</AccountActionButton>
                         </div>
                     </div>
                 </section>

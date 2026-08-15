@@ -23,7 +23,15 @@ class RedirectIfAuthenticatedByStatus
                 return redirect()->route('student.portal');
             }
 
-            if (in_array($user->user_type, ['Super Admin', 'Regional Admin', 'Student Leader'])) {
+            if ($user->user_type === 'Regional Admin') {
+                return redirect()->route('regional.admin');
+            }
+
+            if ($user->user_type === 'Student' && $user->status === 'pending-review') {
+                return redirect()->route('renewal.review');
+            }
+
+            if (in_array($user->user_type, ['Super Admin', 'Student Leader'])) {
                 return redirect()->route('admin.dashboard');
             }
         }

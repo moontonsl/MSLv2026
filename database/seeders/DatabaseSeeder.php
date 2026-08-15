@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             CampusTypeSeeder::class,
             CommunityTierSeeder::class,
             TournamentReferenceSeeder::class,
+            FilipinoStudentSeeder::class,
         ]);
     }
 }

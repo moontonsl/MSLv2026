@@ -31,6 +31,7 @@ class User extends Authenticatable
         'ml_server',
         'ml_ign',
         'ml_avatar',
+        'profile_background',
         'ml_level',
         'ml_rank',
         'ml_rank_level',
@@ -65,6 +66,8 @@ class User extends Authenticatable
         'renewal_requested_at',
         'renewal_submitted_at',
         'renewal_approved_at',
+        'renewal_notice_dismissed_at',
+        'renewal_requirements',
         // Rejection fields
         'rejection_reason',
         'rejection_checklist',
@@ -94,6 +97,8 @@ class User extends Authenticatable
             'renewal_requested_at' => 'datetime',
             'renewal_submitted_at' => 'datetime',
             'renewal_approved_at' => 'datetime',
+            'renewal_notice_dismissed_at' => 'datetime',
+            'renewal_requirements' => 'array',
             'rejection_checklist' => 'array',
         ];
     }

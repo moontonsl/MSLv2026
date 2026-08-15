@@ -130,6 +130,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
 
     const { auth } = usePage().props;
     const user = auth?.user;
+    const userRole = user?.user_type ?? user?.role;
     const loggedIn = isLoggedInProp !== undefined ? isLoggedInProp && !!user : !!user;
 
     useEffect(() => {
@@ -246,20 +247,27 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                             {isAccountDropdownOpen && user && (
                                 <div className="absolute right-0 top-full z-[60] mt-2 min-w-[180px] overflow-hidden rounded-xl border border-white/5 bg-[#111111] py-1 shadow-2xl">
                                     <Link
-                                        href="/studentportal"
+                                        href={
+                                            userRole === 'Student'
+                                                ? '/studentportal'
+                                                : userRole === 'Regional Admin'
+                                                    ? '/RegionalAdmin'
+                                                    : '/admin/dashboard'
+                                        }
                                         className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
                                         onClick={() => setIsAccountDropdownOpen(false)}
                                     >
                                         Profile
                                     </Link>
-                                    {(user.role === 'SL' ||
-                                        user.role === 'Super Admin' ||
-                                        user.role === 'Regional Admin') && (
+                                    {(userRole === 'SL' ||
+                                        userRole === 'Student Leader' ||
+                                        userRole === 'Super Admin' ||
+                                        userRole === 'Regional Admin') && (
                                         <Link
                                             href={
-                                                user.role === 'Super Admin'
+                                                userRole === 'Super Admin'
                                                     ? '/CoreAdmin'
-                                                    : user.role === 'Regional Admin'
+                                                    : userRole === 'Regional Admin'
                                                         ? '/RegionalAdmin'
                                                         : '/StudentLeader'
                                             }
@@ -269,9 +277,10 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                             SL Admin
                                         </Link>
                                     )}
-                                    {(user.role === 'SL' ||
-                                        user.role === 'Regional Admin' ||
-                                        user.role === 'Super Admin') && (
+                                    {(userRole === 'SL' ||
+                                        userRole === 'Student Leader' ||
+                                        userRole === 'Regional Admin' ||
+                                        userRole === 'Super Admin') && (
                                         <a
                                             href="/CampusTournament"
                                             className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
@@ -280,7 +289,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                             Campus Tournament
                                         </a>
                                     )}
-                                    {user.role === 'SL' && (
+                                    {(userRole === 'SL' || userRole === 'Student Leader') && (
                                         <Link
                                             href="/SLAdminApproval"
                                             className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
@@ -289,7 +298,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                             Modification
                                         </Link>
                                     )}
-                                    {(user.role === 'Regional Admin' || user.role === 'Super Admin') && (
+                                    {(userRole === 'Regional Admin' || userRole === 'Super Admin') && (
                                         <Link
                                             href="/RegionalAdminApproval"
                                             className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
@@ -298,7 +307,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                             Modification
                                         </Link>
                                     )}
-                                    {user.role === 'Super Admin' && (
+                                    {userRole === 'Super Admin' && (
                                         <Link
                                             href="/admin/user-regions"
                                             className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
@@ -307,7 +316,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                             User Regions
                                         </Link>
                                     )}
-                                    {(user.role === 'Regional Admin' || user.role === 'Super Admin') && (
+                                    {(userRole === 'Regional Admin' || userRole === 'Super Admin') && (
                                         <Link
                                             href="/community/create"
                                             className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"

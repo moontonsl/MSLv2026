@@ -74,7 +74,14 @@ function getStatusValue(source, field) {
 }
 
 export function getAccountRenewalRequirements(statuses = {}) {
-    return Object.values(accountRenewalFields).filter((field) => needsUpdate(getStatusValue(statuses, field)));
+    const requirements = Object.values(accountRenewalFields).filter((field) => needsUpdate(getStatusValue(statuses, field)));
+
+    // Every renewal submission must include current proof of enrollment.
+    if (requirements.length > 0 && !requirements.some((field) => field.key === 'document')) {
+        requirements.push(accountRenewalFields.document);
+    }
+
+    return requirements;
 }
 
 export function hasAccountRenewalRequirements(statuses = {}) {

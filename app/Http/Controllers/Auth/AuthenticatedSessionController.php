@@ -18,7 +18,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Auth/Login', [
+        return Inertia::render('Login/Login', [
             'canResetPassword' => Route::has('password.request'),
             'status' => session('status'),
         ]);
@@ -35,13 +35,30 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        if (in_array($user->user_type, ['Super Admin', 'Regional Admin', 'Student Leader'])) {
-            return redirect()->intended(route('admin.dashboard'));
+        if ($user->status === 'blocked') {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->withErrors([
+                'username' => 'This account has been blocked. Please contact an administrator.',
+            ]);
+        }
+
+        if ($user->user_type === 'Regional Admin') {
+            return redirect()->route('regional.admin');
+        }
+
+        if (in_array($user->user_type, ['Super Admin', 'Student Leader'])) {
+            return redirect()->route('admin.dashboard');
         }
 
         if ($user->user_type === 'Student') {
             if ($user->status === 'pending') {
                 return redirect()->route('pending.verification');
+            }
+            if ($user->status === 'pending-review') {
+                return redirect()->route('renewal.review');
             }
             if ($user->status === 'rejected') {
                 return redirect()->route('rejected.verification');

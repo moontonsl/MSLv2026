@@ -6,15 +6,19 @@ import {
     Users, Search, Filter, ShieldCheck, ShieldAlert, Check, X, FileText, 
     ExternalLink, Gamepad2, Landmark, User, Mail, Phone, Calendar, 
     Facebook, MapPin, Award, Swords, Compass, LogOut, ClipboardList,
-    Crown, RefreshCw, UserX, UserCheck, ChevronLeft, ChevronRight, Settings
+    Crown, RefreshCw, UserX, UserCheck, ChevronLeft, ChevronRight, Settings, Ban, ArrowUpCircle
 } from "lucide-react";
 
 export default function AdminDashboard({ auth, students, filters }) {
+    const reviewRoles = ['Super Admin', 'Student Leader', 'Regional Admin'];
+    const canReview = reviewRoles.includes(auth?.user?.user_type);
     const hasPermission = (slug) => {
-        return auth?.permissions?.includes(slug) || false;
+        return canReview && (auth?.user?.user_type === 'Super Admin' || auth?.permissions?.includes(slug) || ['approve_students', 'reject_students', 'renew_students'].includes(slug));
     };
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [rejectModalOpen, setRejectModalOpen] = useState(false);
+    const [renewalModalOpen, setRenewalModalOpen] = useState(false);
+    const [renewalRequirements, setRenewalRequirements] = useState(['document']);
     const [searchQuery, setSearchQuery] = useState(filters.search || "");
     const [divisionFilter, setDivisionFilter] = useState(filters.division || "");
     const [activeTab, setActiveTab] = useState(filters.status || "pending");
@@ -124,6 +128,75 @@ export default function AdminDashboard({ auth, students, filters }) {
         });
     };
 
+    const toggleRenewalRequirement = (requirement) => {
+        setRenewalRequirements((current) => current.includes(requirement)
+            ? current.filter((item) => item !== requirement)
+            : [...current, requirement]);
+    };
+
+    const handleMarkRenewal = (e) => {
+        e.preventDefault();
+
+        if (!selectedStudent || renewalRequirements.length === 0) {
+            showToast('Select at least one renewal requirement.', 'error');
+            return;
+        }
+
+        router.post(route('admin.users.renewal', selectedStudent.id), {
+            requirements: renewalRequirements,
+        }, {
+            onSuccess: () => {
+                setRenewalModalOpen(false);
+                setSelectedStudent(null);
+                showToast('Student marked for renewal.', 'success');
+            },
+        });
+    };
+
+    const handleBlock = () => {
+        if (!selectedStudent) return;
+
+        setConfirmDialog({
+            isOpen: true,
+            title: 'Block Account',
+            message: `Are you sure you want to block ${selectedStudent.name}? They will no longer be able to access the platform.`,
+            onConfirm: () => {
+                setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+                router.post(route('admin.users.block', selectedStudent.id), {}, {
+                    onSuccess: () => {
+                        setSelectedStudent(null);
+                        showToast('Account blocked successfully.');
+                    }
+                });
+            },
+            onCancel: () => setConfirmDialog(prev => ({ ...prev, isOpen: false }))
+        });
+    };
+
+    const handlePromote = () => {
+        if (!selectedStudent) return;
+
+        const nextRole = selectedStudent.user_type === 'Student'
+            ? 'Student Leader'
+            : 'Regional Admin';
+
+        setConfirmDialog({
+            isOpen: true,
+            title: `Promote to ${nextRole}`,
+            message: `Are you sure you want to promote ${selectedStudent.name} to ${nextRole}?`,
+            onConfirm: () => {
+                setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+                router.post(route('admin.users.promote', selectedStudent.id), {}, {
+                    onSuccess: () => {
+                        setSelectedStudent(null);
+                        showToast(`Account promoted to ${nextRole}.`);
+                    }
+                });
+            },
+            onCancel: () => setConfirmDialog(prev => ({ ...prev, isOpen: false }))
+        });
+    };
+
     const toggleChecklistItem = (key) => {
         setRejectionChecklist(prev => ({
             ...prev,
@@ -132,26 +205,29 @@ export default function AdminDashboard({ auth, students, filters }) {
     };
 
     // Stats calculations from the full search/division-filtered students list
-    const pendingCount = students.filter(s => s.user_type === 'Student' && (s.status === 'pending' || s.status === 'pending-review')).length;
-    const renewalCount = students.filter(s => s.user_type === 'Student' && s.status === 'renewal-required').length;
+    const pendingCount = students.filter(s => s.user_type === 'Student' && s.status === 'pending').length;
+    const renewalCount = students.filter(s => s.user_type === 'Student' && ['pending-review', 'renewal-required'].includes(s.status)).length;
     const activeCount = students.filter(s => s.user_type === 'Student' && s.status === 'active').length;
     const rejectedCount = students.filter(s => s.user_type === 'Student' && s.status === 'rejected').length;
-    const blockedCount = rejectedCount;
+    const blockedCount = students.filter(s => s.status === 'blocked').length;
     const studentLeaderCount = students.filter(s => s.user_type === 'Student Leader').length;
 
     // Filter students to display in table based on selected tab
     const displayedStudents = students.filter(student => {
         if (activeTab === "pending") {
-            return student.user_type === 'Student' && (student.status === 'pending' || student.status === 'pending-review');
+            return student.user_type === 'Student' && student.status === 'pending';
         }
         if (activeTab === "renewal") {
-            return student.user_type === 'Student' && student.status === 'renewal-required';
+            return student.user_type === 'Student' && ['pending-review', 'renewal-required'].includes(student.status);
         }
         if (activeTab === "active") {
             return student.user_type === 'Student' && student.status === 'active';
         }
         if (activeTab === "rejected") {
             return student.user_type === 'Student' && student.status === 'rejected';
+        }
+        if (activeTab === "blocked") {
+            return student.status === 'blocked';
         }
         if (activeTab === "student_leader") {
             return student.user_type === 'Student Leader';
@@ -352,16 +428,16 @@ export default function AdminDashboard({ auth, students, filters }) {
 
                         {/* Blocked Card */}
                         <button
-                            onClick={() => handleTabChange("rejected")}
+                            onClick={() => handleTabChange("blocked")}
                             className={`group relative rounded-2xl border p-5 flex flex-col justify-between text-left transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:scale-[1.02] active:scale-[0.98] ${
-                                activeTab === "rejected"
+                                activeTab === "blocked"
                                     ? "border-red-500/45 bg-red-950/15 shadow-[0_0_20px_rgba(239,68,68,0.12)]"
                                     : "border-white/[0.06] bg-[#121212] hover:border-white/15 hover:bg-[#181818]"
                             }`}
                         >
                             <div className="flex justify-between items-start w-full">
                                 <UserX className={`h-6 w-6 transition-colors ${
-                                    activeTab === "rejected" ? "text-red-400" : "text-red-500 group-hover:text-red-400"
+                                    activeTab === "blocked" ? "text-red-400" : "text-red-500 group-hover:text-red-400"
                                 }`} />
                                 <span className="text-gray-400 text-xs font-semibold tracking-wider">Blocked</span>
                             </div>
@@ -603,7 +679,105 @@ export default function AdminDashboard({ auth, students, filters }) {
             {selectedStudent && (
                 <div className="fixed inset-0 z-40 flex justify-end bg-black/60 backdrop-blur-sm transition-opacity duration-300">
                     {/* Back drop click handler */}
-                    <div className="flex-1" onClick={() => setSelectedStudent(null)} />
+                    <div className="relative flex-1" onClick={() => setSelectedStudent(null)}>
+                        <div
+                            className="pointer-events-none absolute inset-0 text-white"
+                            onClick={(event) => event.stopPropagation()}
+                        >
+                            <div className="pointer-events-auto absolute inset-x-0 top-0 bottom-[230px] flex items-center justify-center p-6 sm:bottom-[140px]">
+                                <div className="w-[min(82%,620px)] rounded-3xl border border-white/15 bg-zinc-950/55 p-6 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-2xl">
+                                    <div className="flex items-start justify-between gap-4">
+                                <div>
+                                    <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-amber-300/80">
+                                        Student Verification
+                                    </p>
+                                    <h3 className="mt-2 text-2xl font-black tracking-tight text-white">
+                                        Proof of Enrollment
+                                    </h3>
+                                    <p className="mt-2 text-sm leading-5 text-gray-400">
+                                        Review the submitted document while keeping the student profile open on the right.
+                                    </p>
+                                </div>
+                                <div className="rounded-2xl border border-amber-400/30 bg-amber-400/10 p-3 text-amber-300">
+                                    <FileText className="h-6 w-6" />
+                                </div>
+                                    </div>
+
+                                    <div className="mt-6 rounded-2xl border border-white/10 bg-zinc-900/50 p-4">
+                                {selectedStudent.proofOfEnrollment ? (
+                                    <div className="space-y-3">
+                                        <a
+                                            href={selectedStudent.proofOfEnrollment.startsWith('/')
+                                                ? selectedStudent.proofOfEnrollment
+                                                : `/${selectedStudent.proofOfEnrollment}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-brand-500 font-semibold text-xs hover:underline flex items-center gap-1"
+                                        >
+                                            Open Document in New Tab <ExternalLink className="h-3 w-3" />
+                                        </a>
+                                        {selectedStudent.proofOfEnrollment.toLowerCase().endsWith('.pdf') ? (
+                                            <div className="h-[260px] rounded-xl border border-white/5 bg-zinc-950 flex items-center justify-center text-sm text-gray-500">
+                                                📄 PDF File Uploaded
+                                            </div>
+                                        ) : (
+                                            <img
+                                                src={selectedStudent.proofOfEnrollment.startsWith('/')
+                                                    ? selectedStudent.proofOfEnrollment
+                                                    : `/${selectedStudent.proofOfEnrollment}`}
+                                                alt="Proof of Enrollment"
+                                                className="max-h-[360px] w-full rounded-xl border border-white/5 bg-black object-contain"
+                                            />
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="flex min-h-[180px] items-center justify-center rounded-xl border border-dashed border-red-500/30 bg-red-950/10 text-sm text-red-400">
+                                        No enrollment proof uploaded.
+                                    </div>
+                                )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {selectedStudent.status === 'active' && canReview && (
+                                <div className="pointer-events-auto absolute bottom-6 left-1/2 w-[min(82%,620px)] -translate-x-1/2 rounded-2xl border border-white/15 bg-zinc-950/55 p-4 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-2xl">
+                                    <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">
+                                        Account Actions
+                                    </p>
+                                    <div className="grid gap-2 sm:grid-cols-3">
+                                        {selectedStudent.user_type === 'Student' && (
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setRenewalRequirements(['document']);
+                                                    setRenewalModalOpen(true);
+                                                }}
+                                                className="rounded-xl border border-amber-500/40 bg-amber-500/15 px-3 py-3 text-xs font-black uppercase tracking-wider text-amber-200 transition hover:bg-amber-500/25"
+                                            >
+                                                Mark for Renewal
+                                            </button>
+                                        )}
+                                        <button
+                                            type="button"
+                                            onClick={handleBlock}
+                                            className="rounded-xl border border-red-500/40 bg-red-500/10 px-3 py-3 text-xs font-black uppercase tracking-wider text-red-300 transition hover:bg-red-500/20"
+                                        >
+                                            <Ban className="mr-1 inline h-3.5 w-3.5" />
+                                            Block
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={handlePromote}
+                                            className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-3 py-3 text-xs font-black uppercase tracking-wider text-emerald-300 transition hover:bg-emerald-500/20"
+                                        >
+                                            <ArrowUpCircle className="mr-1 inline h-3.5 w-3.5" />
+                                            {selectedStudent.user_type === 'Student' ? 'Promote to Student Leader' : 'Promote to Regional Admin'}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                     
                     {/* Drawer container */}
                     <div className="w-full max-w-xl bg-zinc-950 border-l border-white/10 h-full overflow-y-auto flex flex-col p-6 relative">
@@ -726,39 +900,6 @@ export default function AdminDashboard({ auth, students, filters }) {
                                 </div>
                             </div>
 
-                            {/* Section 4: Proof of Enrollment File View */}
-                            <div className="space-y-3">
-                                <h4 className="text-xs uppercase font-bold text-gray-500 tracking-wider flex items-center gap-1.5">
-                                    <FileText className="h-3.5 w-3.5" /> Proof of Enrollment
-                                </h4>
-                                <div className="bg-zinc-900/40 border border-white/5 rounded-xl p-4">
-                                    {selectedStudent.proofOfEnrollment ? (
-                                        <div className="space-y-3">
-                                            <a 
-                                                href={`/${selectedStudent.proofOfEnrollment}`} 
-                                                target="_blank" 
-                                                rel="noopener noreferrer"
-                                                className="text-brand-500 font-semibold text-xs hover:underline flex items-center gap-1 mb-2"
-                                            >
-                                                Open Document in New Tab <ExternalLink className="h-3 w-3" />
-                                            </a>
-                                            {selectedStudent.proofOfEnrollment.toLowerCase().endsWith(".pdf") ? (
-                                                <div className="h-[200px] border border-white/5 rounded-lg flex items-center justify-center text-xs text-gray-500 bg-zinc-900">
-                                                    📄 PDF File Uploaded
-                                                </div>
-                                            ) : (
-                                                <img 
-                                                    src={`/${selectedStudent.proofOfEnrollment}`} 
-                                                    alt="Proof Document"
-                                                    className="w-full h-auto max-h-[280px] object-contain rounded-lg border border-white/5 bg-black"
-                                                />
-                                            )}
-                                        </div>
-                                    ) : (
-                                        <span className="text-xs text-red-500">No enrollment proof uploaded.</span>
-                                    )}
-                                </div>
-                            </div>
                         </div>
 
                         {/* Rejection Details History if rejected */}
@@ -792,6 +933,65 @@ export default function AdminDashboard({ auth, students, filters }) {
                             </div>
                         )}
                     </div>
+                </div>
+            )}
+
+            {renewalModalOpen && selectedStudent && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+                    <form onSubmit={handleMarkRenewal} className="w-full max-w-md rounded-2xl border border-amber-500/30 bg-zinc-950 p-6 shadow-2xl">
+                        <div className="flex items-start justify-between gap-4 mb-5">
+                            <div>
+                                <h3 className="text-lg font-bold text-amber-300">Mark for Renewal</h3>
+                                <p className="mt-1 text-xs text-gray-400">
+                                    Select the requirements that {selectedStudent.name} must update.
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setRenewalModalOpen(false)}
+                                className="rounded-lg p-1 text-gray-400 hover:bg-white/5 hover:text-white"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        <div className="space-y-2">
+                            {[
+                                ['document', 'Proof of Enrollment'],
+                                ['schoolId', 'Student ID'],
+                                ['school', 'School'],
+                                ['course', 'Course / Track'],
+                                ['yearLevel', 'Year Level'],
+                                ['fullName', 'Full Name'],
+                            ].map(([key, label]) => (
+                                <label key={key} className="flex cursor-pointer items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-3 text-sm text-gray-200 hover:border-amber-500/40">
+                                    <input
+                                        type="checkbox"
+                                        checked={renewalRequirements.includes(key)}
+                                        onChange={() => toggleRenewalRequirement(key)}
+                                        className="h-4 w-4 rounded border-white/20 bg-zinc-900 text-amber-500 focus:ring-amber-500"
+                                    />
+                                    {label}
+                                </label>
+                            ))}
+                        </div>
+
+                        <div className="mt-6 flex gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setRenewalModalOpen(false)}
+                                className="flex-1 rounded-lg border border-white/10 bg-white/5 py-3 text-sm font-semibold text-gray-300 hover:bg-white/10"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                className="flex-1 rounded-lg bg-amber-500 py-3 text-sm font-bold text-black hover:bg-amber-400"
+                            >
+                                Set Renewal
+                            </button>
+                        </div>
+                    </form>
                 </div>
             )}
 

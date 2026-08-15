@@ -6,6 +6,7 @@ import StudentTypeModal from "./StudentTypeModal";
 export default function LoginForm({ onBack }) {
 
     const { post, data, setData, reset } = useForm({
+        _token: document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
         username: '',
         password: '',
     });

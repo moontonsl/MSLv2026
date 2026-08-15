@@ -17,7 +17,7 @@ const blockReasons = [
 ];
 
 const renewReasons = [
-    'Wrong docs',
+    'Documents',
     'School',
     'Course',
     'Name',
@@ -26,6 +26,7 @@ const renewReasons = [
 
 const actionConfig = {
     verify: {
+        confirmTitle: 'Do you want to verify this account?',
         successTitle: 'Verified Account!',
         successButton: 'Success!',
     },
@@ -143,7 +144,7 @@ function ConfirmDialog({ config, onYes, onClose }) {
     );
 }
 
-function SuccessDialog({ config, onClose }) {
+function SuccessDialog({ config, reason, onComplete, onClose }) {
     return (
         <DialogShell onClose={onClose} labelledBy="account-action-success-title">
             <div className="px-4 pt-8 text-center">
@@ -152,13 +153,20 @@ function SuccessDialog({ config, onClose }) {
                 </h2>
             </div>
             <div className="px-6 pb-4 pt-6">
-                <PrimaryButton onClick={onClose}>{config.successButton}</PrimaryButton>
+                <PrimaryButton
+                    onClick={() => {
+                        onComplete?.(reason);
+                        onClose();
+                    }}
+                >
+                    {config.successButton}
+                </PrimaryButton>
             </div>
         </DialogShell>
     );
 }
 
-export default function AccountActionButton({ action, children, className }) {
+export default function AccountActionButton({ action, children, className, onComplete }) {
     const config = actionConfig[action];
     const [phase, setPhase] = useState(null);
     const [reason, setReason] = useState('');
@@ -169,7 +177,7 @@ export default function AccountActionButton({ action, children, className }) {
     };
 
     const start = () => {
-        setPhase(config.reasons ? 'reason' : 'success');
+        setPhase(config.reasons ? 'reason' : config.confirmTitle ? 'confirm' : 'success');
     };
 
     return (
@@ -195,7 +203,7 @@ export default function AccountActionButton({ action, children, className }) {
                 />
             )}
             {phase === 'success' && (
-                <SuccessDialog config={config} onClose={close} />
+                <SuccessDialog config={config} reason={reason} onComplete={onComplete} onClose={close} />
             )}
         </>
     );

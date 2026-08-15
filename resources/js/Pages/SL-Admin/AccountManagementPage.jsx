@@ -1,5 +1,5 @@
 import MainLayout from '@/Layouts/MainLayout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import {
     ArrowDown,
     ArrowUp,
@@ -28,7 +28,6 @@ import {
     slAdminProfile,
     statusOptions,
 } from './slAdminData';
-import { students } from './studentsData';
 
 const PAGE_SIZE = 10;
 const ROLE_OPTIONS = [
@@ -304,7 +303,7 @@ function Pagination({ currentPage, pageCount, onChange }) {
     );
 }
 
-export default function AccountManagementPage({ accountView, allowedRoles, title }) {
+export default function AccountManagementPage({ accountView, allowedRoles, title, students = [], profile = slAdminProfile, backgroundRoute = null }) {
     const [statusFilter, setStatusFilter] = useState('all');
     const [roleFilter, setRoleFilter] = useState('all');
     const [query, setQuery] = useState('');
@@ -312,6 +311,8 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
     const [sort, setSort] = useState({ column: 'account', direction: 'asc' });
     const [selectedStudent, setSelectedStudent] = useState(null);
     const searchRef = useRef(null);
+    const backgroundInputRef = useRef(null);
+    const [backgroundUrl, setBackgroundUrl] = useState(profile.cover);
     const allowedRoleValues = useMemo(() => allowedRoles.map(roleToValue), [allowedRoles]);
     const visibleRoleOptions = useMemo(() => [
         { value: 'all', label: 'All Roles' },
@@ -321,9 +322,28 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
         () => students.filter((student) => allowedRoleValues.includes(roleToValue(student.role))),
         [allowedRoleValues],
     );
+
+    useEffect(() => {
+        setBackgroundUrl(profile.cover);
+    }, [profile.cover]);
+
+    const handleBackgroundChange = (event) => {
+        const file = event.target.files?.[0];
+        if (!file || !backgroundRoute) return;
+
+        setBackgroundUrl(URL.createObjectURL(file));
+        router.post(backgroundRoute, { profileBackground: file }, {
+            forceFormData: true,
+            preserveScroll: true,
+            onFinish: () => {
+                event.target.value = '';
+            },
+        });
+    };
     const statCards = useMemo(() => [
         {
             label: 'Verified',
+            filterValue: 'verified',
             value: visibleStudents.filter((student) => student.status === 'Verified').length,
             icon: CheckCircle2,
             color: 'text-green-500',
@@ -331,6 +351,7 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
         },
         {
             label: 'New',
+            filterValue: 'new',
             value: visibleStudents.filter((student) => student.status === 'New').length,
             icon: Sparkles,
             color: 'text-blue-500',
@@ -338,13 +359,15 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
         },
         {
             label: 'Renewal',
-            value: visibleStudents.filter((student) => student.status === 'Pending').length,
+            filterValue: 'renewal',
+            value: visibleStudents.filter((student) => student.isRenewal).length,
             icon: RefreshCw,
             color: 'text-brand-600',
             background: 'bg-brand-500/20',
         },
         {
             label: 'Blocked',
+            filterValue: 'blocked',
             value: visibleStudents.filter((student) => student.status === 'Blocked').length,
             icon: Ban,
             color: 'text-red-500',
@@ -355,8 +378,9 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
     const filteredStudents = useMemo(() => {
         const normalizedQuery = query.trim().toLowerCase();
         const filtered = visibleStudents.filter((student) => {
-            const matchesStatus =
-                statusFilter === 'all' || student.status.toLowerCase() === statusFilter;
+            const matchesStatus = statusFilter === 'renewal'
+                ? student.isRenewal
+                : statusFilter === 'all' || student.status.toLowerCase() === statusFilter;
             const matchesRole =
                 roleFilter === 'all' || roleToValue(student.role) === roleFilter;
             const matchesSearch =
@@ -412,6 +436,31 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
         }
     };
 
+    const handleRenew = (student) => {
+        if (student.role !== 'Student') return;
+
+        router.post(route('admin.users.renewal', student.id), {
+            requirements: ['document'],
+        }, {
+            preserveScroll: true,
+            onSuccess: () => setSelectedStudent(null),
+        });
+    };
+
+    const handleVerify = (student) => {
+        router.post(route('admin.users.approve', student.id), {}, {
+            preserveScroll: true,
+            onSuccess: () => setSelectedStudent(null),
+        });
+    };
+
+    const handleBlock = (student, reason) => {
+        router.post(route('admin.users.block', student.id), { reason }, {
+            preserveScroll: true,
+            onSuccess: () => setSelectedStudent(null),
+        });
+    };
+
     return (
         <MainLayout fullWidth>
             <Head title={title} />
@@ -422,17 +471,28 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
                         <div
                             className="relative h-[240px] bg-cover bg-center sm:h-[344px]"
                             style={{
-                                backgroundImage: `linear-gradient(180deg, rgba(102,102,102,0) 0%, rgba(0,0,0,.3) 100%), url("${slAdminProfile.cover}")`,
+                                backgroundImage: `linear-gradient(180deg, rgba(102,102,102,0) 0%, rgba(0,0,0,.3) 100%), url("${backgroundUrl}")`,
                                 boxShadow: 'inset 0 -50px 30px rgba(0,0,0,.4)',
                             }}
                         >
                             <button
                                 type="button"
+                                onClick={() => backgroundInputRef.current?.click()}
+                                disabled={!backgroundRoute}
                                 className="absolute right-5 top-5 inline-flex items-center gap-1 rounded-xl border border-white/10 bg-black/60 px-3 py-1 text-sm font-semibold leading-[22px] text-white shadow-sm sm:right-8 sm:top-8"
                             >
                                 <Camera className="h-5 w-5" />
                                 Edit Background
                             </button>
+                            {backgroundRoute && (
+                                <input
+                                    ref={backgroundInputRef}
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    onChange={handleBackgroundChange}
+                                    className="hidden"
+                                />
+                            )}
                         </div>
 
                         <div className="flex flex-col items-center gap-8 px-5 py-6 sm:px-10 lg:flex-row lg:items-start lg:justify-between lg:gap-12 lg:px-12 xl:gap-16 xl:pr-32">
@@ -440,27 +500,27 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
                                 <div className="relative -mt-20 h-[150px] w-[150px] shrink-0 self-center sm:-mt-24 lg:mt-0">
                                     <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-3xl border-[3px] border-brand-700 bg-[#111111] shadow-sm">
                                         <img
-                                            src={slAdminProfile.avatar}
-                                            alt={`${slAdminProfile.name} profile`}
+                                            src={profile.avatar}
+                                            alt={`${profile.name} profile`}
                                             className="h-24 w-24 object-contain"
                                         />
                                     </div>
                                     <span className="absolute -bottom-2 right-0 rounded-lg border border-white/10 bg-[#0B0B0B] px-2.5 py-1 text-sm font-bold leading-[22px] text-brand-500 shadow-[0_0_10px_rgba(242,194,26,.1)]">
-                                        LVL {slAdminProfile.level}
+                                        LVL {profile.level}
                                     </span>
                                 </div>
 
                                 <div className="w-full min-w-0 px-0 py-3 text-center sm:px-6 sm:text-left">
                                     <div className="flex min-w-0 items-center justify-center gap-2 sm:justify-start lg:gap-3">
                                         <h1
-                                            title={slAdminProfile.name}
+                                            title={profile.name}
                                             className="min-w-0 truncate font-heading text-[clamp(1.75rem,8.5vw,3rem)] font-extrabold leading-tight text-brand-400 sm:text-5xl lg:text-[clamp(2.5rem,4vw,3.75rem)] lg:leading-[64px]"
                                         >
-                                            {slAdminProfile.name}
+                                            {profile.name}
                                         </h1>
 
                                         <div className="flex shrink-0 items-center gap-2">
-                                            <GenderIcon gender={slAdminProfile.gender} />
+                                            <GenderIcon gender={profile.gender} />
                                             <button
                                                 type="button"
                                                 aria-label="Edit profile"
@@ -472,9 +532,9 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
                                     </div>
 
                                     <div className="mt-1 flex items-center justify-center gap-2 text-xs font-bold leading-[18px] text-gray-500 sm:justify-start">
-                                        <span>{slAdminProfile.username}</span>
+                                        <span>{profile.username}</span>
                                         <Copy className="h-4 w-4" />
-                                        {slAdminProfile.verified ? (
+                                        {profile.verified ? (
                                             <span className="inline-flex items-center gap-1 rounded-md bg-green-950/60 px-2 py-0.5 font-medium text-green-500">
                                                 <Check className="h-3 w-3" />
                                                 Verified
@@ -484,30 +544,37 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
 
                                     <div className="mt-2 text-center sm:text-left">
                                         <div className="text-base font-semibold leading-[26px] text-gray-400">
-                                            {slAdminProfile.campus}
+                                            {profile.campus}
                                         </div>
                                         <div className="text-sm font-semibold leading-[22px] text-gray-500">
-                                            {slAdminProfile.course}
+                                            {profile.course}
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="grid w-full shrink-0 grid-cols-2 gap-x-8 gap-y-3 rounded-[32px] border border-brand-500/20 bg-[#0B0B0B] p-6 backdrop-blur-xl sm:w-auto lg:ml-4 xl:ml-8">
-                                <ProfileMeta label="ROLE" value={slAdminProfile.role} />
-                                <ProfileMeta label="YEAR LEVEL" value={slAdminProfile.yearLevel} />
-                                <ProfileMeta label="AREA" value={slAdminProfile.area} />
-                                <ProfileMeta label="REGION" value={slAdminProfile.region} />
+                                <ProfileMeta label="ROLE" value={profile.role} />
+                                <ProfileMeta label="YEAR LEVEL" value={profile.yearLevel} />
+                                <ProfileMeta label="AREA" value={profile.area} />
+                                <ProfileMeta label="REGION" value={profile.region} />
                             </div>
                         </div>
                     </section>
 
                     <section className="border-white/10">
                         <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-                            {statCards.map(({ label, value, icon: Icon, color, background }) => (
-                                <div
+                            {statCards.map(({ label, filterValue, value, icon: Icon, color, background }) => (
+                                <button
+                                    type="button"
                                     key={label}
-                                    className="flex min-h-[132px] flex-col items-start gap-3 rounded-xl border border-white/5 bg-[#0B0B0B] px-4 py-4 sm:min-h-[154px] sm:px-6 sm:py-5"
+                                    aria-pressed={statusFilter === filterValue}
+                                    onClick={() => setStatusFilter((current) => current === filterValue ? 'all' : filterValue)}
+                                    className={`flex min-h-[132px] cursor-pointer flex-col items-start gap-3 rounded-xl border bg-[#0B0B0B] px-4 py-4 text-left transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.03] sm:min-h-[154px] sm:px-6 sm:py-5 ${
+                                        statusFilter === filterValue
+                                            ? 'border-brand-500/70 ring-1 ring-brand-500/30'
+                                            : 'border-white/5'
+                                    }`}
                                 >
                                     <div className={`flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-b from-black/80 to-black/30 ${background} ${color}`}>
                                         <Icon className="h-4 w-4" />
@@ -516,7 +583,7 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
                                         <div className="font-heading text-lg font-bold uppercase leading-[26px] text-brand-500">{label}</div>
                                         <div className="mt-2 text-xl font-bold leading-7 text-white">{value.toLocaleString()}</div>
                                     </div>
-                                </div>
+                                </button>
                             ))}
                         </div>
                     </section>
@@ -723,16 +790,23 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
                 student={selectedStudent?.status === 'New' ? selectedStudent : null}
                 accountView={accountView}
                 onClose={() => setSelectedStudent(null)}
+                onRenew={handleRenew}
+                onBlock={handleBlock}
             />
             <VerifiedStudentProfileModal
                 student={selectedStudent?.status === 'Verified' ? selectedStudent : null}
                 accountView={accountView}
                 onClose={() => setSelectedStudent(null)}
+                onRenew={handleRenew}
+                onBlock={handleBlock}
             />
             <PendingStudentProfileModal
                 student={selectedStudent?.status === 'Pending' ? selectedStudent : null}
                 accountView={accountView}
                 onClose={() => setSelectedStudent(null)}
+                onRenew={handleRenew}
+                onVerify={handleVerify}
+                onBlock={handleBlock}
             />
             <BlockedStudentProfileModal
                 student={selectedStudent?.status === 'Blocked' ? selectedStudent : null}
