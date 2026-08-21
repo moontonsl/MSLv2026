@@ -12,7 +12,7 @@ import {
 
 const PROGRAM_LINKS = [
     { label: 'The MSL Network', href: '/programs/msl-network' },
-    { label: 'Campus Tournaments', href: '/programs/campus-tournaments' },
+    { label: 'Campus Tournaments', href: '/Tournament/Organizer' },
     { label: 'MCC League', href: '/programs/mcc-league' },
     { label: 'Leadership Summit', href: '/programs/leadership-summit' },
     { label: 'Community Grants', href: '/programs/community-grants' },

@@ -13,7 +13,7 @@ const ABOUT_ITEMS = [
 const PROGRAMS_ITEMS = [
     { label: 'The MSL Network', href: '/programs/msl-network' },
     { label: 'MSL Collegiate Cup', href: '/programs/collegiate-cup' },
-    { label: 'Campus Tournaments', href: '/programs/campus-tournaments' },
+    { label: 'Campus Tournaments', href: '/Tournament/Organizer' },
     { label: 'Buffs & Support', href: '/programs/buffs-support' },
     { label: 'Referral Program', href: '/programs/referral' },
 ];
@@ -27,15 +27,37 @@ const menuPanelClass =
 const menuItemClass =
     'block w-full rounded-lg px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white';
 
+const menuItemActiveClass =
+    'block w-full rounded-lg bg-white/10 px-4 py-2.5 text-left text-sm font-bold text-white';
+
 const navLinkClass =
     'text-sm font-medium text-white transition-colors hover:text-[#FFC107]';
 
-function NavDropdown({ id, label, items, isOpen, onToggle, onNavigate }) {
+function NavDropdown({ id, label, items, isOpen, onToggle, onNavigate, activeHref }) {
+    const isItemActive = (href) => {
+        if (!activeHref) return false;
+        if (href === activeHref) return true;
+        // Highlight Programs → Campus Tournaments for all CT page URLs
+        if (
+            href === '/Tournament/Organizer' &&
+            (activeHref.startsWith('/Tournament/') ||
+                activeHref.startsWith('/campus-tournament') ||
+                activeHref.startsWith('/programs/campus-tournaments'))
+        ) {
+            return true;
+        }
+        return false;
+    };
+
+    const hasActiveChild = items.some((item) => isItemActive(item.href));
+
     return (
         <div className="relative">
             <button
                 type="button"
-                className={`flex items-center gap-1 ${navLinkClass} ${isOpen ? 'text-[#FFC107]' : ''}`}
+                className={`flex items-center gap-1 ${navLinkClass} ${
+                    isOpen || hasActiveChild ? 'text-[#FFC107]' : ''
+                }`}
                 aria-expanded={isOpen}
                 aria-haspopup="true"
                 onClick={() => onToggle(id)}
@@ -43,23 +65,26 @@ function NavDropdown({ id, label, items, isOpen, onToggle, onNavigate }) {
                 {label}
                 <ChevronDown
                     className={`h-4 w-4 shrink-0 transition-transform ${
-                        isOpen ? 'rotate-180 text-[#FFC107]' : ''
-                    }`}
+                        isOpen || hasActiveChild ? 'text-[#FFC107]' : ''
+                    } ${isOpen ? 'rotate-180' : ''}`}
                 />
             </button>
             {isOpen && (
                 <div className={menuPanelClass} role="menu">
-                    {items.map(({ label: itemLabel, href }) => (
-                        <Link
-                            key={itemLabel}
-                            href={href}
-                            className={menuItemClass}
-                            role="menuitem"
-                            onClick={onNavigate}
-                        >
-                            {itemLabel}
-                        </Link>
-                    ))}
+                    {items.map(({ label: itemLabel, href }) => {
+                        const isActive = isItemActive(href);
+                        return (
+                            <Link
+                                key={itemLabel}
+                                href={href}
+                                className={isActive ? menuItemActiveClass : menuItemClass}
+                                role="menuitem"
+                                onClick={onNavigate}
+                            >
+                                {itemLabel}
+                            </Link>
+                        );
+                    })}
                 </div>
             )}
         </div>
@@ -74,6 +99,7 @@ function DesktopNavigation({
     openDropdown,
     toggleNavDropdown,
     closeNavDropdowns,
+    activeHref,
 }) {
     return (
         <nav
@@ -92,6 +118,7 @@ function DesktopNavigation({
                 isOpen={openDropdown === 'about'}
                 onToggle={toggleNavDropdown}
                 onNavigate={closeNavDropdowns}
+                activeHref={activeHref}
             />
             <NavDropdown
                 id="programs"
@@ -100,6 +127,7 @@ function DesktopNavigation({
                 isOpen={openDropdown === 'programs'}
                 onToggle={toggleNavDropdown}
                 onNavigate={closeNavDropdowns}
+                activeHref={activeHref}
             />
             <Link href="/careers" className={navLinkClass}>
                 Careers
@@ -128,9 +156,11 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
     const navRef = useRef(null);
     const accountRef = useRef(null);
 
-    const { auth } = usePage().props;
+    const page = usePage();
+    const { auth } = page.props;
     const user = auth?.user;
     const loggedIn = isLoggedInProp !== undefined ? isLoggedInProp && !!user : !!user;
+    const activeHref = (page.url ?? '').split('?')[0];
 
     useEffect(() => {
         const close = (e) => {
@@ -205,6 +235,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                     openDropdown={openDropdown}
                     toggleNavDropdown={toggleNavDropdown}
                     closeNavDropdowns={closeNavDropdowns}
+                    activeHref={activeHref}
                 />
 
                 {/* Right: auth */}
@@ -257,13 +288,13 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                     {(user.role === 'SL' ||
                                         user.role === 'Regional Admin' ||
                                         user.role === 'Super Admin') && (
-                                        <a
-                                            href="/campus-tournament"
+                                        <Link
+                                            href="/Tournament/SL"
                                             className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
                                             onClick={() => setIsAccountDropdownOpen(false)}
                                         >
                                             Campus Tournament
-                                        </a>
+                                        </Link>
                                     )}
                                     {user.role === 'SL' && (
                                         <Link
@@ -378,7 +409,10 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                             <button
                                 type="button"
                                 className={`flex w-full items-center justify-between py-2 text-left ${navLinkClass} ${
-                                    mobileSubmenu === 'programs' ? 'text-[#FFC107]' : ''
+                                    mobileSubmenu === 'programs' ||
+                                    PROGRAMS_ITEMS.some((item) => item.href === activeHref)
+                                        ? 'text-[#FFC107]'
+                                        : ''
                                 }`}
                                 onClick={() =>
                                     setMobileSubmenu((s) => (s === 'programs' ? null : 'programs'))
@@ -387,10 +421,11 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                 Programs
                                 <ChevronDown
                                     className={`h-4 w-4 transition-transform ${
-                                        mobileSubmenu === 'programs'
-                                            ? 'rotate-180 text-[#FFC107]'
+                                        mobileSubmenu === 'programs' ||
+                                        PROGRAMS_ITEMS.some((item) => item.href === activeHref)
+                                            ? 'text-[#FFC107]'
                                             : ''
-                                    }`}
+                                    } ${mobileSubmenu === 'programs' ? 'rotate-180' : ''}`}
                                 />
                             </button>
                             {mobileSubmenu === 'programs' && (
@@ -399,7 +434,11 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                         <Link
                                             key={label}
                                             href={href}
-                                            className="block py-2 text-sm text-gray-300 hover:text-white"
+                                            className={`block py-2 text-sm ${
+                                                href === activeHref
+                                                    ? 'font-bold text-white'
+                                                    : 'text-gray-300 hover:text-white'
+                                            }`}
                                             onClick={() => {
                                                 setMobileMenuOpen(false);
                                                 setMobileSubmenu(null);
