@@ -15,8 +15,8 @@ export const studentProfileData = {
         // school: 'needupdate',
         // course: 'needupdate',
         // yearLevel: 'needupdate',
-        // schoolId: 'needupdate',
-        fullName: 'needupdate',
+         schoolId: 'needupdate',
+        //fullName: 'needupdate',
         // document: 'needupdate',
     },
     editableProfile: {

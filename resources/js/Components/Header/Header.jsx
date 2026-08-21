@@ -4,17 +4,17 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 import AccountModificationModal from './AccountModificationModal';
 
 const ABOUT_ITEMS = [
-    { label: 'Campus', href: '/about/campus' },
-    { label: 'Contents & Social Media', href: '/content-media' },
-    { label: 'Partnerships', href: '/about/partnerships' },
-    { label: 'General Affairs', href: '/about/general-affairs' },
+    { label: 'Campus', href: '/Campus' },
+    { label: 'Contents & Social Media', href: '/Contents&SocialMedia' },
+    { label: 'Partnerships', href: '/Partnerships' },
+    { label: 'General Affairs', href: '/GeneralAffairs' },
 ];
 
 const PROGRAMS_ITEMS = [
-    { label: 'The MSL Network', href: '/programs/msl-network' },
+    { label: 'The MSL Network', href: '/MSLNetAdmin' },
     { label: 'MSL Collegiate Cup', href: '/programs/collegiate-cup' },
     { label: 'Campus Tournaments', href: '/Tournament/Organizer' },
-    { label: 'Buffs & Support', href: '/programs/buffs-support' },
+    { label: 'Buffs & Support', href: '/Buffs&Support' },
     { label: 'Referral Program', href: '/programs/referral' },
 ];
 
@@ -27,37 +27,15 @@ const menuPanelClass =
 const menuItemClass =
     'block w-full rounded-lg px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white';
 
-const menuItemActiveClass =
-    'block w-full rounded-lg bg-white/10 px-4 py-2.5 text-left text-sm font-bold text-white';
-
 const navLinkClass =
     'text-sm font-medium text-white transition-colors hover:text-[#FFC107]';
 
-function NavDropdown({ id, label, items, isOpen, onToggle, onNavigate, activeHref }) {
-    const isItemActive = (href) => {
-        if (!activeHref) return false;
-        if (href === activeHref) return true;
-        // Highlight Programs → Campus Tournaments for all CT page URLs
-        if (
-            href === '/Tournament/Organizer' &&
-            (activeHref.startsWith('/Tournament/') ||
-                activeHref.startsWith('/campus-tournament') ||
-                activeHref.startsWith('/programs/campus-tournaments'))
-        ) {
-            return true;
-        }
-        return false;
-    };
-
-    const hasActiveChild = items.some((item) => isItemActive(item.href));
-
+function NavDropdown({ id, label, items, isOpen, onToggle, onNavigate }) {
     return (
         <div className="relative">
             <button
                 type="button"
-                className={`flex items-center gap-1 ${navLinkClass} ${
-                    isOpen || hasActiveChild ? 'text-[#FFC107]' : ''
-                }`}
+                className={`flex items-center gap-1 ${navLinkClass} ${isOpen ? 'text-[#FFC107]' : ''}`}
                 aria-expanded={isOpen}
                 aria-haspopup="true"
                 onClick={() => onToggle(id)}
@@ -65,26 +43,23 @@ function NavDropdown({ id, label, items, isOpen, onToggle, onNavigate, activeHre
                 {label}
                 <ChevronDown
                     className={`h-4 w-4 shrink-0 transition-transform ${
-                        isOpen || hasActiveChild ? 'text-[#FFC107]' : ''
-                    } ${isOpen ? 'rotate-180' : ''}`}
+                        isOpen ? 'rotate-180 text-[#FFC107]' : ''
+                    }`}
                 />
             </button>
             {isOpen && (
                 <div className={menuPanelClass} role="menu">
-                    {items.map(({ label: itemLabel, href }) => {
-                        const isActive = isItemActive(href);
-                        return (
-                            <Link
-                                key={itemLabel}
-                                href={href}
-                                className={isActive ? menuItemActiveClass : menuItemClass}
-                                role="menuitem"
-                                onClick={onNavigate}
-                            >
-                                {itemLabel}
-                            </Link>
-                        );
-                    })}
+                    {items.map(({ label: itemLabel, href }) => (
+                        <Link
+                            key={itemLabel}
+                            href={href}
+                            className={menuItemClass}
+                            role="menuitem"
+                            onClick={onNavigate}
+                        >
+                            {itemLabel}
+                        </Link>
+                    ))}
                 </div>
             )}
         </div>
@@ -99,7 +74,6 @@ function DesktopNavigation({
     openDropdown,
     toggleNavDropdown,
     closeNavDropdowns,
-    activeHref,
 }) {
     return (
         <nav
@@ -118,7 +92,6 @@ function DesktopNavigation({
                 isOpen={openDropdown === 'about'}
                 onToggle={toggleNavDropdown}
                 onNavigate={closeNavDropdowns}
-                activeHref={activeHref}
             />
             <NavDropdown
                 id="programs"
@@ -127,15 +100,14 @@ function DesktopNavigation({
                 isOpen={openDropdown === 'programs'}
                 onToggle={toggleNavDropdown}
                 onNavigate={closeNavDropdowns}
-                activeHref={activeHref}
             />
             <Link href="/careers" className={navLinkClass}>
                 Careers
             </Link>
-            <Link href="/events" className={navLinkClass}>
+            <Link href="/Event" className={navLinkClass}>
                 Events
             </Link>
-            <Link href="/news" className={navLinkClass}>
+            <Link href="/News" className={navLinkClass}>
                 News
             </Link>
         </nav>
@@ -156,11 +128,10 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
     const navRef = useRef(null);
     const accountRef = useRef(null);
 
-    const page = usePage();
-    const { auth } = page.props;
+    const { auth } = usePage().props;
     const user = auth?.user;
+    const userRole = user?.user_type ?? user?.role;
     const loggedIn = isLoggedInProp !== undefined ? isLoggedInProp && !!user : !!user;
-    const activeHref = (page.url ?? '').split('?')[0];
 
     useEffect(() => {
         const close = (e) => {
@@ -235,17 +206,25 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                     openDropdown={openDropdown}
                     toggleNavDropdown={toggleNavDropdown}
                     closeNavDropdowns={closeNavDropdowns}
-                    activeHref={activeHref}
                 />
 
                 {/* Right: auth */}
                 <div className="relative z-[61] flex shrink-0 items-center justify-end">
                     {!loggedIn ? (
                         <Link
-                            href="/login"
-                            className="rounded-full bg-[#FFC107] px-6 py-2 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                            href="/Login"
+                            className="inline-flex items-center justify-center gap-2.5 px-[23px]"
+                            aria-label="Log in"
                         >
-                            Log In
+                            <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-brand-500 transition duration-300 hover:bg-brand-400 hover:shadow-[0_0_20px_rgba(242,194,26,.45)]">
+                                <span className="absolute inset-0 rounded-full border border-black/10" />
+                                <img
+                                    src="/user-01.svg"
+                                    alt=""
+                                    className="relative h-6 w-6"
+                                    aria-hidden="true"
+                                />
+                            </span>
                         </Link>
                     ) : (
                         <div className="relative" ref={accountRef}>
@@ -268,26 +247,40 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                             {isAccountDropdownOpen && user && (
                                 <div className="absolute right-0 top-full z-[60] mt-2 min-w-[180px] overflow-hidden rounded-xl border border-white/5 bg-[#111111] py-1 shadow-2xl">
                                     <Link
-                                        href="/studentportal"
+                                        href={
+                                            userRole === 'Student'
+                                                ? '/studentportal'
+                                                : userRole === 'Regional Admin'
+                                                    ? '/RegionalAdmin'
+                                                    : '/admin/dashboard'
+                                        }
                                         className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
                                         onClick={() => setIsAccountDropdownOpen(false)}
                                     >
                                         Profile
                                     </Link>
-                                    {(user.role === 'SL' ||
-                                        user.role === 'Super Admin' ||
-                                        user.role === 'Regional Admin') && (
+                                    {(userRole === 'SL' ||
+                                        userRole === 'Student Leader' ||
+                                        userRole === 'Super Admin' ||
+                                        userRole === 'Regional Admin') && (
                                         <Link
-                                            href="/sl-admin"
+                                            href={
+                                                userRole === 'Super Admin'
+                                                    ? '/CoreAdmin'
+                                                    : userRole === 'Regional Admin'
+                                                        ? '/RegionalAdmin'
+                                                        : '/StudentLeader'
+                                            }
                                             className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
                                             onClick={() => setIsAccountDropdownOpen(false)}
                                         >
                                             SL Admin
                                         </Link>
                                     )}
-                                    {(user.role === 'SL' ||
-                                        user.role === 'Regional Admin' ||
-                                        user.role === 'Super Admin') && (
+                                    {(userRole === 'SL' ||
+                                        userRole === 'Student Leader' ||
+                                        userRole === 'Regional Admin' ||
+                                        userRole === 'Super Admin') && (
                                         <Link
                                             href="/Tournament/SL"
                                             className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
@@ -296,7 +289,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                             Campus Tournament
                                         </Link>
                                     )}
-                                    {user.role === 'SL' && (
+                                    {(userRole === 'SL' || userRole === 'Student Leader') && (
                                         <Link
                                             href="/SLAdminApproval"
                                             className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
@@ -305,7 +298,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                             Modification
                                         </Link>
                                     )}
-                                    {(user.role === 'Regional Admin' || user.role === 'Super Admin') && (
+                                    {(userRole === 'Regional Admin' || userRole === 'Super Admin') && (
                                         <Link
                                             href="/RegionalAdminApproval"
                                             className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
@@ -314,7 +307,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                             Modification
                                         </Link>
                                     )}
-                                    {user.role === 'Super Admin' && (
+                                    {userRole === 'Super Admin' && (
                                         <Link
                                             href="/admin/user-regions"
                                             className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
@@ -323,7 +316,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                             User Regions
                                         </Link>
                                     )}
-                                    {(user.role === 'Regional Admin' || user.role === 'Super Admin') && (
+                                    {(userRole === 'Regional Admin' || userRole === 'Super Admin') && (
                                         <Link
                                             href="/community/create"
                                             className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
@@ -409,10 +402,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                             <button
                                 type="button"
                                 className={`flex w-full items-center justify-between py-2 text-left ${navLinkClass} ${
-                                    mobileSubmenu === 'programs' ||
-                                    PROGRAMS_ITEMS.some((item) => item.href === activeHref)
-                                        ? 'text-[#FFC107]'
-                                        : ''
+                                    mobileSubmenu === 'programs' ? 'text-[#FFC107]' : ''
                                 }`}
                                 onClick={() =>
                                     setMobileSubmenu((s) => (s === 'programs' ? null : 'programs'))
@@ -421,11 +411,10 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                 Programs
                                 <ChevronDown
                                     className={`h-4 w-4 transition-transform ${
-                                        mobileSubmenu === 'programs' ||
-                                        PROGRAMS_ITEMS.some((item) => item.href === activeHref)
-                                            ? 'text-[#FFC107]'
+                                        mobileSubmenu === 'programs'
+                                            ? 'rotate-180 text-[#FFC107]'
                                             : ''
-                                    } ${mobileSubmenu === 'programs' ? 'rotate-180' : ''}`}
+                                    }`}
                                 />
                             </button>
                             {mobileSubmenu === 'programs' && (
@@ -434,11 +423,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                         <Link
                                             key={label}
                                             href={href}
-                                            className={`block py-2 text-sm ${
-                                                href === activeHref
-                                                    ? 'font-bold text-white'
-                                                    : 'text-gray-300 hover:text-white'
-                                            }`}
+                                            className="block py-2 text-sm text-gray-300 hover:text-white"
                                             onClick={() => {
                                                 setMobileMenuOpen(false);
                                                 setMobileSubmenu(null);
@@ -458,14 +443,14 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                             Careers
                         </Link>
                         <Link
-                            href="/events"
+                            href="/Event"
                             className={`${navLinkClass} py-2`}
                             onClick={() => setMobileMenuOpen(false)}
                         >
                             Events
                         </Link>
                         <Link
-                            href="/news"
+                            href="/News"
                             className={`${navLinkClass} py-2`}
                             onClick={() => setMobileMenuOpen(false)}
                         >

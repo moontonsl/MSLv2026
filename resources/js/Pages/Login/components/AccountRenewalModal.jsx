@@ -1,5 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AlertCircle, ChevronDown, FileUp, Info, Search, X } from 'lucide-react';
+import {
+    AlertCircle,
+    CheckCircle2,
+    ChevronDown,
+    FileText,
+    Info,
+    Search,
+    Trash2,
+    UploadCloud,
+    X,
+} from 'lucide-react';
 import { collegeSchoolOptions } from '@/Pages/AccountCreation/data/collegeOptions';
 import { shsSchoolOptions } from '@/Pages/AccountCreation/data/shsOptions';
 import {
@@ -9,9 +19,6 @@ import {
     shsYearLevels,
 } from '@/Pages/StudentProfile/profileEditOptions';
 import { getAccountRenewalRequirements } from './AccountRenewalLists';
-
-const maxFileSize = 2 * 1024 * 1024;
-const acceptedFileTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'];
 
 const defaultProfile = {
     fullName: 'Norberto Pingoy',
@@ -28,9 +35,9 @@ function FieldShell({ label, hint, error, children }) {
             <span className="text-sm font-semibold leading-5 text-white">{label}</span>
             {children}
             {error ? (
-                <span className="font-['Figtree'] text-sm font-medium leading-5 text-red-400">{error}</span>
+                <span className="font-sans text-sm font-medium leading-5 text-red-400">{error}</span>
             ) : hint ? (
-                <span className="font-['Figtree'] text-sm leading-5 text-gray-400">{hint}</span>
+                <span className="font-sans text-sm leading-5 text-gray-400">{hint}</span>
             ) : null}
         </label>
     );
@@ -40,7 +47,7 @@ function TextInput(props) {
     return (
         <input
             {...props}
-            className="w-full rounded-xl border border-white/10 bg-[#111111] px-3.5 py-2.5 font-['Figtree'] text-base leading-6 text-white outline-none transition placeholder:text-gray-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+            className="w-full rounded-xl border border-white/10 bg-[#111111] px-3.5 py-2.5 font-sans text-base leading-6 text-white outline-none transition placeholder:text-gray-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
         />
     );
 }
@@ -50,7 +57,7 @@ function SelectInput({ children, ...props }) {
         <div className="relative">
             <select
                 {...props}
-                className="w-full appearance-none rounded-xl border border-white/10 bg-[#111111] px-3.5 py-2.5 pr-10 font-['Figtree'] text-base leading-6 text-white outline-none transition focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+                className="w-full appearance-none rounded-xl border border-white/10 bg-[#111111] px-3.5 py-2.5 pr-10 font-sans text-base leading-6 text-white outline-none transition focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
             >
                 {children}
             </select>
@@ -108,7 +115,7 @@ function SearchableSelect({
             <button
                 type="button"
                 onClick={() => setIsOpen((current) => !current)}
-                className={`flex w-full items-center justify-between rounded-xl border bg-[#111111] px-3.5 py-2.5 text-left font-['Figtree'] text-base leading-6 outline-none transition ${
+                className={`flex w-full items-center justify-between rounded-xl border bg-[#111111] px-3.5 py-2.5 text-left font-sans text-base leading-6 outline-none transition ${
                     error
                         ? 'border-red-500 focus:border-red-500 focus:ring-1 focus:ring-red-500'
                         : 'border-white/10 focus:border-brand-500 focus:ring-1 focus:ring-brand-500'
@@ -130,7 +137,7 @@ function SearchableSelect({
                                 value={searchValue}
                                 onChange={(event) => setSearchValue(event.target.value)}
                                 placeholder={searchPlaceholder}
-                                className="w-full rounded-lg border border-white/10 bg-[#0b0b0b] px-3.5 py-2.5 pl-10 font-['Figtree'] text-base leading-6 text-white outline-none placeholder:text-gray-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+                                className="w-full rounded-lg border border-white/10 bg-[#0b0b0b] px-3.5 py-2.5 pl-10 font-sans text-base leading-6 text-white outline-none placeholder:text-gray-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
                             />
                         </div>
                     </div>
@@ -173,40 +180,106 @@ function RequirementPanel({ title, children }) {
     );
 }
 
-function FileUpload({ id, label, file, error, onChange }) {
+function formatFileSize(size) {
+    if (!size) return '0 KB';
+    if (size < 1024 * 1024) return `${Math.max(1, Math.round(size / 1024))} KB`;
+    return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function ProofUploadField({ file, error, onChange, onRemove }) {
+    const inputRef = useRef(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [previewUrl, setPreviewUrl] = useState(null);
+
+    useEffect(() => {
+        if (!file || !file.type?.startsWith('image/')) {
+            setPreviewUrl(null);
+            return undefined;
+        }
+
+        const objectUrl = URL.createObjectURL(file);
+        setPreviewUrl(objectUrl);
+
+        return () => URL.revokeObjectURL(objectUrl);
+    }, [file]);
+
+    const chooseFile = (nextFile) => {
+        if (nextFile) onChange(nextFile);
+    };
+
+    const handleDrop = (event) => {
+        event.preventDefault();
+        setIsDragging(false);
+        chooseFile(event.dataTransfer.files?.[0]);
+    };
+
     return (
-        <div className="flex flex-col gap-2">
-            <div className="text-xl font-bold leading-5 text-white font-['League_Spartan']">{label}</div>
-            <label
-                htmlFor={id}
-                onDragOver={(event) => event.preventDefault()}
-                onDrop={(event) => {
-                    event.preventDefault();
-                    onChange(event.dataTransfer.files?.[0] ?? null);
-                }}
-                className={`flex cursor-pointer flex-col items-center gap-3 rounded-xl border px-6 py-5 text-center transition ${
-                    error
-                        ? 'border-red-500 bg-red-900/20'
-                        : 'border-white/10 bg-brand-500/10 hover:border-brand-500/40'
-                }`}
-            >
-                <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-brand-500/10 text-brand-500">
-                    <FileUp className="h-5 w-5" />
-                </span>
-                <span className="text-sm leading-5 text-gray-300">
-                    <span className="font-semibold text-brand-500">Click to upload</span> or drag and drop
-                </span>
-                <span className="text-xs leading-4 text-gray-300">JPEG, PNG, GIF, PDF (max. 2MB)</span>
-                {file ? <span className="max-w-full truncate text-xs font-semibold text-white">{file.name}</span> : null}
-            </label>
+        <div className="space-y-3">
             <input
-                id={id}
+                ref={inputRef}
                 type="file"
-                accept="image/jpeg,image/png,image/gif,application/pdf"
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={(event) => chooseFile(event.target.files?.[0])}
                 className="hidden"
-                onChange={(event) => onChange(event.target.files?.[0] ?? null)}
             />
-            {error ? <span className="text-xs font-medium text-red-400">{error}</span> : null}
+
+            {file ? (
+                <div className="flex items-center gap-3 rounded-2xl border border-emerald-400/30 bg-emerald-400/[0.08] p-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-black/30">
+                        {previewUrl ? (
+                            <img src={previewUrl} alt="Proof preview" className="h-full w-full object-cover" />
+                        ) : (
+                            <FileText className="h-6 w-6 text-brand-400" />
+                        )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm font-semibold text-white">{file.name}</div>
+                        <div className="mt-0.5 flex items-center gap-1.5 text-xs text-emerald-300">
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                            Ready to upload · {formatFileSize(file.size)}
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={onRemove}
+                        className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-gray-400 transition hover:bg-red-500/10 hover:text-red-400"
+                        aria-label="Remove selected proof of enrollment"
+                    >
+                        <Trash2 className="h-4 w-4" />
+                    </button>
+                </div>
+            ) : (
+                <button
+                    type="button"
+                    onClick={() => inputRef.current?.click()}
+                    onDragEnter={(event) => {
+                        event.preventDefault();
+                        setIsDragging(true);
+                    }}
+                    onDragOver={(event) => event.preventDefault()}
+                    onDragLeave={(event) => {
+                        if (event.currentTarget === event.target) setIsDragging(false);
+                    }}
+                    onDrop={handleDrop}
+                    className={`group flex min-h-[170px] w-full flex-col items-center justify-center rounded-2xl border border-dashed px-5 py-6 text-center transition ${
+                        error
+                            ? 'border-red-500/70 bg-red-500/[0.06]'
+                            : isDragging
+                                ? 'border-brand-400 bg-brand-500/[0.12]'
+                                : 'border-white/20 bg-white/[0.025] hover:border-brand-400/70 hover:bg-brand-500/[0.06]'
+                    }`}
+                >
+                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-brand-400/30 bg-brand-500/10 text-brand-400 transition group-hover:scale-105">
+                        <UploadCloud className="h-6 w-6" />
+                    </span>
+                    <span className="mt-3 text-sm font-semibold text-white">
+                        {isDragging ? 'Drop your file here' : 'Click to upload or drag and drop'}
+                    </span>
+                    <span className="mt-1 text-xs text-gray-400">PDF, JPG, JPEG, or PNG · Maximum 2 MB</span>
+                </button>
+            )}
+
+            {error ? <span className="block text-sm font-medium leading-5 text-red-400">{error}</span> : null}
         </div>
     );
 }
@@ -237,9 +310,9 @@ export default function AccountRenewalModal({
         course: '',
         yearLevel: '',
         studentId: '',
+        proofOfEnrollment: null,
         firstName: '',
         lastName: '',
-        documentFile: null,
     });
     const [errors, setErrors] = useState({});
     const profileDetails = {
@@ -258,32 +331,21 @@ export default function AccountRenewalModal({
         setErrors((current) => ({ ...current, [name]: '' }));
     }
 
-    function validateFile(field, label) {
-        const file = form[field];
-
-        if (!file) return `${label} is required.`;
-        if (!acceptedFileTypes.includes(file.type)) return 'Upload a JPEG, PNG, GIF, or PDF file.';
-        if (file.size > maxFileSize) return 'File must not exceed 2MB.';
-
-        return '';
-    }
-
     function validate() {
         const nextErrors = {};
 
         if (requiredKeys.has('school') && !form.school) nextErrors.school = 'Please select your correct school.';
         if (requiredKeys.has('course') && !form.course) nextErrors.course = 'Please select your correct course.';
         if (requiredKeys.has('yearLevel') && !form.yearLevel) nextErrors.yearLevel = 'Please select your current year level.';
-        if (requiredKeys.has('schoolId')) {
-            if (!form.studentId.trim()) nextErrors.studentId = 'Student ID is required.';
+        if (requiredKeys.has('schoolId') || requiredKeys.has('document')) {
+            if (!form.studentId.trim()) nextErrors.studentId = 'Student ID number is required.';
+        }
+        if (requiredKeys.has('document') && !form.proofOfEnrollment) {
+            nextErrors.proofOfEnrollment = 'Proof of enrollment is required.';
         }
         if (requiredKeys.has('fullName')) {
             if (!form.firstName.trim()) nextErrors.firstName = 'First name is required.';
             if (!form.lastName.trim()) nextErrors.lastName = 'Last name is required.';
-        }
-        if (requiredKeys.has('document')) {
-            const documentError = validateFile('documentFile', 'Document');
-            if (documentError) nextErrors.documentFile = documentError;
         }
 
         setErrors(nextErrors);
@@ -301,9 +363,9 @@ export default function AccountRenewalModal({
             course: form.course,
             yearLevel: form.yearLevel,
             studentId: form.studentId,
+            proofOfEnrollment: form.proofOfEnrollment,
             firstName: form.firstName,
             lastName: form.lastName,
-            documentFile: form.documentFile,
         };
 
         if (onSubmit) {
@@ -355,7 +417,7 @@ export default function AccountRenewalModal({
                 ) : null}
 
                 <div className="px-6 text-center md:px-8">
-                    <h2 className="text-3xl font-black leading-8 text-white font-['League_Spartan']">
+                    <h2 className="font-heading text-3xl font-black leading-8 text-white">
                         Account Renewal Required
                     </h2>
                     <p className="mt-3 text-base leading-6 text-gray-300">
@@ -368,12 +430,12 @@ export default function AccountRenewalModal({
                         <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-400" />
                         <p className="text-xs leading-4 text-red-300">
                             <span className="font-semibold text-red-200">Action Required </span>
-                            Your Account has been marked for renewal. To regain access to the MSL platform, please upload a current proof of enrollment document and update your year level.
+                            Your account has been marked for renewal. Please provide your student ID number and update your year level to regain access.
                         </p>
                     </div>
 
                     <section className="border-b border-white/10 px-3 pb-5">
-                        <h3 className="text-xl font-bold leading-5 text-white font-['League_Spartan']">
+                        <h3 className="font-heading text-xl font-bold leading-5 text-white">
                             Account Details
                         </h3>
                         <div className="mt-4 grid gap-4 text-base md:grid-cols-2">
@@ -399,23 +461,26 @@ export default function AccountRenewalModal({
                     </section>
 
                     <section className="flex flex-col gap-3 border-b border-white/10 px-3 pb-5">
-                        {requiredKeys.has('document') ? (
-                            <FileUpload
-                                id="renewal-document"
-                                label="Upload Proof of Enrollment"
-                                file={form.documentFile}
-                                error={errors.documentFile}
-                                onChange={(file) => updateField('documentFile', file)}
-                            />
-                        ) : null}
-
-                        {requiredKeys.has('schoolId') ? (
-                            <RequirementPanel title="Update School ID">
-                                <FieldShell label="Student ID" error={errors.studentId}>
+                        {(requiredKeys.has('document') || requiredKeys.has('schoolId')) ? (
+                            <RequirementPanel title="Student ID Number">
+                                <FieldShell label="Student ID Number" error={errors.studentId}>
                                     <TextInput
                                         value={form.studentId}
                                         onChange={(event) => updateField('studentId', event.target.value)}
                                         placeholder="e.g. 2026-0001"
+                                    />
+                                </FieldShell>
+                            </RequirementPanel>
+                        ) : null}
+
+                        {requiredKeys.has('document') ? (
+                            <RequirementPanel title="Proof of Enrollment">
+                                <FieldShell label="Upload Proof of Enrollment">
+                                    <ProofUploadField
+                                        file={form.proofOfEnrollment}
+                                        error={errors.proofOfEnrollment}
+                                        onChange={(file) => updateField('proofOfEnrollment', file)}
+                                        onRemove={() => updateField('proofOfEnrollment', null)}
                                     />
                                 </FieldShell>
                             </RequirementPanel>

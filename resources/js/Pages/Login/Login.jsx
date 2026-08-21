@@ -1,4 +1,4 @@
-import { Head } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import MainLayout from "@/Layouts/MainLayout";
 import { useEffect, useMemo, useState } from "react";
 
@@ -44,8 +44,14 @@ export default function Login(props) {
                     status: 'Renewal Required',
                 }}
                 onSubmit={(payload) => {
-                    console.log('Account renewal payload', payload);
-                    setShowRenewalModal(false);
+                    router.post(route('student.portal.renew'), {
+                        ...payload,
+                        _token: document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                    }, {
+                        forceFormData: true,
+                        onSuccess: () => setShowRenewalModal(false),
+                        onError: (errors) => console.error('Account renewal failed', errors),
+                    });
                 }}
             />
 

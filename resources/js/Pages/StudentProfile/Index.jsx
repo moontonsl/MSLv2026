@@ -1,5 +1,5 @@
 import MainLayout from '@/Layouts/MainLayout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import {
     Award,
@@ -53,9 +53,6 @@ function seasonWithCurrent(label) {
 }
 
 const reactionStorageKey = 'student-profile-announcement-reactions';
-const accountRenewalStatusKey = 'msl-account-renewal-status';
-const accountRenewalSubmissionKey = 'msl-account-renewal-submission';
-
 function loadSavedAnnouncementItems(items) {
     if (typeof window === 'undefined') {
         return items;
@@ -244,28 +241,40 @@ function HeroRow({ rank, image, name, matches, wr }) {
 }
 
 export default function Index(props) {
-    const [profile, setProfile] = useState(data);
+    const serverProfile = props.profile ?? {};
+    const [profile, setProfile] = useState(() => ({
+        ...data,
+        ...serverProfile,
+        editableProfile: {
+            ...data.editableProfile,
+            ...serverProfile.editableProfile,
+        },
+        playerInformation: {
+            ...data.playerInformation,
+            ...serverProfile.playerInformation,
+        },
+    }));
     const [announcementItems, setAnnouncementItems] = useState(() => loadSavedAnnouncementItems(announcements));
     const [reactionBursts, setReactionBursts] = useState({});
     const [activeMobileTab, setActiveMobileTab] = useState('about');
     const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
-    const [renewalStatus, setRenewalStatus] = useState(() => {
-        if (typeof window === 'undefined') return '';
-        return window.localStorage.getItem(accountRenewalStatusKey) ?? '';
-    });
     const [showRenewalThankYou, setShowRenewalThankYou] = useState(false);
+    const [showRenewalApproved, setShowRenewalApproved] = useState(Boolean(props.renewalApprovalNotice));
     const renewalStatuses = props.accountRenewal ?? props.accountRenewalStatuses ?? props.auth?.user?.accountRenewal ?? profile.accountRenewal ?? {};
     const renewalRequirements = getAccountRenewalRequirements(renewalStatuses);
-    const isRenewalPending = renewalStatus === 'pending-review';
-    const [showRenewalModal, setShowRenewalModal] = useState(renewalRequirements.length > 0 && !isRenewalPending);
+    const accountStatus = props.auth?.user?.status;
+    const isRenewalPending = accountStatus === 'pending-review';
+    const [showRenewalModal, setShowRenewalModal] = useState(
+        renewalRequirements.length > 0 && accountStatus === 'renewal-required',
+    );
 
     useEffect(() => {
         saveAnnouncementReactionCounts(announcementItems);
     }, [announcementItems]);
 
     useEffect(() => {
-        setShowRenewalModal(renewalRequirements.length > 0 && !isRenewalPending);
-    }, [renewalRequirements.length, isRenewalPending]);
+        setShowRenewalModal(renewalRequirements.length > 0 && accountStatus === 'renewal-required');
+    }, [renewalRequirements.length, accountStatus]);
 
     useEffect(() => {
         if (!showRenewalThankYou) return undefined;
@@ -889,18 +898,19 @@ export default function Index(props) {
                     status: 'Renewal Required',
                 }}
                 onSubmit={(payload) => {
-                    console.log('Student portal account renewal payload', payload);
-                    window.localStorage.setItem(accountRenewalStatusKey, 'pending-review');
-                    window.localStorage.setItem(
-                        accountRenewalSubmissionKey,
-                        JSON.stringify({
-                            ...payload,
-                            submittedAt: new Date().toISOString(),
-                        }),
-                    );
-                    setRenewalStatus('pending-review');
-                    setShowRenewalModal(false);
-                    setShowRenewalThankYou(true);
+                    router.post(route('student.portal.renew'), {
+                        ...payload,
+                        // Include the current Laravel token in the multipart request.
+                        // This prevents a 419 when the renewal form contains a file.
+                        _token: document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                    }, {
+                        forceFormData: true,
+                        onSuccess: () => {
+                            setShowRenewalModal(false);
+                            setShowRenewalThankYou(true);
+                        },
+                        onError: (errors) => console.error('Account renewal failed', errors),
+                    });
                 }}
             />
 
@@ -920,6 +930,27 @@ export default function Index(props) {
                         window.location.href = '/';
                     }}
                 />
+            ) : null}
+
+            {showRenewalApproved ? (
+                <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/75 px-4 py-6 backdrop-blur-sm">
+                    <div className="w-full max-w-[520px] overflow-hidden rounded-3xl border border-emerald-400/20 bg-[#0b0b0b] shadow-2xl">
+                        <div className="px-6 py-9 text-center md:px-10">
+                            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-emerald-400/30 bg-emerald-400/10 text-emerald-400">
+                                <CheckCircle2 className="h-9 w-9" />
+                            </div>
+                            <h2 className="mt-6 font-heading text-3xl font-black leading-tight text-white">Renewal successful!</h2>
+                            <p className="mt-3 text-base leading-6 text-gray-300">Your renewal has been verified and approved. Your account is active again.</p>
+                            <button
+                                type="button"
+                                onClick={() => router.post(route('student.renewal.approval.acknowledge'), {}, { onSuccess: () => setShowRenewalApproved(false) })}
+                                className="mt-8 w-full rounded-xl border border-brand-500 bg-brand-500 px-4 py-3 text-base font-semibold text-black transition hover:bg-brand-400"
+                            >
+                                Continue to my account
+                            </button>
+                        </div>
+                    </div>
+                </div>
             ) : null}
         </MainLayout>
     );

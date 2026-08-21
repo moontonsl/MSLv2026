@@ -31,7 +31,7 @@ export default function AnnouncementBanner() {
                     National University Bulldogs Reign Supreme
                 </span>
                 <Link
-                    href="/news"
+                    href="/News"
                     className="inline-flex cursor-pointer items-center gap-0.5 font-semibold text-[#FFC107] hover:underline"
                 >
                     See More
