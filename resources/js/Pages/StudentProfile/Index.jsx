@@ -36,7 +36,7 @@ function SurfaceCard({ className = '', children }) {
 
 function Title({ children, className = '' }) {
     return (
-        <div className={`font-heading ${className}`}>
+        <div className={`font-['League_Spartan'] ${className}`}>
             {children}
         </div>
     );
@@ -231,7 +231,7 @@ function HeroRow({ rank, image, name, matches, wr }) {
             </div>
             <div className="min-w-0">
                 <div className="text-xs font-bold leading-4 text-gray-300 sm:text-base sm:leading-6">{name}</div>
-                <div className="flex items-center gap-1.5 font-sans text-[8px] font-bold leading-3 text-gray-500 sm:gap-2 sm:text-xs sm:leading-4">
+                <div className="flex items-center gap-1.5 font-['Figtree'] text-[8px] font-bold leading-3 text-gray-500 sm:gap-2 sm:text-xs sm:leading-4">
                     <span>{matches}</span>
                     <span>{wr}</span>
                 </div>
@@ -420,7 +420,7 @@ export default function Index(props) {
                                             </button>
                                         </div>
 
-                                        <div className="flex flex-nowrap items-center gap-1.5 text-[15px] font-bold leading-5 text-gray-500 font-sans">
+                                        <div className="flex flex-nowrap items-center gap-1.5 text-[15px] font-bold leading-5 text-gray-500 font-['Figtree']">
                                             <span className="whitespace-nowrap">{profile.playerUsername}</span>
                                             <button
                                                 type="button"

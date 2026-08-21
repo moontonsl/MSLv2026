@@ -13,7 +13,7 @@ const ABOUT_ITEMS = [
 const PROGRAMS_ITEMS = [
     { label: 'The MSL Network', href: '/MSLNetAdmin' },
     { label: 'MSL Collegiate Cup', href: '/programs/collegiate-cup' },
-    { label: 'Campus Tournaments', href: '/CampusTournament' },
+    { label: 'Campus Tournaments', href: '/Tournament/Organizer' },
     { label: 'Buffs & Support', href: '/Buffs&Support' },
     { label: 'Referral Program', href: '/programs/referral' },
 ];
@@ -281,13 +281,13 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                         userRole === 'Student Leader' ||
                                         userRole === 'Regional Admin' ||
                                         userRole === 'Super Admin') && (
-                                        <a
-                                            href="/CampusTournament"
+                                        <Link
+                                            href="/Tournament/SL"
                                             className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
                                             onClick={() => setIsAccountDropdownOpen(false)}
                                         >
                                             Campus Tournament
-                                        </a>
+                                        </Link>
                                     )}
                                     {(userRole === 'SL' || userRole === 'Student Leader') && (
                                         <Link
