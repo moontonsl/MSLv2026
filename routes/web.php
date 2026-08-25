@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminManagementController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CampusTournamentController;
 use App\Http\Controllers\NewsController;
@@ -133,6 +134,17 @@ Route::get('/GeneralAffairs', function () {
 Route::redirect('/about/general-affairs', '/GeneralAffairs');
 
 Route::redirect('/Login', '/login')->name('Login');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/admin', function () {
+        return Inertia::render('Auth/AdminLogin');
+    })->name('admin.login');
+
+    Route::post('/admin/login', [
+        AuthenticatedSessionController::class,
+        'store',
+    ])->name('admin.login.store');
+});
 
 /** Admin CMS pages from Evren branch */
 Route::get('/admin/account-creation', function () {
