@@ -135,16 +135,13 @@ Route::redirect('/about/general-affairs', '/GeneralAffairs');
 
 Route::redirect('/Login', '/login')->name('Login');
 
-Route::middleware('guest')->group(function () {
-    Route::get('/admin', function () {
-        return Inertia::render('Auth/AdminLogin');
-    })->name('admin.login');
+/** Login Page for Internal temporary to view */
 
-    Route::post('/admin/login', [
-        AuthenticatedSessionController::class,
-        'store',
-    ])->name('admin.login.store');
-});
+Route::get('/admin', function () {
+    return Inertia::render('Auth/AdminLogin');
+})->name('admin.login');
+
+/** */
 
 /** Admin CMS pages from Evren branch */
 Route::get('/admin/account-creation', function () {
