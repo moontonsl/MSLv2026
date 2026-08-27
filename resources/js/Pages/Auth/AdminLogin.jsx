@@ -40,7 +40,7 @@ export default function AdminLogin() {
                         <img
                             src={adminHero}
                             alt=""
-                            className="absolute inset-0 h-full w-full scale-[1.08] object-cover object-center opacity-80"
+                            className="absolute inset-0 h-full w-full origin-center scale-[1.04]  object-cover object-center opacity-80 md:scale-[1.20] md:translate-x-[-4.25%] md:translate-y-[3.42%]"
                         />
                     </div>
 
