@@ -377,7 +377,6 @@ Route::get('/Testpage', function () {
 Route::get('/ForgotPassword', function () {
     return Inertia::render('Login/components/ForgotPassword');
 })->name('reset.password');
-Route::redirect('/forgot-password', '/ForgotPassword');
 
 Route::get('/ForgotUsername', function () {
     return Inertia::render('Login/components/ForgotUsername');
