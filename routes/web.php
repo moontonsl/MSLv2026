@@ -38,18 +38,85 @@ Route::get('/Event', function () {
     return Inertia::render('Events/Index');
 })->name('events');
 Route::redirect('/Events', '/Event');
+Route::redirect('/events', '/Event');
 
 Route::get('/Buffs&Support', function () {
     return Inertia::render('Buffs and Support/Index');
 })->name('buffs.support');
+Route::redirect('/programs/buffs-support', '/Buffs&Support');
 
 Route::get('/Campus', function () {
     return Inertia::render('Campus/Index');
 })->name('campus');
+Route::redirect('/about/campus', '/Campus');
 
+/*
+|--------------------------------------------------------------------------
+| Campus Tournament UI pages (Evren / Figma rebuild — legacy MSL-1 URLs)
+|--------------------------------------------------------------------------
+*/
+Route::get('/campus-tournament', function () {
+    return redirect()->route('campus.tournament.sl');
+})->name('campus.tournament');
+
+Route::get('/Tournament/SL', function () {
+    return Inertia::render('Programs/CampusTournaments/SlView');
+})->name('campus.tournament.sl');
+
+Route::get('/Tournament/RegionalAdmin', function () {
+    return Inertia::render('Programs/CampusTournaments/SlView');
+})->name('campus.tournament.regionaladmin');
+
+Route::get('/campus-tournament/public', function () {
+    return Inertia::render('Programs/CampusTournaments/SlView');
+})->name('campus.tournament.public');
+
+Route::get('/Tournament/Organizer', function () {
+    return Inertia::render('Programs/CampusTournaments/OrganizerView');
+})->name('campus.tournament.organizer');
+
+Route::get('/Tournament/CampusTournament', function () {
+    return Inertia::render('Programs/CampusTournaments/CaptainHub');
+})->name('campus.captainregistration');
+
+Route::get('/Tournament/CampusTournamentReg', function () {
+    return Inertia::render('Programs/CampusTournaments/CaptainRegister');
+})->name('campus.teamregistration');
+
+Route::get('/Tournament/CampusTournamentTeam', function () {
+    return Inertia::render('Programs/CampusTournaments/CaptainTeam');
+})->name('campus.team');
+
+Route::get('/Tournament/SoloPlayer', function () {
+    return Inertia::render('Programs/CampusTournaments/SoloMatchmaking');
+})->name('campus.tournament.solo.player');
+
+Route::get('/Tournament/MemberInvite', function () {
+    return Inertia::render('Programs/CampusTournaments/MemberInvite');
+})->name('campus.member.invite');
+
+Route::get('/Tournament/MemberJoin', function () {
+    return Inertia::render('Programs/CampusTournaments/MemberJoinCode');
+})->name('campus.member.join');
+
+/** Compatibility redirects from earlier /programs/... CT paths */
+Route::redirect('/programs/campus-tournaments', '/Tournament/Organizer');
+Route::redirect('/programs/campus-tournaments/sl', '/Tournament/SL');
+Route::redirect('/programs/campus-tournaments/captain', '/Tournament/CampusTournament');
+Route::redirect('/programs/campus-tournaments/captain/register', '/Tournament/CampusTournamentReg');
+Route::redirect('/programs/campus-tournaments/captain/team', '/Tournament/CampusTournamentTeam');
+Route::redirect('/programs/campus-tournaments/captain/join', '/Tournament/SoloPlayer');
+Route::redirect('/programs/campus-tournaments/solo', '/Tournament/SoloPlayer');
+Route::redirect('/programs/campus-tournaments/member', '/Tournament/MemberInvite');
+Route::redirect('/programs/campus-tournaments/member/join', '/Tournament/MemberJoin');
+Route::redirect('/sl/campus-tournament', '/Tournament/SL');
+Route::redirect('/captain/campus-tournament', '/Tournament/CampusTournament');
+Route::redirect('/member/campus-tournament', '/Tournament/MemberInvite');
+
+/** Staging campus listing page (separate from CT product UI) */
 Route::get('/CampusTournament', function () {
     return Inertia::render('Campus/Index');
-})->name('campus.tournament');
+})->name('campus.tournament.listing');
 
 Route::get('/Programs', function () {
     return Inertia::render('Home');
@@ -58,16 +125,37 @@ Route::get('/Programs', function () {
 Route::get('/Partnerships', function () {
     return Inertia::render('About');
 })->name('partnerships');
+Route::redirect('/about/partnerships', '/Partnerships');
+Route::redirect('/partner', '/Partnerships');
 
 Route::get('/GeneralAffairs', function () {
     return Inertia::render('About');
 })->name('general.affairs');
+Route::redirect('/about/general-affairs', '/GeneralAffairs');
 
 Route::redirect('/Login', '/login')->name('Login');
+
+/** Admin CMS pages from Evren branch */
+Route::get('/admin/account-creation', function () {
+    return Inertia::render('Admin/AccountCreation');
+})->name('admin.account-creation');
+
+Route::get('/admin/home-page', function () {
+    return Inertia::render('Admin/HomePage');
+})->name('admin.home-page');
+
+Route::get('/admin/faq', function () {
+    return Inertia::render('Admin/Faq');
+})->name('admin.faq');
+
+Route::get('/admin/news-updates', function () {
+    return Inertia::render('Admin/NewsUpdates');
+})->name('admin.news-updates');
 
 Route::get('/SL-Admin', function () {
     return Inertia::render('SL-Admin/Index');
 })->name('sl.admin');
+Route::redirect('/sl-admin', '/SL-Admin');
 
 Route::get('/CampusAdmin', function () {
     return Inertia::render('SL-Admin/Index');
@@ -285,25 +373,26 @@ Route::get('/Testpage', function () {
     return Inertia::render('Testpage');
 })->name('Testpage');
 
-// FORGOT PASSWORD PAGE ROUTES
+// FORGOT PASSWORD / USERNAME + ACCOUNT CREATION (staging paths + Evren aliases)
 Route::get('/ForgotPassword', function () {
     return Inertia::render('Login/components/ForgotPassword');
 })->name('reset.password');
+Route::redirect('/forgot-password', '/ForgotPassword');
 
-// FORGOT USERNAME PAGE ROUTES
 Route::get('/ForgotUsername', function () {
     return Inertia::render('Login/components/ForgotUsername');
 })->name('forgot.username');
+Route::redirect('/forgot-username', '/ForgotUsername');
 
-// ACCOUNT CREATION - SHS DIVISION PAGE ROUTES
 Route::get('/AccountCreation/SHS', function () {
     return Inertia::render('AccountCreation/SHSRegister');
 })->name('shs.register');
+Route::redirect('/register/shs', '/AccountCreation/SHS');
 
-// ACCOUNT CREATION - COLLEGE DIVISION PAGE ROUTES
 Route::get('/AccountCreation/College', function () {
     return Inertia::render('AccountCreation/CollegeRegister');
 })->name('college.register');
+Route::redirect('/register/college', '/AccountCreation/College');
 
 // Public routes to fetch news data
 Route::get('/api/news/articles', [NewsController::class, 'getArticles']);

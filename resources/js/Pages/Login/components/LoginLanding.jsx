@@ -52,9 +52,9 @@ export default function LoginLanding({ onSignIn }) {
                                 setShowModal(false);
 
                                 if (type === 'shs') {
-                                    window.location.href = '/AccountCreation/SHS';
+                                    window.location.href = '/register/shs';
                                 } else {
-                                    window.location.href = '/AccountCreation/College';
+                                    window.location.href = '/register/college';
                                 }
                             }}
                         />

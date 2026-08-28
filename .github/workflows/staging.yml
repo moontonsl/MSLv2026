@@ -1,4 +1,4 @@
-name: CI/CD Pipeline - Production
+name: CI/CD Pipeline - Staging
 
 on:
   push:
@@ -53,9 +53,9 @@ jobs:
             php artisan down || true
 
             # Update code
-            git reset --hard
+            git fetch origin staging
+            git reset --hard origin/staging
             git clean -fd
-            git pull origin main
 
             # Clean and install dependencies
             rm -rf node_modules
