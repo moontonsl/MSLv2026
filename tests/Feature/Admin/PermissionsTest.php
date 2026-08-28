@@ -69,12 +69,14 @@ class PermissionsTest extends TestCase
         $admin = User::factory()->create([
             'user_type' => 'Regional Admin',
             'status' => 'active',
+            'region' => 'NCR',
         ]);
 
         // Dashboard access is needed to hit controller endpoints generally, but we can hit POST directly
         $student = User::factory()->create([
             'user_type' => 'Student',
             'status' => 'pending',
+            'region' => 'NCR',
         ]);
 
         // Attempt without permission
