@@ -63,6 +63,7 @@ export default function SlView({
     const [requestPage, setRequestPage] = useState(1);
 
     const [createOpen, setCreateOpen] = useState(false);
+    const [createError, setCreateError] = useState(null);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [pendingDelete, setPendingDelete] = useState(null);
 
@@ -259,31 +260,25 @@ export default function SlView({
     }, [pendingDelete]);
 
     const handleCreateSubmit = useCallback((values) => {
+        setCreateError(null);
         router.post('/campus-tournaments', values, {
             preserveScroll: true,
             onSuccess: () => {
                 setCreateOpen(false);
+                setCreateError(null);
                 setSuccessMessage('Tournament Request Submitted!');
                 setSuccessDescription('Your tournament request has been submitted for approval.');
                 setSuccessOpen(true);
             },
-            onError: (err) => {
-                console.error(err);
-                setPendingCreates((prev) => [
-                    {
-                        id: `pending-${Date.now()}`,
-                        title: 'NEW CAMPUS TOURNAMENT',
-                        startDate: values.startDate,
-                        endDate: values.endDate,
-                        mode: values.mode,
-                        status: 'pending',
-                    },
-                    ...prev,
-                ]);
-                setCreateOpen(false);
-                setSuccessMessage('Tournament Request Submitted!');
-                setSuccessDescription('');
-                setSuccessOpen(true);
+            onError: (errors) => {
+                console.error(errors);
+                const message =
+                    errors?.registration_opens_at ||
+                    errors?.ends_at ||
+                    errors?.starts_at ||
+                    Object.values(errors || {})[0] ||
+                    'Failed to create tournament. Please check your inputs.';
+                setCreateError(message);
             },
         });
     }, []);
@@ -563,8 +558,12 @@ export default function SlView({
 
             <CreateTournamentModal
                 isOpen={createOpen}
-                onClose={() => setCreateOpen(false)}
+                onClose={() => {
+                    setCreateOpen(false);
+                    setCreateError(null);
+                }}
                 onSubmit={handleCreateSubmit}
+                error={createError}
             />
 
             <ConfirmActionModal

@@ -46,6 +46,7 @@ export default function OrganizerView({
     const [showOnsite, setShowOnsite] = useState(true);
 
     const [createOpen, setCreateOpen] = useState(false);
+    const [createError, setCreateError] = useState(null);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [pendingDelete, setPendingDelete] = useState(null);
     const [successOpen, setSuccessOpen] = useState(false);
@@ -134,30 +135,24 @@ export default function OrganizerView({
     }, [pendingDelete]);
 
     const handleCreateSubmit = useCallback((values) => {
+        setCreateError(null);
         router.post('/campus-tournaments', values, {
             preserveScroll: true,
             onSuccess: () => {
                 setCreateOpen(false);
+                setCreateError(null);
                 setSuccessMessage('Tournament Request Submitted!');
                 setSuccessOpen(true);
             },
             onError: (errors) => {
                 console.error(errors);
-                // If demo/mock or offline error, fallback to local state for seamless UI
-                setPendingRequests((prev) => [
-                    {
-                        id: `pending-${Date.now()}`,
-                        title: 'NEW CAMPUS TOURNAMENT',
-                        startDate: values.startDate,
-                        endDate: values.endDate,
-                        mode: values.mode,
-                        status: 'pending',
-                    },
-                    ...prev,
-                ]);
-                setCreateOpen(false);
-                setSuccessMessage('Tournament Request Submitted!');
-                setSuccessOpen(true);
+                const message =
+                    errors?.registration_opens_at ||
+                    errors?.ends_at ||
+                    errors?.starts_at ||
+                    Object.values(errors || {})[0] ||
+                    'Failed to create tournament. Please check your inputs.';
+                setCreateError(message);
             },
         });
     }, []);
@@ -335,8 +330,12 @@ export default function OrganizerView({
 
             <CreateTournamentModal
                 isOpen={createOpen}
-                onClose={() => setCreateOpen(false)}
+                onClose={() => {
+                    setCreateOpen(false);
+                    setCreateError(null);
+                }}
                 onSubmit={handleCreateSubmit}
+                error={createError}
             />
 
             <DeleteConfirmationModal

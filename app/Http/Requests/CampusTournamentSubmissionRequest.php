@@ -83,9 +83,15 @@ abstract class CampusTournamentSubmissionRequest extends FormRequest
             if (! $this->has('registration_opens_at')) {
                 $nowUtc = CarbonImmutable::now('UTC');
                 $regClosesUtc = CarbonImmutable::parse($normalized['registration_closes_at'], 'UTC');
-                $normalized['registration_opens_at'] = $nowUtc->lt($regClosesUtc)
-                    ? $nowUtc->subMinute()->format('Y-m-d H:i:s')
-                    : $regClosesUtc->subDay()->format('Y-m-d H:i:s');
+                $leadTimeOpens = $startsAtParsed->subDays(7)->utc();
+
+                if ($leadTimeOpens->gt($nowUtc) && $leadTimeOpens->lt($regClosesUtc)) {
+                    $normalized['registration_opens_at'] = $leadTimeOpens->format('Y-m-d H:i:s');
+                } else {
+                    $normalized['registration_opens_at'] = $nowUtc->lt($regClosesUtc)
+                        ? $nowUtc->subMinute()->format('Y-m-d H:i:s')
+                        : $regClosesUtc->subDay()->format('Y-m-d H:i:s');
+                }
             }
         }
 

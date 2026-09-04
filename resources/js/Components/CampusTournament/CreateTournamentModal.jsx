@@ -18,9 +18,10 @@ const EMPTY_FORM = {
  *   isOpen: boolean;
  *   onClose: () => void;
  *   onSubmit: (values: typeof EMPTY_FORM) => void;
+ *   error?: string | null;
  * }} props
  */
-export default function CreateTournamentModal({ isOpen, onClose, onSubmit }) {
+export default function CreateTournamentModal({ isOpen, onClose, onSubmit, error = null }) {
     const formId = useId();
     const [form, setForm] = useState(EMPTY_FORM);
     const [pickerField, setPickerField] = useState(null);
@@ -59,6 +60,11 @@ export default function CreateTournamentModal({ isOpen, onClose, onSubmit }) {
                 }
             >
                 <form id={formId} onSubmit={handleSubmit} className="space-y-5">
+                    {error && (
+                        <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm text-red-400">
+                            {error}
+                        </div>
+                    )}
                     <div className="flex rounded-xl bg-[#1a1a1a] p-1">
                         {['Online', 'Onsite'].map((mode) => {
                             const isActive = form.mode === mode;
