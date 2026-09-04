@@ -133,6 +133,21 @@ class User extends Authenticatable
         return $this->hasMany(RegionAdmin::class);
     }
 
+    public function tournamentParticipations(): HasMany
+    {
+        return $this->hasMany(TournamentParticipant::class);
+    }
+
+    public function captainedTeams(): HasMany
+    {
+        return $this->hasMany(TournamentTeam::class, 'captain_user_id');
+    }
+
+    public function receivedInvitations(): HasMany
+    {
+        return $this->hasMany(TournamentTeamInvitation::class, 'invited_user_id');
+    }
+
     /**
      * The permissions assigned to the user.
      */

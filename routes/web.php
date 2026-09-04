@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminManagementController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CampusTournamentController;
+use App\Http\Controllers\TournamentRegistrationController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student\StudentPortalController;
@@ -189,6 +190,30 @@ Route::middleware('auth')->group(function () {
         ->name('campus-tournaments.reject');
     Route::delete('/campus-tournaments/{tournament}', [CampusTournamentController::class, 'destroy'])
         ->name('campus-tournaments.destroy');
+
+    // Tournament team registration
+    Route::post('/campus-tournaments/{tournament}/teams', [TournamentRegistrationController::class, 'store'])
+        ->name('tournament.teams.store');
+    Route::post('/campus-tournaments/{tournament}/participants', [TournamentRegistrationController::class, 'storeSolo'])
+        ->name('tournament.participants.store');
+    Route::get('/campus-tournaments/{tournament}/solo-teams', [TournamentRegistrationController::class, 'indexSoloTeams'])
+        ->name('tournament.solo-teams.index');
+    Route::post('/campus-tournaments/{tournament}/join', [TournamentRegistrationController::class, 'join'])
+        ->name('tournament.join');
+    Route::post('/tournament-teams/{team}/invitations', [TournamentRegistrationController::class, 'storeInvitation'])
+        ->name('tournament.invitations.store');
+    Route::post('/tournament-teams/{team}/solo-participants', [TournamentRegistrationController::class, 'joinSoloTeam'])
+        ->name('tournament.solo-teams.join');
+    Route::post('/tournament-teams/{team}/join-codes', [TournamentRegistrationController::class, 'storeJoinCode'])
+        ->name('tournament.join-codes.store');
+    Route::post('/tournament-invitations/{invitation}/respond', [TournamentRegistrationController::class, 'respond'])
+        ->name('tournament.invitations.respond');
+    Route::delete('/tournament-invitations/{invitation}', [TournamentRegistrationController::class, 'destroyInvitation'])
+        ->name('tournament.invitations.destroy');
+    Route::delete('/tournament-join-codes/{joinCode}', [TournamentRegistrationController::class, 'destroyJoinCode'])
+        ->name('tournament.join-codes.destroy');
+    Route::delete('/tournament-participants/{participant}', [TournamentRegistrationController::class, 'destroy'])
+        ->name('tournament.participants.destroy');
 });
 
 // Protect the student portal with active student checks
@@ -352,7 +377,6 @@ Route::get('/Testpage', function () {
 Route::get('/ForgotPassword', function () {
     return Inertia::render('Login/components/ForgotPassword');
 })->name('reset.password');
-Route::redirect('/forgot-password', '/ForgotPassword');
 
 Route::get('/ForgotUsername', function () {
     return Inertia::render('Login/components/ForgotUsername');
