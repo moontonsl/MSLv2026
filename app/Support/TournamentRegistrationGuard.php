@@ -79,11 +79,6 @@ class TournamentRegistrationGuard
         return now()->addHours(48)->min($tournament->registration_closes_at);
     }
 
-    public function joinCodeExpiresAt(CampusTournament $tournament): Carbon
-    {
-        return now()->addHours(24)->min($tournament->registration_closes_at);
-    }
-
     /**
      * Ensure the user has no existing participant record (of any status) in the tournament.
      */

@@ -8,7 +8,6 @@ use App\Models\CampusTournament;
 use App\Models\TournamentParticipant;
 use App\Models\TournamentTeam;
 use App\Models\TournamentTeamInvitation;
-use App\Models\TournamentTeamJoinCode;
 use App\Models\User;
 
 class TournamentTeamPolicy
@@ -38,27 +37,6 @@ class TournamentTeamPolicy
     {
         return $team->formation_method === TeamFormationMethod::Solo
             && $team->status === TeamStatus::Assembling;
-    }
-
-    /**
-     * Only the team captain may generate a join code, and only while the team is assembling.
-     */
-    public function generateJoinCode(User $user, TournamentTeam $team): bool
-    {
-        return $user->id === $team->captain_user_id
-            && $team->formation_method === TeamFormationMethod::Premade
-            && $team->status === TeamStatus::Assembling;
-    }
-
-    /**
-     * The captain or the user who created the code may revoke it.
-     */
-    public function revokeJoinCode(User $user, TournamentTeamJoinCode $joinCode): bool
-    {
-        $team = $joinCode->team;
-
-        return $user->id === $team->captain_user_id
-            || $user->id === $joinCode->created_by_user_id;
     }
 
     public function cancelInvitation(User $user, TournamentTeamInvitation $invitation): bool

@@ -65,11 +65,6 @@ class TournamentTeam extends Model
         return $this->hasMany(TournamentTeamInvitation::class, 'team_id');
     }
 
-    public function joinCodes(): HasMany
-    {
-        return $this->hasMany(TournamentTeamJoinCode::class, 'team_id');
-    }
-
     public function scopeOpenSoloForTournament(Builder $query, int $tournamentId): Builder
     {
         return $query
