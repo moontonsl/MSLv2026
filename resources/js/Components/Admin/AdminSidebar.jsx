@@ -41,6 +41,12 @@ const NAV_ITEMS = [
         href: "/admin/account-management",
         icon: UserCog,
     },
+    {
+        id: "registration-management",
+        label: "Registration Management",
+        href: "/admin/registration-management",
+        icon: UserCog,
+    },
 ];
 
 export default function AdminSidebar({
