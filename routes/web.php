@@ -55,47 +55,45 @@ Route::redirect('/about/campus', '/Campus');
 | Campus Tournament UI pages (Evren / Figma rebuild — legacy MSL-1 URLs)
 |--------------------------------------------------------------------------
 */
-Route::get('/campus-tournament', function () {
-    return redirect()->route('campus.tournament.sl');
-})->name('campus.tournament');
-
-Route::get('/Tournament/SL', function () {
-    return Inertia::render('Programs/CampusTournaments/SlView');
-})->name('campus.tournament.sl');
-
-Route::get('/Tournament/RegionalAdmin', function () {
-    return Inertia::render('Programs/CampusTournaments/SlView');
-})->name('campus.tournament.regionaladmin');
-
 Route::get('/campus-tournament/public', function () {
     return Inertia::render('Programs/CampusTournaments/SlView');
 })->name('campus.tournament.public');
 
-Route::get('/Tournament/Organizer', function () {
-    return Inertia::render('Programs/CampusTournaments/OrganizerView');
-})->name('campus.tournament.organizer');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/campus-tournament', [CampusTournamentController::class, 'redirectByRole'])
+        ->name('campus.tournament');
 
-Route::get('/Tournament/CampusTournament', function () {
-    return Inertia::render('Programs/CampusTournaments/CaptainHub');
-})->name('campus.captainregistration');
+    Route::get('/Tournament/SL', [CampusTournamentController::class, 'indexSl'])
+        ->name('campus.tournament.sl');
 
-Route::get('/Tournament/CampusTournamentReg', function () {
-    return Inertia::render('Programs/CampusTournaments/CaptainRegister');
-})->name('campus.teamregistration');
+    Route::get('/Tournament/RegionalAdmin', [CampusTournamentController::class, 'indexSl'])
+        ->name('campus.tournament.regionaladmin');
 
-Route::get('/Tournament/CampusTournamentTeam', function () {
-    return Inertia::render('Programs/CampusTournaments/CaptainTeam');
-})->name('campus.team');
+    Route::get('/Tournament/Organizer', [CampusTournamentController::class, 'indexOrganizer'])
+        ->name('campus.tournament.organizer');
 
-Route::get('/Tournament/SoloPlayer', function () {
-    return Inertia::render('Programs/CampusTournaments/SoloMatchmaking');
-})->name('campus.tournament.solo.player');
+    Route::get('/Tournament/CampusTournament', function () {
+        return Inertia::render('Programs/CampusTournaments/CaptainHub');
+    })->name('campus.captainregistration');
 
-Route::get('/Tournament/MemberInvite', function () {
-    return Inertia::render('Programs/CampusTournaments/MemberInvite');
-})->name('campus.member.invite');
+    Route::get('/Tournament/CampusTournamentReg', function () {
+        return Inertia::render('Programs/CampusTournaments/CaptainRegister');
+    })->name('campus.teamregistration');
 
-Route::redirect('/Tournament/MemberJoin', '/Tournament/MemberInvite')->name('campus.member.join');
+    Route::get('/Tournament/CampusTournamentTeam', function () {
+        return Inertia::render('Programs/CampusTournaments/CaptainTeam');
+    })->name('campus.team');
+
+    Route::get('/Tournament/SoloPlayer', function () {
+        return Inertia::render('Programs/CampusTournaments/SoloMatchmaking');
+    })->name('campus.tournament.solo.player');
+
+    Route::get('/Tournament/MemberInvite', function () {
+        return Inertia::render('Programs/CampusTournaments/MemberInvite');
+    })->name('campus.member.invite');
+
+    Route::redirect('/Tournament/MemberJoin', '/Tournament/MemberInvite')->name('campus.member.join');
+});
 
 /** Compatibility redirects from earlier /programs/... CT paths */
 Route::redirect('/programs/campus-tournaments', '/Tournament/Organizer');
