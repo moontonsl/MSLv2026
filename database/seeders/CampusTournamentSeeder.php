@@ -7,6 +7,7 @@ use App\Models\CampusAffiliation;
 use App\Models\CampusType;
 use App\Models\City;
 use App\Models\Institution;
+use App\Models\Permission;
 use App\Models\RegionAdmin;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -25,6 +26,7 @@ class CampusTournamentSeeder extends Seeder
             CampusTypeSeeder::class,
             PhilippineAddressSeeder::class,
             TournamentReferenceSeeder::class,
+            PermissionSeeder::class,
         ]);
 
         $fixtures = DB::transaction(function (): array {
@@ -87,6 +89,10 @@ class CampusTournamentSeeder extends Seeder
             $affiliation->started_at ??= now();
             $affiliation->approved_at ??= now();
             $affiliation->save();
+
+            $permissions = Permission::query()->pluck('id');
+            $studentLeader->permissions()->sync($permissions);
+            $regionalAdmin->permissions()->sync($permissions);
 
             return compact('institution', 'campus', 'regionalAdmin', 'studentLeader');
         });

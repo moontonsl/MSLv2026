@@ -12,9 +12,9 @@ import {
     YEAR_OPTIONS,
 } from '@/data/campusTournamentData';
 import MainLayout from '@/Layouts/MainLayout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { FilePlus2, Search, Shield } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const SEARCH_CLASS =
     'w-full min-h-[44px] rounded-lg border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-10 pr-4 text-base text-white placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none md:text-sm';
@@ -22,10 +22,21 @@ const SEARCH_CLASS =
 const SELECT_CLASS =
     'min-h-[44px] w-full rounded-lg border border-neutral-800 bg-[#1a1a1a] px-3 py-2.5 text-base text-white outline-none focus:ring-2 focus:ring-yellow-500 md:w-auto md:min-w-[120px] md:text-sm';
 
-export default function OrganizerView() {
-    const [pendingRequests, setPendingRequests] = useState(INITIAL_PENDING_REQUESTS);
-    const [rejectedRequests, setRejectedRequests] = useState(INITIAL_REJECTED_REQUESTS);
-    const [tournaments] = useState(INITIAL_TOURNAMENTS);
+export default function OrganizerView({
+    pendingRequests: initialPending = INITIAL_PENDING_REQUESTS,
+    rejectedRequests: initialRejected = INITIAL_REJECTED_REQUESTS,
+    tournaments = INITIAL_TOURNAMENTS,
+}) {
+    const [pendingRequests, setPendingRequests] = useState(initialPending);
+    const [rejectedRequests, setRejectedRequests] = useState(initialRejected);
+
+    useEffect(() => {
+        setPendingRequests(initialPending);
+    }, [initialPending]);
+
+    useEffect(() => {
+        setRejectedRequests(initialRejected);
+    }, [initialRejected]);
 
     const [statusTab, setStatusTab] = useState('upcoming');
     const [search, setSearch] = useState('');
@@ -35,6 +46,7 @@ export default function OrganizerView() {
     const [showOnsite, setShowOnsite] = useState(true);
 
     const [createOpen, setCreateOpen] = useState(false);
+    const [createError, setCreateError] = useState(null);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [pendingDelete, setPendingDelete] = useState(null);
     const [successOpen, setSuccessOpen] = useState(false);
@@ -84,6 +96,32 @@ export default function OrganizerView() {
         if (!pendingDelete) return;
 
         const { source, id } = pendingDelete;
+
+        if (typeof id === 'number' || (!String(id).startsWith('pending-') && !String(id).startsWith('rejected-'))) {
+            router.delete(`/campus-tournaments/${id}`, {
+                data: { reason: 'Cancelled by user' },
+                preserveScroll: true,
+                onSuccess: () => {
+                    setDeleteOpen(false);
+                    setPendingDelete(null);
+                    setSuccessMessage('Data has been deleted!');
+                    setSuccessOpen(true);
+                },
+                onError: () => {
+                    if (source === 'pending') {
+                        setPendingRequests((prev) => prev.filter((item) => item.id !== id));
+                    } else if (source === 'rejected') {
+                        setRejectedRequests((prev) => prev.filter((item) => item.id !== id));
+                    }
+                    setDeleteOpen(false);
+                    setPendingDelete(null);
+                    setSuccessMessage('Data has been deleted!');
+                    setSuccessOpen(true);
+                },
+            });
+            return;
+        }
+
         if (source === 'pending') {
             setPendingRequests((prev) => prev.filter((item) => item.id !== id));
         } else if (source === 'rejected') {
@@ -97,21 +135,26 @@ export default function OrganizerView() {
     }, [pendingDelete]);
 
     const handleCreateSubmit = useCallback((values) => {
-        const title = 'NEW CAMPUS TOURNAMENT';
-        setPendingRequests((prev) => [
-            {
-                id: `pending-${Date.now()}`,
-                title,
-                startDate: values.startDate,
-                endDate: values.endDate,
-                mode: values.mode,
-                status: 'pending',
+        setCreateError(null);
+        router.post('/campus-tournaments', values, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setCreateOpen(false);
+                setCreateError(null);
+                setSuccessMessage('Tournament Request Submitted!');
+                setSuccessOpen(true);
             },
-            ...prev,
-        ]);
-        setCreateOpen(false);
-        setSuccessMessage('Successfully Added!');
-        setSuccessOpen(true);
+            onError: (errors) => {
+                console.error(errors);
+                const message =
+                    errors?.registration_opens_at ||
+                    errors?.ends_at ||
+                    errors?.starts_at ||
+                    Object.values(errors || {})[0] ||
+                    'Failed to create tournament. Please check your inputs.';
+                setCreateError(message);
+            },
+        });
     }, []);
 
     return (
@@ -287,8 +330,12 @@ export default function OrganizerView() {
 
             <CreateTournamentModal
                 isOpen={createOpen}
-                onClose={() => setCreateOpen(false)}
+                onClose={() => {
+                    setCreateOpen(false);
+                    setCreateError(null);
+                }}
                 onSubmit={handleCreateSubmit}
+                error={createError}
             />
 
             <DeleteConfirmationModal

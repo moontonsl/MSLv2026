@@ -19,7 +19,6 @@ use App\Models\Region;
 use App\Models\TournamentParticipant;
 use App\Models\TournamentTeam;
 use App\Models\TournamentTeamInvitation;
-use App\Models\TournamentTeamJoinCode;
 use App\Models\User;
 use Database\Seeders\TournamentReferenceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -234,7 +233,7 @@ class TournamentRegistrationTest extends TestCase
         )->assertForbidden();
     }
 
-    public function test_solo_teams_do_not_use_premade_invitations_or_join_codes(): void
+    public function test_solo_teams_do_not_use_premade_invitations(): void
     {
         $team = $this->createSoloTeam($this->student, 'Solo Alpha', 'jungler');
         $invitee = $this->createEligibleUser();
@@ -242,10 +241,6 @@ class TournamentRegistrationTest extends TestCase
         $this->actingAs($this->student)->post(
             route('tournament.invitations.store', $team),
             ['user_id' => $invitee->id, 'intended_lane_role_code' => 'roam']
-        )->assertForbidden();
-
-        $this->actingAs($this->student)->post(
-            route('tournament.join-codes.store', $team)
         )->assertForbidden();
     }
 
@@ -392,59 +387,7 @@ class TournamentRegistrationTest extends TestCase
         ]);
     }
 
-    public function test_captain_can_generate_and_revoke_join_code(): void
-    {
-        $this->actingAs($this->student)->post(
-            route('tournament.teams.store', $this->tournament),
-            [
-                'name' => 'Team Alpha',
-                'assigned_lane_role_code' => 'jungler',
-            ]
-        );
 
-        $team = TournamentTeam::query()->firstOrFail();
-
-        $codeResponse = $this->actingAs($this->student)->post(
-            route('tournament.join-codes.store', $team)
-        );
-
-        $codeResponse->assertSessionHas('join_code');
-        $plainCode = session('join_code');
-
-        $joiner = $this->createEligibleUser();
-
-        $joinResponse = $this->actingAs($joiner)->post(
-            route('tournament.join', $this->tournament),
-            [
-                'code' => $plainCode,
-                'assigned_lane_role_code' => 'gold_laner',
-            ]
-        );
-
-        $joinResponse->assertRedirect();
-        $this->assertDatabaseHas('tournament_participants', [
-            'team_id' => $team->id,
-            'user_id' => $joiner->id,
-            'assigned_lane_role_code' => 'gold_laner',
-            'status' => 'active',
-        ]);
-
-        $joinCode = TournamentTeamJoinCode::query()->firstOrFail();
-        $this->actingAs($this->student)->delete(
-            route('tournament.join-codes.destroy', $joinCode)
-        )->assertRedirect();
-
-        $this->assertNotNull($joinCode->fresh()->revoked_at);
-
-        $anotherUser = $this->createEligibleUser();
-        $this->actingAs($anotherUser)->post(
-            route('tournament.join', $this->tournament),
-            [
-                'code' => $plainCode,
-                'assigned_lane_role_code' => 'exp_laner',
-            ]
-        )->assertSessionHasErrors('code');
-    }
 
     public function test_team_auto_transitions_to_registered_when_5_lane_roles_are_filled(): void
     {
@@ -685,10 +628,6 @@ class TournamentRegistrationTest extends TestCase
             ['decision' => 'accepted']
         )->assertStatus(409);
 
-        $this->actingAs($this->student)->post(
-            route('tournament.join-codes.store', $team)
-        )->assertStatus(409);
-
         $this->actingAs($this->student)->delete(
             route('tournament.participants.destroy', $captainParticipant)
         )->assertStatus(409);
@@ -777,29 +716,7 @@ class TournamentRegistrationTest extends TestCase
         )->assertStatus(409);
     }
 
-    public function test_join_codes_expire_and_are_capped_by_registration_close(): void
-    {
-        $this->tournament->update(['registration_closes_at' => now()->addMinutes(30)]);
-        $this->actingAs($this->student)->post(
-            route('tournament.teams.store', $this->tournament),
-            ['name' => 'Team Alpha', 'assigned_lane_role_code' => 'jungler']
-        );
 
-        $team = TournamentTeam::query()->firstOrFail();
-        $response = $this->actingAs($this->student)->post(route('tournament.join-codes.store', $team));
-        $response->assertSessionHas('join_code');
-
-        $joinCode = TournamentTeamJoinCode::query()->firstOrFail();
-        $this->assertNotNull($joinCode->expires_at);
-        $this->assertTrue($joinCode->expires_at->equalTo($this->tournament->fresh()->registration_closes_at));
-
-        $joiner = $this->createEligibleUser();
-        $joinCode->update(['expires_at' => now()->subSecond()]);
-        $this->actingAs($joiner)->post(
-            route('tournament.join', $this->tournament),
-            ['code' => session('join_code'), 'assigned_lane_role_code' => 'roam']
-        )->assertSessionHasErrors('code');
-    }
 
     public function test_only_the_five_fixed_lane_codes_are_accepted(): void
     {

@@ -3,19 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Actions\TournamentRegistration\CancelInvitation;
-use App\Actions\TournamentRegistration\GenerateJoinCode;
 use App\Actions\TournamentRegistration\InviteMember;
 use App\Actions\TournamentRegistration\JoinSoloTeam;
-use App\Actions\TournamentRegistration\JoinTeamByCode;
 use App\Actions\TournamentRegistration\ListOpenSoloTeams;
 use App\Actions\TournamentRegistration\RegisterPremadeTeam;
 use App\Actions\TournamentRegistration\RegisterSoloParticipant;
 use App\Actions\TournamentRegistration\RespondToInvitation;
-use App\Actions\TournamentRegistration\RevokeJoinCode;
 use App\Actions\TournamentRegistration\WithdrawFromTournament;
 use App\Http\Requests\InviteMemberRequest;
 use App\Http\Requests\JoinSoloTeamRequest;
-use App\Http\Requests\JoinTeamByCodeRequest;
 use App\Http\Requests\RegisterPremadeTeamRequest;
 use App\Http\Requests\RegisterSoloRequest;
 use App\Http\Requests\RespondToInvitationRequest;
@@ -23,7 +19,6 @@ use App\Models\CampusTournament;
 use App\Models\TournamentParticipant;
 use App\Models\TournamentTeam;
 use App\Models\TournamentTeamInvitation;
-use App\Models\TournamentTeamJoinCode;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -129,53 +124,6 @@ class TournamentRegistrationController extends Controller
         $action->handle($invitation, $request->user());
 
         return back()->with('status', 'Invitation cancelled.');
-    }
-
-    /**
-     * Generate a new join code for a team (plaintext returned once via flash).
-     */
-    public function storeJoinCode(
-        Request $request,
-        TournamentTeam $team,
-        GenerateJoinCode $action,
-    ): RedirectResponse {
-        Gate::authorize('generateJoinCode', $team);
-
-        $result = $action->handle($team, $request->user());
-
-        return back()->with([
-            'status' => 'Join code generated.',
-            'join_code' => $result['code'],
-            'join_code_hint' => $result['hint'],
-        ]);
-    }
-
-    /**
-     * Revoke a join code so it can no longer be used.
-     */
-    public function destroyJoinCode(
-        Request $request,
-        TournamentTeamJoinCode $joinCode,
-        RevokeJoinCode $action,
-    ): RedirectResponse {
-        Gate::authorize('revokeJoinCode', [TournamentTeam::class, $joinCode]);
-
-        $action->handle($joinCode, $request->user());
-
-        return back()->with('status', 'Join code revoked.');
-    }
-
-    /**
-     * Join a team using a plaintext join code.
-     */
-    public function join(
-        JoinTeamByCodeRequest $request,
-        CampusTournament $tournament,
-        JoinTeamByCode $action,
-    ): RedirectResponse {
-        $action->handle($tournament, $request->user(), $request->validated());
-
-        return back()->with('status', 'You have joined the team.');
     }
 
     /**
