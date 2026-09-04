@@ -161,6 +161,10 @@ Route::get('/admin/news-updates', function () {
     return Inertia::render('Admin/NewsUpdates');
 })->name('admin.news-updates');
 
+Route::get('/admin/account-management', function () {
+    return Inertia::render('Admin/AccountManagement');
+})->name('admin.account-management');
+
 Route::get('/SL-Admin', function () {
     return Inertia::render('SL-Admin/Index');
 })->name('sl.admin');
