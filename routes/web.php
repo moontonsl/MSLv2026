@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminManagementController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CampusTournamentController;
 use App\Http\Controllers\TournamentRegistrationController;
@@ -135,6 +136,14 @@ Route::redirect('/about/general-affairs', '/GeneralAffairs');
 
 Route::redirect('/Login', '/login')->name('Login');
 
+/** Login Page for Internal temporary to view */
+
+Route::get('/admin', function () {
+    return Inertia::render('Auth/AdminLogin');
+})->name('admin.login');
+
+/** */
+
 /** Admin CMS pages from Evren branch */
 Route::get('/admin/account-creation', function () {
     return Inertia::render('Admin/AccountCreation');
@@ -151,6 +160,10 @@ Route::get('/admin/faq', function () {
 Route::get('/admin/news-updates', function () {
     return Inertia::render('Admin/NewsUpdates');
 })->name('admin.news-updates');
+
+Route::get('/admin/account-management', function () {
+    return Inertia::render('Admin/AccountManagement');
+})->name('admin.account-management');
 
 Route::get('/SL-Admin', function () {
     return Inertia::render('SL-Admin/Index');
