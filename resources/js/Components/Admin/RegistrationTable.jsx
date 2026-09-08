@@ -102,12 +102,12 @@ function ActionButtons({
 
 function MobileField({ label, children }) {
     return (
-        <div className="grid min-w-0 grid-cols-[max-content_minmax(0,1fr)] items-start gap-4">
-            <span className="whitespace-nowrap text-sm font-bold text-white">
+        <div className="grid min-w-0 grid-cols-[84px_minmax(0,1fr)] items-start gap-4">
+            <span className="whitespace-nowrap text-sm font-bold leading-5 text-[#F5F5F5]">
                 {label}
             </span>
 
-            <div className="min-w-0 text-sm font-semibold text-gray-400">
+            <div className="min-w-0 text-sm font-normal leading-5 text-[#94949F]">
                 {children}
             </div>
         </div>
@@ -119,6 +119,7 @@ export default function RegistrationTable({
     showActions = true,
     showDates = true,
     showMobileActions = false,
+    hideMobilePagination = false,
     currentPage = 1,
     pageCount = 1,
     onPageChange = () => {},
@@ -269,11 +270,11 @@ export default function RegistrationTable({
 
             <div className="md:hidden">
                 {registrations.length === 0 ? (
-                    <div className="border-y border-white/10 py-12 text-center text-sm text-gray-500">
+                    <div className="border-y border-white/10 py-12 text-center text-sm text-[#777781]">
                         {emptyMessage}
                     </div>
                 ) : (
-                    <div className="divide-y divide-white/10">
+                    <div className="overflow-hidden bg-[#080808]">
                         {registrations.map((registration) => {
                             const isExpanded = expandedId === registration.id;
 
@@ -283,10 +284,10 @@ export default function RegistrationTable({
                                     className={
                                         isExpanded
                                             ? "bg-[#1A1A1A]"
-                                            : "bg-[#0B0B0B]"
+                                            : "bg-[#080808]"
                                     }
                                 >
-                                    <div className="flex min-h-[52px] items-center border-b border-white/10 px-2">
+                                    <div className="flex min-h-[52px] items-center border-b border-white/20 px-2.5">
                                         <button
                                             type="button"
                                             onClick={() =>
@@ -296,14 +297,14 @@ export default function RegistrationTable({
                                                         : registration.id,
                                                 )
                                             }
-                                            className="flex min-w-0 flex-1 items-center gap-4 text-left"
+                                            className="flex min-w-0 flex-1 items-center text-left"
                                             aria-expanded={isExpanded}
                                         >
-                                            <span className="shrink-0 text-sm font-bold text-white">
+                                            <span className="w-[100px] shrink-0 whitespace-nowrap text-sm font-bold text-[#F5F5F5]">
                                                 Event Code
                                             </span>
 
-                                            <span className="min-w-0 truncate text-sm font-semibold text-gray-400">
+                                            <span className="min-w-0 truncate text-sm font-normal text-[#94949F]">
                                                 {registration.eventCode}
                                             </span>
                                         </button>
@@ -324,7 +325,7 @@ export default function RegistrationTable({
                                                         : registration.id,
                                                 )
                                             }
-                                            className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-md text-white"
+                                            className="ml-2 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-white transition hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FBBF24]"
                                             aria-label={
                                                 isExpanded
                                                     ? "Collapse registration"
@@ -333,15 +334,15 @@ export default function RegistrationTable({
                                             aria-expanded={isExpanded}
                                         >
                                             {isExpanded ? (
-                                                <ChevronUp className="h-4 w-4" />
+                                                <ChevronUp className="h-3.5 w-3.5" />
                                             ) : (
-                                                <ChevronDown className="h-4 w-4" />
+                                                <ChevronDown className="h-3.5 w-3.5" />
                                             )}
                                         </button>
                                     </div>
 
                                     {isExpanded ? (
-                                        <div className="space-y-3 px-2 py-3">
+                                        <div className="space-y-3 px-2.5 py-3">
                                             <MobileField label="Event Name">
                                                 <span className="block break-words">
                                                     {registration.eventName}
@@ -398,7 +399,11 @@ export default function RegistrationTable({
                 )}
             </div>
 
-            <div className="mt-5 max-w-full overflow-x-auto border-t border-white/10 pt-4">
+            <div
+                className={`mt-5 max-w-full overflow-x-auto border-t border-white/10 pt-4 ${
+                    hideMobilePagination ? "hidden md:block" : ""
+                }`}
+            >
                 <AdminPagination
                     currentPage={currentPage}
                     pageCount={pageCount}

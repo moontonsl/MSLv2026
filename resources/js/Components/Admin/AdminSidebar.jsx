@@ -6,6 +6,7 @@ import {
     UserCog,
     UserPlus,
     X,
+    FolderPlus,
 } from "lucide-react";
 
 const ACCENT = "#FBBF24";
@@ -45,7 +46,7 @@ const NAV_ITEMS = [
         id: "registration-management",
         label: "Registration Management",
         href: "/admin/registration-management",
-        icon: UserCog,
+        icon: FolderPlus,
     },
 ];
 
@@ -61,14 +62,14 @@ export default function AdminSidebar({
             } md:translate-x-0`}
         >
             <div className="flex items-center justify-between border-b border-neutral-800 px-6 py-6">
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 items-center gap-3">
                     <img
                         src="/msl-logo.png"
                         alt="MSL Philippines"
-                        className="h-10 w-10 object-contain"
+                        className="h-10 w-10 shrink-0 object-contain"
                     />
 
-                    <span className="text-sm font-bold leading-tight text-white">
+                    <span className="whitespace-nowrap text-sm font-bold leading-tight text-white">
                         MSL Philippines
                     </span>
                 </div>
@@ -77,13 +78,13 @@ export default function AdminSidebar({
                     type="button"
                     aria-label="Close admin navigation"
                     onClick={onClose}
-                    className="rounded-md p-2 text-gray-400 hover:bg-white/10 hover:text-white md:hidden"
+                    className="rounded-md p-2 text-gray-400 transition-colors hover:bg-white/10 hover:text-white md:hidden"
                 >
                     <X className="h-5 w-5" />
                 </button>
             </div>
 
-            <nav className="flex flex-1 flex-col gap-1 px-3 py-6">
+            <nav className="flex flex-1 flex-col gap-1 py-6 pl-3">
                 {NAV_ITEMS.map(({ id, label, href, icon: Icon }) => {
                     const isActive = id === activeId;
 
@@ -92,19 +93,21 @@ export default function AdminSidebar({
                             key={id}
                             href={href}
                             onClick={onClose}
-                            className={`flex min-h-12 items-center gap-3 rounded-r-md border-l-4 px-4 py-3 text-sm font-medium transition-colors ${
+                            className={`flex min-h-12 min-w-0 items-center gap-3 rounded-l-md border-r-4 px-4 py-3 text-[13px] font-medium tracking-[-0.01em] transition-colors ${
                                 isActive
-                                    ? "border-[#FBBF24] bg-white/5 pl-3"
+                                    ? "border-[#FBBF24] bg-white/5 pr-3 text-[#FBBF24]"
                                     : "border-transparent text-gray-400 hover:bg-white/5 hover:text-white"
                             }`}
-                            style={isActive ? { color: ACCENT } : undefined}
                         >
                             <Icon
+                                aria-hidden="true"
                                 className="h-5 w-5 shrink-0"
                                 style={isActive ? { color: ACCENT } : undefined}
                             />
 
-                            {label}
+                            <span className="min-w-0 flex-1 whitespace-nowrap">
+                                {label}
+                            </span>
                         </Link>
                     );
                 })}
