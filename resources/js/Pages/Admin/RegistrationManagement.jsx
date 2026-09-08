@@ -2,55 +2,137 @@ import { Head } from "@inertiajs/react";
 import { Plus, Search } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
-import AdminLayout from "@/Layouts/AdminLayout";
 import DeleteConfirmationModal from "@/Components/Admin/DeleteConfirmationModal";
 import RegistrationModal from "@/Components/Admin/RegistrationModal";
 import RegistrationTable from "@/Components/Admin/RegistrationTable";
 import SectionCard from "@/Components/Admin/SectionCard";
 import SuccessModal from "@/Components/Admin/SuccessModal";
+import AdminLayout from "@/Layouts/AdminLayout";
+
 import {
-    COMPLETED_REGISTRATION_ITEMS,
-    REGISTRATION_ITEMS,
+    MOCK_COMPLETED_REGISTRATIONS,
+    MOCK_REGISTRATIONS,
+    REGISTRATION_EVENT_OPTIONS,
     REGISTRATION_PAGE_SIZE,
+    REGISTRATION_REGION_OPTIONS,
+    REGISTRATION_SCHOOL_OPTIONS,
 } from "@/data/adminRegistrationData";
 
-function normalizeRegistration(registration, index, prefix) {
-    const record = registration ?? {};
+function cloneAssignedSchools(schools = []) {
+    if (!Array.isArray(schools)) {
+        return [];
+    }
+
+    return schools
+        .map((school, index) => {
+            if (typeof school === "string") {
+                return {
+                    id: `assigned-school-${index + 1}`,
+                    name: school,
+                    region: "",
+                };
+            }
+
+            return {
+                ...school,
+                id: school.id ?? `assigned-school-${index + 1}`,
+                name: school.name ?? school.school ?? "",
+                region: school.region ?? "",
+            };
+        })
+        .filter((school) => school.name);
+}
+
+function normalizeRegistration(
+    registration = {},
+    index = 0,
+    prefix = "registration",
+) {
+    const eventLink =
+        registration.eventLink ??
+        registration.event_link ??
+        registration.responseUrl ??
+        registration.response_url ??
+        "";
 
     return {
-        id: record.id ?? `${prefix}-${index + 1}`,
-        eventCode: record.eventCode ?? record.event_code ?? "",
-        eventName: record.eventName ?? record.event_name ?? "",
-        startDate: record.startDate ?? record.start_date ?? "",
-        endDate: record.endDate ?? record.end_date ?? "",
+        ...registration,
+        id: registration.id ?? `${prefix}-${index + 1}`,
+        eventCode: registration.eventCode ?? registration.event_code ?? "",
+        eventLink,
+        eventName: registration.eventName ?? registration.event_name ?? "",
+        eventShortDescription:
+            registration.eventShortDescription ??
+            registration.event_short_description ??
+            registration.description ??
+            "",
+        startDate: registration.startDate ?? registration.start_date ?? "",
+        endDate: registration.endDate ?? registration.end_date ?? "",
         responseUrl:
-            record.responseUrl ?? record.response_url ?? record.response ?? "",
+            registration.responseUrl ?? registration.response_url ?? eventLink,
+        assignedSchools: cloneAssignedSchools(
+            registration.assignedSchools ?? registration.assigned_schools,
+        ),
+        eventLogo: registration.eventLogo ?? registration.event_logo ?? null,
+        titleTextColor:
+            registration.titleTextColor ??
+            registration.title_text_color ??
+            "#000000FF",
+        subTextColor:
+            registration.subTextColor ??
+            registration.sub_text_color ??
+            "#000000FF",
+        formColor:
+            registration.formColor ?? registration.form_color ?? "#000000FF",
+        backgroundColor:
+            registration.backgroundColor ??
+            registration.background_color ??
+            "#000000FF",
     };
 }
 
-function getInitialRows(source, fallback, prefix) {
-    const rows = Array.isArray(source) && source.length > 0 ? source : fallback;
+function normalizeRegistrations(registrations, prefix) {
+    if (!Array.isArray(registrations)) {
+        return [];
+    }
 
-    return rows.map((row, index) => normalizeRegistration(row, index, prefix));
+    return registrations.map((registration, index) =>
+        normalizeRegistration(registration, index, prefix),
+    );
 }
 
-function filterRegistrations(rows, search) {
+function filterRegistrations(registrations, search) {
     const query = search.trim().toLowerCase();
 
     if (!query) {
-        return rows;
+        return registrations;
     }
 
-    return rows.filter((registration) =>
+    return registrations.filter((registration) =>
         [
             registration.eventCode,
             registration.eventName,
+            registration.eventLink,
             registration.responseUrl,
+            registration.eventShortDescription,
         ]
             .join(" ")
             .toLowerCase()
             .includes(query),
     );
+}
+
+function createLocalId() {
+    if (
+        typeof crypto !== "undefined" &&
+        typeof crypto.randomUUID === "function"
+    ) {
+        return crypto.randomUUID();
+    }
+
+    return `registration-${Date.now()}-${Math.random()
+        .toString(36)
+        .slice(2, 9)}`;
 }
 
 function SearchInput({ value, onChange, label }) {
@@ -73,38 +155,77 @@ function SearchInput({ value, onChange, label }) {
 }
 
 export default function RegistrationManagement({
-    registrations: registrationProp = [],
-    completedRegistrations: completedProp = [],
+    registrations: registrationProp,
+    completedRegistrations: completedRegistrationProp,
 }) {
     const [registrations, setRegistrations] = useState(() =>
-        getInitialRows(registrationProp, REGISTRATION_ITEMS, "registration"),
+        normalizeRegistrations(
+            Array.isArray(registrationProp)
+                ? registrationProp
+                : MOCK_REGISTRATIONS,
+            "registration",
+        ),
     );
 
-    const [completedRegistrations] = useState(() =>
-        getInitialRows(
-            completedProp,
-            COMPLETED_REGISTRATION_ITEMS,
+    const [completedRegistrations, setCompletedRegistrations] = useState(() =>
+        normalizeRegistrations(
+            Array.isArray(completedRegistrationProp)
+                ? completedRegistrationProp
+                : MOCK_COMPLETED_REGISTRATIONS,
             "completed-registration",
         ),
     );
 
     const [registrationSearch, setRegistrationSearch] = useState("");
+
     const [completedSearch, setCompletedSearch] = useState("");
 
     const [registrationPage, setRegistrationPage] = useState(1);
+
     const [completedPage, setCompletedPage] = useState(1);
 
     const [modalOpen, setModalOpen] = useState(false);
+
     const [editingRegistration, setEditingRegistration] = useState(null);
+
     const [pendingDelete, setPendingDelete] = useState(null);
 
     const [successOpen, setSuccessOpen] = useState(false);
+
     const [successMessage, setSuccessMessage] = useState("");
+
     const [copiedCode, setCopiedCode] = useState(null);
+
+    useEffect(() => {
+        if (!Array.isArray(registrationProp)) {
+            return;
+        }
+
+        setRegistrations(
+            normalizeRegistrations(registrationProp, "registration"),
+        );
+
+        setRegistrationPage(1);
+    }, [registrationProp]);
+
+    useEffect(() => {
+        if (!Array.isArray(completedRegistrationProp)) {
+            return;
+        }
+
+        setCompletedRegistrations(
+            normalizeRegistrations(
+                completedRegistrationProp,
+                "completed-registration",
+            ),
+        );
+
+        setCompletedPage(1);
+    }, [completedRegistrationProp]);
 
     const filteredRegistrations = useMemo(
         () => filterRegistrations(registrations, registrationSearch),
-        [registrationSearch, registrations],
+        [registrations, registrationSearch],
     );
 
     const filteredCompletedRegistrations = useMemo(
@@ -165,6 +286,7 @@ export default function RegistrationManagement({
 
     const openEditModal = (registration) => {
         setEditingRegistration(registration);
+
         setModalOpen(true);
     };
 
@@ -176,15 +298,17 @@ export default function RegistrationManagement({
     const handleRegistrationSubmit = (values) => {
         const isEditing = Boolean(editingRegistration);
 
-        const nextRegistration = normalizeRegistration(
-            {
-                ...values,
-                id: editingRegistration?.id ?? `registration-${Date.now()}`,
-            },
-            0,
-            "registration",
-        );
+        const nextRegistration = normalizeRegistration({
+            ...editingRegistration,
+            ...values,
+            id: editingRegistration?.id ?? createLocalId(),
+            responseUrl: values.responseUrl ?? values.eventLink,
+        });
 
+        /*
+         * Replace this local update with router.post() or
+         * router.put() after the Laravel routes are available.
+         */
         setRegistrations((current) =>
             isEditing
                 ? current.map((registration) =>
@@ -195,13 +319,16 @@ export default function RegistrationManagement({
                 : [nextRegistration, ...current],
         );
 
+        setRegistrationSearch("");
         setRegistrationPage(1);
         closeRegistrationModal();
+
         setSuccessMessage(
             isEditing
                 ? "Registration updated successfully."
                 : "Registration created successfully.",
         );
+
         setSuccessOpen(true);
     };
 
@@ -210,6 +337,10 @@ export default function RegistrationManagement({
             return;
         }
 
+        /*
+         * Replace this local update with router.delete()
+         * after the Laravel delete route is available.
+         */
         setRegistrations((current) =>
             current.filter(
                 (registration) => registration.id !== pendingDelete.id,
@@ -217,7 +348,9 @@ export default function RegistrationManagement({
         );
 
         setPendingDelete(null);
+
         setSuccessMessage("Registration deleted successfully.");
+
         setSuccessOpen(true);
     };
 
@@ -231,6 +364,7 @@ export default function RegistrationManagement({
 
         try {
             await navigator.clipboard.writeText(eventCode);
+
             setCopiedCode(eventCode);
 
             window.setTimeout(() => {
@@ -312,6 +446,10 @@ export default function RegistrationManagement({
                         onPageChange={setCompletedPage}
                         showMobileActions
                         showDates={false}
+                        copiedCode={copiedCode}
+                        onCopy={handleCopy}
+                        emptyMessage="No completed registrations match your search."
+                        paginationLabel="Completed registration pagination"
                     />
                 </SectionCard>
             </div>
@@ -321,6 +459,9 @@ export default function RegistrationManagement({
                 onClose={closeRegistrationModal}
                 initialData={editingRegistration}
                 onSubmit={handleRegistrationSubmit}
+                eventNameOptions={REGISTRATION_EVENT_OPTIONS}
+                regionOptions={REGISTRATION_REGION_OPTIONS}
+                schoolOptions={REGISTRATION_SCHOOL_OPTIONS}
             />
 
             <DeleteConfirmationModal

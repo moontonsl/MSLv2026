@@ -1,11 +1,5 @@
 import { Trash2 } from "lucide-react";
 
-import {
-    formatDate,
-    getRole,
-    isProtectedAccount,
-} from "@/Components/Admin/adminAccountUtils";
-
 export default function AdminAccountDesktopTable({
     accounts,
     onEdit,
@@ -64,7 +58,7 @@ export default function AdminAccountDesktopTable({
                                         onEdit(account);
                                     }
                                 }}
-                                className="cursor-pointer border-b border-white/[0.04] outline-none transition hover:bg-white/[0.025] focus:bg-white/[0.04] last:border-0"
+                                className="cursor-pointer border-b border-white/[0.04] outline-none transition last:border-0 hover:bg-white/[0.025] focus:bg-white/[0.04]"
                             >
                                 <td className="max-w-0 py-5 text-sm font-semibold text-gray-400 lg:text-base">
                                     <span className="block truncate">
@@ -80,18 +74,18 @@ export default function AdminAccountDesktopTable({
 
                                 <td className="max-w-0 py-5">
                                     <span className="inline-flex max-w-full truncate rounded-md bg-[#3B3B3B] px-3 py-2 text-sm font-bold text-gray-200">
-                                        {getRole(account)}
+                                        {account.roleLabel}
                                     </span>
                                 </td>
 
                                 <td className="max-w-0 py-5 text-sm font-semibold text-gray-400 lg:text-base">
                                     <span className="block truncate whitespace-nowrap">
-                                        {formatDate(account.created_at)}
+                                        {account.createdDate}
                                     </span>
                                 </td>
 
                                 <td className="py-5 text-right">
-                                    {isProtectedAccount(account) ? (
+                                    {account.protected ? (
                                         <span className="whitespace-nowrap text-sm font-semibold text-gray-400 lg:text-base">
                                             Protected
                                         </span>
@@ -116,4 +110,3 @@ export default function AdminAccountDesktopTable({
         </div>
     );
 }
-

@@ -1,11 +1,5 @@
 import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 
-import {
-    formatDate,
-    getRole,
-    isProtectedAccount,
-} from "@/Components/Admin/adminAccountUtils";
-
 function MobileDetail({ label, children }) {
     return (
         <div className="grid min-w-0 grid-cols-[max-content_minmax(0,1fr)] items-center gap-3 text-sm">
@@ -82,7 +76,7 @@ export default function AdminAccountMobileList({
                             </button>
                         </div>
 
-                        {isExpanded && (
+                        {isExpanded ? (
                             <div className="space-y-3 border-t border-white/10 px-3 py-3">
                                 <MobileDetail label="Email Address">
                                     <span className="block min-w-0 truncate whitespace-nowrap text-gray-400">
@@ -92,18 +86,18 @@ export default function AdminAccountMobileList({
 
                                 <MobileDetail label="Role">
                                     <span className="inline-flex w-fit rounded-md bg-[#3B3B3B] px-2 py-1 text-gray-200">
-                                        {getRole(account)}
+                                        {account.roleLabel}
                                     </span>
                                 </MobileDetail>
 
                                 <MobileDetail label="Created Date">
                                     <span className="block min-w-0 truncate whitespace-nowrap text-gray-400">
-                                        {formatDate(account.created_at)}
+                                        {account.createdDate}
                                     </span>
                                 </MobileDetail>
 
                                 <MobileDetail label="Action">
-                                    {isProtectedAccount(account) ? (
+                                    {account.protected ? (
                                         <span className="whitespace-nowrap text-gray-400">
                                             Protected
                                         </span>
@@ -121,11 +115,10 @@ export default function AdminAccountMobileList({
                                     )}
                                 </MobileDetail>
                             </div>
-                        )}
+                        ) : null}
                     </article>
                 );
             })}
         </div>
     );
 }
-

@@ -1,13 +1,16 @@
 import BaseModal from "@/Components/Admin/BaseModal";
 import FeaturedImageUpload from "@/Components/Admin/FeaturedImageUpload";
-import {
-    MODAL_INPUT_CLASS,
-    MODAL_LABEL_CLASS,
-    MODAL_SELECT_CLASS,
-} from "@/Components/Admin/adminModalFormStyles";
 import { toDateTimeLocal } from "@/data/adminRegistrationData";
 import { ChevronDown, Trash2 } from "lucide-react";
 import { useEffect, useId, useMemo, useState } from "react";
+
+const FIELD_LABEL_CLASS =
+    "mb-2 block text-xs font-medium leading-5 text-[#EDE3C0]";
+
+const CONTROL_CLASS =
+    "min-h-[42px] w-full rounded-sm border border-white/[0.03] bg-[#151515] px-4 py-2.5 text-sm text-[#F5F1E6] outline-none transition placeholder:text-[#65656F] hover:border-white/[0.10] focus:border-[#FBBF24] focus:ring-1 focus:ring-[#FBBF24]";
+
+const SELECT_CLASS = `${CONTROL_CLASS} cursor-pointer appearance-none pr-10`;
 
 const DEFAULT_EVENT_NAMES = [
     "Community",
@@ -45,17 +48,17 @@ const DEFAULT_FORM = {
     endDate: "",
     assignedSchools: DEFAULT_ASSIGNED_SCHOOLS,
     eventLogo: null,
-    titleTextColor: "#000000",
-    subTextColor: "#000000",
-    formColor: "#000000",
-    backgroundColor: "#000000",
+    titleTextColor: "#000000FF",
+    subTextColor: "#000000FF",
+    formColor: "#000000FF",
+    backgroundColor: "#000000FF",
 };
 
 const CANCEL_BUTTON_CLASS =
-    "min-h-[54px] w-full rounded-[10px] bg-[#1A1A1A] py-3 text-base font-semibold text-gray-300 transition-colors hover:bg-[#252525] active:scale-[0.98]";
+    "min-h-[42px] w-full rounded-[10px] border border-white/[0.12] bg-[#1B1B1B] px-4 py-2.5 text-sm font-semibold text-[#A8A8B3] transition hover:border-white/[0.20] hover:bg-[#242424] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FBBF24] active:scale-[0.99] sm:min-h-[52px] sm:text-base";
 
 const SUBMIT_BUTTON_CLASS =
-    "min-h-[54px] w-full rounded-[10px] bg-[#FBBF24] py-3 text-base font-bold text-black transition-colors hover:bg-[#FCD34D] active:scale-[0.98]";
+    "min-h-[42px] w-full rounded-[10px] bg-[#FBBF24] px-4 py-2.5 text-sm font-bold text-black transition hover:bg-[#FCD34D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FDE68A] active:scale-[0.99] sm:min-h-[52px] sm:text-base";
 
 function uniqueOptions(options = []) {
     return [...new Set(options.filter(Boolean).map(String))];
@@ -79,6 +82,22 @@ function cloneAssignedSchools(schools = []) {
             };
         })
         .filter((school) => school.name);
+}
+
+function normalizeColor(value, fallback = "#000000FF") {
+    const normalized = String(value ?? "")
+        .trim()
+        .toUpperCase();
+
+    if (/^#[0-9A-F]{8}$/.test(normalized)) {
+        return normalized;
+    }
+
+    if (/^#[0-9A-F]{6}$/.test(normalized)) {
+        return `${normalized}FF`;
+    }
+
+    return fallback;
 }
 
 function getInitialForm(initialData) {
@@ -115,28 +134,36 @@ function getInitialForm(initialData) {
             ? cloneAssignedSchools(assignedSchoolSource)
             : cloneAssignedSchools(DEFAULT_ASSIGNED_SCHOOLS),
         eventLogo: initialData.eventLogo ?? initialData.event_logo ?? null,
-        titleTextColor:
-            initialData.titleTextColor ??
-            initialData.title_text_color ??
-            "#000000",
-        subTextColor:
-            initialData.subTextColor ?? initialData.sub_text_color ?? "#000000",
-        formColor: initialData.formColor ?? initialData.form_color ?? "#000000",
-        backgroundColor:
-            initialData.backgroundColor ??
-            initialData.background_color ??
-            "#000000",
+        titleTextColor: normalizeColor(
+            initialData.titleTextColor ?? initialData.title_text_color,
+        ),
+        subTextColor: normalizeColor(
+            initialData.subTextColor ?? initialData.sub_text_color,
+        ),
+        formColor: normalizeColor(
+            initialData.formColor ?? initialData.form_color,
+        ),
+        backgroundColor: normalizeColor(
+            initialData.backgroundColor ?? initialData.background_color,
+        ),
     };
 }
 
 function FieldLabel({ htmlFor, children, required = false }) {
     return (
-        <label
-            htmlFor={htmlFor}
-            className={`${MODAL_LABEL_CLASS} text-[#FFFBEB]`}
-        >
+        <label htmlFor={htmlFor} className={FIELD_LABEL_CLASS}>
             {children}
-            {required ? <span className="text-red-400"> *</span> : null}
+
+            {required ? (
+                <>
+                    <span aria-hidden="true" className="text-red-400">
+                        {" "}
+                        *
+                    </span>
+
+                    <span className="sr-only"> required</span>
+                </>
+            ) : null}
         </label>
     );
 }
@@ -156,7 +183,13 @@ function SelectField({
                 value={value}
                 onChange={(event) => onChange(event.target.value)}
                 required={required}
-                className={`${MODAL_SELECT_CLASS} appearance-none pr-10`}
+                className={SELECT_CLASS}
+                style={{
+                    WebkitAppearance: "none",
+                    MozAppearance: "none",
+                    appearance: "none",
+                    backgroundImage: "none",
+                }}
             >
                 {placeholder ? (
                     <option value="" disabled={required}>
@@ -171,22 +204,45 @@ function SelectField({
                 ))}
             </select>
 
-            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+            <ChevronDown
+                aria-hidden="true"
+                className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#555560]"
+            />
         </div>
     );
 }
-
 function ColorField({ id, label, value, onChange }) {
-    const colorValue = /^#[0-9a-f]{6}$/i.test(value) ? value : "#000000";
+    const normalizedValue = normalizeColor(value);
+
+    const handleHexChange = (event) => {
+        const nextValue = event.target.value
+            .toUpperCase()
+            .replace(/[^#0-9A-F]/g, "")
+            .slice(0, 9);
+
+        onChange(nextValue);
+    };
 
     return (
-        <div className="min-w-0 lg:grid lg:grid-cols-[126px_minmax(0,1fr)] lg:items-center lg:gap-2">
-            <div className="flex h-10 min-w-0 items-center rounded-md border border-[#333] bg-[#1A1A1A]">
+        <div className="grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-[132px_minmax(0,1fr)] sm:items-center sm:gap-3">
+            <label
+                htmlFor={`${id}-picker`}
+                className="order-1 text-xs font-medium leading-5 text-[#EDE3C0] sm:order-2 sm:text-sm"
+            >
+                {label}
+            </label>
+
+            <div className="order-2 flex min-h-[42px] min-w-0 items-center rounded-md border border-white/[0.08] bg-[#151515] transition focus-within:border-[#FBBF24] focus-within:ring-1 focus-within:ring-[#FBBF24] sm:order-1">
                 <input
+                    id={`${id}-picker`}
                     type="color"
-                    value={colorValue}
-                    onChange={(event) => onChange(event.target.value)}
-                    className="ml-2 h-5 w-5 shrink-0 cursor-pointer rounded border-0 bg-transparent p-0"
+                    value={normalizedValue}
+                    onChange={(event) =>
+                        onChange(event.target.value.toUpperCase())
+                    }
+                    alpha=""
+                    colorspace="srgb"
+                    className="ml-3 h-5 w-5 shrink-0 cursor-pointer rounded border-0 bg-transparent p-0"
                     aria-label={`Choose ${label}`}
                 />
 
@@ -194,19 +250,14 @@ function ColorField({ id, label, value, onChange }) {
                     id={`${id}-hex`}
                     type="text"
                     value={value}
-                    onChange={(event) => onChange(event.target.value)}
-                    className="min-w-0 w-full border-0 bg-transparent px-2 text-sm text-gray-300 outline-none focus:ring-0"
-                    maxLength={7}
+                    onChange={handleHexChange}
+                    placeholder="#000000FF"
+                    maxLength={9}
+                    spellCheck={false}
+                    className="w-full min-w-0 border-0 bg-transparent px-2 text-xs uppercase text-[#777781] outline-none placeholder:text-[#555560] focus:ring-0 sm:text-sm"
                     aria-label={`${label} hex value`}
                 />
             </div>
-
-            <label
-                htmlFor={`${id}-hex`}
-                className="mt-2 block text-sm text-[#FFFBEB] lg:mt-0"
-            >
-                {label}
-            </label>
         </div>
     );
 }
@@ -221,6 +272,7 @@ function AssignedSchoolPicker({
         region: "",
         school: "",
     });
+
     const [error, setError] = useState("");
 
     const addSchool = () => {
@@ -252,16 +304,27 @@ function AssignedSchoolPicker({
             region: "",
             school: "",
         });
+
         setError("");
     };
 
+    const removeSchool = (schoolId) => {
+        onChange(schools.filter((school) => school.id !== schoolId));
+    };
+
     return (
-        <section className="rounded-md bg-[#151515] p-4">
-            <h3 className="mb-4 text-lg font-medium text-[#FFFBEB]">
+        <section
+            className="rounded-md border border-white/[0.03] bg-[#151515] p-4"
+            aria-labelledby="assigned-school-heading"
+        >
+            <h3
+                id="assigned-school-heading"
+                className="mb-3 text-base font-medium text-[#EDE3C0] sm:text-lg"
+            >
                 Add New Assigned School
             </h3>
 
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_146px]">
                 <SelectField
                     id="assigned-school-region"
                     value={selection.region}
@@ -291,7 +354,7 @@ function AssignedSchoolPicker({
                 <button
                     type="button"
                     onClick={addSchool}
-                    className="min-h-[44px] rounded-lg bg-[#44D979] px-4 text-sm font-bold text-black transition hover:bg-[#63E891] active:scale-[0.98]"
+                    className="min-h-[36px] rounded-[9px] bg-[#44D979] px-5 text-sm font-bold text-black transition hover:bg-[#63E891] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8AF0AD] active:scale-[0.99] sm:min-h-[42px]"
                 >
                     Add School
                 </button>
@@ -303,38 +366,29 @@ function AssignedSchoolPicker({
                 </p>
             ) : null}
 
-            <div className="mt-5 border-t border-white/[0.06] pt-4">
-                <div className="grid grid-cols-[minmax(0,1fr)_72px] gap-4 px-1 text-sm font-bold text-white">
-                    <span>
-                        <span className="sm:hidden">Assigned School</span>
-                        <span className="hidden sm:inline">School</span>
-                    </span>
+            <div className="mt-5">
+                <div className="grid grid-cols-[minmax(0,1fr)_64px] items-center gap-4 text-xs font-bold text-white">
+                    <span>Assigned School</span>
                     <span className="text-right">Actions</span>
                 </div>
 
-                <div className="mt-2 divide-y divide-white/[0.05]">
+                <div className="mt-2">
                     {schools.length === 0 ? (
-                        <p className="py-4 text-sm text-gray-500">
+                        <p className="py-3 text-xs text-[#777781]">
                             No assigned schools yet.
                         </p>
                     ) : (
                         schools.map((school) => (
                             <div
                                 key={school.id}
-                                className="grid min-h-10 grid-cols-[minmax(0,1fr)_72px] items-center gap-4 px-1 text-sm text-gray-400"
+                                className="grid min-h-9 grid-cols-[minmax(0,1fr)_64px] items-center gap-4 text-xs text-[#898992]"
                             >
                                 <span className="truncate">{school.name}</span>
 
                                 <button
                                     type="button"
-                                    onClick={() =>
-                                        onChange(
-                                            schools.filter(
-                                                (item) => item.id !== school.id,
-                                            ),
-                                        )
-                                    }
-                                    className="inline-flex min-h-10 min-w-10 items-center justify-end rounded-md text-red-500 transition hover:bg-red-500/10 hover:text-red-400"
+                                    onClick={() => removeSchool(school.id)}
+                                    className="ml-auto inline-flex min-h-9 min-w-9 items-center justify-center rounded-md text-[#F04444] transition hover:bg-red-500/10 hover:text-[#FF6868] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
                                     aria-label={`Remove ${school.name}`}
                                 >
                                     <Trash2 className="h-4 w-4" />
@@ -359,6 +413,7 @@ export default function RegistrationModal({
 }) {
     const formId = useId();
     const isEditing = initialData != null;
+
     const [form, setForm] = useState(DEFAULT_FORM);
     const [error, setError] = useState("");
 
@@ -416,6 +471,7 @@ export default function RegistrationModal({
         }
 
         const startTime = new Date(form.startDate).getTime();
+
         const endTime = new Date(form.endDate).getTime();
 
         if (
@@ -434,6 +490,10 @@ export default function RegistrationModal({
             eventName: form.eventName.trim(),
             eventShortDescription: form.eventShortDescription.trim(),
             assignedSchools: cloneAssignedSchools(form.assignedSchools),
+            titleTextColor: normalizeColor(form.titleTextColor),
+            subTextColor: normalizeColor(form.subTextColor),
+            formColor: normalizeColor(form.formColor),
+            backgroundColor: normalizeColor(form.backgroundColor),
         });
     };
 
@@ -443,42 +503,21 @@ export default function RegistrationModal({
             onClose={onClose}
             title={isEditing ? "Edit Registration" : "New Registration"}
             hideHeader
-            maxWidth="max-w-[calc(100%_-_64px)] sm:max-w-6xl"
-            footer={
-                <div className="grid w-full grid-cols-2 gap-4 px-4">
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className={CANCEL_BUTTON_CLASS}
-                    >
-                        Cancel
-                    </button>
-
-                    <button
-                        type="submit"
-                        form={formId}
-                        className={SUBMIT_BUTTON_CLASS}
-                    >
-                        {isEditing ? "Update" : "Create"}
-                    </button>
-                </div>
-            }
+            maxWidth="max-w-[330px] sm:max-w-[1128px]"
+            panelClassName="border-[#8A6800] border-t-[#8A6800] bg-[#0D0D0D] shadow-[0_24px_80px_rgba(0,0,0,0.72)]"
+            bodyClassName="!px-8 !py-7 sm:!px-8 sm:!py-8"
         >
-            <form
-                id={formId}
-                onSubmit={handleSubmit}
-                className="space-y-6 px-4 pb-1 pt-2"
-            >
+            <form id={formId} onSubmit={handleSubmit} className="space-y-6">
                 <div className="mb-7 pr-8">
                     <h2
                         id="base-modal-title"
-                        className="font-heading text-lg font-bold text-[#FBBF24]"
+                        className="font-heading text-sm font-bold text-[#FBBF24] sm:text-xl"
                     >
                         {isEditing ? "Edit Registration" : "New Registration"}
                     </h2>
                 </div>
 
-                <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6">
                     <div>
                         <FieldLabel htmlFor={fieldId("event-code")} required>
                             Event Code
@@ -493,7 +532,7 @@ export default function RegistrationModal({
                             onChange={(event) =>
                                 updateField("eventCode", event.target.value)
                             }
-                            className={MODAL_INPUT_CLASS}
+                            className={CONTROL_CLASS}
                         />
                     </div>
 
@@ -511,7 +550,7 @@ export default function RegistrationModal({
                             onChange={(event) =>
                                 updateField("eventLink", event.target.value)
                             }
-                            className={MODAL_INPUT_CLASS}
+                            className={CONTROL_CLASS}
                         />
                     </div>
                 </div>
@@ -547,7 +586,7 @@ export default function RegistrationModal({
                                 event.target.value,
                             )
                         }
-                        className={MODAL_INPUT_CLASS}
+                        className={CONTROL_CLASS}
                     />
                 </div>
 
@@ -565,7 +604,7 @@ export default function RegistrationModal({
                             onChange={(event) =>
                                 updateField("startDate", event.target.value)
                             }
-                            className={MODAL_INPUT_CLASS}
+                            className={`${CONTROL_CLASS} min-w-0 px-2 [color-scheme:dark] sm:px-4`}
                         />
                     </div>
 
@@ -583,7 +622,7 @@ export default function RegistrationModal({
                             onChange={(event) =>
                                 updateField("endDate", event.target.value)
                             }
-                            className={MODAL_INPUT_CLASS}
+                            className={`${CONTROL_CLASS} min-w-0 px-2 [color-scheme:dark] sm:px-4`}
                         />
                     </div>
                 </div>
@@ -597,59 +636,83 @@ export default function RegistrationModal({
                     schoolOptions={resolvedSchools}
                 />
 
-                <div className="space-y-3">
-                    <FieldLabel htmlFor={fieldId("event-logo")}>
-                        Event Logo
-                    </FieldLabel>
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,1fr)]">
+                    <div className="space-y-3">
+                        <FieldLabel htmlFor={fieldId("event-logo")}>
+                            Event Logo
+                        </FieldLabel>
 
-                    <FeaturedImageUpload
-                        value={form.eventLogo}
-                        onChange={(eventLogo) =>
-                            updateField("eventLogo", eventLogo)
-                        }
-                        hint="PNG, JPG, JPEG (MAX. 5MB), Must be 1920x1080 pixels"
-                    />
-                </div>
+                        <FeaturedImageUpload
+                            value={form.eventLogo}
+                            onChange={(eventLogo) =>
+                                updateField("eventLogo", eventLogo)
+                            }
+                            className="[&>button]:min-h-[116px] [&>button]:border-white/[0.12] [&>button]:bg-[#151515] sm:[&>button]:min-h-[194px] [&>button]:hover:border-[#FBBF24]/60"
+                            hint="PNG, JPG, JPEG (MAX. 5MB), Must be 1920x1080 pixels"
+                        />
+                    </div>
 
-                <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
-                    <ColorField
-                        id={fieldId("title-text-color")}
-                        label="Title Text Font Color"
-                        value={form.titleTextColor}
-                        onChange={(value) =>
-                            updateField("titleTextColor", value)
-                        }
-                    />
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-5 lg:grid-cols-1 lg:self-end lg:gap-3">
+                        <ColorField
+                            id={fieldId("title-text-color")}
+                            label="Title Text Font Color"
+                            value={form.titleTextColor}
+                            onChange={(value) =>
+                                updateField("titleTextColor", value)
+                            }
+                        />
 
-                    <ColorField
-                        id={fieldId("sub-text-color")}
-                        label="Sub-Text Font Color"
-                        value={form.subTextColor}
-                        onChange={(value) => updateField("subTextColor", value)}
-                    />
+                        <ColorField
+                            id={fieldId("sub-text-color")}
+                            label="Sub-Text Font Color"
+                            value={form.subTextColor}
+                            onChange={(value) =>
+                                updateField("subTextColor", value)
+                            }
+                        />
 
-                    <ColorField
-                        id={fieldId("form-color")}
-                        label="Form Color"
-                        value={form.formColor}
-                        onChange={(value) => updateField("formColor", value)}
-                    />
+                        <ColorField
+                            id={fieldId("form-color")}
+                            label="Form Color"
+                            value={form.formColor}
+                            onChange={(value) =>
+                                updateField("formColor", value)
+                            }
+                        />
 
-                    <ColorField
-                        id={fieldId("background-color")}
-                        label="Background Color"
-                        value={form.backgroundColor}
-                        onChange={(value) =>
-                            updateField("backgroundColor", value)
-                        }
-                    />
+                        <ColorField
+                            id={fieldId("background-color")}
+                            label="Background Color"
+                            value={form.backgroundColor}
+                            onChange={(value) =>
+                                updateField("backgroundColor", value)
+                            }
+                        />
+                    </div>
                 </div>
 
                 {error ? (
-                    <p role="alert" className="text-sm text-red-400">
+                    <p
+                        role="alert"
+                        className="rounded-md border border-red-500/20 bg-red-500/10 px-3 py-2.5 text-xs text-red-300 sm:text-sm"
+                    >
                         {error}
                     </p>
                 ) : null}
+
+                <div className="grid grid-cols-2 gap-4 pt-4 sm:ml-auto sm:w-[60%]">
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className={CANCEL_BUTTON_CLASS}
+                    >
+                        Cancel
+                    </button>
+
+                    <button type="submit" className={SUBMIT_BUTTON_CLASS}>
+                        {isEditing ? "Update" : "Create"}
+                    </button>
+                </div>
             </form>
         </BaseModal>
     );
