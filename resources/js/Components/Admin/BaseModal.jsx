@@ -10,6 +10,7 @@ export default function BaseModal({
     footer,
     maxWidth = "max-w-lg",
     hideHeader = false,
+    showCloseButton = true,
     scrollable = true,
     panelClassName = "",
     bodyClassName = "",
@@ -39,10 +40,6 @@ export default function BaseModal({
             }
         };
 
-        /*
-         * Keep the scrollbar visible while preventing the page
-         * behind the modal from scrolling.
-         */
         documentElement.style.overflowY = "scroll";
         body.style.position = "fixed";
         body.style.top = `-${scrollPosition}px`;
@@ -59,15 +56,10 @@ export default function BaseModal({
             documentElement.style.overflowY = previousStyles.htmlOverflowY;
 
             body.style.position = previousStyles.bodyPosition;
-
             body.style.top = previousStyles.bodyTop;
-
             body.style.left = previousStyles.bodyLeft;
-
             body.style.right = previousStyles.bodyRight;
-
             body.style.width = previousStyles.bodyWidth;
-
             body.style.overflow = previousStyles.bodyOverflow;
 
             window.scrollTo({
@@ -84,7 +76,7 @@ export default function BaseModal({
 
     return (
         <div
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-3 sm:p-4"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-3 sm:p-4"
             role="dialog"
             aria-modal="true"
             aria-labelledby={title ? "base-modal-title" : undefined}
@@ -101,7 +93,11 @@ export default function BaseModal({
             >
                 {!hideHeader ? (
                     <div className="shrink-0 border-b border-[#333]/60 px-4 pb-3 pt-4 sm:px-6 sm:pb-4 sm:pt-6">
-                        <div className="flex items-start justify-between gap-4 pr-10 sm:pr-12">
+                        <div
+                            className={`flex items-start justify-between gap-4 ${
+                                showCloseButton ? "pr-10 sm:pr-12" : ""
+                            }`}
+                        >
                             <h2
                                 id="base-modal-title"
                                 className="text-lg font-bold text-yellow-500 sm:text-xl"
@@ -109,19 +105,21 @@ export default function BaseModal({
                                 {title}
                             </h2>
 
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                className={`absolute right-2 top-2 sm:right-3 sm:top-3 ${MODAL_CLOSE_BUTTON_CLASS}`}
-                                aria-label="Close"
-                            >
-                                <X className="h-5 w-5" />
-                            </button>
+                            {showCloseButton ? (
+                                <button
+                                    type="button"
+                                    onClick={onClose}
+                                    className={`absolute right-2 top-2 sm:right-3 sm:top-3 ${MODAL_CLOSE_BUTTON_CLASS}`}
+                                    aria-label="Close"
+                                >
+                                    <X className="h-5 w-5" />
+                                </button>
+                            ) : null}
                         </div>
                     </div>
                 ) : null}
 
-                {hideHeader ? (
+                {hideHeader && showCloseButton ? (
                     <button
                         type="button"
                         onClick={onClose}

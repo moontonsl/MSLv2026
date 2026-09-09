@@ -32,36 +32,50 @@ function getPageItems(currentPage, pageCount) {
     ];
 }
 
-export default function AdminPagination({ currentPage, pageCount, onChange }) {
+export default function AdminPagination({
+    currentPage,
+    pageCount,
+    onChange,
+    ariaLabel = "Account pagination",
+}) {
     const pages = getPageItems(currentPage, pageCount);
 
     return (
         <nav
-            className="flex items-center justify-end gap-3 text-sm text-gray-500"
-            aria-label="Account pagination"
+            className="flex items-center justify-end gap-1 text-sm text-gray-500 sm:gap-3"
+            aria-label={ariaLabel}
         >
             <button
                 type="button"
                 disabled={currentPage === 1}
                 onClick={() => onChange(currentPage - 1)}
-                className="inline-flex items-center gap-1 transition hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex min-h-9 min-w-9 items-center justify-center gap-1 rounded-md transition hover:bg-white/5 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                aria-label="Previous page"
             >
                 <ChevronLeft className="h-4 w-4" />
-                Previous
+
+                <span className="hidden sm:inline">Previous</span>
             </button>
 
             {pages.map((page, index) =>
                 page === "ellipsis" ? (
-                    <span key={`ellipsis-${index}`}>...</span>
+                    <span
+                        key={`ellipsis-${index}`}
+                        className="px-1"
+                        aria-hidden="true"
+                    >
+                        ...
+                    </span>
                 ) : (
                     <button
                         key={page}
                         type="button"
                         onClick={() => onChange(page)}
+                        aria-label={`Go to page ${page}`}
                         aria-current={currentPage === page ? "page" : undefined}
-                        className={`min-w-7 rounded px-1.5 py-1 transition ${
+                        className={`min-h-9 min-w-7 rounded px-1.5 py-1 transition ${
                             currentPage === page
-                                ? "text-white"
+                                ? "bg-white/[0.06] text-white"
                                 : "hover:bg-white/5 hover:text-white"
                         }`}
                     >
@@ -74,9 +88,11 @@ export default function AdminPagination({ currentPage, pageCount, onChange }) {
                 type="button"
                 disabled={currentPage === pageCount}
                 onClick={() => onChange(currentPage + 1)}
-                className="inline-flex items-center gap-1 transition hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex min-h-9 min-w-9 items-center justify-center gap-1 rounded-md transition hover:bg-white/5 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                aria-label="Next page"
             >
-                Next
+                <span className="hidden sm:inline">Next</span>
+
                 <ChevronRight className="h-4 w-4" />
             </button>
         </nav>
