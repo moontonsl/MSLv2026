@@ -1,13 +1,15 @@
 import { Link } from "@inertiajs/react";
+
 import {
+    CalendarPlus,
+    ClipboardCheck,
     LayoutGrid,
     Megaphone,
     MessageSquare,
     UserCog,
     UserPlus,
+    UserRoundCog,
     X,
-    ClipboardCheck,
-    CalendarPlus,
 } from "lucide-react";
 
 const ACCENT = "#FBBF24";
@@ -38,10 +40,10 @@ const NAV_ITEMS = [
         icon: Megaphone,
     },
     {
-        id: "account-management",
-        label: "Account Management",
-        href: "/admin/account-management",
-        icon: UserCog,
+        id: "regional-admin",
+        label: "Regional Admin",
+        href: "/admin/regional-admin",
+        icon: UserRoundCog,
     },
     {
         id: "event-management",
@@ -54,6 +56,12 @@ const NAV_ITEMS = [
         label: "Registration Management",
         href: "/admin/registration-management",
         icon: ClipboardCheck,
+    },
+    {
+        id: "account-management",
+        label: "Account Management",
+        href: "/admin/account-management",
+        icon: UserCog,
     },
 ];
 
@@ -91,7 +99,7 @@ export default function AdminSidebar({
                 </button>
             </div>
 
-            <nav className="flex flex-1 flex-col gap-1 py-6 pl-3">
+            <nav className="flex flex-1 flex-col gap-1 overflow-y-auto py-6 pl-3">
                 {NAV_ITEMS.map(({ id, label, href, icon: Icon }) => {
                     const isActive = id === activeId;
 
@@ -109,7 +117,13 @@ export default function AdminSidebar({
                             <Icon
                                 aria-hidden="true"
                                 className="h-5 w-5 shrink-0"
-                                style={isActive ? { color: ACCENT } : undefined}
+                                style={
+                                    isActive
+                                        ? {
+                                              color: ACCENT,
+                                          }
+                                        : undefined
+                                }
                             />
 
                             <span className="min-w-0 flex-1 whitespace-nowrap">
