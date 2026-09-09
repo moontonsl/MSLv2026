@@ -107,7 +107,6 @@ export default function AccountManagement({ adminUsers }) {
         }
 
         setAccounts(normalizeAccounts(adminUsers));
-
         setCurrentPage(1);
         setExpandedAccountId(null);
     }, [adminUsers]);
@@ -134,20 +133,11 @@ export default function AccountManagement({ adminUsers }) {
 
     const activePage = Math.min(currentPage, pageCount);
 
-    const accountPages = useMemo(
-        () =>
-            Array.from({ length: pageCount }, (_, pageIndex) =>
-                filteredAccounts.slice(
-                    pageIndex * ADMIN_PAGE_SIZE,
-                    (pageIndex + 1) * ADMIN_PAGE_SIZE,
-                ),
-            ),
-        [filteredAccounts, pageCount],
-    );
+    const visibleAccounts = useMemo(() => {
+        const startIndex = (activePage - 1) * ADMIN_PAGE_SIZE;
 
-    const pageWidth = `${100 / pageCount}%`;
-
-    const trackOffset = `${((activePage - 1) * 100) / pageCount}%`;
+        return filteredAccounts.slice(startIndex, startIndex + ADMIN_PAGE_SIZE);
+    }, [activePage, filteredAccounts]);
 
     useEffect(() => {
         setCurrentPage(1);
@@ -176,8 +166,8 @@ export default function AccountManagement({ adminUsers }) {
         });
 
         /*
-         * Replace this local state update with router.post()
-         * when the Laravel create route is available.
+         * Replace this local state update with
+         * router.post() when the backend is ready.
          */
         setAccounts((current) => [account, ...current]);
 
@@ -198,8 +188,8 @@ export default function AccountManagement({ adminUsers }) {
         });
 
         /*
-         * Replace this local state update with router.put()
-         * when the Laravel update route is available.
+         * Replace this local state update with
+         * router.put() when the backend is ready.
          */
         setAccounts((current) =>
             current.map((item) => (item.id === account.id ? account : item)),
@@ -222,8 +212,8 @@ export default function AccountManagement({ adminUsers }) {
         }
 
         /*
-         * Replace this local state update with router.delete()
-         * when the Laravel delete route is available.
+         * Replace this local state update with
+         * router.delete() when the backend is ready.
          */
         setAccounts((current) =>
             current.filter((account) => account.id !== deleteAccount.id),
@@ -250,7 +240,7 @@ export default function AccountManagement({ adminUsers }) {
                     Account Management
                 </h1>
 
-                <section className="max-w-full overflow-hidden bg-[#0B0B0B] px-0 py-0 md:rounded-xl md:border md:border-white/[0.08] md:px-11 md:py-11">
+                <section className="max-w-full overflow-hidden bg-[#0B0B0B] md:rounded-xl md:border md:border-white/[0.08] md:px-11 md:py-11">
                     <div className="mb-5 flex flex-col gap-4 sm:mb-8 md:flex-row md:items-center md:justify-between">
                         <h2 className="font-heading text-base font-bold text-[#FBBF24] sm:text-2xl">
                             Admin Account
@@ -289,48 +279,22 @@ export default function AccountManagement({ adminUsers }) {
                     </div>
 
                     <div className="flex min-h-[360px] flex-col md:min-h-[400px]">
-                        <div className="flex-1 overflow-hidden">
-                            <div
-                                className="flex items-start transition-transform duration-300 ease-out motion-reduce:transition-none"
-                                style={{
-                                    width: `${pageCount * 100}%`,
-                                    transform: `translate3d(-${trackOffset}, 0, 0)`,
-                                }}
-                            >
-                                {accountPages.map((pageAccounts, pageIndex) => {
-                                    const pageNumber = pageIndex + 1;
-
-                                    return (
-                                        <div
-                                            key={`account-page-${pageNumber}`}
-                                            className="min-w-0 shrink-0"
-                                            style={{
-                                                flex: `0 0 ${pageWidth}`,
-                                            }}
-                                        >
-                                            <AdminAccountPage
-                                                accounts={pageAccounts}
-                                                isActive={
-                                                    pageNumber === activePage
-                                                }
-                                                expandedAccountId={
-                                                    expandedAccountId
-                                                }
-                                                onToggle={handleToggleAccount}
-                                                onEdit={setEditingAccount}
-                                                onDelete={handleDeleteRequest}
-                                            />
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                        <div className="flex-1">
+                            <AdminAccountPage
+                                accounts={visibleAccounts}
+                                expandedAccountId={expandedAccountId}
+                                onToggle={handleToggleAccount}
+                                onEdit={setEditingAccount}
+                                onDelete={handleDeleteRequest}
+                            />
                         </div>
 
-                        <div className="mt-auto max-w-full overflow-hidden border-t border-white/10 pt-4 md:pt-6">
+                        <div className="mt-auto border-t border-white/10 pt-4 md:pt-6">
                             <AdminPagination
                                 currentPage={activePage}
                                 pageCount={pageCount}
                                 onChange={goToPage}
+                                ariaLabel="Admin account pagination"
                             />
                         </div>
                     </div>
@@ -352,6 +316,11 @@ export default function AccountManagement({ adminUsers }) {
 
             <DeleteConfirmationModal
                 isOpen={Boolean(deleteAccount)}
+                message={
+                    deleteAccount
+                        ? `Are you sure you want to delete ${deleteAccount.name}?`
+                        : ""
+                }
                 onCancel={() => setDeleteAccount(null)}
                 onConfirm={handleDeleteConfirm}
             />

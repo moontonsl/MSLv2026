@@ -1,18 +1,18 @@
-import BaseModal from '@/Components/Admin/BaseModal';
+import BaseModal from "@/Components/Admin/BaseModal";
 import {
     MODAL_INPUT_CLASS,
     MODAL_LABEL_CLASS,
     MODAL_SELECT_CLASS,
     MODAL_SUBMIT_FOOTER_CLASS,
     MODAL_TEXTAREA_CLASS,
-} from '@/Components/Admin/adminModalFormStyles';
-import { FAQ_CATEGORY_OPTIONS } from '@/data/adminFaqData';
-import { useEffect, useId, useState } from 'react';
+} from "@/Components/Admin/adminModalFormStyles";
+import { FAQ_CATEGORY_OPTIONS } from "@/data/adminFaqData";
+import { useEffect, useId, useState } from "react";
 
 const EMPTY_FORM = {
-    category: 'General',
-    question: '',
-    answer: '',
+    category: "General",
+    question: "",
+    answer: "",
 };
 
 /**
@@ -23,7 +23,12 @@ const EMPTY_FORM = {
  *   onSubmit: (values: typeof EMPTY_FORM) => void;
  * }} props
  */
-export default function FAQModal({ isOpen, onClose, initialData = null, onSubmit }) {
+export default function FAQModal({
+    isOpen,
+    onClose,
+    initialData = null,
+    onSubmit,
+}) {
     const isEditing = initialData != null;
     const formId = useId();
     const [form, setForm] = useState(EMPTY_FORM);
@@ -33,9 +38,9 @@ export default function FAQModal({ isOpen, onClose, initialData = null, onSubmit
 
         if (initialData) {
             setForm({
-                category: initialData.category ?? 'General',
-                question: initialData.question ?? '',
-                answer: initialData.answer ?? '',
+                category: initialData.category ?? "General",
+                question: initialData.question ?? "",
+                answer: initialData.answer ?? "",
             });
             return;
         }
@@ -59,13 +64,20 @@ export default function FAQModal({ isOpen, onClose, initialData = null, onSubmit
             onClose={onClose}
             title={
                 isEditing
-                    ? 'Edit Frequently Asked Question'
-                    : 'Add Frequently Asked Question'
+                    ? "Edit Frequently Asked Question"
+                    : "Add Frequently Asked Question"
             }
             footer={
-                <button type="submit" form={formId} className={MODAL_SUBMIT_FOOTER_CLASS}>
+                <button
+                    type="submit"
+                    form={formId}
+                    className={MODAL_SUBMIT_FOOTER_CLASS}
+                >
                     Submit
                 </button>
+            }
+            confirmSubmitMessage={
+                isEditing ? "Are you sure you want to edit this FAQ?" : ""
             }
         >
             <form id={formId} onSubmit={handleSubmit} className="space-y-4">

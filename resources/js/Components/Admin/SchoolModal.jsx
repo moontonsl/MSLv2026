@@ -1,16 +1,16 @@
-import BaseModal from '@/Components/Admin/BaseModal';
-import FeaturedImageUpload from '@/Components/Admin/FeaturedImageUpload';
+import BaseModal from "@/Components/Admin/BaseModal";
+import FeaturedImageUpload from "@/Components/Admin/FeaturedImageUpload";
 import {
     MODAL_INPUT_CLASS,
     MODAL_LABEL_CLASS,
     MODAL_SUBMIT_FOOTER_CLASS,
-} from '@/Components/Admin/adminModalFormStyles';
-import { useEffect, useId, useState } from 'react';
+} from "@/Components/Admin/adminModalFormStyles";
+import { useEffect, useId, useState } from "react";
 
 const EMPTY_FORM = {
-    schoolName: '',
-    locationRegion: '',
-    schoolCode: '',
+    schoolName: "",
+    locationRegion: "",
+    schoolCode: "",
     logo: null,
 };
 
@@ -22,7 +22,12 @@ const EMPTY_FORM = {
  *   onSubmit: (values: typeof EMPTY_FORM) => void;
  * }} props
  */
-export default function SchoolModal({ isOpen, onClose, initialData = null, onSubmit }) {
+export default function SchoolModal({
+    isOpen,
+    onClose,
+    initialData = null,
+    onSubmit,
+}) {
     const isEditing = initialData != null;
     const formId = useId();
     const [form, setForm] = useState(EMPTY_FORM);
@@ -32,13 +37,13 @@ export default function SchoolModal({ isOpen, onClose, initialData = null, onSub
 
         if (initialData) {
             setForm({
-                schoolName: initialData.schoolName ?? initialData.school ?? '',
+                schoolName: initialData.schoolName ?? initialData.school ?? "",
                 locationRegion:
                     initialData.locationRegion ??
                     initialData.region ??
                     initialData.municipality ??
-                    '',
-                schoolCode: initialData.schoolCode ?? '',
+                    "",
+                schoolCode: initialData.schoolCode ?? "",
                 logo: initialData.logo ?? null,
             });
             return;
@@ -61,11 +66,18 @@ export default function SchoolModal({ isOpen, onClose, initialData = null, onSub
         <BaseModal
             isOpen={isOpen}
             onClose={onClose}
-            title={isEditing ? 'Edit School' : 'Add School'}
+            title={isEditing ? "Edit School" : "Add School"}
             footer={
-                <button type="submit" form={formId} className={MODAL_SUBMIT_FOOTER_CLASS}>
-                    {isEditing ? 'Update' : 'Submit'}
+                <button
+                    type="submit"
+                    form={formId}
+                    className={MODAL_SUBMIT_FOOTER_CLASS}
+                >
+                    {isEditing ? "Update" : "Submit"}
                 </button>
+            }
+            confirmSubmitMessage={
+                isEditing ? "Are you sure you want to edit this school?" : ""
             }
         >
             <form id={formId} onSubmit={handleSubmit} className="space-y-4">
@@ -85,7 +97,10 @@ export default function SchoolModal({ isOpen, onClose, initialData = null, onSub
                 </div>
 
                 <div>
-                    <label htmlFor="school-location-region" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="school-location-region"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Location / Region
                     </label>
                     <input
@@ -118,7 +133,9 @@ export default function SchoolModal({ isOpen, onClose, initialData = null, onSub
                     <p className={MODAL_LABEL_CLASS}>Logo / Icon Upload</p>
                     <FeaturedImageUpload
                         value={form.logo}
-                        onChange={(file) => setForm((prev) => ({ ...prev, logo: file }))}
+                        onChange={(file) =>
+                            setForm((prev) => ({ ...prev, logo: file }))
+                        }
                         hint="PNG, JPG, JPEG (MAX. 5MB)"
                     />
                 </div>

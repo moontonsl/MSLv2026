@@ -1,19 +1,19 @@
-import BaseModal from '@/Components/Admin/BaseModal';
+import BaseModal from "@/Components/Admin/BaseModal";
 import {
     MODAL_INPUT_CLASS,
     MODAL_LABEL_CLASS,
     MODAL_SELECT_CLASS,
     MODAL_SUBMIT_FOOTER_CLASS,
     MODAL_TEXTAREA_CLASS,
-} from '@/Components/Admin/adminModalFormStyles';
-import { DEPARTMENT_OPTIONS } from '@/data/adminAccountData';
-import { useEffect, useId, useState } from 'react';
+} from "@/Components/Admin/adminModalFormStyles";
+import { DEPARTMENT_OPTIONS } from "@/data/adminAccountData";
+import { useEffect, useId, useState } from "react";
 
 const EMPTY_FORM = {
-    courseName: '',
-    courseCode: '',
+    courseName: "",
+    courseCode: "",
     department: DEPARTMENT_OPTIONS[0],
-    description: '',
+    description: "",
 };
 
 /**
@@ -24,7 +24,12 @@ const EMPTY_FORM = {
  *   onSubmit: (values: typeof EMPTY_FORM) => void;
  * }} props
  */
-export default function CourseModal({ isOpen, onClose, initialData = null, onSubmit }) {
+export default function CourseModal({
+    isOpen,
+    onClose,
+    initialData = null,
+    onSubmit,
+}) {
     const isEditing = initialData != null;
     const formId = useId();
     const [form, setForm] = useState(EMPTY_FORM);
@@ -34,10 +39,10 @@ export default function CourseModal({ isOpen, onClose, initialData = null, onSub
 
         if (initialData) {
             setForm({
-                courseName: initialData.courseName ?? initialData.course ?? '',
-                courseCode: initialData.courseCode ?? '',
+                courseName: initialData.courseName ?? initialData.course ?? "",
+                courseCode: initialData.courseCode ?? "",
                 department: initialData.department ?? DEPARTMENT_OPTIONS[0],
-                description: initialData.description ?? '',
+                description: initialData.description ?? "",
             });
             return;
         }
@@ -59,11 +64,18 @@ export default function CourseModal({ isOpen, onClose, initialData = null, onSub
         <BaseModal
             isOpen={isOpen}
             onClose={onClose}
-            title={isEditing ? 'Edit Course' : 'Add Course'}
+            title={isEditing ? "Edit Course" : "Add Course"}
             footer={
-                <button type="submit" form={formId} className={MODAL_SUBMIT_FOOTER_CLASS}>
-                    {isEditing ? 'Update' : 'Submit'}
+                <button
+                    type="submit"
+                    form={formId}
+                    className={MODAL_SUBMIT_FOOTER_CLASS}
+                >
+                    {isEditing ? "Update" : "Submit"}
                 </button>
+            }
+            confirmSubmitMessage={
+                isEditing ? "Are you sure you want to edit this course?" : ""
             }
         >
             <form id={formId} onSubmit={handleSubmit} className="space-y-4">
@@ -98,7 +110,10 @@ export default function CourseModal({ isOpen, onClose, initialData = null, onSub
                 </div>
 
                 <div>
-                    <label htmlFor="course-department" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="course-department"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Department
                     </label>
                     <select
@@ -117,7 +132,10 @@ export default function CourseModal({ isOpen, onClose, initialData = null, onSub
                 </div>
 
                 <div>
-                    <label htmlFor="course-description" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="course-description"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Description
                     </label>
                     <textarea

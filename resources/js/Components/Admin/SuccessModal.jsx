@@ -1,18 +1,9 @@
-import BaseModal from '@/Components/Admin/BaseModal';
-import { MODAL_SUBMIT_FOOTER_CLASS } from '@/Components/Admin/adminModalFormStyles';
-import { Check } from 'lucide-react';
+import BaseModal from "@/Components/Admin/BaseModal";
 
-/**
- * Global success feedback modal for add, update, delete, and approval actions.
- *
- * @param {{
- *   isOpen: boolean;
- *   onClose: () => void;
- *   message: string;
- *   description?: string;
- *   isEditMode?: boolean;
- * }} props
- */
+import { MODAL_SUBMIT_FOOTER_CLASS } from "@/Components/Admin/adminModalFormStyles";
+
+import { Check } from "lucide-react";
+
 export default function SuccessModal({
     isOpen,
     onClose,
@@ -21,37 +12,44 @@ export default function SuccessModal({
     isEditMode = false,
 }) {
     const displayMessage =
-        message ?? (isEditMode ? 'Updated Successfully!' : 'Successfully Added!');
+        message ??
+        (isEditMode ? "Updated Successfully!" : "Successfully Added!");
 
     return (
         <BaseModal
             isOpen={isOpen}
             onClose={onClose}
+            title={displayMessage}
+            ariaLabel={displayMessage}
             hideHeader
+            showCloseButton
             scrollable={false}
-            maxWidth="max-w-sm"
-            footer={
-                <button type="button" onClick={onClose} className={MODAL_SUBMIT_FOOTER_CLASS}>
-                    Confirm
-                </button>
-            }
+            maxWidth="max-w-[330px] sm:max-w-[526px]"
+            panelClassName="min-h-[min(420px,90dvh)]"
+            bodyClassName="flex items-center justify-center !px-8 !py-12 sm:!px-16"
         >
-            <div className="px-1 py-2 text-center sm:py-4">
-                <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-yellow-500 bg-[#1a1a1a] sm:h-16 sm:w-16">
-                    <Check className="h-7 w-7 text-yellow-500 sm:h-8 sm:w-8" />
+            <div className="w-full text-center">
+                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-[#FBBF24] bg-[#151515]">
+                    <Check className="h-8 w-8 text-[#FBBF24]" />
                 </div>
-                <h2
-                    className={`text-lg font-bold sm:text-xl ${
-                        description ? 'text-white' : 'text-yellow-500'
-                    }`}
-                >
+
+                <h2 className="font-heading text-lg font-bold text-[#FBBF24] sm:text-2xl">
                     {displayMessage}
                 </h2>
+
                 {description ? (
-                    <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-gray-400">
+                    <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-[#A8A8B3]">
                         {description}
                     </p>
                 ) : null}
+
+                <button
+                    type="button"
+                    onClick={onClose}
+                    className={`mt-8 ${MODAL_SUBMIT_FOOTER_CLASS}`}
+                >
+                    Confirm
+                </button>
             </div>
         </BaseModal>
     );

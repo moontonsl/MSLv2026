@@ -1,21 +1,21 @@
-import BaseModal from '@/Components/Admin/BaseModal';
-import FeaturedImageUpload from '@/Components/Admin/FeaturedImageUpload';
+import BaseModal from "@/Components/Admin/BaseModal";
+import FeaturedImageUpload from "@/Components/Admin/FeaturedImageUpload";
 import {
     MODAL_DATE_HINT_CLASS,
     MODAL_INPUT_CLASS,
     MODAL_LABEL_CLASS,
     MODAL_SUBMIT_FOOTER_CLASS,
     MODAL_TEXTAREA_CLASS,
-} from '@/Components/Admin/adminModalFormStyles';
-import { useEffect, useId, useState } from 'react';
+} from "@/Components/Admin/adminModalFormStyles";
+import { useEffect, useId, useState } from "react";
 
 const EMPTY_FORM = {
-    label: '',
-    title: '',
-    subtitle: '',
-    link: '',
-    startDate: '',
-    endDate: '',
+    label: "",
+    title: "",
+    subtitle: "",
+    link: "",
+    startDate: "",
+    endDate: "",
     featuredImage: null,
 };
 
@@ -27,7 +27,12 @@ const EMPTY_FORM = {
  *   onSubmit: (values: typeof EMPTY_FORM) => void;
  * }} props
  */
-export default function CarouselModal({ isOpen, onClose, initialData = null, onSubmit }) {
+export default function CarouselModal({
+    isOpen,
+    onClose,
+    initialData = null,
+    onSubmit,
+}) {
     const isEditing = initialData != null;
     const formId = useId();
     const [form, setForm] = useState(EMPTY_FORM);
@@ -37,12 +42,12 @@ export default function CarouselModal({ isOpen, onClose, initialData = null, onS
 
         if (initialData) {
             setForm({
-                label: initialData.label ?? '',
-                title: initialData.title ?? '',
-                subtitle: initialData.subtitle ?? '',
-                link: initialData.link ?? '',
-                startDate: initialData.startDate ?? '',
-                endDate: initialData.endDate ?? '',
+                label: initialData.label ?? "",
+                title: initialData.title ?? "",
+                subtitle: initialData.subtitle ?? "",
+                link: initialData.link ?? "",
+                startDate: initialData.startDate ?? "",
+                endDate: initialData.endDate ?? "",
                 featuredImage: initialData.featuredImage ?? null,
             });
             return;
@@ -65,16 +70,28 @@ export default function CarouselModal({ isOpen, onClose, initialData = null, onS
         <BaseModal
             isOpen={isOpen}
             onClose={onClose}
-            title={isEditing ? 'Edit Carousel' : 'Add Carousel'}
+            title={isEditing ? "Edit Carousel" : "Add Carousel"}
             footer={
-                <button type="submit" form={formId} className={MODAL_SUBMIT_FOOTER_CLASS}>
-                    {isEditing ? 'Update' : 'Submit'}
+                <button
+                    type="submit"
+                    form={formId}
+                    className={MODAL_SUBMIT_FOOTER_CLASS}
+                >
+                    {isEditing ? "Update" : "Submit"}
                 </button>
+            }
+            confirmSubmitMessage={
+                isEditing
+                    ? "Are you sure you want to edit this carousel item?"
+                    : ""
             }
         >
             <form id={formId} onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label htmlFor="carousel-label" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="carousel-label"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Label
                     </label>
                     <input
@@ -89,7 +106,10 @@ export default function CarouselModal({ isOpen, onClose, initialData = null, onS
                 </div>
 
                 <div>
-                    <label htmlFor="carousel-title" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="carousel-title"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Title
                     </label>
                     <input
@@ -104,7 +124,10 @@ export default function CarouselModal({ isOpen, onClose, initialData = null, onS
                 </div>
 
                 <div>
-                    <label htmlFor="carousel-subtitle" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="carousel-subtitle"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Subtitle
                     </label>
                     <textarea
@@ -118,7 +141,10 @@ export default function CarouselModal({ isOpen, onClose, initialData = null, onS
                 </div>
 
                 <div>
-                    <label htmlFor="carousel-link" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="carousel-link"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Link
                     </label>
                     <input
@@ -133,7 +159,10 @@ export default function CarouselModal({ isOpen, onClose, initialData = null, onS
                 </div>
 
                 <div>
-                    <label htmlFor="carousel-start-date" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="carousel-start-date"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Start Date
                     </label>
                     <input
@@ -148,7 +177,10 @@ export default function CarouselModal({ isOpen, onClose, initialData = null, onS
                 </div>
 
                 <div>
-                    <label htmlFor="carousel-end-date" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="carousel-end-date"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         End Date
                     </label>
                     <input
@@ -167,7 +199,10 @@ export default function CarouselModal({ isOpen, onClose, initialData = null, onS
                     <FeaturedImageUpload
                         value={form.featuredImage}
                         onChange={(file) =>
-                            setForm((prev) => ({ ...prev, featuredImage: file }))
+                            setForm((prev) => ({
+                                ...prev,
+                                featuredImage: file,
+                            }))
                         }
                     />
                 </div>

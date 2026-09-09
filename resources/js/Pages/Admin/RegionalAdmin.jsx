@@ -94,6 +94,7 @@ export default function RegionalAdmin({ regionalAdmins }) {
 
     const [search, setSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
+
     const [expandedRegionalAdminId, setExpandedRegionalAdminId] =
         useState(null);
 
@@ -111,6 +112,7 @@ export default function RegionalAdmin({ regionalAdmins }) {
         }
 
         setRecords(normalizeRegionalAdmins(regionalAdmins));
+
         setCurrentPage(1);
         setExpandedRegionalAdminId(null);
     }, [regionalAdmins]);
@@ -143,20 +145,14 @@ export default function RegionalAdmin({ regionalAdmins }) {
 
     const activePage = Math.min(currentPage, pageCount);
 
-    const recordPages = useMemo(
-        () =>
-            Array.from({ length: pageCount }, (_, pageIndex) =>
-                filteredRecords.slice(
-                    pageIndex * REGIONAL_ADMIN_PAGE_SIZE,
-                    (pageIndex + 1) * REGIONAL_ADMIN_PAGE_SIZE,
-                ),
-            ),
-        [filteredRecords, pageCount],
-    );
+    const visibleRegionalAdmins = useMemo(() => {
+        const startIndex = (activePage - 1) * REGIONAL_ADMIN_PAGE_SIZE;
 
-    const pageWidth = `${100 / pageCount}%`;
-
-    const trackOffset = `${((activePage - 1) * 100) / pageCount}%`;
+        return filteredRecords.slice(
+            startIndex,
+            startIndex + REGIONAL_ADMIN_PAGE_SIZE,
+        );
+    }, [activePage, filteredRecords]);
 
     const unavailableMslIds = useMemo(
         () =>
@@ -198,14 +194,15 @@ export default function RegionalAdmin({ regionalAdmins }) {
         });
 
         /*
-         * Replace this local state update with router.post()
-         * when the Regional Admin backend endpoint is ready.
+         * Replace this local state update with
+         * router.post() when the backend is ready.
          */
         setRecords((currentRecords) => [newRegionalAdmin, ...currentRecords]);
 
         setSearch("");
         setCurrentPage(1);
         setIsCreateModalOpen(false);
+
         setSuccessMessage("Regional Admin Added Successfully!");
     };
 
@@ -221,8 +218,8 @@ export default function RegionalAdmin({ regionalAdmins }) {
         });
 
         /*
-         * Replace this local state update with router.put()
-         * when the Regional Admin backend endpoint is ready.
+         * Replace this local state update with
+         * router.put() when the backend is ready.
          */
         setRecords((currentRecords) =>
             currentRecords.map((regionalAdmin) =>
@@ -233,6 +230,7 @@ export default function RegionalAdmin({ regionalAdmins }) {
         );
 
         setEditingRegionalAdmin(null);
+
         setSuccessMessage("Regional Admin Updated Successfully!");
     };
 
@@ -242,8 +240,8 @@ export default function RegionalAdmin({ regionalAdmins }) {
         }
 
         /*
-         * Replace this local state update with router.delete()
-         * when the Regional Admin backend endpoint is ready.
+         * Replace this local state update with
+         * router.delete() when the backend is ready.
          */
         setRecords((currentRecords) =>
             currentRecords.filter(
@@ -254,6 +252,7 @@ export default function RegionalAdmin({ regionalAdmins }) {
 
         setRegionalAdminToDelete(null);
         setExpandedRegionalAdminId(null);
+
         setSuccessMessage("Regional Admin Deleted Successfully!");
     };
 
@@ -266,7 +265,7 @@ export default function RegionalAdmin({ regionalAdmins }) {
                     Regional Admin
                 </h1>
 
-                <section className="max-w-full overflow-hidden bg-[#0B0B0B] px-0 py-0 md:rounded-xl md:border md:border-white/[0.08] md:px-11 md:py-11">
+                <section className="max-w-full overflow-hidden bg-[#0B0B0B] md:rounded-xl md:border md:border-white/[0.08] md:px-11 md:py-11">
                     <div className="mb-5 flex flex-col gap-4 sm:mb-8 md:flex-row md:items-center md:justify-between">
                         <h2 className="font-heading text-base font-bold text-[#FBBF24] sm:text-2xl">
                             Regional Admin
@@ -305,46 +304,19 @@ export default function RegionalAdmin({ regionalAdmins }) {
                     </div>
 
                     <div className="flex min-h-[360px] flex-col md:min-h-[400px]">
-                        <div className="flex-1 overflow-hidden">
-                            <div
-                                className="flex items-start transition-transform duration-300 ease-out motion-reduce:transition-none"
-                                style={{
-                                    width: `${pageCount * 100}%`,
-                                    transform: `translate3d(-${trackOffset}, 0, 0)`,
-                                }}
-                            >
-                                {recordPages.map((pageRecords, pageIndex) => {
-                                    const pageNumber = pageIndex + 1;
-
-                                    return (
-                                        <div
-                                            key={`regional-admin-page-${pageNumber}`}
-                                            className="min-w-0 shrink-0"
-                                            style={{
-                                                flex: `0 0 ${pageWidth}`,
-                                            }}
-                                        >
-                                            <RegionalAdminPage
-                                                regionalAdmins={pageRecords}
-                                                isActive={
-                                                    pageNumber === activePage
-                                                }
-                                                expandedRegionalAdminId={
-                                                    expandedRegionalAdminId
-                                                }
-                                                onToggle={handleToggle}
-                                                onEdit={setEditingRegionalAdmin}
-                                                onDelete={
-                                                    setRegionalAdminToDelete
-                                                }
-                                            />
-                                        </div>
-                                    );
-                                })}
-                            </div>
+                        <div className="flex-1">
+                            <RegionalAdminPage
+                                regionalAdmins={visibleRegionalAdmins}
+                                expandedRegionalAdminId={
+                                    expandedRegionalAdminId
+                                }
+                                onToggle={handleToggle}
+                                onEdit={setEditingRegionalAdmin}
+                                onDelete={setRegionalAdminToDelete}
+                            />
                         </div>
 
-                        <div className="mt-auto max-w-full overflow-hidden border-t border-white/10 pt-4 md:pt-6">
+                        <div className="mt-auto border-t border-white/10 pt-4 md:pt-6">
                             <AdminPagination
                                 currentPage={activePage}
                                 pageCount={pageCount}
@@ -374,6 +346,11 @@ export default function RegionalAdmin({ regionalAdmins }) {
 
             <DeleteConfirmationModal
                 isOpen={Boolean(regionalAdminToDelete)}
+                message={
+                    regionalAdminToDelete
+                        ? `Are you sure you want to delete ${regionalAdminToDelete.fullName}?`
+                        : ""
+                }
                 onCancel={() => setRegionalAdminToDelete(null)}
                 onConfirm={handleDeleteConfirm}
             />

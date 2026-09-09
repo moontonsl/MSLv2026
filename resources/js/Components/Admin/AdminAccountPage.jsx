@@ -3,14 +3,13 @@ import AdminAccountMobileList from "@/Components/Admin/AdminAccountMobileList";
 
 export default function AdminAccountPage({
     accounts,
-    isActive,
     expandedAccountId,
     onToggle,
     onEdit,
     onDelete,
 }) {
     return (
-        <div aria-hidden={!isActive}>
+        <div>
             <div className="md:hidden">
                 <AdminAccountMobileList
                     accounts={accounts}
@@ -31,4 +30,3 @@ export default function AdminAccountPage({
         </div>
     );
 }
-

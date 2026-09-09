@@ -76,15 +76,18 @@ export default function AdminSidebar({
                 isOpen ? "translate-x-0" : "-translate-x-full"
             } md:translate-x-0`}
         >
-            <div className="flex items-center justify-between border-b border-neutral-800 px-6 py-6">
+            <div className="flex min-h-[112px] items-center justify-between px-5 py-7">
                 <div className="flex min-w-0 items-center gap-3">
-                    <img
-                        src="/msl-logo.png"
-                        alt="MSL Philippines"
-                        className="h-10 w-10 shrink-0 object-contain"
-                    />
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden">
+                        <img
+                            src="/MSL_LOGO.png"
+                            alt=""
+                            aria-hidden="true"
+                            className="h-full w-full scale-[1.55] object-contain"
+                        />
+                    </div>
 
-                    <span className="whitespace-nowrap text-sm font-bold leading-tight text-white">
+                    <span className="min-w-0 whitespace-nowrap font-heading text-[21px] font-bold leading-none tracking-[-0.035em] text-[#F5F5F5]">
                         MSL Philippines
                     </span>
                 </div>
@@ -93,7 +96,7 @@ export default function AdminSidebar({
                     type="button"
                     aria-label="Close admin navigation"
                     onClick={onClose}
-                    className="rounded-md p-2 text-gray-400 transition-colors hover:bg-white/10 hover:text-white md:hidden"
+                    className="ml-2 inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-md text-gray-400 outline-none transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-[#FBBF24] md:hidden"
                 >
                     <X className="h-5 w-5" />
                 </button>
