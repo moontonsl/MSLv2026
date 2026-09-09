@@ -1,6 +1,6 @@
-export const REGISTRATION_PAGE_SIZE = 3;
+export const EVENT_PAGE_SIZE = 3;
 
-export const REGISTRATION_REGION_OPTIONS = [
+export const EVENT_REGION_OPTIONS = [
     { id: "ncr", name: "National Capital Region" },
     { id: "region-iii", name: "Central Luzon" },
     { id: "region-iv-a", name: "CALABARZON" },
@@ -8,7 +8,7 @@ export const REGISTRATION_REGION_OPTIONS = [
     { id: "region-xi", name: "Davao Region" },
 ];
 
-export const REGISTRATION_SCHOOL_OPTIONS = [
+export const EVENT_SCHOOL_OPTIONS = [
     {
         id: "nu",
         name: "National University",
@@ -53,59 +53,53 @@ export const REGISTRATION_SCHOOL_OPTIONS = [
     },
 ];
 
-const ACTIVE_ATTENDANCE = [
+const ACTIVE_EVENTS = [
     {
-        attendanceCode: "ATT-001",
-        activityName: "Student Leader General Assembly",
-        attendanceLink: "/Attendance/ATT-001",
-        instructions: "Record attendance for the assembly.",
+        eventCode: "ASDC26",
+        eventName: "All Star Dance Challenge 2026",
+        eventLink: "/Event/ASDC26",
+        description: "The 2026 All Star Dance Challenge.",
         startDate: "2026-07-10T08:00:00+08:00",
-        endDate: "2026-07-10T12:00:00+08:00",
-        assignedSchools: [
-            REGISTRATION_SCHOOL_OPTIONS[0],
-            REGISTRATION_SCHOOL_OPTIONS[1],
-        ],
+        endDate: "2026-07-25T16:00:00+08:00",
+        assignedSchools: [EVENT_SCHOOL_OPTIONS[0], EVENT_SCHOOL_OPTIONS[2]],
     },
     {
-        attendanceCode: "ATT-002",
-        activityName: "Campus Organizer Orientation",
-        attendanceLink: "/Attendance/ATT-002",
-        instructions: "Attendance for campus organizers.",
+        eventCode: "MCC26",
+        eventName: "MSL Campus Clash 2026",
+        eventLink: "/Event/MCC26",
+        description: "The 2026 MSL Campus Clash.",
         startDate: "2026-08-01T08:00:00+08:00",
-        endDate: "2026-08-01T17:00:00+08:00",
-        assignedSchools: [
-            REGISTRATION_SCHOOL_OPTIONS[2],
-            REGISTRATION_SCHOOL_OPTIONS[3],
-        ],
+        endDate: "2026-08-20T18:00:00+08:00",
+        assignedSchools: [EVENT_SCHOOL_OPTIONS[4], EVENT_SCHOOL_OPTIONS[5]],
     },
     {
-        attendanceCode: "ATT-003",
-        activityName: "Regional Admin Meeting",
-        attendanceLink: "/Attendance/ATT-003",
-        instructions: "Attendance for regional administrators.",
+        eventCode: "COM26",
+        eventName: "MSL Community Activity 2026",
+        eventLink: "/Event/COM26",
+        description: "A community activity for all schools.",
         startDate: "2026-09-01T08:00:00+08:00",
-        endDate: "2026-09-01T12:00:00+08:00",
+        endDate: "2026-09-30T18:00:00+08:00",
         assignedSchools: [],
     },
 ];
 
-const COMPLETED_ATTENDANCE = [
+const COMPLETED_EVENTS = [
     {
-        attendanceCode: "ATT-2025-01",
-        activityName: "Student Leader Orientation 2025",
-        attendanceLink: "/Attendance/ATT-2025-01",
-        instructions: "Completed attendance activity.",
+        eventCode: "ASDC25",
+        eventName: "All Star Dance Challenge 2025",
+        eventLink: "/Event/ASDC25",
+        description: "Completed activity event.",
         startDate: "2025-07-10T08:00:00+08:00",
-        endDate: "2025-07-10T12:00:00+08:00",
+        endDate: "2025-07-25T16:00:00+08:00",
         assignedSchools: [],
     },
     {
-        attendanceCode: "ATT-2025-02",
-        activityName: "Campus Community Meeting 2025",
-        attendanceLink: "/Attendance/ATT-2025-02",
-        instructions: "Completed attendance activity.",
+        eventCode: "MCC25",
+        eventName: "MSL Campus Clash 2025",
+        eventLink: "/Event/MCC25",
+        description: "Completed campus activity event.",
         startDate: "2025-08-01T08:00:00+08:00",
-        endDate: "2025-08-01T17:00:00+08:00",
+        endDate: "2025-08-20T18:00:00+08:00",
         assignedSchools: [],
     },
 ];
@@ -117,32 +111,28 @@ function createRows(templates, prefix, count) {
         return {
             ...template,
             id: `${prefix}-${index + 1}`,
-            responseUrl: template.attendanceLink,
+            responseUrl: template.eventLink,
             assignedSchools: template.assignedSchools.map((school) => ({
                 ...school,
             })),
-            attendanceLogo: null,
+            eventLogo: null,
             titleTextColor: "#FFFFFFFF",
             subTextColor: "#A1A1AAFF",
-            formColor: "#000000FF",
+            eventCardColor: "#151515FF",
             backgroundColor: "#0A0A0AFF",
         };
     });
 }
 
-export const MOCK_REGISTRATIONS = createRows(
-    ACTIVE_ATTENDANCE,
-    "attendance",
+export const MOCK_EVENTS = createRows(ACTIVE_EVENTS, "event", 30);
+
+export const MOCK_COMPLETED_EVENTS = createRows(
+    COMPLETED_EVENTS,
+    "completed-event",
     30,
 );
 
-export const MOCK_COMPLETED_REGISTRATIONS = createRows(
-    COMPLETED_ATTENDANCE,
-    "completed-attendance",
-    30,
-);
-
-export function formatRegistrationDate(value) {
+export function formatEventDate(value) {
     const date = new Date(value);
 
     if (Number.isNaN(date.getTime())) {
@@ -160,7 +150,7 @@ export function formatRegistrationDate(value) {
     }).format(date);
 }
 
-export function toRegistrationDateTimeLocal(value) {
+export function toEventDateTimeLocal(value) {
     if (!value) {
         return "";
     }

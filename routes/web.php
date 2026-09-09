@@ -165,6 +165,10 @@ Route::get('/admin/registration-management', function () {
    return Inertia::render('Admin/RegistrationManagement');
 })->name('admin.registration-management');
 
+Route::get('/admin/event-management', function () {
+    return Inertia::render('Admin/EventManagement');
+})->name('admin.event-management');
+
 
 Route::get('/SL-Admin', function () {
     return Inertia::render('SL-Admin/Index');

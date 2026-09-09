@@ -8,14 +8,10 @@ import RegistrationTable from "@/Components/Admin/RegistrationTable";
 import SectionCard from "@/Components/Admin/SectionCard";
 import SuccessModal from "@/Components/Admin/SuccessModal";
 import AdminLayout from "@/Layouts/AdminLayout";
-
 import {
     MOCK_COMPLETED_REGISTRATIONS,
     MOCK_REGISTRATIONS,
-    REGISTRATION_EVENT_OPTIONS,
     REGISTRATION_PAGE_SIZE,
-    REGISTRATION_REGION_OPTIONS,
-    REGISTRATION_SCHOOL_OPTIONS,
 } from "@/data/adminRegistrationData";
 
 function cloneAssignedSchools(schools = []) {
@@ -27,17 +23,23 @@ function cloneAssignedSchools(schools = []) {
         .map((school, index) => {
             if (typeof school === "string") {
                 return {
-                    id: `assigned-school-${index + 1}`,
+                    id: school,
                     name: school,
-                    region: "",
+                    regionId: "",
+                    regionName: "",
                 };
             }
 
             return {
                 ...school,
-                id: school.id ?? `assigned-school-${index + 1}`,
+                id: school.id ?? `assigned-school-${index}`,
                 name: school.name ?? school.school ?? "",
-                region: school.region ?? "",
+                regionId: school.regionId ?? school.region_id ?? "",
+                regionName:
+                    school.regionName ??
+                    school.region_name ??
+                    school.region?.name ??
+                    (typeof school.region === "string" ? school.region : ""),
             };
         })
         .filter((school) => school.name);
@@ -46,11 +48,11 @@ function cloneAssignedSchools(schools = []) {
 function normalizeRegistration(
     registration = {},
     index = 0,
-    prefix = "registration",
+    prefix = "attendance",
 ) {
-    const eventLink =
-        registration.eventLink ??
-        registration.event_link ??
+    const attendanceLink =
+        registration.attendanceLink ??
+        registration.attendance_link ??
         registration.responseUrl ??
         registration.response_url ??
         "";
@@ -58,36 +60,38 @@ function normalizeRegistration(
     return {
         ...registration,
         id: registration.id ?? `${prefix}-${index + 1}`,
-        eventCode: registration.eventCode ?? registration.event_code ?? "",
-        eventLink,
-        eventName: registration.eventName ?? registration.event_name ?? "",
-        eventShortDescription:
-            registration.eventShortDescription ??
-            registration.event_short_description ??
-            registration.description ??
-            "",
+        attendanceCode:
+            registration.attendanceCode ?? registration.attendance_code ?? "",
+        attendanceLink,
+        activityName:
+            registration.activityName ?? registration.activity_name ?? "",
+        instructions:
+            registration.instructions ?? registration.description ?? "",
         startDate: registration.startDate ?? registration.start_date ?? "",
         endDate: registration.endDate ?? registration.end_date ?? "",
         responseUrl:
-            registration.responseUrl ?? registration.response_url ?? eventLink,
+            registration.responseUrl ??
+            registration.response_url ??
+            attendanceLink,
         assignedSchools: cloneAssignedSchools(
             registration.assignedSchools ?? registration.assigned_schools,
         ),
-        eventLogo: registration.eventLogo ?? registration.event_logo ?? null,
+        attendanceLogo:
+            registration.attendanceLogo ?? registration.attendance_logo ?? null,
         titleTextColor:
             registration.titleTextColor ??
             registration.title_text_color ??
-            "#000000FF",
+            "#FFFFFFFF",
         subTextColor:
             registration.subTextColor ??
             registration.sub_text_color ??
-            "#000000FF",
+            "#A1A1AAFF",
         formColor:
             registration.formColor ?? registration.form_color ?? "#000000FF",
         backgroundColor:
             registration.backgroundColor ??
             registration.background_color ??
-            "#000000FF",
+            "#0A0A0AFF",
     };
 }
 
@@ -110,11 +114,10 @@ function filterRegistrations(registrations, search) {
 
     return registrations.filter((registration) =>
         [
-            registration.eventCode,
-            registration.eventName,
-            registration.eventLink,
-            registration.responseUrl,
-            registration.eventShortDescription,
+            registration.attendanceCode,
+            registration.activityName,
+            registration.attendanceLink,
+            registration.instructions,
         ]
             .join(" ")
             .toLowerCase()
@@ -130,9 +133,7 @@ function createLocalId() {
         return crypto.randomUUID();
     }
 
-    return `registration-${Date.now()}-${Math.random()
-        .toString(36)
-        .slice(2, 9)}`;
+    return `attendance-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
 function SearchInput({ value, onChange, label }) {
@@ -163,7 +164,7 @@ export default function RegistrationManagement({
             Array.isArray(registrationProp)
                 ? registrationProp
                 : MOCK_REGISTRATIONS,
-            "registration",
+            "attendance",
         ),
     );
 
@@ -172,7 +173,7 @@ export default function RegistrationManagement({
             Array.isArray(completedRegistrationProp)
                 ? completedRegistrationProp
                 : MOCK_COMPLETED_REGISTRATIONS,
-            "completed-registration",
+            "completed-attendance",
         ),
     );
 
@@ -202,7 +203,7 @@ export default function RegistrationManagement({
         }
 
         setRegistrations(
-            normalizeRegistrations(registrationProp, "registration"),
+            normalizeRegistrations(registrationProp, "attendance"),
         );
 
         setRegistrationPage(1);
@@ -216,7 +217,7 @@ export default function RegistrationManagement({
         setCompletedRegistrations(
             normalizeRegistrations(
                 completedRegistrationProp,
-                "completed-registration",
+                "completed-attendance",
             ),
         );
 
@@ -228,7 +229,7 @@ export default function RegistrationManagement({
         [registrations, registrationSearch],
     );
 
-    const filteredCompletedRegistrations = useMemo(
+    const filteredCompleted = useMemo(
         () => filterRegistrations(completedRegistrations, completedSearch),
         [completedRegistrations, completedSearch],
     );
@@ -240,9 +241,7 @@ export default function RegistrationManagement({
 
     const completedPageCount = Math.max(
         1,
-        Math.ceil(
-            filteredCompletedRegistrations.length / REGISTRATION_PAGE_SIZE,
-        ),
+        Math.ceil(filteredCompleted.length / REGISTRATION_PAGE_SIZE),
     );
 
     const pagedRegistrations = useMemo(() => {
@@ -254,14 +253,11 @@ export default function RegistrationManagement({
         );
     }, [filteredRegistrations, registrationPage]);
 
-    const pagedCompletedRegistrations = useMemo(() => {
+    const pagedCompleted = useMemo(() => {
         const start = (completedPage - 1) * REGISTRATION_PAGE_SIZE;
 
-        return filteredCompletedRegistrations.slice(
-            start,
-            start + REGISTRATION_PAGE_SIZE,
-        );
-    }, [completedPage, filteredCompletedRegistrations]);
+        return filteredCompleted.slice(start, start + REGISTRATION_PAGE_SIZE);
+    }, [completedPage, filteredCompleted]);
 
     useEffect(() => {
         setRegistrationPage(1);
@@ -290,25 +286,21 @@ export default function RegistrationManagement({
         setModalOpen(true);
     };
 
-    const closeRegistrationModal = () => {
+    const closeModal = () => {
         setEditingRegistration(null);
         setModalOpen(false);
     };
 
-    const handleRegistrationSubmit = (values) => {
-        const isEditing = Boolean(editingRegistration);
+    const handleSubmit = (values) => {
+        const isEditing = editingRegistration !== null;
 
         const nextRegistration = normalizeRegistration({
             ...editingRegistration,
             ...values,
             id: editingRegistration?.id ?? createLocalId(),
-            responseUrl: values.responseUrl ?? values.eventLink,
+            responseUrl: values.responseUrl ?? values.attendanceLink,
         });
 
-        /*
-         * Replace this local update with router.post() or
-         * router.put() after the Laravel routes are available.
-         */
         setRegistrations((current) =>
             isEditing
                 ? current.map((registration) =>
@@ -321,7 +313,7 @@ export default function RegistrationManagement({
 
         setRegistrationSearch("");
         setRegistrationPage(1);
-        closeRegistrationModal();
+        closeModal();
 
         setSuccessMessage(
             isEditing
@@ -332,15 +324,11 @@ export default function RegistrationManagement({
         setSuccessOpen(true);
     };
 
-    const handleDeleteConfirm = () => {
+    const handleDelete = () => {
         if (!pendingDelete) {
             return;
         }
 
-        /*
-         * Replace this local update with router.delete()
-         * after the Laravel delete route is available.
-         */
         setRegistrations((current) =>
             current.filter(
                 (registration) => registration.id !== pendingDelete.id,
@@ -354,7 +342,7 @@ export default function RegistrationManagement({
         setSuccessOpen(true);
     };
 
-    const handleCopy = async (eventCode) => {
+    const handleCopy = async (attendanceCode) => {
         if (
             typeof navigator === "undefined" ||
             !navigator.clipboard?.writeText
@@ -363,13 +351,13 @@ export default function RegistrationManagement({
         }
 
         try {
-            await navigator.clipboard.writeText(eventCode);
+            await navigator.clipboard.writeText(attendanceCode);
 
-            setCopiedCode(eventCode);
+            setCopiedCode(attendanceCode);
 
             window.setTimeout(() => {
                 setCopiedCode((current) =>
-                    current === eventCode ? null : current,
+                    current === attendanceCode ? null : current,
                 );
             }, 1500);
         } catch {
@@ -387,19 +375,19 @@ export default function RegistrationManagement({
                 </h1>
 
                 <SectionCard
-                    title="Registration"
+                    title="Attendance Registrations"
                     headerRight={
                         <div className="flex w-full min-w-0 items-center gap-2 sm:w-auto">
                             <SearchInput
                                 value={registrationSearch}
                                 onChange={setRegistrationSearch}
-                                label="Search registrations"
+                                label="Search attendance registrations"
                             />
 
                             <button
                                 type="button"
                                 onClick={openCreateModal}
-                                className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[#FBBF24] px-3 text-xs font-bold text-black transition hover:bg-[#FCD34D] sm:gap-2 sm:px-4"
+                                className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[#FBBF24] px-3 text-xs font-bold text-black transition hover:bg-[#FCD34D] sm:px-4"
                             >
                                 <Plus className="h-4 w-4" />
 
@@ -423,51 +411,45 @@ export default function RegistrationManagement({
                         onDelete={setPendingDelete}
                         copiedCode={copiedCode}
                         onCopy={handleCopy}
-                        emptyMessage="No registrations match your search."
-                        paginationLabel="Registration pagination"
+                        emptyMessage="No attendance registrations match your search."
                     />
                 </SectionCard>
 
                 <SectionCard
-                    title="Completed Registration"
+                    title="Completed Attendance"
                     headerRight={
                         <SearchInput
                             value={completedSearch}
                             onChange={setCompletedSearch}
-                            label="Search completed registrations"
+                            label="Search completed attendance"
                         />
                     }
                 >
                     <RegistrationTable
-                        registrations={pagedCompletedRegistrations}
+                        registrations={pagedCompleted}
                         showActions={false}
+                        showDates={false}
                         currentPage={completedPage}
                         pageCount={completedPageCount}
                         onPageChange={setCompletedPage}
-                        showMobileActions
-                        showDates={false}
                         copiedCode={copiedCode}
                         onCopy={handleCopy}
-                        emptyMessage="No completed registrations match your search."
-                        paginationLabel="Completed registration pagination"
+                        emptyMessage="No completed attendance records match your search."
                     />
                 </SectionCard>
             </div>
 
             <RegistrationModal
                 isOpen={modalOpen}
-                onClose={closeRegistrationModal}
+                onClose={closeModal}
                 initialData={editingRegistration}
-                onSubmit={handleRegistrationSubmit}
-                eventNameOptions={REGISTRATION_EVENT_OPTIONS}
-                regionOptions={REGISTRATION_REGION_OPTIONS}
-                schoolOptions={REGISTRATION_SCHOOL_OPTIONS}
+                onSubmit={handleSubmit}
             />
 
             <DeleteConfirmationModal
-                isOpen={Boolean(pendingDelete)}
+                isOpen={pendingDelete !== null}
                 onCancel={() => setPendingDelete(null)}
-                onConfirm={handleDeleteConfirm}
+                onConfirm={handleDelete}
             />
 
             <SuccessModal

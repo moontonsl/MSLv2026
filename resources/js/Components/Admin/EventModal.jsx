@@ -1,10 +1,10 @@
 import BaseModal from "@/Components/Admin/BaseModal";
 import FeaturedImageUpload from "@/Components/Admin/FeaturedImageUpload";
 import {
-    REGISTRATION_REGION_OPTIONS,
-    REGISTRATION_SCHOOL_OPTIONS,
-    toRegistrationDateTimeLocal,
-} from "@/data/adminRegistrationData";
+    EVENT_REGION_OPTIONS,
+    EVENT_SCHOOL_OPTIONS,
+    toEventDateTimeLocal,
+} from "@/data/adminEventData";
 import { ChevronDown, Trash2 } from "lucide-react";
 import { useEffect, useId, useMemo, useState } from "react";
 
@@ -22,17 +22,17 @@ const SUBMIT_CLASS =
     "min-h-[42px] w-full rounded-[10px] bg-[#FBBF24] px-4 py-2.5 text-sm font-bold text-black transition hover:bg-[#FCD34D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FDE68A] sm:min-h-[52px] sm:text-base";
 
 const EMPTY_FORM = {
-    attendanceCode: "",
-    attendanceLink: "",
-    activityName: "",
-    instructions: "",
+    eventCode: "",
+    eventLink: "",
+    eventName: "",
+    description: "",
     startDate: "",
     endDate: "",
     assignedSchools: [],
-    attendanceLogo: null,
+    eventLogo: null,
     titleTextColor: "#FFFFFFFF",
     subTextColor: "#A1A1AAFF",
-    formColor: "#000000FF",
+    eventCardColor: "#151515FF",
     backgroundColor: "#0A0A0AFF",
 };
 
@@ -95,8 +95,8 @@ function normalizeAssignedSchools(schools = []) {
         .filter((school) => school.name);
 }
 
-function getInitialForm(registration) {
-    if (!registration) {
+function getInitialForm(eventData) {
+    if (!eventData) {
         return {
             ...EMPTY_FORM,
             assignedSchools: [],
@@ -104,43 +104,41 @@ function getInitialForm(registration) {
     }
 
     return {
-        attendanceCode:
-            registration.attendanceCode ?? registration.attendance_code ?? "",
-        attendanceLink:
-            registration.attendanceLink ??
-            registration.attendance_link ??
-            registration.responseUrl ??
-            registration.response_url ??
+        eventCode: eventData.eventCode ?? eventData.event_code ?? "",
+        eventLink:
+            eventData.eventLink ??
+            eventData.event_link ??
+            eventData.responseUrl ??
+            eventData.response_url ??
             "",
-        activityName:
-            registration.activityName ?? registration.activity_name ?? "",
-        instructions:
-            registration.instructions ?? registration.description ?? "",
-        startDate: toRegistrationDateTimeLocal(
-            registration.startDate ?? registration.start_date,
+        eventName: eventData.eventName ?? eventData.event_name ?? "",
+        description:
+            eventData.description ??
+            eventData.eventDescription ??
+            eventData.event_description ??
+            "",
+        startDate: toEventDateTimeLocal(
+            eventData.startDate ?? eventData.start_date,
         ),
-        endDate: toRegistrationDateTimeLocal(
-            registration.endDate ?? registration.end_date,
-        ),
+        endDate: toEventDateTimeLocal(eventData.endDate ?? eventData.end_date),
         assignedSchools: normalizeAssignedSchools(
-            registration.assignedSchools ?? registration.assigned_schools,
+            eventData.assignedSchools ?? eventData.assigned_schools,
         ),
-        attendanceLogo:
-            registration.attendanceLogo ?? registration.attendance_logo ?? null,
+        eventLogo: eventData.eventLogo ?? eventData.event_logo ?? null,
         titleTextColor: normalizeColor(
-            registration.titleTextColor ?? registration.title_text_color,
+            eventData.titleTextColor ?? eventData.title_text_color,
             "#FFFFFFFF",
         ),
         subTextColor: normalizeColor(
-            registration.subTextColor ?? registration.sub_text_color,
+            eventData.subTextColor ?? eventData.sub_text_color,
             "#A1A1AAFF",
         ),
-        formColor: normalizeColor(
-            registration.formColor ?? registration.form_color,
-            "#000000FF",
+        eventCardColor: normalizeColor(
+            eventData.eventCardColor ?? eventData.event_card_color,
+            "#151515FF",
         ),
         backgroundColor: normalizeColor(
-            registration.backgroundColor ?? registration.background_color,
+            eventData.backgroundColor ?? eventData.background_color,
             "#0A0A0AFF",
         ),
     };
@@ -253,7 +251,7 @@ function ColorField({ id, label, value, fallback, onChange }) {
     );
 }
 
-function RegistrationSchoolPicker({ assignedSchools, onChange }) {
+function EventSchoolPicker({ assignedSchools, onChange }) {
     const [regionId, setRegionId] = useState("");
 
     const [schoolId, setSchoolId] = useState("");
@@ -262,10 +260,10 @@ function RegistrationSchoolPicker({ assignedSchools, onChange }) {
 
     const filteredSchools = useMemo(() => {
         if (!regionId) {
-            return REGISTRATION_SCHOOL_OPTIONS;
+            return EVENT_SCHOOL_OPTIONS;
         }
 
-        return REGISTRATION_SCHOOL_OPTIONS.filter(
+        return EVENT_SCHOOL_OPTIONS.filter(
             (school) => String(school.regionId) === String(regionId),
         );
     }, [regionId]);
@@ -287,11 +285,11 @@ function RegistrationSchoolPicker({ assignedSchools, onChange }) {
             return;
         }
 
-        const region = REGISTRATION_REGION_OPTIONS.find(
+        const region = EVENT_REGION_OPTIONS.find(
             (item) => String(item.id) === String(regionId),
         );
 
-        const school = REGISTRATION_SCHOOL_OPTIONS.find(
+        const school = EVENT_SCHOOL_OPTIONS.find(
             (item) => String(item.id) === String(schoolId),
         );
 
@@ -335,14 +333,14 @@ function RegistrationSchoolPicker({ assignedSchools, onChange }) {
     return (
         <section className="rounded-md border border-white/[0.03] bg-[#151515] p-4">
             <h3 className="text-base font-medium text-[#EDE3C0] sm:text-lg">
-                Assigned Schools
+                Event Availability
             </h3>
 
             <div className="grid grid-cols-1 gap-2 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_146px]">
                 <SelectField
-                    id="registration-region"
+                    id="event-region"
                     value={regionId}
-                    options={REGISTRATION_REGION_OPTIONS.map((region) => ({
+                    options={EVENT_REGION_OPTIONS.map((region) => ({
                         value: String(region.id),
                         label: region.name,
                     }))}
@@ -355,7 +353,7 @@ function RegistrationSchoolPicker({ assignedSchools, onChange }) {
                 />
 
                 <SelectField
-                    id="registration-school"
+                    id="event-school"
                     value={schoolId}
                     options={filteredSchools.map((school) => ({
                         value: String(school.id),
@@ -396,7 +394,8 @@ function RegistrationSchoolPicker({ assignedSchools, onChange }) {
 
                 {assignedSchools.length === 0 ? (
                     <p className="py-3 text-xs text-[#777781]">
-                        No schools have been assigned.
+                        No schools assigned. The event is available to all
+                        schools.
                     </p>
                 ) : (
                     assignedSchools.map((school) => (
@@ -426,7 +425,7 @@ function RegistrationSchoolPicker({ assignedSchools, onChange }) {
     );
 }
 
-export default function RegistrationModal({
+export default function EventModal({
     isOpen,
     onClose,
     initialData = null,
@@ -463,13 +462,13 @@ export default function RegistrationModal({
         event.preventDefault();
 
         if (
-            !form.attendanceCode.trim() ||
-            !form.attendanceLink.trim() ||
-            !form.activityName.trim() ||
+            !form.eventCode.trim() ||
+            !form.eventLink.trim() ||
+            !form.eventName.trim() ||
             !form.startDate ||
             !form.endDate
         ) {
-            setError("Complete all required attendance fields.");
+            setError("Complete all required event fields.");
             return;
         }
 
@@ -482,28 +481,28 @@ export default function RegistrationModal({
             Number.isNaN(endTime) ||
             endTime <= startTime
         ) {
-            setError("Attendance end date must be after the start date.");
+            setError("End date must be after the start date.");
             return;
         }
 
         onSubmit({
-            attendanceCode: form.attendanceCode.trim().toUpperCase(),
-            attendanceLink: form.attendanceLink.trim(),
-            responseUrl: form.attendanceLink.trim(),
-            activityName: form.activityName.trim(),
-            instructions: form.instructions.trim(),
+            eventCode: form.eventCode.trim().toUpperCase(),
+            eventName: form.eventName.trim(),
+            eventLink: form.eventLink.trim(),
+            responseUrl: form.eventLink.trim(),
+            description: form.description.trim(),
             startDate: form.startDate,
             endDate: form.endDate,
             assignedSchools: normalizeAssignedSchools(form.assignedSchools),
-            attendanceLogo: form.attendanceLogo,
+            eventLogo: form.eventLogo,
             titleTextColor: normalizeColor(form.titleTextColor, "#FFFFFFFF"),
             subTextColor: normalizeColor(form.subTextColor, "#A1A1AAFF"),
-            formColor: normalizeColor(form.formColor, "#000000FF"),
+            eventCardColor: normalizeColor(form.eventCardColor, "#151515FF"),
             backgroundColor: normalizeColor(form.backgroundColor, "#0A0A0AFF"),
         });
     };
 
-    const modalTitle = isEditing ? "Edit Registration" : "New Registration";
+    const modalTitle = isEditing ? "Edit Event" : "New Event";
 
     return (
         <BaseModal
@@ -528,7 +527,7 @@ export default function RegistrationModal({
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div>
                         <FieldLabel htmlFor={`${formId}-code`} required>
-                            Attendance Code
+                            Event Code
                         </FieldLabel>
 
                         <input
@@ -536,13 +535,10 @@ export default function RegistrationModal({
                             type="text"
                             required
                             maxLength={20}
-                            placeholder="Example: ATT-001"
-                            value={form.attendanceCode}
+                            placeholder="Example: ASDC26"
+                            value={form.eventCode}
                             onChange={(event) =>
-                                updateField(
-                                    "attendanceCode",
-                                    event.target.value,
-                                )
+                                updateField("eventCode", event.target.value)
                             }
                             className={CONTROL_CLASS}
                         />
@@ -550,7 +546,7 @@ export default function RegistrationModal({
 
                     <div>
                         <FieldLabel htmlFor={`${formId}-link`} required>
-                            Attendance Form Link
+                            Event Page Link
                         </FieldLabel>
 
                         <input
@@ -558,13 +554,10 @@ export default function RegistrationModal({
                             type="text"
                             inputMode="url"
                             required
-                            placeholder="/Attendance/ATT-001"
-                            value={form.attendanceLink}
+                            placeholder="/Event/ASDC26"
+                            value={form.eventLink}
                             onChange={(event) =>
-                                updateField(
-                                    "attendanceLink",
-                                    event.target.value,
-                                )
+                                updateField("eventLink", event.target.value)
                             }
                             className={CONTROL_CLASS}
                         />
@@ -572,36 +565,36 @@ export default function RegistrationModal({
                 </div>
 
                 <div>
-                    <FieldLabel htmlFor={`${formId}-activity`} required>
-                        Activity Name
+                    <FieldLabel htmlFor={`${formId}-name`} required>
+                        Event Name
                     </FieldLabel>
 
                     <input
-                        id={`${formId}-activity`}
+                        id={`${formId}-name`}
                         type="text"
                         required
-                        placeholder="Enter attendance activity name"
-                        value={form.activityName}
+                        placeholder="Enter event name"
+                        value={form.eventName}
                         onChange={(event) =>
-                            updateField("activityName", event.target.value)
+                            updateField("eventName", event.target.value)
                         }
                         className={CONTROL_CLASS}
                     />
                 </div>
 
                 <div>
-                    <FieldLabel htmlFor={`${formId}-instructions`}>
-                        Attendance Instructions
+                    <FieldLabel htmlFor={`${formId}-description`}>
+                        Event Short Description
                     </FieldLabel>
 
                     <textarea
-                        id={`${formId}-instructions`}
+                        id={`${formId}-description`}
                         rows={3}
                         maxLength={300}
-                        placeholder="Enter attendance instructions"
-                        value={form.instructions}
+                        placeholder="Write a short description of the event"
+                        value={form.description}
                         onChange={(event) =>
-                            updateField("instructions", event.target.value)
+                            updateField("description", event.target.value)
                         }
                         className={`${CONTROL_CLASS} resize-y`}
                     />
@@ -610,7 +603,7 @@ export default function RegistrationModal({
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                         <FieldLabel htmlFor={`${formId}-start`} required>
-                            Attendance Start Date
+                            Event Start Date
                         </FieldLabel>
 
                         <input
@@ -627,7 +620,7 @@ export default function RegistrationModal({
 
                     <div>
                         <FieldLabel htmlFor={`${formId}-end`} required>
-                            Attendance End Date
+                            Event End Date
                         </FieldLabel>
 
                         <input
@@ -644,7 +637,7 @@ export default function RegistrationModal({
                     </div>
                 </div>
 
-                <RegistrationSchoolPicker
+                <EventSchoolPicker
                     assignedSchools={form.assignedSchools}
                     onChange={(schools) =>
                         updateField("assignedSchools", schools)
@@ -654,13 +647,13 @@ export default function RegistrationModal({
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,1fr)]">
                     <div>
                         <FieldLabel htmlFor={`${formId}-logo`}>
-                            Attendance Logo or Banner
+                            Event Logo or Banner
                         </FieldLabel>
 
                         <FeaturedImageUpload
-                            value={form.attendanceLogo}
+                            value={form.eventLogo}
                             onChange={(value) =>
-                                updateField("attendanceLogo", value)
+                                updateField("eventLogo", value)
                             }
                             className="[&>button]:min-h-[116px] [&>button]:bg-[#151515] sm:[&>button]:min-h-[194px]"
                             hint="PNG, JPG or JPEG (MAX. 5MB), recommended 1920x1080 pixels"
@@ -689,12 +682,12 @@ export default function RegistrationModal({
                         />
 
                         <ColorField
-                            id={`${formId}-form`}
-                            label="Form Color"
-                            value={form.formColor}
-                            fallback="#000000FF"
+                            id={`${formId}-card`}
+                            label="Event Card Color"
+                            value={form.eventCardColor}
+                            fallback="#151515FF"
                             onChange={(value) =>
-                                updateField("formColor", value)
+                                updateField("eventCardColor", value)
                             }
                         />
 
@@ -729,9 +722,7 @@ export default function RegistrationModal({
                     </button>
 
                     <button type="submit" className={SUBMIT_CLASS}>
-                        {isEditing
-                            ? "Update Registration"
-                            : "Create Registration"}
+                        {isEditing ? "Update Event" : "Create Event"}
                     </button>
                 </div>
             </form>
