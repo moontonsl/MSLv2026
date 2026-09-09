@@ -1,13 +1,13 @@
-import BaseModal from '@/Components/Admin/BaseModal';
+import BaseModal from "@/Components/Admin/BaseModal";
 import {
     MODAL_INPUT_CLASS,
     MODAL_LABEL_CLASS,
     MODAL_SELECT_CLASS,
     MODAL_SUBMIT_FOOTER_CLASS,
     MODAL_TEXTAREA_CLASS,
-} from '@/Components/Admin/adminModalFormStyles';
-import { getCourseTrackOptions } from '@/data/adminAccountData';
-import { useEffect, useId, useState } from 'react';
+} from "@/Components/Admin/adminModalFormStyles";
+import { getCourseTrackOptions } from "@/data/adminAccountData";
+import { useEffect, useId, useState } from "react";
 
 /**
  * @param {{
@@ -32,13 +32,13 @@ export default function StrandModal({
 }) {
     const isEditing = initialData != null;
     const formId = useId();
-    const defaultCourse = courseOptions[0] ?? '';
+    const defaultCourse = courseOptions[0] ?? "";
 
     const emptyForm = {
-        strandName: '',
-        strandCode: '',
+        strandName: "",
+        strandCode: "",
         relatedCourse: defaultCourse,
-        briefSummary: '',
+        briefSummary: "",
     };
 
     const [form, setForm] = useState(emptyForm);
@@ -48,10 +48,10 @@ export default function StrandModal({
 
         if (initialData) {
             setForm({
-                strandName: initialData.strandName ?? initialData.strand ?? '',
-                strandCode: initialData.strandCode ?? '',
+                strandName: initialData.strandName ?? initialData.strand ?? "",
+                strandCode: initialData.strandCode ?? "",
                 relatedCourse: initialData.relatedCourse ?? defaultCourse,
-                briefSummary: initialData.briefSummary ?? '',
+                briefSummary: initialData.briefSummary ?? "",
             });
             return;
         }
@@ -73,11 +73,18 @@ export default function StrandModal({
         <BaseModal
             isOpen={isOpen}
             onClose={onClose}
-            title={isEditing ? 'Edit Strand' : 'Add Strand'}
+            title={isEditing ? "Edit Strand" : "Add Strand"}
             footer={
-                <button type="submit" form={formId} className={MODAL_SUBMIT_FOOTER_CLASS}>
-                    {isEditing ? 'Update' : 'Submit'}
+                <button
+                    type="submit"
+                    form={formId}
+                    className={MODAL_SUBMIT_FOOTER_CLASS}
+                >
+                    {isEditing ? "Update" : "Submit"}
                 </button>
+            }
+            confirmSubmitMessage={
+                isEditing ? "Are you sure you want to edit this strand?" : ""
             }
         >
             <form id={formId} onSubmit={handleSubmit} className="space-y-4">
@@ -112,7 +119,10 @@ export default function StrandModal({
                 </div>
 
                 <div>
-                    <label htmlFor="strand-related-course" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="strand-related-course"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Related Course / Track
                     </label>
                     <select
@@ -131,7 +141,10 @@ export default function StrandModal({
                 </div>
 
                 <div>
-                    <label htmlFor="strand-summary" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="strand-summary"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Brief Summary
                     </label>
                     <textarea

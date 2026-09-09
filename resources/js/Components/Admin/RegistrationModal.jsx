@@ -514,6 +514,11 @@ export default function RegistrationModal({
             maxWidth="max-w-[330px] sm:max-w-[1128px]"
             panelClassName="border-[#8A6800] bg-[#0D0D0D] shadow-[0_24px_80px_rgba(0,0,0,0.72)]"
             bodyClassName="!px-8 !py-7 sm:!py-8"
+            confirmSubmitMessage={
+                isEditing
+                    ? "Are you sure you want to edit this attendance registration?"
+                    : ""
+            }
         >
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="pr-8">

@@ -1,5 +1,13 @@
-import { ChevronDown, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import BaseModal from "@/Components/Admin/BaseModal";
+
+import {
+    MODAL_INPUT_CLASS,
+    MODAL_LABEL_CLASS,
+    MODAL_SUBMIT_FOOTER_CLASS,
+} from "@/Components/Admin/adminModalFormStyles";
+
+import { ChevronDown } from "lucide-react";
+import { useEffect, useId, useState } from "react";
 
 const INITIAL_FORM = {
     name: "",
@@ -9,9 +17,6 @@ const INITIAL_FORM = {
     role: "Admin",
 };
 
-const INPUT_CLASS =
-    "min-h-11 w-full rounded-md border border-white/[0.05] bg-[#1A1A1A] px-3 text-sm text-white outline-none placeholder:text-gray-600 focus:border-[#FBBF24] focus:ring-1 focus:ring-[#FBBF24]";
-
 const ROLE_LABELS = {
     admin: "Admin",
     content_admin: "Content Manager",
@@ -20,48 +25,41 @@ const ROLE_LABELS = {
     super_admin: "Super Admin",
 };
 
+const ROLE_OPTIONS = [
+    "Admin",
+    "Content Manager",
+    "Regional Admin",
+    "Event Manager",
+    "Super Admin",
+];
+
 function getRoleLabel(role) {
     return ROLE_LABELS[role] ?? role ?? "Admin";
 }
 
 export default function EditAdminModal({ account, isOpen, onClose, onSubmit }) {
+    const formId = useId();
+
     const [form, setForm] = useState(INITIAL_FORM);
     const [error, setError] = useState("");
 
     useEffect(() => {
-        if (account && isOpen) {
-            setForm({
-                name: account.name ?? "",
-                email: account.email ?? "",
-                password: "",
-                password_confirmation: "",
-                role: getRoleLabel(account.role ?? account.user_type),
-            });
-
-            setError("");
+        if (!account || !isOpen) {
+            return;
         }
+
+        setForm({
+            name: account.name ?? "",
+            email: account.email ?? "",
+            password: "",
+            password_confirmation: "",
+            role: getRoleLabel(account.role ?? account.user_type),
+        });
+
+        setError("");
     }, [account, isOpen]);
 
-    useEffect(() => {
-        if (!isOpen) return undefined;
-
-        const handleEscape = (event) => {
-            if (event.key === "Escape") {
-                onClose();
-            }
-        };
-
-        const previousOverflow = document.body.style.overflow;
-        document.body.style.overflow = "hidden";
-        window.addEventListener("keydown", handleEscape);
-
-        return () => {
-            document.body.style.overflow = previousOverflow;
-            window.removeEventListener("keydown", handleEscape);
-        };
-    }, [isOpen, onClose]);
-
-    if (!isOpen || !account) {
+    if (!account) {
         return null;
     }
 
@@ -70,6 +68,8 @@ export default function EditAdminModal({ account, isOpen, onClose, onSubmit }) {
             ...current,
             [field]: value,
         }));
+
+        setError("");
     };
 
     const closeModal = () => {
@@ -81,7 +81,9 @@ export default function EditAdminModal({ account, isOpen, onClose, onSubmit }) {
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        const hasNewPassword = form.password || form.password_confirmation;
+        const hasNewPassword = Boolean(
+            form.password || form.password_confirmation,
+        );
 
         if (hasNewPassword && form.password.length < 8) {
             setError("Password must be at least 8 characters.");
@@ -105,178 +107,156 @@ export default function EditAdminModal({ account, isOpen, onClose, onSubmit }) {
     };
 
     return (
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 sm:p-6"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="edit-admin-title"
-            onMouseDown={(event) => {
-                if (event.target === event.currentTarget) {
-                    closeModal();
-                }
-            }}
+        <BaseModal
+            isOpen={isOpen}
+            onClose={closeModal}
+            title="Edit Admin Account"
+            showCloseButton
+            maxWidth="max-w-[330px] sm:max-w-[600px]"
+            footer={
+                <button
+                    type="submit"
+                    form={formId}
+                    className={MODAL_SUBMIT_FOOTER_CLASS}
+                >
+                    Update
+                </button>
+            }
         >
-            <div
-                className="max-h-[calc(100dvh-2rem)] w-full max-w-[600px] overflow-y-auto rounded-xl border border-[#8A6A00] bg-[#0B0B0B] p-6 sm:p-8"
-                onMouseDown={(event) => event.stopPropagation()}
-            >
-                <div className="mb-6 flex items-center justify-between sm:mb-7">
-                    <h2
-                        id="edit-admin-title"
-                        className="font-heading text-lg font-bold text-[#FBBF24] sm:text-[22px]"
+            <form id={formId} onSubmit={handleSubmit} className="space-y-5">
+                <div>
+                    <label
+                        htmlFor={`${formId}-name`}
+                        className={MODAL_LABEL_CLASS}
                     >
-                        Edit Admin Account
-                    </h2>
+                        Full Name
+                    </label>
 
-                    <button
-                        type="button"
-                        onClick={closeModal}
-                        className="flex min-h-11 min-w-11 items-center justify-center text-gray-400 transition hover:text-white"
-                        aria-label="Close modal"
-                    >
-                        <X className="h-5 w-5" />
-                    </button>
+                    <input
+                        id={`${formId}-name`}
+                        type="text"
+                        required
+                        value={form.name}
+                        onChange={(event) =>
+                            updateField("name", event.target.value)
+                        }
+                        placeholder="Leonora Teresa"
+                        className={MODAL_INPUT_CLASS}
+                    />
                 </div>
 
-                <form
-                    onSubmit={handleSubmit}
-                    className="space-y-5 sm:space-y-6"
-                >
-                    <div>
-                        <label
-                            htmlFor="edit-admin-name"
-                            className="mb-2 block text-xs font-medium text-[#FFFBEB] sm:text-sm"
-                        >
-                            Full Name
-                        </label>
-
-                        <input
-                            id="edit-admin-name"
-                            type="text"
-                            required
-                            value={form.name}
-                            onChange={(event) =>
-                                updateField("name", event.target.value)
-                            }
-                            placeholder="Leonora Teresa"
-                            className={INPUT_CLASS}
-                        />
-                    </div>
-
-                    <div>
-                        <label
-                            htmlFor="edit-admin-email"
-                            className="mb-2 block text-xs font-medium text-[#FFFBEB] sm:text-sm"
-                        >
-                            Email Address
-                        </label>
-
-                        <input
-                            id="edit-admin-email"
-                            type="email"
-                            required
-                            value={form.email}
-                            onChange={(event) =>
-                                updateField("email", event.target.value)
-                            }
-                            placeholder="example@msl.com"
-                            className={INPUT_CLASS}
-                        />
-                    </div>
-
-                    <div>
-                        <label
-                            htmlFor="edit-admin-password"
-                            className="mb-2 block text-xs font-medium text-[#FFFBEB] sm:text-sm"
-                        >
-                            New Password
-                        </label>
-
-                        <input
-                            id="edit-admin-password"
-                            type="password"
-                            minLength="8"
-                            value={form.password}
-                            onChange={(event) =>
-                                updateField("password", event.target.value)
-                            }
-                            placeholder="********"
-                            className={INPUT_CLASS}
-                        />
-                    </div>
-
-                    <div>
-                        <label
-                            htmlFor="edit-admin-password-confirmation"
-                            className="mb-2 block text-xs font-medium text-[#FFFBEB] sm:text-sm"
-                        >
-                            Confirm New Password
-                        </label>
-
-                        <input
-                            id="edit-admin-password-confirmation"
-                            type="password"
-                            minLength="8"
-                            value={form.password_confirmation}
-                            onChange={(event) =>
-                                updateField(
-                                    "password_confirmation",
-                                    event.target.value,
-                                )
-                            }
-                            placeholder="********"
-                            className={INPUT_CLASS}
-                        />
-                    </div>
-
-                    <div>
-                        <label
-                            htmlFor="edit-admin-role"
-                            className="mb-2 block text-xs font-medium text-[#FFFBEB] sm:text-sm"
-                        >
-                            Role Description
-                        </label>
-
-                        <div className="relative">
-                            <select
-                                id="edit-admin-role"
-                                value={form.role}
-                                onChange={(event) =>
-                                    updateField("role", event.target.value)
-                                }
-                                className={`${INPUT_CLASS} appearance-none pr-10`}
-                            >
-                                <option value="Admin">Admin</option>
-                                <option value="Content Manager">
-                                    Content Manager
-                                </option>
-                                <option value="Regional Admin">
-                                    Regional Admin
-                                </option>
-                                <option value="Event Manager">
-                                    Event Manager
-                                </option>
-                                <option value="Super Admin">Super Admin</option>
-                            </select>
-
-                            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-                        </div>
-                    </div>
-
-                    {error && (
-                        <p className="text-xs text-red-500 sm:text-sm">
-                            {error}
-                        </p>
-                    )}
-
-                    <button
-                        type="submit"
-                        className="min-h-[54px] w-full rounded-[10px] bg-[#FBBF24] text-base font-bold text-black transition hover:bg-[#FCD34D] sm:text-xl"
+                <div>
+                    <label
+                        htmlFor={`${formId}-email`}
+                        className={MODAL_LABEL_CLASS}
                     >
-                        Update
-                    </button>
-                </form>
-            </div>
-        </div>
+                        Email Address
+                    </label>
+
+                    <input
+                        id={`${formId}-email`}
+                        type="email"
+                        required
+                        value={form.email}
+                        onChange={(event) =>
+                            updateField("email", event.target.value)
+                        }
+                        placeholder="example@msl.com"
+                        className={MODAL_INPUT_CLASS}
+                    />
+                </div>
+
+                <div>
+                    <label
+                        htmlFor={`${formId}-password`}
+                        className={MODAL_LABEL_CLASS}
+                    >
+                        New Password
+                    </label>
+
+                    <input
+                        id={`${formId}-password`}
+                        type="password"
+                        minLength={8}
+                        value={form.password}
+                        onChange={(event) =>
+                            updateField("password", event.target.value)
+                        }
+                        placeholder="Leave blank to keep current password"
+                        className={MODAL_INPUT_CLASS}
+                    />
+                </div>
+
+                <div>
+                    <label
+                        htmlFor={`${formId}-password-confirmation`}
+                        className={MODAL_LABEL_CLASS}
+                    >
+                        Confirm New Password
+                    </label>
+
+                    <input
+                        id={`${formId}-password-confirmation`}
+                        type="password"
+                        minLength={8}
+                        value={form.password_confirmation}
+                        onChange={(event) =>
+                            updateField(
+                                "password_confirmation",
+                                event.target.value,
+                            )
+                        }
+                        placeholder="Re-enter the new password"
+                        className={MODAL_INPUT_CLASS}
+                    />
+                </div>
+
+                <div>
+                    <label
+                        htmlFor={`${formId}-role`}
+                        className={MODAL_LABEL_CLASS}
+                    >
+                        Role Description
+                    </label>
+
+                    <div className="relative">
+                        <select
+                            id={`${formId}-role`}
+                            value={form.role}
+                            onChange={(event) =>
+                                updateField("role", event.target.value)
+                            }
+                            className={`${MODAL_INPUT_CLASS} cursor-pointer appearance-none bg-none pr-10 [background-image:none] [&::-ms-expand]:hidden`}
+                            style={{
+                                WebkitAppearance: "none",
+                                MozAppearance: "none",
+                                appearance: "none",
+                                backgroundImage: "none",
+                            }}
+                        >
+                            {ROLE_OPTIONS.map((role) => (
+                                <option key={role} value={role}>
+                                    {role}
+                                </option>
+                            ))}
+                        </select>
+
+                        <ChevronDown
+                            aria-hidden="true"
+                            className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#555560]"
+                        />
+                    </div>
+                </div>
+
+                {error ? (
+                    <p
+                        role="alert"
+                        className="rounded-md border border-red-500/20 bg-red-500/10 px-3 py-2.5 text-sm text-red-300"
+                    >
+                        {error}
+                    </p>
+                ) : null}
+            </form>
+        </BaseModal>
     );
 }
