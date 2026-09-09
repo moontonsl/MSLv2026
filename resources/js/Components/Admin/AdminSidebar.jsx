@@ -6,7 +6,8 @@ import {
     UserCog,
     UserPlus,
     X,
-    FolderPlus,
+    ClipboardCheck,
+    CalendarPlus,
 } from "lucide-react";
 
 const ACCENT = "#FBBF24";
@@ -43,10 +44,16 @@ const NAV_ITEMS = [
         icon: UserCog,
     },
     {
+        id: "event-management",
+        label: "Event Management",
+        href: "/admin/event-management",
+        icon: CalendarPlus,
+    },
+    {
         id: "registration-management",
         label: "Registration Management",
         href: "/admin/registration-management",
-        icon: FolderPlus,
+        icon: ClipboardCheck,
     },
 ];
 

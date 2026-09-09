@@ -1,9 +1,9 @@
 import AdminPagination from "@/Components/Admin/AdminPagination";
-import RegistrationDesktopTable from "@/Components/Admin/RegistrationDesktopTable";
-import RegistrationMobileList from "@/Components/Admin/RegistrationMobileList";
+import EventDesktopTable from "@/Components/Admin/EventDesktopTable";
+import EventMobileList from "@/Components/Admin/EventMobileList";
 
-export default function RegistrationTable({
-    registrations = [],
+export default function EventTable({
+    events = [],
     showDates = true,
     showActions = true,
     currentPage = 1,
@@ -13,13 +13,13 @@ export default function RegistrationTable({
     onDelete = () => {},
     copiedCode = null,
     onCopy = () => {},
-    emptyMessage = "No attendance registrations found.",
+    emptyMessage = "No events found.",
 }) {
     return (
         <div className="w-full min-w-0">
             <div className="hidden md:block">
-                <RegistrationDesktopTable
-                    registrations={registrations}
+                <EventDesktopTable
+                    events={events}
                     showDates={showDates}
                     showActions={showActions}
                     onEdit={onEdit}
@@ -31,8 +31,8 @@ export default function RegistrationTable({
             </div>
 
             <div className="md:hidden">
-                <RegistrationMobileList
-                    registrations={registrations}
+                <EventMobileList
+                    events={events}
                     showDates={showDates}
                     showActions={showActions}
                     onEdit={onEdit}
