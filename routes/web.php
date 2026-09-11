@@ -73,17 +73,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/Tournament/Organizer', [CampusTournamentController::class, 'indexOrganizer'])
         ->name('campus.tournament.organizer');
 
-    Route::get('/Tournament/CampusTournament', function () {
-        return Inertia::render('Programs/CampusTournaments/CaptainHub');
-    })->name('campus.captainregistration');
+    Route::get('/Tournament/CampusTournament', [TournamentRegistrationController::class, 'showCaptainHub'])
+        ->name('campus.captainregistration');
 
-    Route::get('/Tournament/CampusTournamentReg', function () {
-        return Inertia::render('Programs/CampusTournaments/CaptainRegister');
-    })->name('campus.teamregistration');
+    Route::get('/Tournament/CampusTournamentReg', [TournamentRegistrationController::class, 'showCaptainRegistration'])
+        ->name('campus.teamregistration');
 
-    Route::get('/Tournament/CampusTournamentTeam', function () {
-        return Inertia::render('Programs/CampusTournaments/CaptainTeam');
-    })->name('campus.team');
+    Route::get('/Tournament/CampusTournamentTeam', [TournamentRegistrationController::class, 'showCaptainTeam'])
+        ->name('campus.team');
+
+    Route::get('/school-players', [TournamentRegistrationController::class, 'searchSchoolPlayers'])
+        ->name('campus.school-players');
 
     Route::get('/Tournament/SoloPlayer', [TournamentRegistrationController::class, 'showSoloMatchmaking'])
         ->name('campus.tournament.solo.player');
@@ -131,7 +131,6 @@ Route::redirect('/about/general-affairs', '/GeneralAffairs');
 Route::redirect('/Login', '/login')->name('Login');
 
 /** Login Page for Internal temporary to view */
-
 Route::get('/admin', function () {
     return Inertia::render('Auth/AdminLogin');
 })->name('admin.login');

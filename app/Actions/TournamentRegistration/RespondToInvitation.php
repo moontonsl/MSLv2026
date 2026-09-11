@@ -36,15 +36,23 @@ class RespondToInvitation
             if ($decision === 'accepted') {
                 $team = TournamentTeam::query()->lockForUpdate()->findOrFail($invitation->team_id);
                 $tournament = CampusTournament::query()->lockForUpdate()->findOrFail($team->tournament_id);
+                $participant = TournamentParticipant::query()
+                    ->where('tournament_id', $tournament->id)
+                    ->where('user_id', $user->id)
+                    ->lockForUpdate()
+                    ->first();
 
                 $this->guard->assertRegistrationOpen($tournament);
                 $this->guard->assertPremadeTeam($team);
                 $this->guard->assertTeamIsAssembling($team);
                 $this->guard->assertEligibleForCampus($tournament, $user);
                 $this->guard->assertLaneRoleAvailable($team, $invitation->intended_lane_role_code);
-                $this->guard->assertNotAlreadyParticipating($tournament, $user);
 
-                TournamentParticipant::query()->create([
+                if ($participant && $participant->status !== ParticipantStatus::Withdrawn) {
+                    throw new ConflictHttpException('Leave your current team before accepting another invitation.');
+                }
+
+                $participantData = [
                     'tournament_id' => $team->tournament_id,
                     'user_id' => $user->id,
                     'team_id' => $team->id,
@@ -54,7 +62,14 @@ class RespondToInvitation
                     'status' => ParticipantStatus::Active,
                     'registered_at' => now(),
                     'accepted_at' => now(),
-                ]);
+                    'withdrawn_at' => null,
+                ];
+
+                if ($participant) {
+                    $participant->update($participantData);
+                } else {
+                    TournamentParticipant::query()->create($participantData);
+                }
 
                 $invitation->update([
                     'status' => InvitationStatus::Accepted,

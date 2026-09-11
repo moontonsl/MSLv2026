@@ -27,12 +27,15 @@ class CampusTournamentSeederTest extends TestCase
             ->firstOrFail();
         $regionalAdmin = User::query()->where('username', 'lspu_regional_admin')->firstOrFail();
         $studentLeader = User::query()->where('username', 'lspu_student_leader')->firstOrFail();
+        $coreAdmin = User::query()->where('username', 'lspu_core_admin')->firstOrFail();
 
         $this->assertSame('043411000', $campus->city_code);
         $this->assertSame('043411010', $campus->barangay_code);
         $this->assertSame('active', $campus->status);
         $this->assertTrue(Hash::check('password', $regionalAdmin->password));
         $this->assertTrue(Hash::check('password', $studentLeader->password));
+        $this->assertTrue(Hash::check('password', $coreAdmin->password));
+        $this->assertSame('Super Admin', $coreAdmin->user_type);
 
         $this->assertDatabaseHas('region_admins', [
             'region_code' => '040000000',
@@ -57,6 +60,28 @@ class CampusTournamentSeederTest extends TestCase
             ->where('user_id', $studentLeader->id)
             ->count());
         $this->assertSame($regionalAdmin->id, RegionAdmin::query()->findOrFail('040000000')->user_id);
+        $this->assertSame(12, User::query()
+            ->where(function ($query): void {
+                $query->where('username', 'like', 'lspu_premade_%')
+                    ->orWhere('username', 'like', 'lspu_solo_player_%')
+                    ->orWhere('username', 'lspu_unverified_player');
+            })
+            ->count());
+        $this->assertSame(13, CampusAffiliation::query()
+            ->where('campus_id', $campus->id)
+            ->count());
+        $this->assertDatabaseHas('users', [
+            'username' => 'lspu_premade_captain',
+            'is_mlbb_verified' => true,
+        ]);
+        $this->assertDatabaseHas('users', [
+            'username' => 'lspu_unverified_player',
+            'email_verified_at' => null,
+            'is_mlbb_verified' => false,
+        ]);
+        $this->assertDatabaseMissing('campus_affiliations', [
+            'user_id' => User::query()->where('username', 'campus_tournament_outsider')->value('id'),
+        ]);
         $this->assertDatabaseCount('campus_tournaments', 0);
     }
 }

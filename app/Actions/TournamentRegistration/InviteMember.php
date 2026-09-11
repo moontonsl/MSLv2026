@@ -31,7 +31,6 @@ class InviteMember
             $this->guard->assertEligibleForCampus($tournament, $invitedUser);
             $this->guard->assertLaneRoleAvailable($team, $intendedLaneRoleCode);
             $this->guard->assertInvitationSlotAvailable($team, $invitedUser, $intendedLaneRoleCode);
-            $this->guard->assertNotAlreadyParticipating($tournament, $invitedUser);
 
             return TournamentTeamInvitation::query()->create([
                 'team_id' => $team->id,
