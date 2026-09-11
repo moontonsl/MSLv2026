@@ -85,13 +85,11 @@ Route::middleware(['auth'])->group(function () {
         return Inertia::render('Programs/CampusTournaments/CaptainTeam');
     })->name('campus.team');
 
-    Route::get('/Tournament/SoloPlayer', function () {
-        return Inertia::render('Programs/CampusTournaments/SoloMatchmaking');
-    })->name('campus.tournament.solo.player');
+    Route::get('/Tournament/SoloPlayer', [TournamentRegistrationController::class, 'showSoloMatchmaking'])
+        ->name('campus.tournament.solo.player');
 
-    Route::get('/Tournament/MemberInvite', function () {
-        return Inertia::render('Programs/CampusTournaments/MemberInvite');
-    })->name('campus.member.invite');
+    Route::get('/Tournament/MemberInvite', [TournamentRegistrationController::class, 'showMemberInvitations'])
+        ->name('campus.member.invite');
 
     Route::redirect('/Tournament/MemberJoin', '/Tournament/MemberInvite')->name('campus.member.join');
 });
