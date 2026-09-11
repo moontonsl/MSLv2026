@@ -351,6 +351,83 @@ class TournamentRegistrationTest extends TestCase
         )->assertForbidden();
     }
 
+    public function test_player_can_receive_other_team_invitation_then_leave_and_accept_it(): void
+    {
+        $this->actingAs($this->student)->post(
+            route('tournament.teams.store', $this->tournament),
+            ['name' => 'Team Alpha', 'assigned_lane_role_code' => 'jungler']
+        );
+        $invitingTeam = TournamentTeam::query()->where('name', 'Team Alpha')->firstOrFail();
+        $registeredPlayer = $this->createEligibleUser();
+        $otherTeam = TournamentTeam::query()->create([
+            'tournament_id' => $this->tournament->id,
+            'name' => 'Private Team',
+            'active_name' => 'Private Team',
+            'formation_method' => TeamFormationMethod::Premade,
+            'status' => TeamStatus::Assembling,
+            'captain_user_id' => $registeredPlayer->id,
+        ]);
+        TournamentParticipant::query()->create([
+            'tournament_id' => $this->tournament->id,
+            'team_id' => $otherTeam->id,
+            'user_id' => $registeredPlayer->id,
+            'entry_method' => TeamFormationMethod::Premade,
+            'roster_role' => 'captain',
+            'assigned_lane_role_code' => 'roam',
+            'status' => ParticipantStatus::Active,
+            'registered_at' => now(),
+            'accepted_at' => now(),
+        ]);
+
+        $this->actingAs($this->student)->post(
+            route('tournament.invitations.store', $invitingTeam),
+            ['user_id' => $registeredPlayer->id, 'intended_lane_role_code' => 'mid_laner']
+        )->assertRedirect();
+
+        $invitation = TournamentTeamInvitation::query()
+            ->where('team_id', $invitingTeam->id)
+            ->where('invited_user_id', $registeredPlayer->id)
+            ->firstOrFail();
+
+        $this->assertSame(InvitationStatus::Pending, $invitation->status);
+
+        $participant = TournamentParticipant::query()
+            ->where('tournament_id', $this->tournament->id)
+            ->where('user_id', $registeredPlayer->id)
+            ->firstOrFail();
+
+        $this->actingAs($registeredPlayer)->post(
+            route('tournament.invitations.respond', $invitation),
+            ['decision' => 'accepted']
+        )->assertStatus(409);
+
+        $this->assertSame(InvitationStatus::Pending, $invitation->fresh()->status);
+        $this->assertSame($otherTeam->id, $participant->fresh()->team_id);
+
+        $this->actingAs($registeredPlayer)->delete(
+            route('tournament.participants.destroy', $participant)
+        )->assertRedirect();
+
+        $this->assertSame(ParticipantStatus::Withdrawn, $participant->fresh()->status);
+
+        $this->actingAs($registeredPlayer)->post(
+            route('tournament.invitations.respond', $invitation),
+            ['decision' => 'accepted']
+        )->assertRedirect();
+
+        $participant->refresh();
+        $this->assertSame(InvitationStatus::Accepted, $invitation->fresh()->status);
+        $this->assertSame($invitingTeam->id, $participant->team_id);
+        $this->assertSame(ParticipantStatus::Active, $participant->status);
+        $this->assertSame('member', $participant->roster_role);
+        $this->assertSame('mid_laner', $participant->assigned_lane_role_code);
+        $this->assertNull($participant->withdrawn_at);
+        $this->assertSame(1, TournamentParticipant::query()
+            ->where('tournament_id', $this->tournament->id)
+            ->where('user_id', $registeredPlayer->id)
+            ->count());
+    }
+
     public function test_member_can_decline_invitation(): void
     {
         $this->actingAs($this->student)->post(
@@ -386,8 +463,6 @@ class TournamentRegistrationTest extends TestCase
             'user_id' => $invitee->id,
         ]);
     }
-
-
 
     public function test_team_auto_transitions_to_registered_when_5_lane_roles_are_filled(): void
     {
@@ -583,6 +658,21 @@ class TournamentRegistrationTest extends TestCase
         ]);
     }
 
+    public function test_unverified_player_cannot_register(): void
+    {
+        $this->student->update(['is_mlbb_verified' => false]);
+
+        $this->actingAs($this->student)->post(
+            route('tournament.participants.store', $this->tournament),
+            ['name' => 'Unverified Solo', 'preferred_lane_role_code' => 'roam']
+        )->assertSessionHasErrors('user_id');
+
+        $this->assertDatabaseMissing('tournament_participants', [
+            'tournament_id' => $this->tournament->id,
+            'user_id' => $this->student->id,
+        ]);
+    }
+
     public function test_registration_and_roster_mutations_are_rejected_outside_the_window_or_after_lock(): void
     {
         $this->tournament->update(['registration_opens_at' => now()->addHour()]);
@@ -680,6 +770,40 @@ class TournamentRegistrationTest extends TestCase
         )->assertSessionHasErrors('user_id');
     }
 
+    public function test_captain_cannot_invite_an_active_member_of_the_same_team(): void
+    {
+        $this->actingAs($this->student)->post(
+            route('tournament.teams.store', $this->tournament),
+            ['name' => 'Team Alpha', 'assigned_lane_role_code' => 'jungler']
+        );
+
+        $team = TournamentTeam::query()->firstOrFail();
+        $member = $this->createEligibleUser();
+        TournamentParticipant::query()->create([
+            'tournament_id' => $this->tournament->id,
+            'team_id' => $team->id,
+            'user_id' => $member->id,
+            'entry_method' => TeamFormationMethod::Premade,
+            'roster_role' => 'member',
+            'assigned_lane_role_code' => 'roam',
+            'status' => ParticipantStatus::Active,
+            'registered_at' => now(),
+            'accepted_at' => now(),
+        ]);
+
+        $this->actingAs($this->student)->post(
+            route('tournament.invitations.store', $team),
+            ['user_id' => $member->id, 'intended_lane_role_code' => 'mid_laner']
+        )->assertSessionHasErrors([
+            'user_id' => 'This player is already an active member of your team.',
+        ]);
+
+        $this->assertDatabaseMissing('tournament_team_invitations', [
+            'team_id' => $team->id,
+            'invited_user_id' => $member->id,
+        ]);
+    }
+
     public function test_invitation_can_be_cancelled_and_expired_invitation_cannot_be_accepted(): void
     {
         $this->actingAs($this->student)->post(
@@ -715,8 +839,6 @@ class TournamentRegistrationTest extends TestCase
             ['decision' => 'accepted']
         )->assertStatus(409);
     }
-
-
 
     public function test_only_the_five_fixed_lane_codes_are_accepted(): void
     {

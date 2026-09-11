@@ -55,6 +55,8 @@ class TournamentRegistrationGuard
     {
         $now = now();
         $eligible = $user->status === 'active'
+            && $user->hasVerifiedEmail()
+            && $user->is_mlbb_verified
             && CampusAffiliation::query()
                 ->where('campus_id', $tournament->campus_id)
                 ->where('user_id', $user->id)
@@ -69,7 +71,7 @@ class TournamentRegistrationGuard
 
         if (! $eligible) {
             throw ValidationException::withMessages([
-                'user_id' => 'An active affiliation with the tournament campus is required.',
+                'user_id' => 'An active, email-verified, MLBB-verified account affiliated with the tournament campus is required.',
             ]);
         }
     }
@@ -155,6 +157,18 @@ class TournamentRegistrationGuard
         User $invitedUser,
         string $laneRoleCode,
     ): void {
+        $alreadyOnTeam = TournamentParticipant::query()
+            ->where('team_id', $team->id)
+            ->where('user_id', $invitedUser->id)
+            ->where('status', ParticipantStatus::Active)
+            ->exists();
+
+        if ($alreadyOnTeam) {
+            throw ValidationException::withMessages([
+                'user_id' => 'This player is already an active member of your team.',
+            ]);
+        }
+
         $pendingInvitations = TournamentTeamInvitation::query()
             ->where('team_id', $team->id)
             ->where('status', InvitationStatus::Pending)
