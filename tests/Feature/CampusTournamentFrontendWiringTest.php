@@ -32,9 +32,13 @@ class CampusTournamentFrontendWiringTest extends TestCase
     use RefreshDatabase;
 
     private Campus $campus;
+
     private User $studentLeader;
+
     private User $regionalAdmin;
+
     private User $superAdmin;
+
     private User $student;
 
     protected function setUp(): void
@@ -72,7 +76,7 @@ class CampusTournamentFrontendWiringTest extends TestCase
 
         $institution = Institution::query()->create([
             'name' => 'Laguna State Polytechnic University',
-            'slug' => 'lspu-' . uniqid(),
+            'slug' => 'lspu-'.uniqid(),
             'status' => 'active',
         ]);
 
@@ -159,6 +163,71 @@ class CampusTournamentFrontendWiringTest extends TestCase
             ->assertRedirect('/Tournament/CampusTournament');
     }
 
+    public function test_solo_matchmaking_page_uses_real_open_tournament_and_team_data(): void
+    {
+        $tournament = $this->createApprovedTournament();
+        $soloTeam = TournamentTeam::query()->create([
+            'tournament_id' => $tournament->id,
+            'name' => 'Solo Alpha',
+            'active_name' => 'Solo Alpha',
+            'formation_method' => TeamFormationMethod::Solo,
+            'status' => TeamStatus::Assembling,
+            'captain_user_id' => $this->student->id,
+        ]);
+        TournamentParticipant::query()->create([
+            'tournament_id' => $tournament->id,
+            'team_id' => $soloTeam->id,
+            'user_id' => $this->student->id,
+            'entry_method' => TeamFormationMethod::Solo,
+            'roster_role' => 'captain',
+            'preferred_lane_role_code' => 'jungler',
+            'assigned_lane_role_code' => 'jungler',
+            'status' => ParticipantStatus::Active,
+            'registered_at' => now(),
+            'accepted_at' => now(),
+        ]);
+
+        $this->actingAs($this->student)
+            ->get(route('campus.tournament.solo.player', ['tournament' => $tournament->id]))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Programs/CampusTournaments/SoloMatchmaking')
+                ->where('tournament.id', $tournament->id)
+                ->where('tournament.title', 'LSPU Championship')
+                ->where('canCreateTeam', false)
+                ->has('availableTournaments', 1)
+                ->has('teams', 1)
+                ->where('teams.0.id', $soloTeam->id)
+                ->where('teams.0.joined', true)
+                ->where('teams.0.locked_lane_role', 'jungler')
+                ->where('teams.0.participant_id', fn ($value) => is_int($value))
+            );
+    }
+
+    public function test_solo_matchmaking_page_has_an_empty_state_without_an_open_tournament(): void
+    {
+        $this->actingAs($this->student)
+            ->get(route('campus.tournament.solo.player'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Programs/CampusTournaments/SoloMatchmaking')
+                ->where('tournament', null)
+                ->where('canCreateTeam', false)
+                ->has('availableTournaments', 0)
+                ->has('teams', 0)
+            );
+    }
+
+    public function test_solo_matchmaking_rejects_a_tournament_outside_the_users_campus(): void
+    {
+        $tournament = $this->createApprovedTournament();
+        $outsider = User::factory()->create(['status' => 'active']);
+
+        $this->actingAs($outsider)
+            ->get(route('campus.tournament.solo.player', ['tournament' => $tournament->id]))
+            ->assertNotFound();
+    }
+
     public function test_active_captain_redirects_to_captain_team(): void
     {
         $tournament = $this->createApprovedTournament();
@@ -225,11 +294,123 @@ class CampusTournamentFrontendWiringTest extends TestCase
             'invited_by_user_id' => $captain->id,
             'intended_lane_role_code' => 'roam',
             'status' => InvitationStatus::Pending,
+            'expires_at' => now()->addDay(),
         ]);
 
         $this->actingAs($this->student)
             ->get(route('campus.tournament'))
             ->assertRedirect('/Tournament/MemberInvite');
+    }
+
+    public function test_member_invitation_page_uses_real_pending_invitation_data(): void
+    {
+        $tournament = $this->createApprovedTournament();
+        $captain = User::factory()->create([
+            'status' => 'active',
+            'name' => 'Captain One',
+            'ml_ign' => 'CAPTAINIGN',
+        ]);
+        $team = TournamentTeam::query()->create([
+            'tournament_id' => $tournament->id,
+            'name' => 'Team Beta',
+            'active_name' => 'Team Beta',
+            'formation_method' => TeamFormationMethod::Premade,
+            'status' => TeamStatus::Assembling,
+            'captain_user_id' => $captain->id,
+        ]);
+        TournamentParticipant::query()->create([
+            'tournament_id' => $tournament->id,
+            'team_id' => $team->id,
+            'user_id' => $captain->id,
+            'entry_method' => TeamFormationMethod::Premade,
+            'roster_role' => 'captain',
+            'assigned_lane_role_code' => 'jungler',
+            'status' => ParticipantStatus::Active,
+            'registered_at' => now(),
+            'accepted_at' => now(),
+        ]);
+        $invitation = TournamentTeamInvitation::query()->create([
+            'team_id' => $team->id,
+            'invited_user_id' => $this->student->id,
+            'invited_by_user_id' => $captain->id,
+            'intended_lane_role_code' => 'roam',
+            'status' => InvitationStatus::Pending,
+            'expires_at' => now()->addDay(),
+        ]);
+
+        $this->actingAs($this->student)
+            ->get(route('campus.member.invite'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Programs/CampusTournaments/MemberInvite')
+                ->has('invitations', 1)
+                ->where('invitations.0.id', $invitation->id)
+                ->where('invitations.0.laneRoleCode', 'roam')
+                ->where('invitations.0.team.name', 'Team Beta')
+                ->where('invitations.0.team.captain.name', 'Captain One')
+            );
+    }
+
+    public function test_expired_invitation_is_not_shown_or_used_for_role_redirect(): void
+    {
+        $tournament = $this->createApprovedTournament();
+        $captain = User::factory()->create(['status' => 'active']);
+        $team = TournamentTeam::query()->create([
+            'tournament_id' => $tournament->id,
+            'name' => 'Expired Team',
+            'active_name' => 'Expired Team',
+            'formation_method' => TeamFormationMethod::Premade,
+            'status' => TeamStatus::Assembling,
+            'captain_user_id' => $captain->id,
+        ]);
+        TournamentTeamInvitation::query()->create([
+            'team_id' => $team->id,
+            'invited_user_id' => $this->student->id,
+            'invited_by_user_id' => $captain->id,
+            'intended_lane_role_code' => 'roam',
+            'status' => InvitationStatus::Pending,
+            'expires_at' => now()->subMinute(),
+        ]);
+
+        $this->actingAs($this->student)
+            ->get(route('campus.member.invite'))
+            ->assertInertia(fn (Assert $page) => $page->has('invitations', 0));
+
+        $this->actingAs($this->student)
+            ->get(route('campus.tournament'))
+            ->assertRedirect('/Tournament/CampusTournament');
+    }
+
+    public function test_invitation_for_closed_registration_is_not_shown(): void
+    {
+        $tournament = $this->createApprovedTournament();
+        $tournament->update([
+            'registration_opens_at' => now()->subDays(2),
+            'registration_closes_at' => now()->subDay(),
+            'starts_at' => now()->addDay(),
+            'ends_at' => now()->addDays(2),
+        ]);
+        $captain = User::factory()->create(['status' => 'active']);
+        $team = TournamentTeam::query()->create([
+            'tournament_id' => $tournament->id,
+            'name' => 'Closed Registration Team',
+            'active_name' => 'Closed Registration Team',
+            'formation_method' => TeamFormationMethod::Premade,
+            'status' => TeamStatus::Assembling,
+            'captain_user_id' => $captain->id,
+        ]);
+        TournamentTeamInvitation::query()->create([
+            'team_id' => $team->id,
+            'invited_user_id' => $this->student->id,
+            'invited_by_user_id' => $captain->id,
+            'intended_lane_role_code' => 'roam',
+            'status' => InvitationStatus::Pending,
+            'expires_at' => now()->addDay(),
+        ]);
+
+        $this->actingAs($this->student)
+            ->get(route('campus.member.invite'))
+            ->assertInertia(fn (Assert $page) => $page->has('invitations', 0));
     }
 
     public function test_organizer_view_renders_inertia_with_proper_props(): void

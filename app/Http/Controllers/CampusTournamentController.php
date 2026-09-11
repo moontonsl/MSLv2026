@@ -96,6 +96,7 @@ class CampusTournamentController extends Controller
             $pendingInvite = TournamentTeamInvitation::query()
                 ->where('invited_user_id', $user->id)
                 ->where('status', InvitationStatus::Pending)
+                ->where('expires_at', '>', now())
                 ->whereHas('team', function ($teamQuery) use ($activeTournamentIds) {
                     $teamQuery->whereIn('tournament_id', $activeTournamentIds);
                 })
@@ -330,6 +331,7 @@ class CampusTournamentController extends Controller
             'isReviewer' => $isReviewer,
         ]);
     }
+
     public function store(StoreCampusTournamentRequest $request, CreateCampusTournament $action): RedirectResponse
     {
         $campus = Campus::query()->findOrFail($request->integer('campus_id'));
