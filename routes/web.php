@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminManagementController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CampusTournamentController;
+use App\Http\Controllers\TournamentRegistrationController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student\StudentPortalController;
@@ -22,10 +24,6 @@ Route::get('/About', function () {
     return Inertia::render('About');
 })->name('about');
 Route::redirect('/about', '/About');
-
-Route::get('/report-violation', function () {
-    return Inertia::render('SafeSpaces/ReportViolation');
-})->name('report.violation');
 
 Route::get('/Contents&SocialMedia', function () {
     return Inertia::render('ContentMedia');
@@ -58,49 +56,43 @@ Route::redirect('/about/campus', '/Campus');
 | Campus Tournament UI pages (Evren / Figma rebuild — legacy MSL-1 URLs)
 |--------------------------------------------------------------------------
 */
-Route::get('/campus-tournament', function () {
-    return redirect()->route('campus.tournament.sl');
-})->name('campus.tournament');
-
-Route::get('/Tournament/SL', function () {
-    return Inertia::render('Programs/CampusTournaments/SlView');
-})->name('campus.tournament.sl');
-
-Route::get('/Tournament/RegionalAdmin', function () {
-    return Inertia::render('Programs/CampusTournaments/RaView');
-})->name('campus.tournament.regionaladmin');
-
 Route::get('/campus-tournament/public', function () {
     return Inertia::render('Programs/CampusTournaments/SlView');
 })->name('campus.tournament.public');
 
-Route::get('/Tournament/Organizer', function () {
-    return Inertia::render('Programs/CampusTournaments/OrganizerView');
-})->name('campus.tournament.organizer');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/campus-tournament', [CampusTournamentController::class, 'redirectByRole'])
+        ->name('campus.tournament');
 
-Route::get('/Tournament/CampusTournament', function () {
-    return Inertia::render('Programs/CampusTournaments/CaptainHub');
-})->name('campus.captainregistration');
+    Route::get('/Tournament/SL', [CampusTournamentController::class, 'indexSl'])
+        ->name('campus.tournament.sl');
 
-Route::get('/Tournament/CampusTournamentReg', function () {
-    return Inertia::render('Programs/CampusTournaments/CaptainRegister');
-})->name('campus.teamregistration');
+    Route::get('/Tournament/RegionalAdmin', [CampusTournamentController::class, 'indexSl'])
+        ->name('campus.tournament.regionaladmin');
 
-Route::get('/Tournament/CampusTournamentTeam', function () {
-    return Inertia::render('Programs/CampusTournaments/CaptainTeam');
-})->name('campus.team');
+    Route::get('/Tournament/Organizer', [CampusTournamentController::class, 'indexOrganizer'])
+        ->name('campus.tournament.organizer');
 
-Route::get('/Tournament/SoloPlayer', function () {
-    return Inertia::render('Programs/CampusTournaments/SoloMatchmaking');
-})->name('campus.tournament.solo.player');
+    Route::get('/Tournament/CampusTournament', [TournamentRegistrationController::class, 'showCaptainHub'])
+        ->name('campus.captainregistration');
 
-Route::get('/Tournament/MemberInvite', function () {
-    return Inertia::render('Programs/CampusTournaments/MemberInvite');
-})->name('campus.member.invite');
+    Route::get('/Tournament/CampusTournamentReg', [TournamentRegistrationController::class, 'showCaptainRegistration'])
+        ->name('campus.teamregistration');
 
-Route::get('/Tournament/MemberJoin', function () {
-    return Inertia::render('Programs/CampusTournaments/MemberJoinCode');
-})->name('campus.member.join');
+    Route::get('/Tournament/CampusTournamentTeam', [TournamentRegistrationController::class, 'showCaptainTeam'])
+        ->name('campus.team');
+
+    Route::get('/school-players', [TournamentRegistrationController::class, 'searchSchoolPlayers'])
+        ->name('campus.school-players');
+
+    Route::get('/Tournament/SoloPlayer', [TournamentRegistrationController::class, 'showSoloMatchmaking'])
+        ->name('campus.tournament.solo.player');
+
+    Route::get('/Tournament/MemberInvite', [TournamentRegistrationController::class, 'showMemberInvitations'])
+        ->name('campus.member.invite');
+
+    Route::redirect('/Tournament/MemberJoin', '/Tournament/MemberInvite')->name('campus.member.join');
+});
 
 /** Compatibility redirects from earlier /programs/... CT paths */
 Route::redirect('/programs/campus-tournaments', '/Tournament/Organizer');
@@ -111,7 +103,7 @@ Route::redirect('/programs/campus-tournaments/captain/team', '/Tournament/Campus
 Route::redirect('/programs/campus-tournaments/captain/join', '/Tournament/SoloPlayer');
 Route::redirect('/programs/campus-tournaments/solo', '/Tournament/SoloPlayer');
 Route::redirect('/programs/campus-tournaments/member', '/Tournament/MemberInvite');
-Route::redirect('/programs/campus-tournaments/member/join', '/Tournament/MemberJoin');
+Route::redirect('/programs/campus-tournaments/member/join', '/Tournament/MemberInvite');
 Route::redirect('/sl/campus-tournament', '/Tournament/SL');
 Route::redirect('/captain/campus-tournament', '/Tournament/CampusTournament');
 Route::redirect('/member/campus-tournament', '/Tournament/MemberInvite');
@@ -138,6 +130,13 @@ Route::redirect('/about/general-affairs', '/GeneralAffairs');
 
 Route::redirect('/Login', '/login')->name('Login');
 
+/** Login Page for Internal temporary to view */
+Route::get('/admin', function () {
+    return Inertia::render('Auth/AdminLogin');
+})->name('admin.login');
+
+/** */
+
 /** Admin CMS pages from Evren branch */
 Route::get('/admin/account-creation', function () {
     return Inertia::render('Admin/AccountCreation');
@@ -154,6 +153,23 @@ Route::get('/admin/faq', function () {
 Route::get('/admin/news-updates', function () {
     return Inertia::render('Admin/NewsUpdates');
 })->name('admin.news-updates');
+
+Route::get('/admin/account-management', function () {
+    return Inertia::render('Admin/AccountManagement');
+})->name('admin.account-management');
+
+Route::get('/admin/registration-management', function () {
+   return Inertia::render('Admin/RegistrationManagement');
+})->name('admin.registration-management');
+
+Route::get('/admin/event-management', function () {
+    return Inertia::render('Admin/EventManagement');
+})->name('admin.event-management');
+
+Route::get('/admin/regional-admin', function () {
+    return Inertia::render('Admin/RegionalAdmin');
+})->name('admin.regional-admin');
+
 
 Route::get('/SL-Admin', function () {
     return Inertia::render('SL-Admin/Index');
@@ -193,6 +209,24 @@ Route::middleware('auth')->group(function () {
         ->name('campus-tournaments.reject');
     Route::delete('/campus-tournaments/{tournament}', [CampusTournamentController::class, 'destroy'])
         ->name('campus-tournaments.destroy');
+
+    // Tournament team registration
+    Route::post('/campus-tournaments/{tournament}/teams', [TournamentRegistrationController::class, 'store'])
+        ->name('tournament.teams.store');
+    Route::post('/campus-tournaments/{tournament}/participants', [TournamentRegistrationController::class, 'storeSolo'])
+        ->name('tournament.participants.store');
+    Route::get('/campus-tournaments/{tournament}/solo-teams', [TournamentRegistrationController::class, 'indexSoloTeams'])
+        ->name('tournament.solo-teams.index');
+    Route::post('/tournament-teams/{team}/invitations', [TournamentRegistrationController::class, 'storeInvitation'])
+        ->name('tournament.invitations.store');
+    Route::post('/tournament-teams/{team}/solo-participants', [TournamentRegistrationController::class, 'joinSoloTeam'])
+        ->name('tournament.solo-teams.join');
+    Route::post('/tournament-invitations/{invitation}/respond', [TournamentRegistrationController::class, 'respond'])
+        ->name('tournament.invitations.respond');
+    Route::delete('/tournament-invitations/{invitation}', [TournamentRegistrationController::class, 'destroyInvitation'])
+        ->name('tournament.invitations.destroy');
+    Route::delete('/tournament-participants/{participant}', [TournamentRegistrationController::class, 'destroy'])
+        ->name('tournament.participants.destroy');
 });
 
 // Protect the student portal with active student checks
@@ -356,7 +390,6 @@ Route::get('/Testpage', function () {
 Route::get('/ForgotPassword', function () {
     return Inertia::render('Login/components/ForgotPassword');
 })->name('reset.password');
-Route::redirect('/forgot-password', '/ForgotPassword');
 
 Route::get('/ForgotUsername', function () {
     return Inertia::render('Login/components/ForgotUsername');

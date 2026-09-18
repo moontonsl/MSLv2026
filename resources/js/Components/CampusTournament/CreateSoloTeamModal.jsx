@@ -1,27 +1,35 @@
-import BaseModal from '@/Components/Admin/BaseModal';
-import { MODAL_SUBMIT_FOOTER_CLASS } from '@/Components/Admin/adminModalFormStyles';
-import { SOLO_ROLE_OPTIONS } from '@/data/campusTournamentCaptainData';
-import { useEffect, useId, useState } from 'react';
+import BaseModal from "@/Components/Admin/BaseModal";
+import { MODAL_SUBMIT_FOOTER_CLASS } from "@/Components/Admin/adminModalFormStyles";
+import { SOLO_ROLE_OPTIONS } from "@/data/campusTournamentCaptainData";
+import { useEffect, useId, useState } from "react";
 
 const INPUT_CLASS =
-    'w-full min-h-[44px] rounded-lg border border-neutral-700 bg-[#0a0a0a] px-4 py-3 text-base text-white outline-none transition-shadow placeholder:text-gray-600 focus:ring-2 focus:ring-yellow-500 md:text-sm';
+    "w-full min-h-[44px] rounded-lg border border-neutral-700 bg-[#0a0a0a] px-4 py-3 text-base text-white outline-none transition-shadow placeholder:text-gray-600 focus:ring-2 focus:ring-yellow-500 md:text-sm";
 
 /**
  * @param {{
  *   isOpen: boolean;
+ *   processing?: boolean;
+ *   error?: string | null;
  *   onClose: () => void;
  *   onSubmit: (values: { teamName: string; role: string }) => void;
  * }} props
  */
-export default function CreateSoloTeamModal({ isOpen, onClose, onSubmit }) {
+export default function CreateSoloTeamModal({
+    isOpen,
+    processing = false,
+    error = null,
+    onClose,
+    onSubmit,
+}) {
     const formId = useId();
-    const [teamName, setTeamName] = useState('');
-    const [role, setRole] = useState('');
+    const [teamName, setTeamName] = useState("");
+    const [role, setRole] = useState("");
 
     useEffect(() => {
         if (!isOpen) return;
-        setTeamName('');
-        setRole('');
+        setTeamName("");
+        setRole("");
     }, [isOpen]);
 
     const handleSubmit = (event) => {
@@ -37,8 +45,13 @@ export default function CreateSoloTeamModal({ isOpen, onClose, onSubmit }) {
             hideHeader
             maxWidth="max-w-md"
             footer={
-                <button type="submit" form={formId} className={MODAL_SUBMIT_FOOTER_CLASS}>
-                    Create Team
+                <button
+                    type="submit"
+                    form={formId}
+                    disabled={processing}
+                    className={`${MODAL_SUBMIT_FOOTER_CLASS} disabled:cursor-not-allowed disabled:opacity-60`}
+                >
+                    {processing ? "Creating…" : "Create Team"}
                 </button>
             }
         >
@@ -50,16 +63,30 @@ export default function CreateSoloTeamModal({ isOpen, onClose, onSubmit }) {
                     Start a new matchmaking team for your school
                 </p>
 
-                <form id={formId} onSubmit={handleSubmit} className="mt-6 space-y-5">
+                <form
+                    id={formId}
+                    onSubmit={handleSubmit}
+                    className="mt-6 space-y-5"
+                >
+                    {error && (
+                        <p className="rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+                            {error}
+                        </p>
+                    )}
                     <div>
-                        <label htmlFor="solo-team-name" className="mb-2 block text-sm text-white">
+                        <label
+                            htmlFor="solo-team-name"
+                            className="mb-2 block text-sm text-white"
+                        >
                             Team Name <span className="text-red-500">*</span>
                         </label>
                         <input
                             id="solo-team-name"
                             type="text"
                             value={teamName}
-                            onChange={(event) => setTeamName(event.target.value)}
+                            onChange={(event) =>
+                                setTeamName(event.target.value)
+                            }
                             placeholder="Enter Team Name"
                             required
                             className={INPUT_CLASS}
@@ -67,8 +94,12 @@ export default function CreateSoloTeamModal({ isOpen, onClose, onSubmit }) {
                     </div>
 
                     <div>
-                        <label htmlFor="solo-role" className="mb-2 block text-sm text-white">
-                            Select your role <span className="text-red-500">*</span>
+                        <label
+                            htmlFor="solo-role"
+                            className="mb-2 block text-sm text-white"
+                        >
+                            Select your role{" "}
+                            <span className="text-red-500">*</span>
                         </label>
                         <select
                             id="solo-role"
@@ -93,9 +124,11 @@ export default function CreateSoloTeamModal({ isOpen, onClose, onSubmit }) {
                     </div>
 
                     <p className="text-sm leading-relaxed text-gray-400">
-                        <span className="font-semibold text-yellow-500">Note:</span> Incomplete
-                        rosters will be merged, roles will be randomly assigned once registration
-                        locks.
+                        <span className="font-semibold text-yellow-500">
+                            Note:
+                        </span>{" "}
+                        Incomplete rosters will be merged, roles will be
+                        randomly assigned once registration locks.
                     </p>
                 </form>
             </div>

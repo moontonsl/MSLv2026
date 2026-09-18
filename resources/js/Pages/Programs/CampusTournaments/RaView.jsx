@@ -13,9 +13,25 @@ import {
     YEAR_OPTIONS,
 } from '@/data/campusTournamentData';
 import MainLayout from '@/Layouts/MainLayout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { Search } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+/** The controller sends roster teams, so registration stats are derived here. */
+function withRegistrationStats(tournament) {
+    const rosterTeams = tournament.rosterTeams ?? [];
+
+    return {
+        ...tournament,
+        verifiedTeams:
+            tournament.verifiedTeams ??
+            rosterTeams.filter((team) => team.status === 'confirmed').length,
+        pendingTeams:
+            tournament.pendingTeams ??
+            rosterTeams.filter((team) => team.status !== 'confirmed').length,
+        totalRegistration: tournament.totalRegistration ?? rosterTeams.length,
+    };
+}
 
 const SEARCH_CLASS =
     'w-full min-h-[44px] rounded-lg border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-10 pr-4 text-base text-white placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none md:text-sm';
@@ -27,9 +43,22 @@ const SELECT_CLASS =
  * Regional Admin view — approves incoming SL tournament requests and manages
  * the approved tournaments (view, reschedule, delete).
  */
-export default function RaView() {
-    const [requests, setRequests] = useState(INITIAL_SL_TOURNAMENT_REQUESTS);
-    const [tournaments, setTournaments] = useState(INITIAL_RA_MANAGED_TOURNAMENTS);
+export default function RaView({
+    approvalRequests: initialRequests = INITIAL_SL_TOURNAMENT_REQUESTS,
+    tournaments: initialTournaments = INITIAL_RA_MANAGED_TOURNAMENTS,
+}) {
+    const [requests, setRequests] = useState(initialRequests);
+    const [tournaments, setTournaments] = useState(() =>
+        initialTournaments.map(withRegistrationStats),
+    );
+
+    useEffect(() => {
+        setRequests(initialRequests);
+    }, [initialRequests]);
+
+    useEffect(() => {
+        setTournaments(initialTournaments.map(withRegistrationStats));
+    }, [initialTournaments]);
 
     const [statusTab, setStatusTab] = useState('ongoing');
     const [search, setSearch] = useState('');
@@ -44,6 +73,7 @@ export default function RaView() {
     const [activeRequest, setActiveRequest] = useState(null);
 
     const [rescheduleTarget, setRescheduleTarget] = useState(null);
+    const [rescheduleError, setRescheduleError] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
 
     const [successOpen, setSuccessOpen] = useState(false);
@@ -106,6 +136,36 @@ export default function RaView() {
     const handleConfirmAction = useCallback(() => {
         if (!activeRequest || !confirmAction) return;
 
+        const isApprove = confirmAction === 'approve';
+        const requestId = activeRequest.id;
+        const isPersisted =
+            typeof requestId === 'number' || !String(requestId).startsWith('sl-req-');
+
+        if (isPersisted) {
+            router.post(
+                `/campus-tournaments/${requestId}/${isApprove ? 'approve' : 'reject'}`,
+                { reason: isApprove ? 'Approved by Regional Admin' : 'Rejected by Regional Admin' },
+                {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        setConfirmOpen(false);
+                        setActiveRequest(null);
+                        setConfirmAction(null);
+                        showSuccess(
+                            isApprove
+                                ? 'Tournament Approved Successfully!'
+                                : 'Tournament Rejected',
+                            isApprove
+                                ? 'The tournament request has been approved and is now available for student registration'
+                                : 'The tournament request has been rejected.',
+                        );
+                    },
+                    onError: (errors) => console.error(errors),
+                },
+            );
+            return;
+        }
+
         setRequests((prev) => prev.filter((item) => item.id !== activeRequest.id));
 
         if (confirmAction === 'approve') {
@@ -140,21 +200,55 @@ export default function RaView() {
     const handleReschedule = useCallback(
         (values) => {
             if (!rescheduleTarget) return;
+            setRescheduleError(null);
 
-            setTournaments((prev) =>
-                prev.map((item) =>
-                    item.id === rescheduleTarget.id
-                        ? {
-                              ...item,
-                              startDate: values.startDate,
-                              endDate: values.endDate,
-                              mode: values.mode,
-                          }
-                        : item,
-                ),
+            const applyLocally = () => {
+                setTournaments((prev) =>
+                    prev.map((item) =>
+                        item.id === rescheduleTarget.id
+                            ? {
+                                  ...item,
+                                  startDate: values.startDate,
+                                  endDate: values.endDate,
+                                  mode: values.mode,
+                              }
+                            : item,
+                    ),
+                );
+                setRescheduleTarget(null);
+                showSuccess(
+                    'Tournament Updated Successfully!',
+                    'The new schedule has been saved.',
+                );
+            };
+
+            if (typeof rescheduleTarget.id === 'string' && rescheduleTarget.id.startsWith('ra-')) {
+                applyLocally();
+                return;
+            }
+
+            router.put(
+                `/campus-tournaments/${rescheduleTarget.id}/resubmit`,
+                { ...values, resubmission_reason: 'Rescheduled by Regional Admin.' },
+                {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        setRescheduleTarget(null);
+                        setRescheduleError(null);
+                        showSuccess(
+                            'Tournament Updated Successfully!',
+                            'The new schedule has been saved.',
+                        );
+                    },
+                    onError: (errors) => {
+                        console.error(errors);
+                        setRescheduleError(
+                            Object.values(errors || {})[0] ||
+                                'Failed to reschedule this tournament.',
+                        );
+                    },
+                },
             );
-            setRescheduleTarget(null);
-            showSuccess('Tournament Updated Successfully!', 'The new schedule has been saved.');
         },
         [rescheduleTarget, showSuccess],
     );
@@ -162,9 +256,26 @@ export default function RaView() {
     const confirmDelete = useCallback(() => {
         if (!deleteTarget) return;
 
-        setTournaments((prev) => prev.filter((item) => item.id !== deleteTarget.id));
-        setDeleteTarget(null);
-        showSuccess('Data has been deleted!');
+        const removeLocally = () => {
+            setTournaments((prev) => prev.filter((item) => item.id !== deleteTarget.id));
+            setDeleteTarget(null);
+            showSuccess('Data has been deleted!');
+        };
+
+        if (typeof deleteTarget.id === 'string' && deleteTarget.id.startsWith('ra-')) {
+            removeLocally();
+            return;
+        }
+
+        router.delete(`/campus-tournaments/${deleteTarget.id}`, {
+            data: { reason: 'Cancelled by Regional Admin' },
+            preserveScroll: true,
+            onSuccess: () => {
+                setDeleteTarget(null);
+                showSuccess('Data has been deleted!');
+            },
+            onError: removeLocally,
+        });
     }, [deleteTarget, showSuccess]);
 
     return (
@@ -343,7 +454,11 @@ export default function RaView() {
                 isOpen={rescheduleTarget != null}
                 mode="edit"
                 initialValues={rescheduleTarget}
-                onClose={() => setRescheduleTarget(null)}
+                error={rescheduleError}
+                onClose={() => {
+                    setRescheduleTarget(null);
+                    setRescheduleError(null);
+                }}
                 onSubmit={handleReschedule}
             />
 

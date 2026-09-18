@@ -6,6 +6,7 @@ import SlTournamentPanel from '@/Components/CampusTournament/SlTournamentPanel';
 import DeleteConfirmationModal from '@/Components/Admin/DeleteConfirmationModal';
 import SuccessModal from '@/Components/Admin/SuccessModal';
 import {
+    getPlacementSummary,
     INITIAL_PENDING_REQUESTS,
     INITIAL_REJECTED_REQUESTS,
     INITIAL_SL_MANAGED_TOURNAMENTS,
@@ -14,9 +15,9 @@ import {
     YEAR_OPTIONS,
 } from '@/data/campusTournamentData';
 import MainLayout from '@/Layouts/MainLayout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { FilePlus2, Search } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const SEARCH_CLASS =
     'w-full min-h-[44px] rounded-lg border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-10 pr-4 text-base text-white placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none md:text-sm';
@@ -24,10 +25,32 @@ const SEARCH_CLASS =
 const SELECT_CLASS =
     'min-h-[44px] w-full rounded-lg border border-neutral-800 bg-[#1a1a1a] px-3 py-2.5 text-base text-white outline-none focus:ring-2 focus:ring-yellow-500 md:w-auto md:min-w-[120px] md:text-sm';
 
-export default function SlView() {
-    const [pendingCreates, setPendingCreates] = useState(INITIAL_PENDING_REQUESTS);
-    const [rejectedRequests, setRejectedRequests] = useState(INITIAL_REJECTED_REQUESTS);
-    const [tournaments, setTournaments] = useState(INITIAL_SL_MANAGED_TOURNAMENTS);
+export default function SlView({
+    approvalRequests: initialApprovals = INITIAL_PENDING_REQUESTS,
+    rejectedRequests: initialRejected = INITIAL_REJECTED_REQUESTS,
+    pendingCreates: initialPendingCreates = [],
+    tournaments: initialTournaments = INITIAL_SL_MANAGED_TOURNAMENTS,
+}) {
+    const [approvalRequests, setApprovalRequests] = useState(initialApprovals);
+    const [rejectedRequests, setRejectedRequests] = useState(initialRejected);
+    const [pendingCreates, setPendingCreates] = useState(initialPendingCreates);
+    const [tournaments, setTournaments] = useState(initialTournaments);
+
+    useEffect(() => {
+        setApprovalRequests(initialApprovals);
+    }, [initialApprovals]);
+
+    useEffect(() => {
+        setRejectedRequests(initialRejected);
+    }, [initialRejected]);
+
+    useEffect(() => {
+        setPendingCreates(initialPendingCreates);
+    }, [initialPendingCreates]);
+
+    useEffect(() => {
+        setTournaments(initialTournaments);
+    }, [initialTournaments]);
 
     const [statusTab, setStatusTab] = useState('upcoming');
     const [search, setSearch] = useState('');
@@ -37,7 +60,9 @@ export default function SlView() {
     const [showOnsite, setShowOnsite] = useState(true);
 
     const [createOpen, setCreateOpen] = useState(false);
+    const [createError, setCreateError] = useState(null);
     const [editRequest, setEditRequest] = useState(null);
+    const [editError, setEditError] = useState(null);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [pendingDelete, setPendingDelete] = useState(null);
 
@@ -49,6 +74,23 @@ export default function SlView() {
     const [successOpen, setSuccessOpen] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [successDescription, setSuccessDescription] = useState('');
+
+    /** Own submissions awaiting Regional Admin review, plus anything queued locally. */
+    const pendingItems = useMemo(
+        () => [
+            ...pendingCreates,
+            ...approvalRequests.map((item) => ({
+                id: item.id,
+                title:
+                    item.title ??
+                    `${(item.schoolName ?? 'Campus').toUpperCase()} TOURNAMENT`,
+                startDate: item.startDate,
+                endDate: item.endDate,
+                mode: item.mode ?? item.type,
+            })),
+        ],
+        [approvalRequests, pendingCreates],
+    );
 
     const tabCounts = useMemo(
         () => ({
@@ -93,8 +135,37 @@ export default function SlView() {
         if (!pendingDelete) return;
         const { source, id } = pendingDelete;
 
+        if (typeof id === 'number' || (!String(id).startsWith('pending-') && !String(id).startsWith('rejected-'))) {
+            router.delete(`/campus-tournaments/${id}`, {
+                data: { reason: 'Cancelled by user' },
+                preserveScroll: true,
+                onSuccess: () => {
+                    setDeleteOpen(false);
+                    setPendingDelete(null);
+                    setSuccessMessage('Data has been deleted!');
+                    setSuccessDescription('');
+                    setSuccessOpen(true);
+                },
+                onError: () => {
+                    if (source === 'pending') {
+                        setPendingCreates((prev) => prev.filter((item) => item.id !== id));
+                        setApprovalRequests((prev) => prev.filter((item) => item.id !== id));
+                    } else if (source === 'rejected') {
+                        setRejectedRequests((prev) => prev.filter((item) => item.id !== id));
+                    }
+                    setDeleteOpen(false);
+                    setPendingDelete(null);
+                    setSuccessMessage('Data has been deleted!');
+                    setSuccessDescription('');
+                    setSuccessOpen(true);
+                },
+            });
+            return;
+        }
+
         if (source === 'pending') {
             setPendingCreates((prev) => prev.filter((item) => item.id !== id));
+            setApprovalRequests((prev) => prev.filter((item) => item.id !== id));
         } else if (source === 'rejected') {
             setRejectedRequests((prev) => prev.filter((item) => item.id !== id));
         }
@@ -107,44 +178,59 @@ export default function SlView() {
     }, [pendingDelete]);
 
     const handleCreateSubmit = useCallback((values) => {
-        setPendingCreates((prev) => [
-            {
-                id: `pending-${Date.now()}`,
-                title: 'NEW CAMPUS TOURNAMENT',
-                startDate: values.startDate,
-                endDate: values.endDate,
-                mode: values.mode,
-                status: 'pending',
+        setCreateError(null);
+        router.post('/campus-tournaments', values, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setCreateOpen(false);
+                setCreateError(null);
+                setSuccessMessage('Tournament Request Submitted!');
+                setSuccessDescription('Your tournament request has been submitted for approval.');
+                setSuccessOpen(true);
             },
-            ...prev,
-        ]);
-        setCreateOpen(false);
-        setSuccessMessage('Successfully Added!');
-        setSuccessDescription('');
-        setSuccessOpen(true);
+            onError: (errors) => {
+                console.error(errors);
+                const message =
+                    errors?.registration_opens_at ||
+                    errors?.ends_at ||
+                    errors?.starts_at ||
+                    Object.values(errors || {})[0] ||
+                    'Failed to create tournament. Please check your inputs.';
+                setCreateError(message);
+            },
+        });
     }, []);
 
-    /** Resubmitting a rejected request moves it back to Pending with the new schedule. */
+    /** Editing a rejected request resubmits it for approval with the new schedule. */
     const handleEditSubmit = useCallback(
         (values) => {
             if (!editRequest) return;
+            setEditError(null);
 
-            setRejectedRequests((prev) => prev.filter((item) => item.id !== editRequest.id));
-            setPendingCreates((prev) => [
-                {
-                    ...editRequest,
-                    id: `pending-${Date.now()}`,
-                    startDate: values.startDate,
-                    endDate: values.endDate,
-                    mode: values.mode,
-                    status: 'pending',
+            const payload = {
+                ...values,
+                resubmission_reason: 'Resubmitted with an updated schedule.',
+            };
+
+            router.put(`/campus-tournaments/${editRequest.id}/resubmit`, payload, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setEditRequest(null);
+                    setEditError(null);
+                    setSuccessMessage('Tournament Request Resubmitted!');
+                    setSuccessDescription(
+                        'Your request is waiting for Regional Admin approval again.',
+                    );
+                    setSuccessOpen(true);
                 },
-                ...prev,
-            ]);
-            setEditRequest(null);
-            setSuccessMessage('Tournament Updated Successfully!');
-            setSuccessDescription('Your request has been resubmitted for approval.');
-            setSuccessOpen(true);
+                onError: (errors) => {
+                    console.error(errors);
+                    setEditError(
+                        Object.values(errors || {})[0] ||
+                            'Failed to resubmit tournament. Please check your inputs.',
+                    );
+                },
+            });
         },
         [editRequest],
     );
@@ -222,11 +308,11 @@ export default function SlView() {
 
                     <RequestSection
                         title="Pending Requests"
-                        count={pendingCreates.length}
+                        count={pendingItems.length}
                         countLabel="Pending"
                         emptyMessage="No pending tournament requests."
                         variant="pending"
-                        items={pendingCreates}
+                        items={pendingItems}
                         onDelete={(id) => requestDelete('pending', id)}
                     />
 
@@ -238,7 +324,10 @@ export default function SlView() {
                         variant="rejected"
                         items={rejectedRequests}
                         onDelete={(id) => requestDelete('rejected', id)}
-                        onEdit={setEditRequest}
+                        onEdit={(item) => {
+                            setEditError(null);
+                            setEditRequest(item);
+                        }}
                     />
 
                     <div className="space-y-4 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-5">
@@ -371,16 +460,24 @@ export default function SlView() {
 
             <CreateTournamentModal
                 isOpen={createOpen}
-                onClose={() => setCreateOpen(false)}
+                onClose={() => {
+                    setCreateOpen(false);
+                    setCreateError(null);
+                }}
                 onSubmit={handleCreateSubmit}
+                error={createError}
             />
 
             <CreateTournamentModal
                 isOpen={editRequest != null}
                 mode="edit"
                 initialValues={editRequest}
-                onClose={() => setEditRequest(null)}
+                onClose={() => {
+                    setEditRequest(null);
+                    setEditError(null);
+                }}
                 onSubmit={handleEditSubmit}
+                error={editError}
             />
 
             <ConfirmResultsModal

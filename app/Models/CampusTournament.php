@@ -130,4 +130,33 @@ class CampusTournament extends Model
     {
         return $this->belongsTo(User::class, 'cancelled_by_user_id');
     }
+
+    public function teams(): HasMany
+    {
+        return $this->hasMany(TournamentTeam::class, 'tournament_id');
+    }
+
+    public function participants(): HasMany
+    {
+        return $this->hasMany(TournamentParticipant::class, 'tournament_id');
+    }
+
+    /**
+     * Whether registration is currently open based on approval, schedule, and roster state.
+     */
+    public function isRegistrationOpen(): bool
+    {
+        if ($this->approval_status !== CampusTournamentApprovalStatus::Approved) {
+            return false;
+        }
+
+        if ($this->cancelled_at !== null || $this->roster_locked_at !== null) {
+            return false;
+        }
+
+        $now = now();
+
+        return $now->gte($this->registration_opens_at)
+            && $now->lt($this->registration_closes_at);
+    }
 }

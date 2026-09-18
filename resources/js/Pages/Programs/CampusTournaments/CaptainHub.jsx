@@ -13,9 +13,9 @@ const OPTIONS = [
     },
     {
         id: 'join',
-        title: 'Join an Existing Team',
-        description: 'Join a team that already has a slot.',
-        href: '/Tournament/MemberJoin',
+        title: 'Team Invitations',
+        description: 'View and respond to direct team invitations.',
+        href: '/Tournament/MemberInvite',
         icon: ChevronRight,
         highlight: false,
     },

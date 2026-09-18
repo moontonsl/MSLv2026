@@ -1,176 +1,73 @@
-import { DEFAULT_TOURNAMENT } from '@/data/campusTournamentCaptainData';
-import MainLayout from '@/Layouts/MainLayout';
-import { Head, Link, router } from '@inertiajs/react';
-import { ChevronLeft, CircleHelp } from 'lucide-react';
-import { useState } from 'react';
+import { ROLE_SLOTS } from "@/data/campusTournamentCaptainData";
+import MainLayout from "@/Layouts/MainLayout";
+import { Head, Link, useForm } from "@inertiajs/react";
+import { ChevronLeft } from "lucide-react";
 
 const INPUT_CLASS =
-    'w-full min-h-[44px] rounded-lg border border-neutral-800 bg-[#0a0a0a] px-4 py-3 text-base text-white outline-none transition-shadow placeholder:text-gray-600 focus:ring-2 focus:ring-yellow-500 md:text-sm';
+    "min-h-[44px] w-full rounded-lg border border-neutral-800 bg-[#0a0a0a] px-4 py-3 text-white outline-none focus:ring-2 focus:ring-yellow-500";
 
-const LABEL_CLASS = 'mb-2 block text-sm text-white';
-
-export default function CaptainRegister() {
-    const [form, setForm] = useState({
-        captain: 'DAKI',
-        discordId: '',
-        teamName: '',
-        player2: '',
-        player3: '',
-        player4: '',
-        player5: '',
+export default function CaptainRegister({ captain, tournament }) {
+    const { data, setData, post, processing, errors } = useForm({
+        name: "",
+        discord_id: "",
+        assigned_lane_role_code: "",
     });
 
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleSubmit = (event) => {
+    const submit = (event) => {
         event.preventDefault();
-        router.visit(
-            `/Tournament/CampusTournamentTeam?teamName=${encodeURIComponent(
-                form.teamName || 'BINIGNIT',
-            )}`,
-        );
+        if (!tournament) return;
+        post(`/campus-tournaments/${tournament.id}/teams`);
     };
 
     return (
         <MainLayout fullWidth>
-            <Head title={`Register — ${DEFAULT_TOURNAMENT.title}`} />
+            <Head title="Create Premade Team — Campus Tournament" />
+            <div className="min-h-screen bg-[#0a0a0a] px-4 py-8 text-white sm:px-6">
+                <div className="mx-auto max-w-xl rounded-2xl border border-neutral-800 bg-[#111111] p-5 sm:p-8">
+                    <Link href="/Tournament/CampusTournament" className="mb-6 inline-flex min-h-[44px] items-center gap-1 text-sm text-gray-400 hover:text-white">
+                        <ChevronLeft className="h-4 w-4" /> Back
+                    </Link>
+                    <h1 className="text-center text-2xl font-black uppercase">
+                        {tournament?.title ?? "Premade Team Registration"}
+                    </h1>
+                    {tournament ? <p className="mt-2 text-center text-sm text-gray-400">{tournament.school}</p> : null}
 
-            <div className="min-h-screen bg-[#0a0a0a] px-4 py-8 sm:px-6 lg:px-8">
-                <div className="mx-auto max-w-xl">
-                    <div className="rounded-2xl border border-neutral-800 bg-[#111111] p-5 sm:p-8">
-                        <Link
-                            href="/Tournament/CampusTournament"
-                            className="mb-6 inline-flex min-h-[44px] items-center gap-1 text-sm text-gray-400 transition-colors hover:text-white"
-                        >
-                            <ChevronLeft className="h-4 w-4" />
-                            Back
-                        </Link>
-
-                        <h1 className="mb-6 text-center text-xl font-black uppercase tracking-wide text-white sm:text-2xl">
-                            {DEFAULT_TOURNAMENT.title}
-                        </h1>
-
-                        <div className="mb-6 rounded-xl border border-yellow-500/70 bg-yellow-500/5 p-4">
-                            <p className="mb-2 text-sm font-semibold text-yellow-500">
-                                Important Requirements:
-                            </p>
-                            <ul className="list-disc space-y-2 pl-5 text-sm text-yellow-500/90">
-                                <li>
-                                    <span className="font-semibold text-yellow-500">
-                                        Verification Required:
-                                    </span>{' '}
-                                    All team members must be verified users to participate in campus
-                                    tournaments.
-                                </li>
-                                <li>
-                                    Each team may include only one senior high school student in
-                                    their roster.
-                                </li>
-                            </ul>
+                    {!tournament ? (
+                        <div className="mt-8 rounded-lg border border-yellow-500/40 bg-yellow-500/10 p-4 text-sm text-yellow-200">
+                            No tournament is currently open for registration at your campus.
                         </div>
-
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div>
-                                <label htmlFor="captain" className={LABEL_CLASS}>
-                                    Captain (Player 1) <span className="text-red-500">*</span>
-                                </label>
-                                <div className="relative">
-                                    <input
-                                        id="captain"
-                                        name="captain"
-                                        type="text"
-                                        value={form.captain}
-                                        readOnly
-                                        className={`${INPUT_CLASS} pr-12 text-gray-300`}
-                                    />
-                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
-                                        <CircleHelp className="h-4 w-4" />
-                                    </span>
-                                </div>
+                    ) : (
+                        <form onSubmit={submit} className="mt-8 space-y-5">
+                            <div className="rounded-lg border border-yellow-500/50 bg-yellow-500/5 p-4 text-sm text-yellow-200">
+                                Create the team first, then invite four verified campus players from your captain dashboard.
                             </div>
-
-                            <div>
-                                <label htmlFor="discordId" className={LABEL_CLASS}>
-                                    Discord ID{' '}
-                                    <span className="font-normal text-gray-500">(optional)</span>
-                                </label>
-                                <input
-                                    id="discordId"
-                                    name="discordId"
-                                    type="text"
-                                    value={form.discordId}
-                                    onChange={handleChange}
-                                    placeholder="e.g. username00000"
-                                    className={INPUT_CLASS}
-                                />
-                            </div>
-
-                            <div>
-                                <label htmlFor="teamName" className={LABEL_CLASS}>
-                                    Team Name <span className="text-red-500">*</span>
-                                </label>
-                                <input
-                                    id="teamName"
-                                    name="teamName"
-                                    type="text"
-                                    value={form.teamName}
-                                    onChange={handleChange}
-                                    placeholder="e.g. MSL PH"
-                                    required
-                                    className={INPUT_CLASS}
-                                />
-                            </div>
-
-                            <div className="rounded-lg border border-yellow-500/70 bg-yellow-500/5 px-4 py-3 text-sm text-yellow-500">
-                                Note: Players must be from your school, verified, and have an MSL
-                                Account.
-                            </div>
-
-                            {[2, 3, 4, 5].map((n) => (
-                                <div key={n}>
-                                    <label htmlFor={`player${n}`} className={LABEL_CLASS}>
-                                        Player {n} <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        id={`player${n}`}
-                                        name={`player${n}`}
-                                        type="text"
-                                        value={form[`player${n}`]}
-                                        onChange={handleChange}
-                                        placeholder="e.g. DAKI"
-                                        required
-                                        className={INPUT_CLASS}
-                                    />
-                                </div>
-                            ))}
-
-                            <button
-                                type="submit"
-                                className="mt-2 w-full min-h-[44px] rounded-lg bg-yellow-500 py-3 text-base font-bold text-black transition-colors hover:bg-yellow-400 md:text-sm"
-                            >
-                                Submit
+                            <label className="block text-sm">
+                                Captain
+                                <input value={`${captain.ign} — ${captain.name}`} readOnly className={`${INPUT_CLASS} mt-2 text-gray-400`} />
+                            </label>
+                            <label className="block text-sm">
+                                Team Name <span className="text-red-500">*</span>
+                                <input value={data.name} onChange={(event) => setData("name", event.target.value)} required className={`${INPUT_CLASS} mt-2`} />
+                                {errors.name ? <span className="mt-1 block text-xs text-red-400">{errors.name}</span> : null}
+                            </label>
+                            <label className="block text-sm">
+                                Discord ID <span className="text-gray-500">(optional)</span>
+                                <input value={data.discord_id} onChange={(event) => setData("discord_id", event.target.value)} className={`${INPUT_CLASS} mt-2`} />
+                                {errors.discord_id ? <span className="mt-1 block text-xs text-red-400">{errors.discord_id}</span> : null}
+                            </label>
+                            <label className="block text-sm">
+                                Captain Lane <span className="text-red-500">*</span>
+                                <select value={data.assigned_lane_role_code} onChange={(event) => setData("assigned_lane_role_code", event.target.value)} required className={`${INPUT_CLASS} mt-2`}>
+                                    <option value="">Select lane</option>
+                                    {ROLE_SLOTS.map((role) => <option key={role.id} value={role.id}>{role.label}</option>)}
+                                </select>
+                                {errors.assigned_lane_role_code ? <span className="mt-1 block text-xs text-red-400">{errors.assigned_lane_role_code}</span> : null}
+                            </label>
+                            <button disabled={processing} className="min-h-[48px] w-full rounded-lg bg-yellow-500 font-bold text-black disabled:opacity-60">
+                                {processing ? "Creating Team…" : "Create Team"}
                             </button>
                         </form>
-                    </div>
-
-                    <p className="mt-6 text-center text-xs leading-relaxed text-gray-500 sm:text-sm">
-                        Make sure that you have read the{' '}
-                        <a href="#" className="text-yellow-500 underline">
-                            Rulebook
-                        </a>{' '}
-                        to avoid conflicts. Also, join the{' '}
-                        <a href="#" className="text-yellow-500 underline">
-                            Discord Server
-                        </a>{' '}
-                        or our{' '}
-                        <a href="#" className="text-yellow-500 underline">
-                            Facebook Page
-                        </a>{' '}
-                        for more information and announcements.
-                    </p>
+                    )}
                 </div>
             </div>
         </MainLayout>

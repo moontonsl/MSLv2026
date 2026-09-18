@@ -1,6 +1,6 @@
 # Campus and Tournament Database
 
-Last updated: 2026-08-07
+Last updated: 2026-08-21
 
 This document describes the normalized campus and campus-tournament database
 implemented in MSLv2026.
@@ -40,6 +40,7 @@ MySQL `mslv2026` database through these migrations:
 | `2026_07_30_000007_create_tournament_roster_tables` | Teams, participants, invitations, join codes, merge runs, and assignment history |
 | `2026_07_30_000008_create_tournament_result_tables` | Result revisions, result entries, and the current-result pointer |
 | `2026_08_07_000001_add_campus_tournament_submission_history` | Immutable request submissions, current-submission pointer, and review-to-submission linkage |
+| `2026_08_20_000001_add_intended_lane_role_to_tournament_team_invitations` | Intended fixed-lane assignment for premade-team invitations |
 
 Verification on 2026-07-30 confirmed:
 
@@ -50,11 +51,14 @@ Verification on 2026-07-30 confirmed:
 - operational Regional Admin and tournament tables contain no invented sample
   records.
 
-The Student Leader creation/resubmission/cancellation and Regional Admin
-approval/rejection backend is implemented with authenticated web actions,
+The Student Leader creation/resubmission/cancellation, Regional Admin review,
+and team-registration backends are implemented with authenticated web actions,
 policies, validation, transactions, immutable submission snapshots, and tests.
-Tournament user interfaces, team workflows, scheduled merging, result services,
-rescheduling, notifications, and exports have not been added.
+Tournament user interfaces, scheduled merging, result services, rescheduling,
+notifications, and exports have not been added.
+
+For manual endpoint verification, see
+[Testing Campus Tournament Team Registration with Postman](testing-team-registration-with-postman.md).
 
 ## Entity relationships
 
@@ -436,6 +440,13 @@ Important constraints:
 
 Participant statuses are `pending`, `active`, `declined`, `withdrawn`, and
 `not_qualified`.
+
+Solo registration creates a named `solo` team with the creator as its current
+captain. The creator's selected lane is stored as both preferred and assigned.
+Other eligible campus affiliates can browse assembling solo teams and join one
+directly by locking an unoccupied lane. A solo team becomes `registered` after
+all five fixed lanes are occupied. Premade invitations and join codes do not
+apply to solo teams.
 
 ### Invitations and join codes
 

@@ -1,6 +1,6 @@
-import BaseModal from '@/Components/Admin/BaseModal';
-import { MODAL_CLOSE_BUTTON_CLASS } from '@/Components/Admin/adminModalFormStyles';
-import { AlertTriangle, X } from 'lucide-react';
+import BaseModal from "@/Components/Admin/BaseModal";
+import { MODAL_CLOSE_BUTTON_CLASS } from "@/Components/Admin/adminModalFormStyles";
+import { AlertTriangle, X } from "lucide-react";
 
 /**
  * Confirm leaving a team. Solo matchmaking passes the locked role; team members omit it.
@@ -9,14 +9,16 @@ import { AlertTriangle, X } from 'lucide-react';
  *   isOpen: boolean;
  *   teamName?: string;
  *   lockedRole?: string | null;
+ *   processing?: boolean;
  *   onCancel: () => void;
  *   onConfirm: () => void;
  * }} props
  */
 export default function LeaveTeamModal({
     isOpen,
-    teamName = 'MSL TEAM 1',
+    teamName = "MSL TEAM 1",
     lockedRole = null,
+    processing = false,
     onCancel,
     onConfirm,
 }) {
@@ -32,6 +34,7 @@ export default function LeaveTeamModal({
                     <button
                         type="button"
                         onClick={onCancel}
+                        disabled={processing}
                         className="min-h-[44px] w-full rounded-lg border border-yellow-500 bg-transparent text-base font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10 md:text-sm"
                     >
                         Cancel
@@ -39,9 +42,10 @@ export default function LeaveTeamModal({
                     <button
                         type="button"
                         onClick={onConfirm}
-                        className="min-h-[44px] w-full rounded-lg bg-red-600 text-base font-bold text-white transition-colors hover:bg-red-700 md:text-sm"
+                        disabled={processing}
+                        className="min-h-[44px] w-full rounded-lg bg-red-600 text-base font-bold text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60 md:text-sm"
                     >
-                        Leave
+                        {processing ? "Leaving…" : "Leave"}
                     </button>
                 </div>
             }
@@ -60,18 +64,25 @@ export default function LeaveTeamModal({
                     <AlertTriangle className="h-6 w-6 text-yellow-500" />
                 </div>
 
-                <h2 className="mb-2 text-xl font-bold text-white">Leave Team?</h2>
+                <h2 className="mb-2 text-xl font-bold text-white">
+                    Leave Team?
+                </h2>
                 <p className="text-sm leading-relaxed text-gray-300">
                     {lockedRole ? (
                         <>
-                            You are currently locked as{' '}
-                            <span className="font-bold text-yellow-500">{lockedRole}</span> in{' '}
-                            {teamName}.
+                            You are currently locked as{" "}
+                            <span className="font-bold text-yellow-500">
+                                {lockedRole}
+                            </span>{" "}
+                            in {teamName}.
                         </>
                     ) : (
                         <>
-                            Are you sure you want to leave{' '}
-                            <span className="font-bold text-yellow-500">{teamName}</span>?
+                            Are you sure you want to leave{" "}
+                            <span className="font-bold text-yellow-500">
+                                {teamName}
+                            </span>
+                            ?
                         </>
                     )}
                 </p>
