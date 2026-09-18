@@ -25,6 +25,10 @@ Route::get('/About', function () {
 })->name('about');
 Route::redirect('/about', '/About');
 
+Route::get('/report-violation', function () {
+    return Inertia::render('SafeSpaces/ReportViolation');
+})->name('report.violation');
+
 Route::get('/Contents&SocialMedia', function () {
     return Inertia::render('ContentMedia');
 })->name('contents.social.media');
