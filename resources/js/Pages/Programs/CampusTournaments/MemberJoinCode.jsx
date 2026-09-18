@@ -1,6 +1,7 @@
+import CampusTournamentPageHeader from '@/Components/CampusTournament/CampusTournamentPageHeader';
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, Link, router } from '@inertiajs/react';
-import { ChevronLeft, Shield } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { useState } from 'react';
 
 const INPUT_CLASS =
@@ -24,14 +25,7 @@ export default function MemberJoinCode() {
 
             <div className="min-h-screen bg-[#0a0a0a] px-4 py-8 text-white sm:px-6 sm:py-10 lg:px-8">
                 <div className="mx-auto max-w-xl space-y-6">
-                    <div className="flex items-center gap-3">
-                        <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-yellow-500/40 bg-yellow-500/10 text-yellow-500">
-                            <Shield className="h-6 w-6" strokeWidth={2.2} />
-                        </div>
-                        <h1 className="text-2xl font-black uppercase tracking-wide text-white sm:text-3xl">
-                            Campus Tournament
-                        </h1>
-                    </div>
+                    <CampusTournamentPageHeader centered />
 
                     <div className="rounded-2xl border border-neutral-800 bg-[#111111] p-5 sm:p-8">
                         <Link

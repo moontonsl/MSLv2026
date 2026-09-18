@@ -334,6 +334,70 @@ export const INITIAL_SL_MANAGED_TOURNAMENTS = [
     },
 ];
 
+/** Regional Admin view: approved tournaments with registration stats */
+export const INITIAL_RA_MANAGED_TOURNAMENTS = [
+    {
+        id: 'ra-ong-1',
+        title: "ILOILO DOCTOR'S COLLEGE TOURNAMENT",
+        schoolName: "Iloilo Doctor's College",
+        startDate: '2026-04-24',
+        endDate: '2026-05-10',
+        mode: 'Online',
+        status: 'ongoing',
+        verifiedTeams: 12,
+        pendingTeams: 3,
+        totalRegistration: 15,
+    },
+    {
+        id: 'ra-ong-2',
+        title: 'WEST VISAYAS STATE UNIVERSITY CUP',
+        schoolName: 'West Visayas State University',
+        startDate: '2026-05-01',
+        endDate: '2026-05-15',
+        mode: 'Onsite',
+        status: 'ongoing',
+        verifiedTeams: 8,
+        pendingTeams: 5,
+        totalRegistration: 13,
+    },
+    {
+        id: 'ra-up-1',
+        title: 'MSL CAMPUS INVITATIONAL',
+        schoolName: 'University of Santo Tomas',
+        startDate: '2026-06-01',
+        endDate: '2026-06-20',
+        mode: 'Onsite',
+        status: 'upcoming',
+        verifiedTeams: 4,
+        pendingTeams: 6,
+        totalRegistration: 10,
+    },
+    {
+        id: 'ra-comp-1',
+        title: 'COLLEGIATE OPEN SERIES',
+        schoolName: 'Ateneo de Manila University',
+        startDate: '2026-01-10',
+        endDate: '2026-01-25',
+        mode: 'Online',
+        status: 'completed',
+        verifiedTeams: 16,
+        pendingTeams: 0,
+        totalRegistration: 16,
+    },
+    {
+        id: 'ra-comp-2',
+        title: 'REGIONAL CAMPUS SHOWDOWN',
+        schoolName: 'University of the Philippines',
+        startDate: '2025-12-01',
+        endDate: '2025-12-15',
+        mode: 'Onsite',
+        status: 'completed',
+        verifiedTeams: 10,
+        pendingTeams: 0,
+        totalRegistration: 10,
+    },
+];
+
 /**
  * @param {Array<{ id: string; name: string; placement: string }>} teams
  */

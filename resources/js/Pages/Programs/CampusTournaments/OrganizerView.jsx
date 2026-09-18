@@ -1,3 +1,4 @@
+import CampusTournamentPageHeader from '@/Components/CampusTournament/CampusTournamentPageHeader';
 import CreateTournamentModal from '@/Components/CampusTournament/CreateTournamentModal';
 import RequestSection from '@/Components/CampusTournament/RequestSection';
 import TournamentListItem from '@/Components/CampusTournament/TournamentListItem';
@@ -13,7 +14,7 @@ import {
 } from '@/data/campusTournamentData';
 import MainLayout from '@/Layouts/MainLayout';
 import { Head } from '@inertiajs/react';
-import { FilePlus2, Search, Shield } from 'lucide-react';
+import { FilePlus2, Search } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 
 const SEARCH_CLASS =
@@ -35,6 +36,7 @@ export default function OrganizerView() {
     const [showOnsite, setShowOnsite] = useState(true);
 
     const [createOpen, setCreateOpen] = useState(false);
+    const [editRequest, setEditRequest] = useState(null);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [pendingDelete, setPendingDelete] = useState(null);
     const [successOpen, setSuccessOpen] = useState(false);
@@ -114,6 +116,30 @@ export default function OrganizerView() {
         setSuccessOpen(true);
     }, []);
 
+    /** Resubmitting a rejected request moves it back to Pending with the new schedule. */
+    const handleEditSubmit = useCallback(
+        (values) => {
+            if (!editRequest) return;
+
+            setRejectedRequests((prev) => prev.filter((item) => item.id !== editRequest.id));
+            setPendingRequests((prev) => [
+                {
+                    ...editRequest,
+                    id: `pending-${Date.now()}`,
+                    startDate: values.startDate,
+                    endDate: values.endDate,
+                    mode: values.mode,
+                    status: 'pending',
+                },
+                ...prev,
+            ]);
+            setEditRequest(null);
+            setSuccessMessage('Tournament Updated Successfully!');
+            setSuccessOpen(true);
+        },
+        [editRequest],
+    );
+
     return (
         <MainLayout fullWidth>
             <Head title="Campus Tournament" />
@@ -121,13 +147,8 @@ export default function OrganizerView() {
             <div className="min-h-screen bg-[#0a0a0a] px-4 py-8 text-white sm:px-6 sm:py-10 lg:px-8">
                 <div className="mx-auto max-w-6xl space-y-6 sm:space-y-8">
                     <div>
-                        <div className="mb-4 flex items-center gap-3">
-                            <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-yellow-500/40 bg-yellow-500/10 text-yellow-500">
-                                <Shield className="h-6 w-6" strokeWidth={2.2} />
-                            </div>
-                            <h1 className="text-2xl font-black uppercase tracking-wide text-white sm:text-3xl md:text-4xl">
-                                Campus Tournament
-                            </h1>
+                        <div className="mb-4">
+                            <CampusTournamentPageHeader />
                         </div>
 
                         <button
@@ -158,6 +179,7 @@ export default function OrganizerView() {
                         variant="rejected"
                         items={rejectedRequests}
                         onDelete={(id) => requestDelete('rejected', id)}
+                        onEdit={setEditRequest}
                     />
 
                     <div className="space-y-4 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-5">
@@ -289,6 +311,14 @@ export default function OrganizerView() {
                 isOpen={createOpen}
                 onClose={() => setCreateOpen(false)}
                 onSubmit={handleCreateSubmit}
+            />
+
+            <CreateTournamentModal
+                isOpen={editRequest != null}
+                mode="edit"
+                initialValues={editRequest}
+                onClose={() => setEditRequest(null)}
+                onSubmit={handleEditSubmit}
             />
 
             <DeleteConfirmationModal

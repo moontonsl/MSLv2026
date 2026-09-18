@@ -89,6 +89,7 @@ function PlayerMobileRow({ player, roleLabel, showPendingBadge = false }) {
  *   onEdit?: () => void;
  *   onGenerateCode?: () => void;
  *   onCopyCode?: () => void;
+ *   onLeave?: () => void;
  *   memberView?: boolean;
  * }} props
  */
@@ -97,11 +98,15 @@ export default function CaptainTeamCard({
     onEdit,
     onGenerateCode,
     onCopyCode,
+    onLeave,
     memberView = false,
 }) {
     const roster = [team.captain, ...team.players];
     const isApproved = team.status === 'approved';
     const showCodeActions = !memberView;
+    // Approved members can only leave the team; pending members can still edit their entry.
+    const showLeave = memberView && isApproved && Boolean(onLeave);
+    const showEdit = !showLeave;
 
     return (
         <article className="overflow-hidden rounded-xl border border-neutral-800 bg-[#111111]">
@@ -161,13 +166,24 @@ export default function CaptainTeamCard({
                 </div>
 
                 <div className="flex shrink-0 flex-col gap-2 border-t border-neutral-800 pt-4 lg:w-40 lg:border-l lg:border-t-0 lg:p-4">
-                    <button
-                        type="button"
-                        onClick={onEdit}
-                        className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
-                    >
-                        Edit
-                    </button>
+                    {showEdit ? (
+                        <button
+                            type="button"
+                            onClick={onEdit}
+                            className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                        >
+                            Edit
+                        </button>
+                    ) : null}
+                    {showLeave ? (
+                        <button
+                            type="button"
+                            onClick={onLeave}
+                            className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-red-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-red-700"
+                        >
+                            Leave
+                        </button>
+                    ) : null}
                     {showCodeActions ? (
                         isApproved && team.inviteCode ? (
                             <button
@@ -197,13 +213,24 @@ export default function CaptainTeamCard({
                     showCodeActions ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'
                 }`}
             >
-                <button
-                    type="button"
-                    onClick={onEdit}
-                    className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black"
-                >
-                    Edit
-                </button>
+                {showEdit ? (
+                    <button
+                        type="button"
+                        onClick={onEdit}
+                        className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black"
+                    >
+                        Edit
+                    </button>
+                ) : null}
+                {showLeave ? (
+                    <button
+                        type="button"
+                        onClick={onLeave}
+                        className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-red-600 px-4 text-sm font-semibold text-white"
+                    >
+                        Leave
+                    </button>
+                ) : null}
                 {showCodeActions ? (
                     isApproved && team.inviteCode ? (
                         <button

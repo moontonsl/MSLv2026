@@ -1,21 +1,20 @@
 import CampusTournamentPageHeader from '@/Components/CampusTournament/CampusTournamentPageHeader';
-import ConfirmResultsModal from '@/Components/CampusTournament/ConfirmResultsModal';
+import ConfirmActionModal from '@/Components/CampusTournament/ConfirmActionModal';
 import CreateTournamentModal from '@/Components/CampusTournament/CreateTournamentModal';
-import RequestSection from '@/Components/CampusTournament/RequestSection';
-import SlTournamentPanel from '@/Components/CampusTournament/SlTournamentPanel';
+import ManagedTournamentCard from '@/Components/CampusTournament/ManagedTournamentCard';
+import TournamentRequestTable from '@/Components/CampusTournament/TournamentRequestTable';
 import DeleteConfirmationModal from '@/Components/Admin/DeleteConfirmationModal';
 import SuccessModal from '@/Components/Admin/SuccessModal';
 import {
-    INITIAL_PENDING_REQUESTS,
-    INITIAL_REJECTED_REQUESTS,
-    INITIAL_SL_MANAGED_TOURNAMENTS,
+    INITIAL_RA_MANAGED_TOURNAMENTS,
+    INITIAL_SL_TOURNAMENT_REQUESTS,
     MONTH_OPTIONS,
     TOURNAMENT_STATUS_TABS,
     YEAR_OPTIONS,
 } from '@/data/campusTournamentData';
 import MainLayout from '@/Layouts/MainLayout';
 import { Head } from '@inertiajs/react';
-import { FilePlus2, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 
 const SEARCH_CLASS =
@@ -24,27 +23,28 @@ const SEARCH_CLASS =
 const SELECT_CLASS =
     'min-h-[44px] w-full rounded-lg border border-neutral-800 bg-[#1a1a1a] px-3 py-2.5 text-base text-white outline-none focus:ring-2 focus:ring-yellow-500 md:w-auto md:min-w-[120px] md:text-sm';
 
-export default function SlView() {
-    const [pendingCreates, setPendingCreates] = useState(INITIAL_PENDING_REQUESTS);
-    const [rejectedRequests, setRejectedRequests] = useState(INITIAL_REJECTED_REQUESTS);
-    const [tournaments, setTournaments] = useState(INITIAL_SL_MANAGED_TOURNAMENTS);
+/**
+ * Regional Admin view — approves incoming SL tournament requests and manages
+ * the approved tournaments (view, reschedule, delete).
+ */
+export default function RaView() {
+    const [requests, setRequests] = useState(INITIAL_SL_TOURNAMENT_REQUESTS);
+    const [tournaments, setTournaments] = useState(INITIAL_RA_MANAGED_TOURNAMENTS);
 
-    const [statusTab, setStatusTab] = useState('upcoming');
+    const [statusTab, setStatusTab] = useState('ongoing');
     const [search, setSearch] = useState('');
     const [month, setMonth] = useState('');
     const [year, setYear] = useState('');
     const [showOnline, setShowOnline] = useState(true);
     const [showOnsite, setShowOnsite] = useState(true);
+    const [requestPage, setRequestPage] = useState(1);
 
-    const [createOpen, setCreateOpen] = useState(false);
-    const [editRequest, setEditRequest] = useState(null);
-    const [deleteOpen, setDeleteOpen] = useState(false);
-    const [pendingDelete, setPendingDelete] = useState(null);
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [confirmAction, setConfirmAction] = useState(null);
+    const [activeRequest, setActiveRequest] = useState(null);
 
-    const [resultsConfirmOpen, setResultsConfirmOpen] = useState(false);
-    const [resultsMode, setResultsMode] = useState('submit');
-    const [resultsTournamentId, setResultsTournamentId] = useState(null);
-    const [resultsPlacements, setResultsPlacements] = useState([]);
+    const [rescheduleTarget, setRescheduleTarget] = useState(null);
+    const [deleteTarget, setDeleteTarget] = useState(null);
 
     const [successOpen, setSuccessOpen] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
@@ -79,167 +79,129 @@ export default function SlView() {
         });
     }, [tournaments, statusTab, search, showOnline, showOnsite, month, year]);
 
-    const requestDelete = useCallback((source, id) => {
-        setPendingDelete({ source, id });
-        setDeleteOpen(true);
-    }, []);
-
-    const cancelDelete = useCallback(() => {
-        setDeleteOpen(false);
-        setPendingDelete(null);
-    }, []);
-
-    const confirmDelete = useCallback(() => {
-        if (!pendingDelete) return;
-        const { source, id } = pendingDelete;
-
-        if (source === 'pending') {
-            setPendingCreates((prev) => prev.filter((item) => item.id !== id));
-        } else if (source === 'rejected') {
-            setRejectedRequests((prev) => prev.filter((item) => item.id !== id));
-        }
-
-        setDeleteOpen(false);
-        setPendingDelete(null);
-        setSuccessMessage('Data has been deleted!');
-        setSuccessDescription('');
-        setSuccessOpen(true);
-    }, [pendingDelete]);
-
-    const handleCreateSubmit = useCallback((values) => {
-        setPendingCreates((prev) => [
-            {
-                id: `pending-${Date.now()}`,
-                title: 'NEW CAMPUS TOURNAMENT',
-                startDate: values.startDate,
-                endDate: values.endDate,
-                mode: values.mode,
-                status: 'pending',
-            },
-            ...prev,
-        ]);
-        setCreateOpen(false);
-        setSuccessMessage('Successfully Added!');
-        setSuccessDescription('');
+    const showSuccess = useCallback((message, description = '') => {
+        setSuccessMessage(message);
+        setSuccessDescription(description);
         setSuccessOpen(true);
     }, []);
 
-    /** Resubmitting a rejected request moves it back to Pending with the new schedule. */
-    const handleEditSubmit = useCallback(
-        (values) => {
-            if (!editRequest) return;
+    const openApprove = useCallback((request) => {
+        setActiveRequest(request);
+        setConfirmAction('approve');
+        setConfirmOpen(true);
+    }, []);
 
-            setRejectedRequests((prev) => prev.filter((item) => item.id !== editRequest.id));
-            setPendingCreates((prev) => [
+    const openReject = useCallback((request) => {
+        setActiveRequest(request);
+        setConfirmAction('reject');
+        setConfirmOpen(true);
+    }, []);
+
+    const cancelConfirm = useCallback(() => {
+        setConfirmOpen(false);
+        setActiveRequest(null);
+        setConfirmAction(null);
+    }, []);
+
+    const handleConfirmAction = useCallback(() => {
+        if (!activeRequest || !confirmAction) return;
+
+        setRequests((prev) => prev.filter((item) => item.id !== activeRequest.id));
+
+        if (confirmAction === 'approve') {
+            setTournaments((prev) => [
                 {
-                    ...editRequest,
-                    id: `pending-${Date.now()}`,
-                    startDate: values.startDate,
-                    endDate: values.endDate,
-                    mode: values.mode,
-                    status: 'pending',
+                    id: `ra-up-${Date.now()}`,
+                    title: `${activeRequest.schoolName.toUpperCase()} TOURNAMENT`,
+                    schoolName: activeRequest.schoolName,
+                    startDate: activeRequest.startDate,
+                    endDate: activeRequest.endDate,
+                    mode: activeRequest.type,
+                    status: 'upcoming',
+                    verifiedTeams: 0,
+                    pendingTeams: 0,
+                    totalRegistration: 0,
                 },
                 ...prev,
             ]);
-            setEditRequest(null);
-            setSuccessMessage('Tournament Updated Successfully!');
-            setSuccessDescription('Your request has been resubmitted for approval.');
-            setSuccessOpen(true);
+            showSuccess(
+                'Tournament Approved Successfully!',
+                'The tournament request has been approved and is now available for student registration',
+            );
+        } else {
+            showSuccess('Tournament Rejected', 'The tournament request has been rejected.');
+        }
+
+        setConfirmOpen(false);
+        setActiveRequest(null);
+        setConfirmAction(null);
+    }, [activeRequest, confirmAction, showSuccess]);
+
+    const handleReschedule = useCallback(
+        (values) => {
+            if (!rescheduleTarget) return;
+
+            setTournaments((prev) =>
+                prev.map((item) =>
+                    item.id === rescheduleTarget.id
+                        ? {
+                              ...item,
+                              startDate: values.startDate,
+                              endDate: values.endDate,
+                              mode: values.mode,
+                          }
+                        : item,
+                ),
+            );
+            setRescheduleTarget(null);
+            showSuccess('Tournament Updated Successfully!', 'The new schedule has been saved.');
         },
-        [editRequest],
+        [rescheduleTarget, showSuccess],
     );
 
-    const handlePlacementChange = useCallback((tournamentId, teamId, placementId) => {
-        setTournaments((prev) =>
-            prev.map((tournament) => {
-                if (tournament.id !== tournamentId) return tournament;
-                return {
-                    ...tournament,
-                    teams: (tournament.teams ?? []).map((team) =>
-                        team.id === teamId ? { ...team, placement: placementId } : team,
-                    ),
-                };
-            }),
-        );
-    }, []);
+    const confirmDelete = useCallback(() => {
+        if (!deleteTarget) return;
 
-    const openSubmitResults = useCallback((tournament) => {
-        setResultsTournamentId(tournament.id);
-        setResultsMode(tournament.resultsSubmitted ? 'update' : 'submit');
-        setResultsPlacements(getPlacementSummary(tournament.teams ?? []));
-        setResultsConfirmOpen(true);
-    }, []);
-
-    const cancelResultsConfirm = useCallback(() => {
-        setResultsConfirmOpen(false);
-        setResultsTournamentId(null);
-        setResultsPlacements([]);
-    }, []);
-
-    const confirmResults = useCallback(() => {
-        const isUpdate = resultsMode === 'update';
-        setTournaments((prev) =>
-            prev.map((tournament) =>
-                tournament.id === resultsTournamentId
-                    ? { ...tournament, resultsSubmitted: true }
-                    : tournament,
-            ),
-        );
-        setResultsConfirmOpen(false);
-        setResultsTournamentId(null);
-        setResultsPlacements([]);
-        setSuccessMessage(
-            isUpdate ? 'Results Updated Successfully!' : 'Results Submitted Successfully!',
-        );
-        setSuccessDescription(
-            isUpdate
-                ? 'Tournament results have been updated.'
-                : 'Tournament results have been submitted.',
-        );
-        setSuccessOpen(true);
-    }, [resultsMode, resultsTournamentId]);
+        setTournaments((prev) => prev.filter((item) => item.id !== deleteTarget.id));
+        setDeleteTarget(null);
+        showSuccess('Data has been deleted!');
+    }, [deleteTarget, showSuccess]);
 
     return (
         <MainLayout fullWidth>
-            <Head title="Campus Tournament — SL View" />
+            <Head title="Campus Tournament — Regional Admin" />
 
             <div className="min-h-screen bg-[#0a0a0a] px-4 py-8 text-white sm:px-6 sm:py-10 lg:px-8">
                 <div className="mx-auto max-w-6xl space-y-6 sm:space-y-8">
-                    <div>
-                        <div className="mb-4">
-                            <CampusTournamentPageHeader />
+                    <CampusTournamentPageHeader />
+
+                    <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
+                        <div className="mb-4 flex items-start justify-between gap-3">
+                            <div>
+                                <h2 className="text-lg font-bold text-yellow-500 sm:text-xl">
+                                    Tournament Requests
+                                </h2>
+                                {requests.length === 0 ? (
+                                    <p className="mt-1 text-sm text-gray-400">
+                                        No pending tournament requests.
+                                    </p>
+                                ) : null}
+                            </div>
+                            <p className="shrink-0 text-sm text-white">
+                                {requests.length} Pending
+                            </p>
                         </div>
 
-                        <button
-                            type="button"
-                            onClick={() => setCreateOpen(true)}
-                            className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg bg-yellow-500 px-5 py-2.5 text-base font-bold text-black transition-colors hover:bg-yellow-400 sm:w-auto md:text-sm"
-                        >
-                            <FilePlus2 className="h-4 w-4" />
-                            Create Tournament
-                        </button>
-                    </div>
-
-                    <RequestSection
-                        title="Pending Requests"
-                        count={pendingCreates.length}
-                        countLabel="Pending"
-                        emptyMessage="No pending tournament requests."
-                        variant="pending"
-                        items={pendingCreates}
-                        onDelete={(id) => requestDelete('pending', id)}
-                    />
-
-                    <RequestSection
-                        title="Rejected Requests"
-                        count={rejectedRequests.length}
-                        countLabel="Rejected"
-                        emptyMessage="No rejected tournament requests."
-                        variant="rejected"
-                        items={rejectedRequests}
-                        onDelete={(id) => requestDelete('rejected', id)}
-                        onEdit={setEditRequest}
-                    />
+                        {requests.length > 0 ? (
+                            <TournamentRequestTable
+                                requests={requests}
+                                onApprove={openApprove}
+                                onReject={openReject}
+                                page={requestPage}
+                                onPageChange={setRequestPage}
+                            />
+                        ) : null}
+                    </section>
 
                     <div className="space-y-4 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-5">
                         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
@@ -315,13 +277,13 @@ export default function SlView() {
                                 <div className="flex items-center gap-4 px-1">
                                     {[
                                         {
-                                            id: 'sl-filter-online',
+                                            id: 'ra-filter-online',
                                             label: 'Online',
                                             checked: showOnline,
                                             onChange: setShowOnline,
                                         },
                                         {
-                                            id: 'sl-filter-onsite',
+                                            id: 'ra-filter-onsite',
                                             label: 'Onsite',
                                             checked: showOnsite,
                                             onChange: setShowOnsite,
@@ -354,13 +316,12 @@ export default function SlView() {
                                     No tournaments found for this filter.
                                 </p>
                             ) : (
-                                filteredTournaments.map((tournament, index) => (
-                                    <SlTournamentPanel
+                                filteredTournaments.map((tournament) => (
+                                    <ManagedTournamentCard
                                         key={tournament.id}
                                         tournament={tournament}
-                                        defaultExpanded={index === 0}
-                                        onPlacementChange={handlePlacementChange}
-                                        onSubmitResults={openSubmitResults}
+                                        onReschedule={setRescheduleTarget}
+                                        onDelete={setDeleteTarget}
                                     />
                                 ))
                             )}
@@ -369,31 +330,26 @@ export default function SlView() {
                 </div>
             </div>
 
-            <CreateTournamentModal
-                isOpen={createOpen}
-                onClose={() => setCreateOpen(false)}
-                onSubmit={handleCreateSubmit}
+            <ConfirmActionModal
+                isOpen={confirmOpen}
+                onCancel={cancelConfirm}
+                onConfirm={handleConfirmAction}
+                actionLabel={confirmAction ?? 'approve'}
+                subjectName={activeRequest?.schoolName ?? 'this school'}
+                stackedButtons={false}
             />
 
             <CreateTournamentModal
-                isOpen={editRequest != null}
+                isOpen={rescheduleTarget != null}
                 mode="edit"
-                initialValues={editRequest}
-                onClose={() => setEditRequest(null)}
-                onSubmit={handleEditSubmit}
-            />
-
-            <ConfirmResultsModal
-                isOpen={resultsConfirmOpen}
-                mode={resultsMode}
-                placements={resultsPlacements}
-                onCancel={cancelResultsConfirm}
-                onConfirm={confirmResults}
+                initialValues={rescheduleTarget}
+                onClose={() => setRescheduleTarget(null)}
+                onSubmit={handleReschedule}
             />
 
             <DeleteConfirmationModal
-                isOpen={deleteOpen}
-                onCancel={cancelDelete}
+                isOpen={deleteTarget != null}
+                onCancel={() => setDeleteTarget(null)}
                 onConfirm={confirmDelete}
             />
 

@@ -1,9 +1,9 @@
+import CampusTournamentPageHeader from '@/Components/CampusTournament/CampusTournamentPageHeader';
 import CaptainTeamCard from '@/Components/CampusTournament/CaptainTeamCard';
 import TeamInviteCodeModal from '@/Components/CampusTournament/TeamInviteCodeModal';
 import { INITIAL_CAPTAIN_TEAM } from '@/data/campusTournamentCaptainData';
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { Shield } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 function generateInviteCode() {
@@ -50,22 +50,14 @@ export default function CaptainTeam() {
 
             <div className="min-h-screen bg-[#0a0a0a] px-4 py-8 text-white sm:px-6 sm:py-10 lg:px-8">
                 <div className="mx-auto max-w-6xl space-y-6">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-yellow-500/40 bg-yellow-500/10 text-yellow-500">
-                                <Shield className="h-6 w-6" strokeWidth={2.2} />
-                            </div>
-                            <h1 className="text-2xl font-black uppercase tracking-wide text-white sm:text-3xl">
-                                Campus Tournament
-                            </h1>
-                        </div>
+                    <CampusTournamentPageHeader>
                         <Link
                             href="/Tournament/CampusTournament"
                             className="text-sm text-gray-400 transition-colors hover:text-white"
                         >
                             ← Back to registration hub
                         </Link>
-                    </div>
+                    </CampusTournamentPageHeader>
 
                     <CaptainTeamCard
                         team={team}
