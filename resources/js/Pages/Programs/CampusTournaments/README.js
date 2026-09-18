@@ -5,7 +5,7 @@
  * |-----------------|-----------------------------|------------------------------------|----------------------|
  * | Entry           | Role redirect               | /campus-tournament                 | → /Tournament/SL     |
  * | SL Manage       | Student Leaders             | /Tournament/SL                     | SlView.jsx           |
- * | Regional Admin  | Regional / Super Admin      | /Tournament/RegionalAdmin          | SlView.jsx (temp)    |
+ * | Regional Admin  | Regional / Super Admin      | /Tournament/RegionalAdmin          | RaView.jsx           |
  * | Public          | Public / testing            | /campus-tournament/public          | SlView.jsx           |
  * | Organizer       | School organizers (new)     | /Tournament/Organizer              | OrganizerView.jsx    |
  * | Captain Hub     | Team captains / players     | /Tournament/CampusTournament       | CaptainHub.jsx       |

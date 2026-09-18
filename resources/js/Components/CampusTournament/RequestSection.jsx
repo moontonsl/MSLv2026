@@ -16,6 +16,7 @@ import { Ban, Hourglass } from 'lucide-react';
  *     mode: string;
  *   }>;
  *   onDelete: (id: string) => void;
+ *   onEdit?: (item: object) => void;
  * }} props
  */
 export default function RequestSection({
@@ -26,8 +27,10 @@ export default function RequestSection({
     variant,
     items,
     onDelete,
+    onEdit,
 }) {
     const isPending = variant === 'pending';
+    const showEdit = !isPending && Boolean(onEdit);
 
     return (
         <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
@@ -72,13 +75,24 @@ export default function RequestSection({
                                     {formatDateRange(item.startDate, item.endDate, item.mode)}
                                 </p>
                             </div>
-                            <button
-                                type="button"
-                                onClick={() => onDelete(item.id)}
-                                className="inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-red-600 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 sm:w-auto"
-                            >
-                                Delete
-                            </button>
+                            <div className="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center">
+                                {showEdit ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => onEdit(item)}
+                                        className="inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-yellow-500 px-6 py-2 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:w-auto"
+                                    >
+                                        Edit
+                                    </button>
+                                ) : null}
+                                <button
+                                    type="button"
+                                    onClick={() => onDelete(item.id)}
+                                    className="inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-red-600 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 sm:w-auto"
+                                >
+                                    Delete
+                                </button>
+                            </div>
                         </article>
                     ))}
                 </div>

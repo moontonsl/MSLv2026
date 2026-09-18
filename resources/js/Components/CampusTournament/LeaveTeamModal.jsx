@@ -3,12 +3,12 @@ import { MODAL_CLOSE_BUTTON_CLASS } from "@/Components/Admin/adminModalFormStyle
 import { AlertTriangle, X } from "lucide-react";
 
 /**
- * Confirm leaving a solo matchmaking team.
+ * Confirm leaving a team. Solo matchmaking passes the locked role; team members omit it.
  *
  * @param {{
  *   isOpen: boolean;
  *   teamName?: string;
- *   lockedRole?: string;
+ *   lockedRole?: string | null;
  *   processing?: boolean;
  *   onCancel: () => void;
  *   onConfirm: () => void;
@@ -17,7 +17,7 @@ import { AlertTriangle, X } from "lucide-react";
 export default function LeaveTeamModal({
     isOpen,
     teamName = "MSL TEAM 1",
-    lockedRole = "JUNGLER",
+    lockedRole = null,
     processing = false,
     onCancel,
     onConfirm,
@@ -68,11 +68,23 @@ export default function LeaveTeamModal({
                     Leave Team?
                 </h2>
                 <p className="text-sm leading-relaxed text-gray-300">
-                    You are currently locked as{" "}
-                    <span className="font-bold text-yellow-500">
-                        {lockedRole}
-                    </span>{" "}
-                    in {teamName}.
+                    {lockedRole ? (
+                        <>
+                            You are currently locked as{" "}
+                            <span className="font-bold text-yellow-500">
+                                {lockedRole}
+                            </span>{" "}
+                            in {teamName}.
+                        </>
+                    ) : (
+                        <>
+                            Are you sure you want to leave{" "}
+                            <span className="font-bold text-yellow-500">
+                                {teamName}
+                            </span>
+                            ?
+                        </>
+                    )}
                 </p>
             </div>
         </BaseModal>

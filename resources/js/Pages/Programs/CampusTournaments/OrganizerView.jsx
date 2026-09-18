@@ -1,3 +1,4 @@
+import CampusTournamentPageHeader from '@/Components/CampusTournament/CampusTournamentPageHeader';
 import CreateTournamentModal from '@/Components/CampusTournament/CreateTournamentModal';
 import RequestSection from '@/Components/CampusTournament/RequestSection';
 import TournamentListItem from '@/Components/CampusTournament/TournamentListItem';
@@ -13,7 +14,7 @@ import {
 } from '@/data/campusTournamentData';
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, router } from '@inertiajs/react';
-import { FilePlus2, Search, Shield } from 'lucide-react';
+import { FilePlus2, Search } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const SEARCH_CLASS =
@@ -47,6 +48,8 @@ export default function OrganizerView({
 
     const [createOpen, setCreateOpen] = useState(false);
     const [createError, setCreateError] = useState(null);
+    const [editRequest, setEditRequest] = useState(null);
+    const [editError, setEditError] = useState(null);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [pendingDelete, setPendingDelete] = useState(null);
     const [successOpen, setSuccessOpen] = useState(false);
@@ -157,6 +160,37 @@ export default function OrganizerView({
         });
     }, []);
 
+    /** Editing a rejected request resubmits it for approval with the new schedule. */
+    const handleEditSubmit = useCallback(
+        (values) => {
+            if (!editRequest) return;
+            setEditError(null);
+
+            const payload = {
+                ...values,
+                resubmission_reason: 'Resubmitted with an updated schedule.',
+            };
+
+            router.put(`/campus-tournaments/${editRequest.id}/resubmit`, payload, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setEditRequest(null);
+                    setEditError(null);
+                    setSuccessMessage('Tournament Request Resubmitted!');
+                    setSuccessOpen(true);
+                },
+                onError: (errors) => {
+                    console.error(errors);
+                    setEditError(
+                        Object.values(errors || {})[0] ||
+                            'Failed to resubmit tournament. Please check your inputs.',
+                    );
+                },
+            });
+        },
+        [editRequest],
+    );
+
     return (
         <MainLayout fullWidth>
             <Head title="Campus Tournament" />
@@ -164,13 +198,8 @@ export default function OrganizerView({
             <div className="min-h-screen bg-[#0a0a0a] px-4 py-8 text-white sm:px-6 sm:py-10 lg:px-8">
                 <div className="mx-auto max-w-6xl space-y-6 sm:space-y-8">
                     <div>
-                        <div className="mb-4 flex items-center gap-3">
-                            <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-yellow-500/40 bg-yellow-500/10 text-yellow-500">
-                                <Shield className="h-6 w-6" strokeWidth={2.2} />
-                            </div>
-                            <h1 className="text-2xl font-black uppercase tracking-wide text-white sm:text-3xl md:text-4xl">
-                                Campus Tournament
-                            </h1>
+                        <div className="mb-4">
+                            <CampusTournamentPageHeader />
                         </div>
 
                         <button
@@ -201,6 +230,10 @@ export default function OrganizerView({
                         variant="rejected"
                         items={rejectedRequests}
                         onDelete={(id) => requestDelete('rejected', id)}
+                        onEdit={(item) => {
+                            setEditError(null);
+                            setEditRequest(item);
+                        }}
                     />
 
                     <div className="space-y-4 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-5">
@@ -336,6 +369,18 @@ export default function OrganizerView({
                 }}
                 onSubmit={handleCreateSubmit}
                 error={createError}
+            />
+
+            <CreateTournamentModal
+                isOpen={editRequest != null}
+                mode="edit"
+                initialValues={editRequest}
+                onClose={() => {
+                    setEditRequest(null);
+                    setEditError(null);
+                }}
+                onSubmit={handleEditSubmit}
+                error={editError}
             />
 
             <DeleteConfirmationModal

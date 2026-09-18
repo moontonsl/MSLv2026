@@ -95,7 +95,9 @@ function PlayerMobileRow({ player, roleLabel, showPendingBadge = false }) {
  *   onEdit?: () => void;
  *   onGenerateCode?: () => void;
  *   onCopyCode?: () => void;
+ *   onLeave?: () => void;
  *   memberView?: boolean;
+ *   showInviteCode?: boolean;
  * }} props
  */
 export default function CaptainTeamCard({
@@ -103,11 +105,17 @@ export default function CaptainTeamCard({
     onEdit,
     onGenerateCode,
     onCopyCode,
+    onLeave,
     memberView = false,
+    showInviteCode = true,
 }) {
-    const roster = [team.captain, ...team.players];
+    const roster = [team.captain, ...team.players].filter(Boolean);
     const isApproved = team.status === "approved";
-    const showCodeActions = !memberView;
+    const showCodeActions = !memberView && showInviteCode;
+    // Approved members can only leave the team; pending members can still edit their entry.
+    const showLeave = memberView && isApproved && Boolean(onLeave);
+    const showEdit = !showLeave && (!memberView || Boolean(onEdit));
+    const showActions = showEdit || showLeave;
 
     return (
         <article className="overflow-hidden rounded-xl border border-neutral-800 bg-[#111111]">
@@ -172,15 +180,26 @@ export default function CaptainTeamCard({
                     </div>
                 </div>
 
-                {!memberView ? (
+                {showActions ? (
                     <div className="flex shrink-0 flex-col gap-2 border-t border-neutral-800 pt-4 lg:w-40 lg:border-l lg:border-t-0 lg:p-4">
-                        <button
-                            type="button"
-                            onClick={onEdit}
-                            className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
-                        >
-                            Edit
-                        </button>
+                        {showEdit ? (
+                            <button
+                                type="button"
+                                onClick={onEdit}
+                                className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                            >
+                                Edit
+                            </button>
+                        ) : null}
+                        {showLeave ? (
+                            <button
+                                type="button"
+                                onClick={onLeave}
+                                className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-red-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-red-700"
+                            >
+                                Leave
+                            </button>
+                        ) : null}
                         {showCodeActions ? (
                             isApproved && team.inviteCode ? (
                                 <button
@@ -206,7 +225,7 @@ export default function CaptainTeamCard({
             </div>
 
             {/* Mobile actions */}
-            {!memberView ? (
+            {showActions ? (
                 <div
                     className={`grid gap-2 border-t border-neutral-800 p-4 md:hidden ${
                         showCodeActions
@@ -214,13 +233,24 @@ export default function CaptainTeamCard({
                             : "grid-cols-1"
                     }`}
                 >
-                    <button
-                        type="button"
-                        onClick={onEdit}
-                        className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black"
-                    >
-                        Edit
-                    </button>
+                    {showEdit ? (
+                        <button
+                            type="button"
+                            onClick={onEdit}
+                            className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black"
+                        >
+                            Edit
+                        </button>
+                    ) : null}
+                    {showLeave ? (
+                        <button
+                            type="button"
+                            onClick={onLeave}
+                            className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-red-600 px-4 text-sm font-semibold text-white"
+                        >
+                            Leave
+                        </button>
+                    ) : null}
                     {showCodeActions ? (
                         isApproved && team.inviteCode ? (
                             <button

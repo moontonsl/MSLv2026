@@ -323,7 +323,12 @@ class CampusTournamentController extends Controller
                 ];
             });
 
-        return Inertia::render('Programs/CampusTournaments/SlView', [
+        // Regional Admin gets the reviewer screen; Student Leaders keep the management screen.
+        $component = $request->routeIs('campus.tournament.regionaladmin')
+            ? 'Programs/CampusTournaments/RaView'
+            : 'Programs/CampusTournaments/SlView';
+
+        return Inertia::render($component, [
             'approvalRequests' => $approvalRequests,
             'rejectedRequests' => $rejectedRequests,
             'pendingCreates' => [],

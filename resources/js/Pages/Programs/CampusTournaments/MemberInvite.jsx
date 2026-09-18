@@ -1,10 +1,11 @@
 import SuccessModal from "@/Components/Admin/SuccessModal";
+import CampusTournamentPageHeader from "@/Components/CampusTournament/CampusTournamentPageHeader";
 import CaptainTeamCard from "@/Components/CampusTournament/CaptainTeamCard";
 import InviteActionBanner from "@/Components/CampusTournament/InviteActionBanner";
 import MemberInviteModal from "@/Components/CampusTournament/MemberInviteModal";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head, Link, router } from "@inertiajs/react";
-import { BellOff, Shield } from "lucide-react";
+import { BellOff } from "lucide-react";
 import { useState } from "react";
 
 export default function MemberInvite({ invitations = [] }) {
@@ -63,22 +64,14 @@ export default function MemberInvite({ invitations = [] }) {
 
             <div className="min-h-screen bg-[#0a0a0a] px-4 py-8 text-white sm:px-6 sm:py-10 lg:px-8">
                 <div className="mx-auto max-w-6xl space-y-6">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-yellow-500/40 bg-yellow-500/10 text-yellow-500">
-                                <Shield className="h-6 w-6" strokeWidth={2.2} />
-                            </div>
-                            <h1 className="text-2xl font-black uppercase tracking-wide text-white sm:text-3xl">
-                                Team Invitations
-                            </h1>
-                        </div>
+                    <CampusTournamentPageHeader subtitle="Team invitations">
                         <Link
                             href="/Tournament/CampusTournament"
                             className="text-sm text-gray-400 transition-colors hover:text-white"
                         >
                             ← Back to registration hub
                         </Link>
-                    </div>
+                    </CampusTournamentPageHeader>
 
                     {error && (
                         <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">

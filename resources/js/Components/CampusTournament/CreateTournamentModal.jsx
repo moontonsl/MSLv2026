@@ -5,7 +5,7 @@ import {
 } from '@/Components/Admin/adminModalFormStyles';
 import { formatShortDate } from '@/data/campusTournamentData';
 import { CalendarDays } from 'lucide-react';
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 
 const EMPTY_FORM = {
     mode: 'Online',
@@ -14,21 +14,42 @@ const EMPTY_FORM = {
 };
 
 /**
+ * Create / edit a tournament request. Pass `initialValues` to edit an existing one.
+ *
  * @param {{
  *   isOpen: boolean;
  *   onClose: () => void;
  *   onSubmit: (values: typeof EMPTY_FORM) => void;
  *   error?: string | null;
+ *   mode?: 'create' | 'edit';
+ *   initialValues?: { mode?: string; startDate?: string; endDate?: string } | null;
  * }} props
  */
-export default function CreateTournamentModal({ isOpen, onClose, onSubmit, error = null }) {
+export default function CreateTournamentModal({
+    isOpen,
+    onClose,
+    onSubmit,
+    error = null,
+    mode = 'create',
+    initialValues = null,
+}) {
     const formId = useId();
     const [form, setForm] = useState(EMPTY_FORM);
     const [pickerField, setPickerField] = useState(null);
+    const isEdit = mode === 'edit';
+
+    // Read through a ref so a new object literal on re-render can't wipe in-progress input.
+    const initialValuesRef = useRef(initialValues);
+    initialValuesRef.current = initialValues;
 
     useEffect(() => {
         if (!isOpen) return;
-        setForm(EMPTY_FORM);
+        const seed = initialValuesRef.current;
+        setForm({
+            mode: seed?.mode ?? EMPTY_FORM.mode,
+            startDate: seed?.startDate ?? EMPTY_FORM.startDate,
+            endDate: seed?.endDate ?? EMPTY_FORM.endDate,
+        });
         setPickerField(null);
     }, [isOpen]);
 
@@ -51,12 +72,31 @@ export default function CreateTournamentModal({ isOpen, onClose, onSubmit, error
             <BaseModal
                 isOpen={isOpen}
                 onClose={onClose}
-                title="Create Tournament"
+                title={isEdit ? 'Edit Tournament' : 'Create Tournament'}
                 maxWidth="max-w-md"
                 footer={
-                    <button type="submit" form={formId} className={MODAL_SUBMIT_FOOTER_CLASS}>
-                        Submit
-                    </button>
+                    isEdit ? (
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                className="min-h-[44px] w-full rounded-lg border border-yellow-500 bg-transparent text-base font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10 md:text-sm"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                form={formId}
+                                className="min-h-[44px] w-full rounded-lg bg-yellow-500 text-base font-bold text-black transition-colors hover:bg-yellow-400 md:text-sm"
+                            >
+                                Submit
+                            </button>
+                        </div>
+                    ) : (
+                        <button type="submit" form={formId} className={MODAL_SUBMIT_FOOTER_CLASS}>
+                            Submit
+                        </button>
+                    )
                 }
             >
                 <form id={formId} onSubmit={handleSubmit} className="space-y-5">
