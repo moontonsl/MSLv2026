@@ -22,20 +22,36 @@ const AVATAR_PLACEHOLDER =
     'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&h=128&fit=crop';
 
 const menuPanelClass =
-    'absolute left-0 top-full z-[60] mt-6 w-56 rounded-xl border border-white/5 bg-[#111111] p-2 shadow-2xl';
+    'absolute left-0 top-full z-[60] mt-3 min-w-[220px] rounded-2xl bg-[#1A1A1A] p-2 shadow-2xl';
 
 const menuItemClass =
-    'block w-full rounded-lg px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white';
+    'block w-full rounded-lg px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-[#2A2A2A] hover:text-white';
 
-const navLinkClass =
-    'text-sm font-medium text-white transition-colors hover:text-[#FFC107]';
+const navLinkBase =
+    'rounded-full px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-[#1E1E1E] hover:text-white';
 
-function NavDropdown({ id, label, items, isOpen, onToggle, onNavigate }) {
+const navLinkActive =
+    'rounded-full bg-[#FFC107] px-4 py-2 text-sm font-medium text-black';
+
+function isPathActive(url, href) {
+    if (href === '/') return url === '/' || url === '';
+    return url === href || url.startsWith(`${href}/`) || url.startsWith(`${href}?`);
+}
+
+function NavDropdown({ id, label, items, isOpen, onToggle, onNavigate, url }) {
+    const childActive = items.some(({ href }) => isPathActive(url, href));
+
     return (
         <div className="relative">
             <button
                 type="button"
-                className={`flex items-center gap-1 ${navLinkClass} ${isOpen ? 'text-[#FFC107]' : ''}`}
+                className={`flex items-center gap-1 ${
+                    isOpen
+                        ? 'text-[#FFC107]'
+                        : childActive
+                          ? navLinkActive
+                          : navLinkBase
+                } ${isOpen ? 'px-4 py-2' : ''}`}
                 aria-expanded={isOpen}
                 aria-haspopup="true"
                 onClick={() => onToggle(id)}
@@ -49,40 +65,48 @@ function NavDropdown({ id, label, items, isOpen, onToggle, onNavigate }) {
             </button>
             {isOpen && (
                 <div className={menuPanelClass} role="menu">
-                    {items.map(({ label: itemLabel, href }) => (
-                        <Link
-                            key={itemLabel}
-                            href={href}
-                            className={menuItemClass}
-                            role="menuitem"
-                            onClick={onNavigate}
-                        >
-                            {itemLabel}
-                        </Link>
-                    ))}
+                    {items.map(({ label: itemLabel, href }) => {
+                        const active = isPathActive(url, href);
+                        return (
+                            <Link
+                                key={itemLabel}
+                                href={href}
+                                className={`${menuItemClass} ${
+                                    active
+                                        ? 'border border-[#FFC107] bg-transparent text-white'
+                                        : ''
+                                }`}
+                                role="menuitem"
+                                onClick={onNavigate}
+                            >
+                                {itemLabel}
+                            </Link>
+                        );
+                    })}
                 </div>
             )}
         </div>
     );
 }
 
-/**
- * Desktop-only centered nav (absolute centering within the relative inner bar).
- */
 function DesktopNavigation({
     navRef,
     openDropdown,
     toggleNavDropdown,
     closeNavDropdowns,
+    url,
 }) {
     return (
         <nav
             ref={navRef}
             id="main-navigation"
-            className="hidden md:flex items-center gap-8 absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2"
+            className="hidden items-center gap-1 md:flex lg:gap-2"
             aria-label="Main"
         >
-            <Link href="/" className={navLinkClass}>
+            <Link
+                href="/"
+                className={isPathActive(url, '/') ? navLinkActive : navLinkBase}
+            >
                 Home
             </Link>
             <NavDropdown
@@ -92,6 +116,7 @@ function DesktopNavigation({
                 isOpen={openDropdown === 'about'}
                 onToggle={toggleNavDropdown}
                 onNavigate={closeNavDropdowns}
+                url={url}
             />
             <NavDropdown
                 id="programs"
@@ -100,17 +125,109 @@ function DesktopNavigation({
                 isOpen={openDropdown === 'programs'}
                 onToggle={toggleNavDropdown}
                 onNavigate={closeNavDropdowns}
+                url={url}
             />
-            <Link href="/careers" className={navLinkClass}>
-                Careers
-            </Link>
-            <Link href="/Event" className={navLinkClass}>
+            <Link
+                href="/Event"
+                className={isPathActive(url, '/Event') ? navLinkActive : navLinkBase}
+            >
                 Events
             </Link>
-            <Link href="/News" className={navLinkClass}>
+            <Link
+                href="/News"
+                className={isPathActive(url, '/News') ? navLinkActive : navLinkBase}
+            >
                 News
             </Link>
         </nav>
+    );
+}
+
+function AccountMenuLinks({ user, userRole, onClose, onOpenModification }) {
+    const profileHref =
+        userRole === 'Student'
+            ? '/studentportal'
+            : userRole === 'Regional Admin'
+              ? '/RegionalAdmin'
+              : '/admin/dashboard';
+
+    const showSlAdmin =
+        userRole === 'SL' ||
+        userRole === 'Student Leader' ||
+        userRole === 'Super Admin' ||
+        userRole === 'Regional Admin';
+
+    const showCampusTournaments =
+        userRole === 'SL' ||
+        userRole === 'Student Leader' ||
+        userRole === 'Regional Admin' ||
+        userRole === 'Super Admin';
+
+    const showModification =
+        userRole === 'SL' ||
+        userRole === 'Student Leader' ||
+        userRole === 'Regional Admin' ||
+        userRole === 'Super Admin';
+
+    const modificationHref =
+        userRole === 'Regional Admin' || userRole === 'Super Admin'
+            ? '/RegionalAdminApproval'
+            : '/SLAdminApproval';
+
+    const linkClass =
+        'block w-full rounded-lg px-3 py-2.5 text-left text-sm text-white transition-colors hover:bg-white/10';
+
+    return (
+        <>
+            <Link href={profileHref} className={linkClass} onClick={onClose}>
+                Profile
+            </Link>
+            {showSlAdmin && (
+                <Link
+                    href={
+                        userRole === 'Super Admin'
+                            ? '/CoreAdmin'
+                            : userRole === 'Regional Admin'
+                              ? '/RegionalAdmin'
+                              : '/StudentLeader'
+                    }
+                    className={linkClass}
+                    onClick={onClose}
+                >
+                    SL Admin
+                </Link>
+            )}
+            {showCampusTournaments && (
+                <Link href="/Tournament/SL" className={linkClass} onClick={onClose}>
+                    Campus Tournaments
+                </Link>
+            )}
+            {showModification && (
+                <Link href={modificationHref} className={linkClass} onClick={onClose}>
+                    Modification
+                </Link>
+            )}
+            {userRole === 'Super Admin' && (
+                <Link href="/admin/user-regions" className={linkClass} onClick={onClose}>
+                    User Regions
+                </Link>
+            )}
+            {(userRole === 'Regional Admin' || userRole === 'Super Admin') && (
+                <Link href="/community/create" className={linkClass} onClick={onClose}>
+                    Communities
+                </Link>
+            )}
+            <button
+                type="button"
+                className={linkClass}
+                onClick={() => {
+                    onOpenModification();
+                    onClose();
+                }}
+            >
+                Modify Account
+            </button>
+        </>
     );
 }
 
@@ -128,7 +245,14 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
     const navRef = useRef(null);
     const accountRef = useRef(null);
 
-    const { auth } = usePage().props;
+    const page = usePage();
+    const { auth } = page.props;
+    const currentUrl =
+        typeof page.url === 'string'
+            ? page.url
+            : typeof window !== 'undefined'
+              ? window.location.pathname
+              : '/';
     const user = auth?.user;
     const userRole = user?.user_type ?? user?.role;
     const loggedIn = isLoggedInProp !== undefined ? isLoggedInProp && !!user : !!user;
@@ -160,13 +284,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
 
     const handleLogout = () => {
         setIsAccountDropdownOpen(false);
-        router.post(
-            '/logout',
-            {},
-            {
-                replace: true,
-            }
-        );
+        router.post('/logout', {}, { replace: true });
     };
 
     const toggleNavDropdown = (id) => {
@@ -178,46 +296,50 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
         setMobileMenuOpen(false);
     };
 
+    const mobileLinkClass = (href) =>
+        `flex w-full items-center justify-between rounded-lg px-1 py-3 text-left text-base ${
+            isPathActive(currentUrl, href) ? 'font-semibold text-white' : 'font-medium text-white'
+        }`;
+
     return (
-        <header className="w-full border-b border-white/5 bg-[#0a0a0a] text-white">
-            <div className="relative mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6">
-                {/* Left: logo + wordmark */}
-                <div className="flex shrink-0 items-center gap-3">
+        <header className="w-full border-b border-white/5 bg-black text-white">
+            <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:h-20 sm:px-6">
+                <div className="flex min-w-0 flex-1 items-center gap-3 md:gap-8">
                     <button
                         type="button"
-                        className="rounded-md p-1 text-white md:hidden"
+                        className="shrink-0 rounded-md p-1 text-white md:hidden"
                         aria-expanded={mobileMenuOpen}
                         aria-controls="mobile-main-navigation"
                         onClick={() => setMobileMenuOpen((o) => !o)}
                     >
                         {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                     </button>
-                    <Link href="/" className="flex h-10 max-w-[200px] items-center gap-2 sm:max-w-none">
+
+                    <Link href="/" className="flex h-9 shrink-0 items-center sm:h-10">
                         <img
                             src="/msl-logo.png"
                             alt="MSL Philippines"
-                            className="h-full w-auto shrink-0 object-contain"
+                            className="h-full w-auto object-contain"
                         />
                     </Link>
+
+                    <DesktopNavigation
+                        navRef={navRef}
+                        openDropdown={openDropdown}
+                        toggleNavDropdown={toggleNavDropdown}
+                        closeNavDropdowns={closeNavDropdowns}
+                        url={currentUrl}
+                    />
                 </div>
 
-                <DesktopNavigation
-                    navRef={navRef}
-                    openDropdown={openDropdown}
-                    toggleNavDropdown={toggleNavDropdown}
-                    closeNavDropdowns={closeNavDropdowns}
-                />
-
-                {/* Right: auth */}
                 <div className="relative z-[61] flex shrink-0 items-center justify-end">
                     {!loggedIn ? (
                         <Link
                             href="/Login"
-                            className="inline-flex items-center justify-center gap-2.5 px-[23px]"
+                            className="inline-flex items-center justify-center"
                             aria-label="Log in"
                         >
-                            <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-brand-500 transition duration-300 hover:bg-brand-400 hover:shadow-[0_0_20px_rgba(242,194,26,.45)]">
-                                <span className="absolute inset-0 rounded-full border border-black/10" />
+                            <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[#FFC107] transition duration-300 hover:bg-[#F5B800] hover:shadow-[0_0_20px_rgba(255,193,7,.35)]">
                                 <img
                                     src="/user-01.svg"
                                     alt=""
@@ -230,7 +352,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                         <div className="relative" ref={accountRef}>
                             <button
                                 type="button"
-                                className="block overflow-hidden rounded-full ring-2 ring-transparent transition hover:ring-white/20"
+                                className="block overflow-hidden rounded-full ring-2 ring-transparent transition hover:ring-[#FFC107]/40"
                                 onClick={() => setIsAccountDropdownOpen((o) => !o)}
                                 aria-expanded={isAccountDropdownOpen}
                                 aria-haspopup="true"
@@ -245,99 +367,20 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                             </button>
 
                             {isAccountDropdownOpen && user && (
-                                <div className="absolute right-0 top-full z-[60] mt-2 min-w-[180px] overflow-hidden rounded-xl border border-white/5 bg-[#111111] py-1 shadow-2xl">
-                                    <Link
-                                        href={
-                                            userRole === 'Student'
-                                                ? '/studentportal'
-                                                : userRole === 'Regional Admin'
-                                                    ? '/RegionalAdmin'
-                                                    : '/admin/dashboard'
-                                        }
-                                        className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
-                                        onClick={() => setIsAccountDropdownOpen(false)}
-                                    >
-                                        Profile
-                                    </Link>
-                                    {(userRole === 'SL' ||
-                                        userRole === 'Student Leader' ||
-                                        userRole === 'Super Admin' ||
-                                        userRole === 'Regional Admin') && (
-                                        <Link
-                                            href={
-                                                userRole === 'Super Admin'
-                                                    ? '/CoreAdmin'
-                                                    : userRole === 'Regional Admin'
-                                                        ? '/RegionalAdmin'
-                                                        : '/StudentLeader'
+                                <div className="absolute right-0 top-full z-[60] mt-3 w-[200px] overflow-hidden rounded-2xl bg-[#1A1A1A] p-3 shadow-2xl">
+                                    <div className="flex flex-col gap-0.5">
+                                        <AccountMenuLinks
+                                            user={user}
+                                            userRole={userRole}
+                                            onClose={() => setIsAccountDropdownOpen(false)}
+                                            onOpenModification={() =>
+                                                setShowModificationModal(true)
                                             }
-                                            className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
-                                            onClick={() => setIsAccountDropdownOpen(false)}
-                                        >
-                                            SL Admin
-                                        </Link>
-                                    )}
-                                    {(userRole === 'SL' ||
-                                        userRole === 'Student Leader' ||
-                                        userRole === 'Regional Admin' ||
-                                        userRole === 'Super Admin') && (
-                                        <Link
-                                            href="/Tournament/SL"
-                                            className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
-                                            onClick={() => setIsAccountDropdownOpen(false)}
-                                        >
-                                            Campus Tournament
-                                        </Link>
-                                    )}
-                                    {(userRole === 'SL' || userRole === 'Student Leader') && (
-                                        <Link
-                                            href="/SLAdminApproval"
-                                            className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
-                                            onClick={() => setIsAccountDropdownOpen(false)}
-                                        >
-                                            Modification
-                                        </Link>
-                                    )}
-                                    {(userRole === 'Regional Admin' || userRole === 'Super Admin') && (
-                                        <Link
-                                            href="/RegionalAdminApproval"
-                                            className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
-                                            onClick={() => setIsAccountDropdownOpen(false)}
-                                        >
-                                            Modification
-                                        </Link>
-                                    )}
-                                    {userRole === 'Super Admin' && (
-                                        <Link
-                                            href="/admin/user-regions"
-                                            className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
-                                            onClick={() => setIsAccountDropdownOpen(false)}
-                                        >
-                                            User Regions
-                                        </Link>
-                                    )}
-                                    {(userRole === 'Regional Admin' || userRole === 'Super Admin') && (
-                                        <Link
-                                            href="/community/create"
-                                            className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
-                                            onClick={() => setIsAccountDropdownOpen(false)}
-                                        >
-                                            Communities
-                                        </Link>
-                                    )}
+                                        />
+                                    </div>
                                     <button
                                         type="button"
-                                        className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
-                                        onClick={() => {
-                                            setShowModificationModal(true);
-                                            setIsAccountDropdownOpen(false);
-                                        }}
-                                    >
-                                        Modify Account
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="block w-full px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
+                                        className="mt-3 w-full rounded-lg bg-[#FFC107] px-4 py-2.5 text-center text-sm font-semibold text-black transition hover:bg-[#F5B800]"
                                         onClick={handleLogout}
                                     >
                                         Log out
@@ -349,25 +392,27 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                 </div>
             </div>
 
-            {/* Mobile menu */}
             {mobileMenuOpen && (
                 <div
                     id="mobile-main-navigation"
-                    className="border-t border-white/5 bg-[#0a0a0a] px-4 py-4 sm:px-6 md:hidden"
+                    className="border-t border-white/10 bg-black px-4 py-2 sm:px-6 md:hidden"
                 >
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col">
                         <Link
                             href="/"
-                            className={`${navLinkClass} py-2`}
+                            className={mobileLinkClass('/')}
                             onClick={() => setMobileMenuOpen(false)}
                         >
                             Home
                         </Link>
+
                         <div>
                             <button
                                 type="button"
-                                className={`flex w-full items-center justify-between py-2 text-left ${navLinkClass} ${
-                                    mobileSubmenu === 'about' ? 'text-[#FFC107]' : ''
+                                className={`flex w-full items-center justify-between py-3 text-left text-base ${
+                                    mobileSubmenu === 'about'
+                                        ? 'font-semibold text-white'
+                                        : 'font-medium text-white'
                                 }`}
                                 onClick={() =>
                                     setMobileSubmenu((s) => (s === 'about' ? null : 'about'))
@@ -376,17 +421,21 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                 About
                                 <ChevronDown
                                     className={`h-4 w-4 transition-transform ${
-                                        mobileSubmenu === 'about' ? 'rotate-180 text-[#FFC107]' : ''
+                                        mobileSubmenu === 'about' ? 'rotate-180' : ''
                                     }`}
                                 />
                             </button>
                             {mobileSubmenu === 'about' && (
-                                <div className="ml-2 border-l border-white/10 pl-3">
+                                <div className="mb-2 space-y-1 border-l border-white/10 pl-3">
                                     {ABOUT_ITEMS.map(({ label, href }) => (
                                         <Link
                                             key={label}
                                             href={href}
-                                            className="block py-2 text-sm text-gray-300 hover:text-white"
+                                            className={`block rounded-lg px-3 py-2 text-sm text-gray-300 transition-colors hover:bg-[#1E1E1E] hover:text-white ${
+                                                isPathActive(currentUrl, href)
+                                                    ? 'border border-[#FFC107] text-white'
+                                                    : ''
+                                            }`}
                                             onClick={() => {
                                                 setMobileMenuOpen(false);
                                                 setMobileSubmenu(null);
@@ -398,32 +447,39 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                 </div>
                             )}
                         </div>
+
                         <div>
                             <button
                                 type="button"
-                                className={`flex w-full items-center justify-between py-2 text-left ${navLinkClass} ${
-                                    mobileSubmenu === 'programs' ? 'text-[#FFC107]' : ''
+                                className={`flex w-full items-center justify-between py-3 text-left text-base ${
+                                    mobileSubmenu === 'programs'
+                                        ? 'font-semibold text-white'
+                                        : 'font-medium text-white'
                                 }`}
                                 onClick={() =>
-                                    setMobileSubmenu((s) => (s === 'programs' ? null : 'programs'))
+                                    setMobileSubmenu((s) =>
+                                        s === 'programs' ? null : 'programs'
+                                    )
                                 }
                             >
                                 Programs
                                 <ChevronDown
                                     className={`h-4 w-4 transition-transform ${
-                                        mobileSubmenu === 'programs'
-                                            ? 'rotate-180 text-[#FFC107]'
-                                            : ''
+                                        mobileSubmenu === 'programs' ? 'rotate-180' : ''
                                     }`}
                                 />
                             </button>
                             {mobileSubmenu === 'programs' && (
-                                <div className="ml-2 border-l border-white/10 pl-3">
+                                <div className="mb-2 space-y-1 border-l border-white/10 pl-3">
                                     {PROGRAMS_ITEMS.map(({ label, href }) => (
                                         <Link
                                             key={label}
                                             href={href}
-                                            className="block py-2 text-sm text-gray-300 hover:text-white"
+                                            className={`block rounded-lg px-3 py-2 text-sm text-gray-300 transition-colors hover:bg-[#1E1E1E] hover:text-white ${
+                                                isPathActive(currentUrl, href)
+                                                    ? 'border border-[#FFC107] text-white'
+                                                    : ''
+                                            }`}
                                             onClick={() => {
                                                 setMobileMenuOpen(false);
                                                 setMobileSubmenu(null);
@@ -435,23 +491,17 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                 </div>
                             )}
                         </div>
-                        <Link
-                            href="/careers"
-                            className={`${navLinkClass} py-2`}
-                            onClick={() => setMobileMenuOpen(false)}
-                        >
-                            Careers
-                        </Link>
+
                         <Link
                             href="/Event"
-                            className={`${navLinkClass} py-2`}
+                            className={mobileLinkClass('/Event')}
                             onClick={() => setMobileMenuOpen(false)}
                         >
                             Events
                         </Link>
                         <Link
                             href="/News"
-                            className={`${navLinkClass} py-2`}
+                            className={mobileLinkClass('/News')}
                             onClick={() => setMobileMenuOpen(false)}
                         >
                             News

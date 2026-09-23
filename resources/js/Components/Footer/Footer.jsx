@@ -6,7 +6,7 @@ import {
     Heart,
     Lock,
     ShieldCheck,
-    BadgeCheck,
+    ScrollText,
     Accessibility,
 } from 'lucide-react';
 
@@ -27,31 +27,26 @@ const RESOURCE_LINKS = [
 const TRUST_BADGES = [
     {
         Icon: Heart,
-        iconClass: 'text-[#FFC107]',
         title: 'Safe Space Zone',
         subtitle: 'RA 11313 Compliant',
     },
     {
         Icon: Lock,
-        iconClass: 'text-gray-400',
         title: 'Data Privacy',
         subtitle: 'Encrypted & Secure',
     },
     {
         Icon: ShieldCheck,
-        iconClass: 'text-gray-400',
         title: 'Child Protection',
         subtitle: 'Strictly Enforced',
     },
     {
-        Icon: BadgeCheck,
-        iconClass: 'text-gray-400',
+        Icon: ScrollText,
         title: 'Intellectual Property',
         subtitle: 'Moonton Authorized',
     },
     {
         Icon: Accessibility,
-        iconClass: 'text-gray-400',
         title: 'Accessibility',
         subtitle: 'WCAG 2.1 Level AA',
     },
@@ -76,6 +71,9 @@ function TikTokIcon({ className }) {
     );
 }
 
+const footerLinkClass =
+    'text-sm text-gray-400 transition-colors hover:text-white';
+
 const Footer = () => {
     const { footer } = usePage().props;
 
@@ -86,14 +84,14 @@ const Footer = () => {
     const mlbbLogo = footer?.mlbb_logo || '/mlbb-logo.png';
     const moontonLogo = footer?.moonton_logo || '/moonton-logo.png';
 
-    const socialClass =
-        'text-gray-400 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FFC107]';
+    const socialBase =
+        'inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#1A1A1A] text-white transition-colors';
 
     return (
-        <footer className="relative z-10 border-t border-white/10 bg-[#0a0a0a] pb-8 pt-16 text-white">
+        <footer className="relative z-10 border-t border-white/10 bg-black pb-8 pt-14 text-white sm:pt-16">
             <div className="mx-auto max-w-7xl px-4 sm:px-6">
-                {/* Tier 1 */}
-                <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+                {/* Desktop: 4-column brand + nav */}
+                <div className="hidden gap-10 lg:grid lg:grid-cols-12 lg:gap-8">
                     <div className="lg:col-span-4">
                         <Link href="/" className="inline-flex">
                             <img
@@ -102,66 +100,46 @@ const Footer = () => {
                                 className="h-10 w-auto object-contain"
                             />
                         </Link>
-                        <p className="mt-6 text-sm text-gray-400">
+                        <p className="mt-5 max-w-xs text-sm leading-relaxed text-gray-400">
                             The official student leader body of Mobile Legends: Bang Bang in the
                             Philippines.
                         </p>
-                        <div className="mt-8 flex flex-wrap items-center gap-6">
-                            <Link href="/" className="block h-9 opacity-90 transition-opacity hover:opacity-100">
-                                <img
-                                    src={moontonLogo}
-                                    alt="Moonton"
-                                    className="h-full w-auto max-h-9 object-contain"
-                                />
-                            </Link>
-                            <Link href="/" className="block h-9 opacity-90 transition-opacity hover:opacity-100">
-                                <img
-                                    src={mlbbLogo}
-                                    alt="Mobile Legends: Bang Bang"
-                                    className="h-full w-auto max-h-9 object-contain"
-                                />
-                            </Link>
-                        </div>
-                        <div className="mt-6 flex items-center gap-4">
+                        <div className="mt-6 flex items-center gap-3">
                             <a
                                 href={facebookUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={socialClass}
+                                className={`${socialBase} hover:bg-[#1877F2]`}
                                 aria-label="Facebook"
                             >
-                                <Facebook className="h-5 w-5" strokeWidth={1.75} />
+                                <Facebook className="h-4 w-4" strokeWidth={1.75} />
                             </a>
                             <a
                                 href={tiktokUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={socialClass}
+                                className={`${socialBase} hover:bg-black hover:ring-1 hover:ring-white/20`}
                                 aria-label="TikTok"
                             >
-                                <TikTokIcon className="h-5 w-5" />
+                                <TikTokIcon className="h-4 w-4" />
                             </a>
                             <a
                                 href={youtubeUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={socialClass}
+                                className={`${socialBase} hover:bg-[#FF0000]`}
                                 aria-label="YouTube"
                             >
-                                <Youtube className="h-5 w-5" strokeWidth={1.75} />
+                                <Youtube className="h-4 w-4" strokeWidth={1.75} />
                             </a>
                         </div>
                     </div>
 
                     <div className="lg:col-span-3">
                         <h3 className="text-sm font-bold text-white">Programs</h3>
-                        <nav className="mt-6 flex flex-col gap-3 text-sm text-gray-400" aria-label="Programs">
+                        <nav className="mt-5 flex flex-col gap-3" aria-label="Programs">
                             {PROGRAM_LINKS.map(({ label, href }) => (
-                                <Link
-                                    key={href}
-                                    href={href}
-                                    className="transition-colors hover:text-white"
-                                >
+                                <Link key={href} href={href} className={footerLinkClass}>
                                     {label}
                                 </Link>
                             ))}
@@ -170,13 +148,9 @@ const Footer = () => {
 
                     <div className="lg:col-span-2">
                         <h3 className="text-sm font-bold text-white">Resources</h3>
-                        <nav className="mt-6 flex flex-col gap-3 text-sm text-gray-400" aria-label="Resources">
+                        <nav className="mt-5 flex flex-col gap-3" aria-label="Resources">
                             {RESOURCE_LINKS.map(({ label, href }) => (
-                                <Link
-                                    key={href}
-                                    href={href}
-                                    className="transition-colors hover:text-white"
-                                >
+                                <Link key={href} href={href} className={footerLinkClass}>
                                     {label}
                                 </Link>
                             ))}
@@ -185,12 +159,12 @@ const Footer = () => {
 
                     <div className="lg:col-span-3">
                         <h3 className="text-sm font-bold text-white">Safe Spaces</h3>
-                        <p className="mb-6 mt-6 text-sm text-gray-400">
+                        <p className="mb-5 mt-5 text-sm text-gray-400">
                             We are committed to RA11313 compliance.
                         </p>
                         <Link
                             href="/report-violation"
-                            className="inline-flex items-center justify-center gap-2 rounded-md border border-red-900 bg-red-950/30 px-4 py-2 text-sm font-medium text-red-500 transition-colors hover:bg-red-950/50 hover:text-red-400"
+                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-red-700/80 bg-red-950/40 px-4 py-2.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-950/60 hover:text-red-400"
                         >
                             <ShieldAlert className="h-4 w-4 shrink-0" />
                             Report Violation
@@ -198,33 +172,148 @@ const Footer = () => {
                     </div>
                 </div>
 
-                {/* Tier 2 */}
-                <div className="mt-16 grid grid-cols-2 gap-6 pt-8 md:grid-cols-3 lg:grid-cols-5">
-                    {TRUST_BADGES.map(({ Icon, iconClass, title, subtitle }) => (
-                        <div key={title} className="flex items-start gap-3">
-                            <Icon className={`h-5 w-5 shrink-0 ${iconClass}`} strokeWidth={1.75} />
-                            <div className="min-w-0">
-                                <p className="text-xs font-semibold text-white">{title}</p>
-                                <p className="text-[10px] text-gray-400">{subtitle}</p>
-                            </div>
+                {/* Mobile / tablet layout */}
+                <div className="lg:hidden">
+                    <div className="flex flex-col items-start sm:items-center sm:text-center">
+                        <Link href="/" className="inline-flex">
+                            <img
+                                src={logo}
+                                alt="MSL Philippines"
+                                className="h-10 w-auto object-contain"
+                            />
+                        </Link>
+                        <p className="mt-5 max-w-sm text-sm leading-relaxed text-gray-400">
+                            The official student leader body of Mobile Legends: Bang Bang in the
+                            Philippines.
+                        </p>
+
+                        <div className="mt-6 flex flex-wrap items-center justify-center gap-6">
+                            <img
+                                src={moontonLogo}
+                                alt="Moonton"
+                                className="h-8 w-auto object-contain opacity-90"
+                            />
+                            <img
+                                src={mlbbLogo}
+                                alt="Mobile Legends: Bang Bang"
+                                className="h-8 w-auto object-contain opacity-90"
+                            />
                         </div>
-                    ))}
+
+                        <div className="mt-6 flex items-center gap-3">
+                            <a
+                                href={facebookUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`${socialBase} hover:bg-[#1877F2]`}
+                                aria-label="Facebook"
+                            >
+                                <Facebook className="h-4 w-4" strokeWidth={1.75} />
+                            </a>
+                            <a
+                                href={tiktokUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`${socialBase} hover:bg-black hover:ring-1 hover:ring-white/20`}
+                                aria-label="TikTok"
+                            >
+                                <TikTokIcon className="h-4 w-4" />
+                            </a>
+                            <a
+                                href={youtubeUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`${socialBase} hover:bg-[#FF0000]`}
+                                aria-label="YouTube"
+                            >
+                                <Youtube className="h-4 w-4" strokeWidth={1.75} />
+                            </a>
+                        </div>
+                    </div>
+
+                    <div className="mt-10 grid grid-cols-2 gap-8">
+                        <div>
+                            <h3 className="text-sm font-bold text-white">Programs</h3>
+                            <nav className="mt-4 flex flex-col gap-3" aria-label="Programs">
+                                {PROGRAM_LINKS.map(({ label, href }) => (
+                                    <Link key={href} href={href} className={footerLinkClass}>
+                                        {label}
+                                    </Link>
+                                ))}
+                            </nav>
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-bold text-white">Resources</h3>
+                            <nav className="mt-4 flex flex-col gap-3" aria-label="Resources">
+                                {RESOURCE_LINKS.map(({ label, href }) => (
+                                    <Link key={href} href={href} className={footerLinkClass}>
+                                        {label}
+                                    </Link>
+                                ))}
+                            </nav>
+                        </div>
+                    </div>
+
+                    <div className="mt-10">
+                        <h3 className="text-sm font-bold text-white">Safe Spaces</h3>
+                        <p className="mb-4 mt-3 text-sm text-gray-400">
+                            We are committed to RA11313 compliance.
+                        </p>
+                        <Link
+                            href="/report-violation"
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-red-700/80 bg-red-950/40 px-4 py-3 text-sm font-medium text-red-500 transition-colors hover:bg-red-950/60 hover:text-red-400"
+                        >
+                            <ShieldAlert className="h-4 w-4 shrink-0" />
+                            Report Violation
+                        </Link>
+                    </div>
+
+                    <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-6">
+                        {TRUST_BADGES.map(({ Icon, title, subtitle }) => (
+                            <div key={title} className="flex items-start gap-2.5">
+                                <Icon
+                                    className="mt-0.5 h-5 w-5 shrink-0 text-[#FFC107]"
+                                    strokeWidth={1.75}
+                                />
+                                <div className="min-w-0">
+                                    <p className="text-xs font-semibold text-white">{title}</p>
+                                    <p className="text-[10px] leading-snug text-gray-400">
+                                        {subtitle}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
-                {/* Tier 3 */}
-                <div className="mt-12 flex flex-col items-center justify-between gap-4 pt-8 text-xs text-gray-500 md:flex-row">
-                    <p className="text-center md:text-left">
+                {/* Desktop: partner logos row */}
+                <div className="mt-14 hidden items-center justify-center gap-10 border-t border-white/10 pt-10 lg:flex">
+                    <img
+                        src={mlbbLogo}
+                        alt="Mobile Legends: Bang Bang"
+                        className="h-10 w-auto object-contain opacity-90"
+                    />
+                    <img
+                        src={moontonLogo}
+                        alt="Moonton"
+                        className="h-9 w-auto object-contain opacity-90"
+                    />
+                </div>
+
+                {/* Copyright + legal */}
+                <div className="mt-10 flex flex-col items-center gap-4 border-t border-white/10 pt-8 text-xs text-gray-500 lg:mt-8 lg:flex-row lg:items-center lg:justify-between lg:border-0 lg:pt-0">
+                    <p className="text-center lg:text-left">
                         © 2025 Moonton Student Leaders Philippines. All rights reserved.
                     </p>
                     <nav
-                        className="flex flex-wrap items-center justify-center gap-6 md:justify-end"
+                        className="flex flex-col items-center gap-3 lg:flex-row lg:gap-6"
                         aria-label="Legal"
                     >
                         {LEGAL_LINKS.map(({ label, href }) => (
                             <Link
                                 key={href}
                                 href={href}
-                                className="transition-colors hover:text-white"
+                                className="text-gray-500 transition-colors hover:text-white"
                             >
                                 {label}
                             </Link>
