@@ -64,51 +64,49 @@ function HomeHero() {
     const active = slides[activeIndex];
 
     return (
-        <section className="bg-[#0a0a0a]">
-            <div className="container-page py-12 md:py-20">
-                <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-                    {/* Left column */}
-                    <div className="mx-auto max-w-xl text-center md:mx-0 md:text-left">
-                        <h1 className="font-heading text-4xl font-black leading-[1.05] tracking-tighter text-white md:text-[56px] lg:text-[64px]">
-                            Empowering{' '}
-                            <span className="text-[#FFC107]">Student-Gamers</span>
-                            <br />
-                            to <span className="text-[#FFC107]">Become</span> the Next
-                            <br />
-                            Generation Leaders
+        <section className="bg-[#050505]">
+            <div className="container-page py-10 md:py-[43px] md:pb-12">
+                <div className="flex flex-col items-stretch gap-10 lg:flex-row lg:items-center lg:gap-10">
+                    {/* Left column — Figma: 550px, left-aligned, 4 forced line breaks */}
+                    <div className="w-full max-w-[550px] shrink-0 text-left lg:w-[550px]">
+                        <h1 className="font-heading text-[40px] font-extrabold leading-[48px] tracking-normal text-left text-white sm:text-hero-md sm:leading-[58px]">
+                            <span className="block">Empowering</span>
+                            <span className="block text-brand-500">Student-Gamers</span>
+                            <span className="block">to Become the Next</span>
+                            <span className="block">Generation Leaders</span>
                         </h1>
 
-                        <p className="mt-6 text-base leading-relaxed text-gray-400 sm:text-lg">
+                        <p className="mt-6 max-w-[550px] font-sans text-body-md font-normal text-gray-400">
                             We equip student-gamers and esports organizations with
                             recognition, resources, and professional mentorship —
                             everything you need to build a thriving campus community.
                         </p>
 
-                        <div className="mt-8 flex w-full flex-col items-center gap-4 md:flex-row md:justify-start">
+                        <div className="mt-6 flex flex-wrap items-start justify-start gap-4">
                             <button
                                 type="button"
-                                className="inline-flex w-full items-center justify-center rounded-lg bg-yellow-400 px-6 py-3 text-sm font-semibold text-black shadow-[0_0_0_1px_rgba(0,0,0,0.25)] transition hover:bg-yellow-300 md:w-auto"
+                                className="inline-flex items-center justify-center rounded-xl border border-brand-600 bg-brand-500 px-[18px] py-3 font-sans text-body-md font-semibold text-gray-900 transition hover:bg-brand-400"
                             >
                                 Be A Member
                             </button>
 
                             <button
                                 type="button"
-                                className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-transparent px-6 py-3 text-sm font-semibold text-white transition hover:border-white/20 hover:bg-white/5 md:w-auto"
+                                className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-[18px] py-3 font-sans text-body-md font-semibold text-white transition hover:bg-white/10"
                             >
-                                Partner With US
-                                <ArrowRight className="h-4 w-4" />
+                                Partner With Us
+                                <ArrowRight className="h-5 w-5" />
                             </button>
                         </div>
                     </div>
 
                     {/* Right column */}
-                    <div className="w-full">
-                        <div className="mb-2 text-xs font-semibold tracking-[0.22em] text-gray-500">
+                    <div className="min-w-0 flex-1">
+                        <div className="mb-2.5 font-sans text-body-xs font-semibold text-gray-400">
                             HAPPENING NOW
                         </div>
 
-                        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_30px_80px_rgba(0,0,0,0.55)]">
+                        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#121212] shadow-[0_20px_25px_rgba(0,0,0,0.10)]">
                             <div className="relative h-[260px] sm:h-[320px] lg:h-[360px]">
                                 <img
                                     src={active.imageSrc}
@@ -116,42 +114,38 @@ function HomeHero() {
                                     className="absolute inset-0 h-full w-full object-cover"
                                 />
 
-                                {/* Soft dark vignette + bottom gradient for legibility */}
-                                <div className="absolute inset-0 bg-black/10" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#1A1A1A]/80 to-transparent" />
 
-                                {/* Content */}
-                                <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-                                    <div className="inline-flex items-center rounded-md bg-red-600 px-2 py-0.5 text-[11px] font-bold tracking-wide text-white">
+                                <div className="absolute inset-x-0 bottom-0 p-4 sm:p-6">
+                                    <div className="inline-flex items-center rounded-md bg-error-700 px-3 py-1 font-sans text-body-xs font-bold text-white">
                                         {active.badge}
                                     </div>
 
-                                    <div className="mt-2 font-heading text-2xl font-bold leading-tight text-white sm:text-3xl">
+                                    <div className="mt-2 font-heading text-card-title font-extrabold leading-6 text-white">
                                         {active.title}
                                     </div>
 
-                                    <div className="mt-1 max-w-lg text-sm leading-relaxed text-white/80">
+                                    <div className="mt-1 max-w-lg font-sans text-body-md font-semibold text-gray-300">
                                         {active.description}
                                     </div>
 
-                                    <div className="flex items-center gap-4 mt-6 w-full">
-                                        <div className="flex items-center gap-2 bg-black/60 px-3 py-1.5 rounded-lg text-white text-sm font-medium">
-                                            <Calendar className="h-4 w-4 text-[#FFC107]" />
+                                    <div className="mt-4 flex w-full flex-wrap items-center gap-2.5">
+                                        <div className="inline-flex items-center gap-1 rounded-md border border-white/10 bg-black/60 px-3 py-2 font-sans text-sm font-bold leading-[22px] text-white">
+                                            <Calendar className="h-4 w-4 text-brand-500" />
                                             <span>{active.dateLabel}</span>
                                         </div>
 
                                         <button
                                             type="button"
-                                            className="inline-flex items-center gap-2 rounded-full bg-yellow-400 px-4 py-2 text-sm font-semibold text-black transition hover:bg-yellow-300"
+                                            className="inline-flex items-center gap-1 rounded-xl border border-brand-600 bg-brand-500 px-3 py-2 font-sans text-sm font-semibold leading-[22px] text-gray-900 transition hover:bg-brand-400"
                                         >
                                             View Details
-                                            <ArrowRight className="h-4 w-4" />
+                                            <ArrowRight className="h-5 w-5" />
                                         </button>
                                     </div>
                                 </div>
 
-                                {/* Indicators */}
-                                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2">
+                                <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2">
                                     {slides.map((_, i) => {
                                         const isActive = i === activeIndex;
                                         return (
@@ -162,8 +156,8 @@ function HomeHero() {
                                                 onClick={() => setActiveIndex(i)}
                                                 className={`h-1.5 rounded-full transition ${
                                                     isActive
-                                                        ? 'w-10 bg-yellow-400'
-                                                        : 'w-4 bg-gray-500'
+                                                        ? 'w-10 bg-brand-500'
+                                                        : 'w-[18px] bg-gray-600'
                                                 }`}
                                             />
                                         );
@@ -187,21 +181,21 @@ function AboutMSLSection() {
     ];  
 
     return (
-        <section className="relative isolate overflow-hidden bg-[#0a0a0a] py-16 md:py-24">
+        <section className="relative isolate overflow-hidden border-t border-white/10 bg-[#0B0B0B] py-16 md:py-20">
             <div
-                className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[80%] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl opacity-20"
+                className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 opacity-10"
                 style={{
                     background:
-                        'radial-gradient(circle, rgba(251,191,36,1) 0%, rgba(251,191,36,0) 70%)',
+                        'radial-gradient(circle, #FBBF24 0%, #FDE68A 35%, transparent 70%)',
                 }}
             />
             <div className="relative z-10 container-page">
-                <div className="mx-auto max-w-4xl text-center">
-                    <h2 className="text-center font-heading text-2xl font-black uppercase tracking-wide text-white md:text-3xl">
+                <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
+                    <h2 className="font-heading text-section font-bold uppercase tracking-normal text-white">
                         About MSL Philippines
                     </h2>
 
-                    <p className="mx-auto mt-3 max-w-2xl text-center font-sans text-sm leading-relaxed text-gray-400 md:text-base">
+                    <p className="font-sans text-body-lg font-normal text-white">
                         We are the official student leader body of Mobile Legends:
                         Bang Bang in the Philippines. Guided by Moonton, we create
                         inclusive campus initiatives that unite players, boost school
@@ -211,33 +205,33 @@ function AboutMSLSection() {
 
                     <Link
                         href="/About"
-                        className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-[#FFC107] transition hover:text-yellow-300 sm:text-base"
+                        className="inline-flex items-center gap-2 font-sans text-body-md font-bold text-brand-500 transition hover:text-brand-400"
                     >
                         Learn More About Us
-                        <ArrowRight className="h-4 w-4" />
+                        <ArrowUpRight className="h-5 w-5" />
                     </Link>
                 </div>
 
-                <div className="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-4">
+                <div className="mt-16 grid grid-cols-2 gap-5 lg:grid-cols-4">
                     {stats.map((item) => {
                         const Icon = item.icon;
                         return (
                             <article
                                 key={item.label}
-                                className="rounded-2xl border border-neutral-700 bg-[#1a1a1a] px-6 py-7"
+                                className="flex flex-col items-center gap-4 rounded-2xl border border-white/5 bg-[#121212] p-6"
                             >
-                                <div className="flex justify-center">
-                                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#2a2a2a]">
-                                        <Icon className="h-5 w-5 text-[#FFC107]" />
-                                    </span>
-                                </div>
+                                <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[rgba(242,194,26,0.30)]">
+                                    <Icon className="h-6 w-6 text-brand-600" />
+                                </span>
 
-                                <div className="stat-number mt-5 text-center text-3xl text-white sm:text-5xl">
-                                    {item.value}
-                                </div>
+                                <div className="flex flex-col items-center gap-1">
+                                    <div className="stat-number text-center font-heading text-section font-bold text-white">
+                                        {item.value}
+                                    </div>
 
-                                <div className="mt-2 text-center text-xs font-medium tracking-[0.16em] text-gray-400">
-                                    {item.label}
+                                    <div className="text-center font-sans text-body-sm font-normal text-gray-400">
+                                        {item.label}
+                                    </div>
                                 </div>
                             </article>
                         );
@@ -267,7 +261,7 @@ function NetworkOrganizationsSection() {
             `}</style>
 
             <div className="container-page mb-12">
-                <h2 className="mb-12 text-center font-heading text-2xl font-black uppercase tracking-wide text-white md:text-3xl">
+                <h2 className="mb-12 text-center font-heading text-section font-bold uppercase tracking-normal text-white">
                     MSL Network Organizations
                 </h2>
             </div>
@@ -410,12 +404,12 @@ function ProgramsSection() {
     return (
         <section className="bg-[#0a0a0a] py-12 md:py-20">
             <div className="container-page">
-                <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-                    <div className="text-center md:text-left">
-                        <h2 className="text-center font-heading text-2xl font-black uppercase tracking-wide text-white md:text-left md:text-3xl">
+                <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+                    <div className="max-w-[532px] text-left">
+                        <h2 className="font-heading text-section font-bold uppercase tracking-normal text-white">
                             Our Programs
                         </h2>
-                        <p className="mx-auto mt-3 max-w-2xl text-center font-sans text-sm leading-relaxed text-gray-400 md:mx-0 md:text-left md:text-base">
+                        <p className="mt-3 font-sans text-body-lg font-normal text-white">
                             Building opportunities for student leaders through
                             events, training, and nationwide esports initiatives.
                         </p>
@@ -423,10 +417,10 @@ function ProgramsSection() {
 
                     <button
                         type="button"
-                        className="inline-flex w-full items-center justify-center gap-2 self-stretch rounded-full border border-[#FFC107] px-5 py-2.5 text-sm font-medium text-[#FFC107] transition hover:bg-[#FFC107]/10 md:w-auto md:self-auto md:mt-0"
+                        className="inline-flex shrink-0 items-center justify-center gap-1 self-start rounded-xl border border-brand-500 bg-white/5 px-[18px] py-3 font-sans text-body-md font-semibold text-brand-500 transition hover:bg-brand-500/10"
                     >
                         View All Programs
-                        <ArrowRight className="h-4 w-4" />
+                        <ArrowUpRight className="h-5 w-5" />
                     </button>
                 </div>
 
@@ -467,22 +461,23 @@ function ProgramsSection() {
                                     <ChevronRight className="h-4 w-4" />
                                 </button>
 
-                                <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-start gap-1 p-6 pr-16">
-                                    <h3 className="text-xl font-bold leading-tight text-white lg:text-2xl">
+                                <div className="absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-4 p-6 md:p-8">
+                                    <h3 className="font-heading text-card-title font-extrabold leading-6 text-white lg:leading-8">
                                         {program.title}
                                     </h3>
-                                    <p className="max-w-lg text-xs text-gray-300 opacity-0 -translate-y-2 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 md:text-sm">
-                                        {program.description}
-                                    </p>
+                                    <button
+                                        type="button"
+                                        aria-label={`Open ${program.title}`}
+                                        className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-brand-500 bg-brand-500 transition hover:bg-brand-400"
+                                    >
+                                        <ArrowUpRight className="h-5 w-5 text-neutral-700" />
+                                    </button>
                                 </div>
 
-                                <button
-                                    type="button"
-                                    aria-label={`Open ${program.title}`}
-                                    className="absolute bottom-6 right-6 z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#FFC107] opacity-0 shadow-lg translate-x-4 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
-                                >
-                                    <ArrowUpRight className="h-5 w-5 text-black" />
-                                </button>
+                                {/* Keep description available for hover without shifting title row */}
+                                <p className="pointer-events-none absolute inset-x-6 bottom-20 z-10 max-w-lg text-xs text-gray-300 opacity-0 transition-opacity duration-300 group-hover:opacity-100 md:text-sm">
+                                    {program.description}
+                                </p>
                             </article>
                         ))}
                     </div>
@@ -494,7 +489,7 @@ function ProgramsSection() {
                                 key={i}
                                 className={`h-1.5 rounded-full transition ${
                                     i === activeProgramIndex
-                                        ? 'w-8 bg-yellow-400'
+                                        ? 'w-8 bg-brand-500'
                                         : 'w-2 bg-gray-600'
                                 }`}
                             />
@@ -627,11 +622,11 @@ function CommunityVoicesSection() {
                 }}
             />
             <div className="relative z-10 container-page">
-                <div className="text-center md:text-left">
-                    <h2 className="text-center font-heading text-2xl font-black uppercase tracking-wide text-white md:text-left md:text-3xl">
+                <div className="text-left">
+                    <h2 className="font-heading text-section font-bold uppercase tracking-normal text-white">
                         Community Voices
                     </h2>
-                    <p className="mx-auto mt-3 max-w-2xl text-center font-sans text-sm leading-relaxed text-gray-400 md:mx-0 md:text-left md:text-base">
+                    <p className="mt-3 max-w-[532px] font-sans text-body-lg font-normal text-white">
                         Hear from the student leaders, campus organizers, and
                         partners who are driving the MSL Philippines movement
                         forward.
@@ -664,7 +659,7 @@ function CommunityVoicesSection() {
                         {voices.map((voice, idx) => (
                             <article
                                 key={`${voice.name}-${idx}`}
-                                className="group relative w-[85vw] max-w-[340px] shrink-0 snap-start rounded-2xl border border-transparent bg-[#111111] transition-all duration-300 hover:border-[#FFC107] md:w-auto"
+                                className="group relative w-[85vw] max-w-[340px] shrink-0 snap-start rounded-2xl border border-transparent bg-[#111111] transition-all duration-300 hover:border-brand-500 md:w-auto"
                             >
                                 <div className="relative h-64 overflow-hidden rounded-t-2xl">
                                     <img
@@ -677,7 +672,7 @@ function CommunityVoicesSection() {
                                 </div>
 
                                 <div className="absolute right-6 top-[200px] z-20">
-                                    <span className="inline-flex rounded-xl bg-[#FFC107] p-3 shadow-lg transition-transform duration-300 group-hover:-translate-y-4 group-hover:rotate-12">
+                                    <span className="inline-flex rounded-xl bg-brand-500 p-3 shadow-lg transition-transform duration-300 group-hover:-translate-y-4 group-hover:rotate-12">
                                         <Quote className="h-4 w-4 fill-black text-black" />
                                     </span>
                                 </div>
@@ -689,7 +684,7 @@ function CommunityVoicesSection() {
                                         Alexander
                                     </h3>
 
-                                    <p className="mt-2 text-sm font-bold text-[#FFC107]">
+                                    <p className="mt-2 text-sm font-bold text-brand-500">
                                         {voice.role}
                                     </p>
 
@@ -715,7 +710,7 @@ function CommunityVoicesSection() {
                                 key={i}
                                 className={`h-1.5 rounded-full transition ${
                                     i === activeVoiceIndex
-                                        ? 'w-8 bg-yellow-400'
+                                        ? 'w-8 bg-brand-500'
                                         : 'w-2 bg-gray-600'
                                 }`}
                             />
@@ -732,10 +727,10 @@ function ChooseYourPathSection() {
         <section className="bg-[#0a0a0a] py-16 md:py-24">
             <div className="container-page">
                 <div className="text-center">
-                    <h2 className="text-center font-heading text-2xl font-black uppercase tracking-wide text-white md:text-3xl">
+                    <h2 className="text-center font-heading text-section font-bold uppercase tracking-normal text-white">
                         Choose Your Path
                     </h2>
-                    <p className="mx-auto mt-3 max-w-2xl text-center font-sans text-sm leading-relaxed text-gray-400 md:text-base">
+                    <p className="mx-auto mt-3 max-w-2xl text-center font-sans text-body-md font-normal text-white">
                         Select how you want to get involved with MSL Philippines.
                     </p>
                 </div>
@@ -744,14 +739,14 @@ function ChooseYourPathSection() {
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <article className="group relative rounded-2xl border border-yellow-500/20 bg-[#111111] bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-yellow-500/10 via-[#111111]/50 to-[#111111] p-10 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl group-hover:border-yellow-500/50">
                             <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-yellow-500/10 transition-all duration-300 group-hover:bg-yellow-500/20">
-                                <GraduationCap className="h-7 w-7 text-[#FFC107]" />
+                                <GraduationCap className="h-7 w-7 text-brand-500" />
                             </div>
 
-                            <h3 className="mt-8 text-3xl text-white">
+                            <h3 className="mt-8 font-heading text-subsection font-extrabold text-white">
                                 For Students
                             </h3>
 
-                            <p className="mt-4 leading-relaxed text-gray-400">
+                            <p className="mt-4 font-sans text-body-lg font-normal text-gray-400">
                                 Establish an MSL community in your school. Gain
                                 access to official tournaments, leadership grants,
                                 and mentorship programs.
@@ -759,7 +754,7 @@ function ChooseYourPathSection() {
 
                             <button
                                 type="button"
-                                className="mt-10 flex w-full items-center justify-center gap-2 rounded-lg bg-[#FFC107] py-3 font-bold text-black transition-all duration-300 group-hover:shadow-lg group-hover:shadow-yellow-500/30"
+                                className="mt-10 flex w-full items-center justify-center gap-2 rounded-lg border border-brand-500 bg-brand-500 py-3 font-sans text-body-lg font-semibold text-gray-900 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-yellow-500/30"
                             >
                                 Be A Member
                                 <ArrowRight className="h-4 w-4" />
@@ -771,11 +766,11 @@ function ChooseYourPathSection() {
                                 <Building2 className="h-7 w-7 text-blue-400" />
                             </div>
 
-                            <h3 className="mt-8 text-3xl text-white">
+                            <h3 className="mt-8 font-heading text-subsection font-extrabold text-white">
                                 For Partners
                             </h3>
 
-                            <p className="mt-4 leading-relaxed text-gray-400">
+                            <p className="mt-4 font-sans text-body-lg font-normal text-[#888888]">
                                 Empower the next generation. Collaborate with us
                                 for campus activations, brand integration, and
                                 student-led events.
@@ -783,7 +778,7 @@ function ChooseYourPathSection() {
 
                             <button
                                 type="button"
-                                className="mt-10 flex w-full items-center justify-center gap-2 rounded-lg border border-blue-500/30 py-3 font-bold text-white transition-all duration-300 group-hover:border-transparent group-hover:bg-[#2A2A2A]"
+                                className="mt-10 flex w-full items-center justify-center gap-2 rounded-lg border border-blue-500 bg-white/10 py-3 font-sans text-body-lg font-semibold text-white transition-all duration-300 group-hover:border-transparent group-hover:bg-[#2A2A2A]"
                             >
                                 Partner With Us
                                 <ArrowRight className="h-4 w-4" />
@@ -846,10 +841,10 @@ function FAQSection() {
         <section className="bg-[#0a0a0a] py-16 md:py-24">
             <div className="container-page">
                 <div className="text-center">
-                    <h2 className="text-center font-heading text-2xl font-black uppercase tracking-wide text-white md:text-3xl">
+                    <h2 className="text-center font-heading text-section font-bold uppercase tracking-normal text-white">
                         Frequently Asked Questions
                     </h2>
-                    <p className="mx-auto mt-3 max-w-2xl text-center font-sans text-sm leading-relaxed text-gray-400 md:text-base">
+                    <p className="mx-auto mt-3 max-w-2xl text-center font-sans text-body-md font-normal text-white">
                         Everything you need to know about joining and partnering
                         with us.
                     </p>
@@ -863,7 +858,7 @@ function FAQSection() {
                                 key={item.q}
                                 className={`rounded-xl bg-[#111111] border ${
                                     isOpen
-                                        ? 'border-[#FFC107]/40'
+                                        ? 'border-brand-500/40'
                                         : 'border-neutral-800'
                                 }`}
                             >
@@ -877,10 +872,10 @@ function FAQSection() {
                                     className="flex w-full cursor-pointer items-center justify-between p-4 text-left md:p-6"
                                 >
                                     <span
-                                        className={`text-base font-bold sm:text-lg ${
+                                        className={`font-sans text-body-sm font-semibold ${
                                             isOpen
-                                                ? 'text-[#FFC107]'
-                                                : 'text-white'
+                                                ? 'text-brand-500'
+                                                : 'text-gray-300'
                                         }`}
                                     >
                                         {item.q}
@@ -888,8 +883,8 @@ function FAQSection() {
                                     <ChevronDown
                                         className={`h-5 w-5 transition-transform duration-300 ${
                                             isOpen
-                                                ? 'rotate-180 text-[#FFC107]'
-                                                : 'text-white/70'
+                                                ? 'rotate-180 text-brand-500'
+                                                : 'text-gray-300'
                                         }`}
                                     />
                                 </button>
@@ -902,8 +897,8 @@ function FAQSection() {
                                     }`}
                                 >
                                     <div className="overflow-hidden">
-                                        <div className="border-t border-neutral-800 p-4 pt-3 md:p-6 md:pt-4">
-                                            <p className="text-sm leading-relaxed text-gray-300 sm:text-base">
+                                        <div className="border-t border-white/10 p-4 pt-3 md:p-6 md:pt-4">
+                                            <p className="font-sans text-body-sm font-semibold text-gray-300">
                                                 {item.a}
                                             </p>
                                         </div>
