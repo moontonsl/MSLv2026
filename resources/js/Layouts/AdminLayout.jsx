@@ -28,26 +28,23 @@ export default function AdminLayout({
     }, []);
 
     return (
-        <div className="flex min-h-screen bg-[#0A0A0A] text-white">
+        <div className="min-h-screen overflow-x-hidden bg-[#0A0A0A] text-white">
             <AdminSidebar activeId={activeNavId} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-            <div className="ml-0 flex min-h-screen flex-1 flex-col overflow-hidden lg:ml-64">
-                <header
-                    className={`flex shrink-0 items-center border-b border-neutral-800 px-4 py-4 sm:px-6 lg:px-8 lg:py-5 ${
-                        showGlobalSearch ? 'gap-6' : 'justify-end'
-                    }`}
-                >
+            <div className="ml-0 flex min-h-screen min-w-0 flex-1 flex-col overflow-hidden lg:ml-64">
+                <header className={`flex shrink-0 items-center border-b border-neutral-800 px-4 py-4 sm:px-6 lg:px-8 lg:py-5 ${showGlobalSearch ? 'gap-6' : 'justify-end'}`}>
                     <button
                         type="button"
                         aria-label="Open admin navigation"
-                        className="mr-3 rounded-md p-2 text-gray-400 hover:bg-white/5 hover:text-white lg:hidden"
+                        aria-expanded={isSidebarOpen}
                         onClick={() => setIsSidebarOpen(true)}
+                        className="mr-auto inline-flex min-h-10 min-w-10 items-center justify-center rounded-md text-gray-300 hover:bg-white/10 hover:text-white lg:hidden"
                     >
-                        <Menu className="h-6 w-6" />
+                        <Menu className="h-5 w-5" />
                     </button>
                     {showGlobalSearch ? <AdminGlobalSearch /> : null}
                     <AdminUserProfile />
                 </header>
-                <main className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+                <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
                     {isLoading ? <AdminPageSkeleton /> : children}
                 </main>
             </div>

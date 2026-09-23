@@ -1,7 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutGrid, Megaphone, MessageSquare, UserPlus, Gauge, Shield, Users, CalendarDays, Image, Settings, Trophy, UserCog, Link2, AlertTriangle, ClipboardCheck, ClipboardList, School, X, Bell } from 'lucide-react';
+import { LayoutGrid, Megaphone, MessageSquare, UserPlus, Gauge, Shield, Users, CalendarDays, Image, Settings, Trophy, UserCog, Link2, AlertTriangle, ClipboardCheck, ClipboardList, School, X, Bell, CalendarPlus, UserRoundCog } from 'lucide-react';
 
-const ACCENT = '#FBBF24';
+const ACCENT = "#FBBF24";
 
 const NAV_ITEMS = [
     { id: 'dashboard', label: 'Dashboard', href: '/admin/dashboard', icon: Gauge, permission: 'access_admin_dashboard' },
@@ -26,6 +26,10 @@ const NAV_ITEMS = [
     { id: 'accounts', label: 'Admin Accounts', href: '/admin/accounts', icon: Users, permission: 'manage_admin_accounts' },
     { id: 'management', label: 'Permissions', href: '/admin/management', icon: Shield, permission: 'access_admin_management' },
     { id: 'audit-logs', label: 'Audit Logs', href: '/admin/audit-logs', icon: ClipboardList, permission: 'manage_audit_logs' },
+    { id: 'regional-admin', label: 'Regional Admin', href: '/admin/regional-admin', icon: UserRoundCog, permission: null },
+    { id: 'event-management', label: 'Event Management', href: '/admin/event-management', icon: CalendarPlus, permission: null },
+    { id: 'registration-management', label: 'Registration Management', href: '/admin/registration-management', icon: ClipboardCheck, permission: null },
+    { id: 'account-management', label: 'Account Management', href: '/admin/account-management', icon: UserCog, permission: null },
 ];
 
 export default function AdminSidebar({ activeId = 'account-creation', isOpen = false, onClose = () => {} }) {
@@ -61,17 +65,17 @@ export default function AdminSidebar({ activeId = 'account-creation', isOpen = f
             <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-6">
                 {NAV_ITEMS.filter(({ permission }) => permission === null || isSuperAdmin || permissions.includes(permission)).map(({ id, label, href, icon: Icon }) => {
                     const isActive = id === activeId;
+
                     return (
                         <Link
                             key={id}
                             href={href}
                             onClick={onClose}
-                            className={`flex items-center gap-3 rounded-r-md px-4 py-3 text-sm font-medium transition-colors ${
+                            className={`flex min-h-12 min-w-0 items-center gap-3 rounded-r-md border-r-4 px-4 py-3 text-sm font-medium transition-colors ${
                                 isActive
-                                    ? 'border-l-4 border-[#FBBF24] bg-white/5 pl-3'
-                                    : 'border-l-4 border-transparent text-gray-400 hover:bg-white/5 hover:text-white'
+                                    ? "border-[#FBBF24] bg-white/5 pr-3 text-[#FBBF24]"
+                                    : "border-transparent text-gray-400 hover:bg-white/5 hover:text-white"
                             }`}
-                            style={isActive ? { color: ACCENT } : undefined}
                         >
                             <Icon className={`h-5 w-5 shrink-0 ${isActive ? '' : 'text-gray-400'}`} style={isActive ? { color: ACCENT } : undefined} />
                             <span className="flex-1">{label}</span>

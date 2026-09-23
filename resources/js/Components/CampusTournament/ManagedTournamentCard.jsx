@@ -51,8 +51,8 @@ export default function ManagedTournamentCard({
                     ))}
                 </div>
 
-                {/* Mobile: 3 equal buttons in a row; desktop: compact actions */}
-                <div className="grid grid-cols-3 gap-2 lg:flex lg:w-auto lg:flex-col lg:gap-2 lg:pl-6 xl:flex-row">
+                {/* Mobile: 3 equal buttons in a row; desktop keeps them in one row too */}
+                <div className="grid grid-cols-3 gap-2 lg:flex lg:w-auto lg:flex-row lg:gap-2 lg:pl-6">
                     <button
                         type="button"
                         onClick={() => onView?.(tournament)}

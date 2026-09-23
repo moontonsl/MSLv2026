@@ -1,17 +1,17 @@
-import BaseModal from '@/Components/Admin/BaseModal';
-import FeaturedImageUpload from '@/Components/Admin/FeaturedImageUpload';
+import BaseModal from "@/Components/Admin/BaseModal";
+import FeaturedImageUpload from "@/Components/Admin/FeaturedImageUpload";
 import {
     MODAL_INPUT_CLASS,
     MODAL_LABEL_CLASS,
     MODAL_SUBMIT_FOOTER_CLASS,
     MODAL_TEXTAREA_CLASS,
-} from '@/Components/Admin/adminModalFormStyles';
-import { useEffect, useId, useState } from 'react';
+} from "@/Components/Admin/adminModalFormStyles";
+import { useEffect, useId, useState } from "react";
 
 const EMPTY_FORM = {
-    title: '',
-    shortDescription: '',
-    links: '',
+    title: "",
+    shortDescription: "",
+    links: "",
     featuredImage: null,
 };
 
@@ -23,7 +23,12 @@ const EMPTY_FORM = {
  *   onSubmit: (values: typeof EMPTY_FORM) => void;
  * }} props
  */
-export default function ProgramModal({ isOpen, onClose, initialData = null, onSubmit }) {
+export default function ProgramModal({
+    isOpen,
+    onClose,
+    initialData = null,
+    onSubmit,
+}) {
     const isEditing = initialData != null;
     const formId = useId();
     const [form, setForm] = useState(EMPTY_FORM);
@@ -33,10 +38,11 @@ export default function ProgramModal({ isOpen, onClose, initialData = null, onSu
 
         if (initialData) {
             setForm({
-                title: initialData.title ?? '',
-                shortDescription: initialData.shortDescription ?? '',
-                links: initialData.links ?? initialData.link ?? '',
-                featuredImage: initialData.featuredImage ?? initialData.thumbnail ?? null,
+                title: initialData.title ?? "",
+                shortDescription: initialData.shortDescription ?? "",
+                links: initialData.links ?? initialData.link ?? "",
+                featuredImage:
+                    initialData.featuredImage ?? initialData.thumbnail ?? null,
             });
             return;
         }
@@ -58,16 +64,26 @@ export default function ProgramModal({ isOpen, onClose, initialData = null, onSu
         <BaseModal
             isOpen={isOpen}
             onClose={onClose}
-            title={isEditing ? 'Edit Programs' : 'Add Programs'}
+            title={isEditing ? "Edit Programs" : "Add Programs"}
             footer={
-                <button type="submit" form={formId} className={MODAL_SUBMIT_FOOTER_CLASS}>
-                    {isEditing ? 'Update' : 'Submit'}
+                <button
+                    type="submit"
+                    form={formId}
+                    className={MODAL_SUBMIT_FOOTER_CLASS}
+                >
+                    {isEditing ? "Update" : "Submit"}
                 </button>
+            }
+            confirmSubmitMessage={
+                isEditing ? "Are you sure you want to edit this program?" : ""
             }
         >
             <form id={formId} onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label htmlFor="program-title" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="program-title"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Title
                     </label>
                     <input
@@ -82,7 +98,10 @@ export default function ProgramModal({ isOpen, onClose, initialData = null, onSu
                 </div>
 
                 <div>
-                    <label htmlFor="program-short-description" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="program-short-description"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Short Description
                     </label>
                     <textarea
@@ -96,7 +115,10 @@ export default function ProgramModal({ isOpen, onClose, initialData = null, onSu
                 </div>
 
                 <div>
-                    <label htmlFor="program-links" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="program-links"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Links
                     </label>
                     <input
@@ -115,7 +137,10 @@ export default function ProgramModal({ isOpen, onClose, initialData = null, onSu
                     <FeaturedImageUpload
                         value={form.featuredImage}
                         onChange={(file) =>
-                            setForm((prev) => ({ ...prev, featuredImage: file }))
+                            setForm((prev) => ({
+                                ...prev,
+                                featuredImage: file,
+                            }))
                         }
                     />
                 </div>

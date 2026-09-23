@@ -1,22 +1,22 @@
-import BaseModal from '@/Components/Admin/BaseModal';
-import FeaturedImagesUpload from '@/Components/Admin/FeaturedImagesUpload';
+import BaseModal from "@/Components/Admin/BaseModal";
+import FeaturedImagesUpload from "@/Components/Admin/FeaturedImagesUpload";
 import {
     MODAL_INPUT_CLASS,
     MODAL_LABEL_CLASS,
     MODAL_SELECT_CLASS,
     MODAL_SUBMIT_FOOTER_CLASS,
     MODAL_TEXTAREA_CLASS,
-} from '@/Components/Admin/adminModalFormStyles';
-import { NEWS_CATEGORY_OPTIONS } from '@/data/adminNewsData';
-import { useEffect, useId, useState } from 'react';
+} from "@/Components/Admin/adminModalFormStyles";
+import { NEWS_CATEGORY_OPTIONS } from "@/data/adminNewsData";
+import { useEffect, useId, useState } from "react";
 
 const EMPTY_FORM = {
-    category: 'Community',
-    title: '',
-    authorName: '',
-    publishedDate: '',
-    shortDescription: '',
-    articleContent: '',
+    category: "Community",
+    title: "",
+    authorName: "",
+    publishedDate: "",
+    shortDescription: "",
+    articleContent: "",
     featuredImages: [],
 };
 
@@ -28,7 +28,12 @@ const EMPTY_FORM = {
  *   onSubmit: (values: typeof EMPTY_FORM) => void;
  * }} props
  */
-export default function NewsFormModal({ isOpen, onClose, initialData = null, onSubmit }) {
+export default function NewsFormModal({
+    isOpen,
+    onClose,
+    initialData = null,
+    onSubmit,
+}) {
     const isEditing = initialData != null;
     const formId = useId();
     const [form, setForm] = useState(EMPTY_FORM);
@@ -38,13 +43,15 @@ export default function NewsFormModal({ isOpen, onClose, initialData = null, onS
 
         if (initialData) {
             setForm({
-                category: initialData.category ?? 'Community',
-                title: initialData.title ?? '',
-                authorName: initialData.authorName ?? initialData.writer ?? '',
-                publishedDate: initialData.publishedDate ?? '',
+                category: initialData.category ?? "Community",
+                title: initialData.title ?? "",
+                authorName: initialData.authorName ?? initialData.writer ?? "",
+                publishedDate: initialData.publishedDate ?? "",
                 shortDescription:
-                    initialData.shortDescription ?? initialData.description ?? '',
-                articleContent: initialData.articleContent ?? '',
+                    initialData.shortDescription ??
+                    initialData.description ??
+                    "",
+                articleContent: initialData.articleContent ?? "",
                 featuredImages: initialData.featuredImages ?? [],
             });
             return;
@@ -68,16 +75,28 @@ export default function NewsFormModal({ isOpen, onClose, initialData = null, onS
             isOpen={isOpen}
             onClose={onClose}
             maxWidth="max-w-2xl"
-            title={isEditing ? 'Edit News & Update' : 'Add News & Update'}
+            title={isEditing ? "Edit News & Update" : "Add News & Update"}
             footer={
-                <button type="submit" form={formId} className={MODAL_SUBMIT_FOOTER_CLASS}>
-                    {isEditing ? 'Update' : 'Submit'}
+                <button
+                    type="submit"
+                    form={formId}
+                    className={MODAL_SUBMIT_FOOTER_CLASS}
+                >
+                    {isEditing ? "Update" : "Submit"}
                 </button>
+            }
+            confirmSubmitMessage={
+                isEditing
+                    ? "Are you sure you want to edit this news article?"
+                    : ""
             }
         >
             <form id={formId} onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label htmlFor="news-category" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="news-category"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Category
                     </label>
                     <select
@@ -111,7 +130,10 @@ export default function NewsFormModal({ isOpen, onClose, initialData = null, onS
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div>
-                        <label htmlFor="news-author" className={MODAL_LABEL_CLASS}>
+                        <label
+                            htmlFor="news-author"
+                            className={MODAL_LABEL_CLASS}
+                        >
                             Author Name
                         </label>
                         <input
@@ -124,7 +146,10 @@ export default function NewsFormModal({ isOpen, onClose, initialData = null, onS
                         />
                     </div>
                     <div>
-                        <label htmlFor="news-published-date" className={MODAL_LABEL_CLASS}>
+                        <label
+                            htmlFor="news-published-date"
+                            className={MODAL_LABEL_CLASS}
+                        >
                             Published Date
                         </label>
                         <input
@@ -139,7 +164,10 @@ export default function NewsFormModal({ isOpen, onClose, initialData = null, onS
                 </div>
 
                 <div>
-                    <label htmlFor="news-short-description" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="news-short-description"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Short Description
                     </label>
                     <input
@@ -153,7 +181,10 @@ export default function NewsFormModal({ isOpen, onClose, initialData = null, onS
                 </div>
 
                 <div>
-                    <label htmlFor="news-article-content" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="news-article-content"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Article Content
                     </label>
                     <textarea

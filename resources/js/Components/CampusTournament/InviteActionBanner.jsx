@@ -25,14 +25,16 @@ export default function InviteActionBanner({ teamName, onAccept, onDecline }) {
                     onClick={onDecline}
                     className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-lg bg-red-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-red-700 sm:flex-none"
                 >
-                    Decline
+                    <span className="sm:hidden">Reject</span>
+                    <span className="hidden sm:inline">Decline</span>
                 </button>
                 <button
                     type="button"
                     onClick={onAccept}
                     className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:flex-none"
                 >
-                    Accept Invite
+                    <span className="sm:hidden">Approve</span>
+                    <span className="hidden sm:inline">Accept Invite</span>
                 </button>
             </div>
         </div>

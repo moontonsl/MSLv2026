@@ -39,6 +39,7 @@ jobs:
           VITE_APP_URL: ${{ secrets.APP_URL }}
 
       - name: Deploy to VPS via SSH
+        if: github.event_name == 'push'
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}

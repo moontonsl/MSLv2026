@@ -1,18 +1,18 @@
-import BaseModal from '@/Components/Admin/BaseModal';
-import FeaturedImageUpload from '@/Components/Admin/FeaturedImageUpload';
+import BaseModal from "@/Components/Admin/BaseModal";
+import FeaturedImageUpload from "@/Components/Admin/FeaturedImageUpload";
 import {
     MODAL_INPUT_CLASS,
     MODAL_LABEL_CLASS,
     MODAL_SUBMIT_FOOTER_CLASS,
     MODAL_TEXTAREA_CLASS,
-} from '@/Components/Admin/adminModalFormStyles';
-import { useEffect, useId, useState } from 'react';
+} from "@/Components/Admin/adminModalFormStyles";
+import { useEffect, useId, useState } from "react";
 
 const EMPTY_FORM = {
-    fullName: '',
-    position: '',
-    school: '',
-    message: '',
+    fullName: "",
+    position: "",
+    school: "",
+    message: "",
     featuredImage: null,
 };
 
@@ -39,11 +39,12 @@ export default function CommunityVoiceModal({
 
         if (initialData) {
             setForm({
-                fullName: initialData.fullName ?? initialData.name ?? '',
-                position: initialData.position ?? initialData.role ?? '',
-                school: initialData.school ?? '',
-                message: initialData.message ?? '',
-                featuredImage: initialData.featuredImage ?? initialData.image ?? null,
+                fullName: initialData.fullName ?? initialData.name ?? "",
+                position: initialData.position ?? initialData.role ?? "",
+                school: initialData.school ?? "",
+                message: initialData.message ?? "",
+                featuredImage:
+                    initialData.featuredImage ?? initialData.image ?? null,
             });
             return;
         }
@@ -65,16 +66,28 @@ export default function CommunityVoiceModal({
         <BaseModal
             isOpen={isOpen}
             onClose={onClose}
-            title={isEditing ? 'Edit Community Voice' : 'Add Community Voice'}
+            title={isEditing ? "Edit Community Voice" : "Add Community Voice"}
             footer={
-                <button type="submit" form={formId} className={MODAL_SUBMIT_FOOTER_CLASS}>
-                    {isEditing ? 'Update' : 'Submit'}
+                <button
+                    type="submit"
+                    form={formId}
+                    className={MODAL_SUBMIT_FOOTER_CLASS}
+                >
+                    {isEditing ? "Update" : "Submit"}
                 </button>
+            }
+            confirmSubmitMessage={
+                isEditing
+                    ? "Are you sure you want to edit this community voice item?"
+                    : ""
             }
         >
             <form id={formId} onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label htmlFor="community-full-name" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="community-full-name"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Full Name
                     </label>
                     <input
@@ -89,7 +102,10 @@ export default function CommunityVoiceModal({
                 </div>
 
                 <div>
-                    <label htmlFor="community-position" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="community-position"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Position
                     </label>
                     <input
@@ -104,7 +120,10 @@ export default function CommunityVoiceModal({
                 </div>
 
                 <div>
-                    <label htmlFor="community-school" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="community-school"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         School
                     </label>
                     <input
@@ -119,7 +138,10 @@ export default function CommunityVoiceModal({
                 </div>
 
                 <div>
-                    <label htmlFor="community-message" className={MODAL_LABEL_CLASS}>
+                    <label
+                        htmlFor="community-message"
+                        className={MODAL_LABEL_CLASS}
+                    >
                         Message
                     </label>
                     <textarea
@@ -137,7 +159,10 @@ export default function CommunityVoiceModal({
                     <FeaturedImageUpload
                         value={form.featuredImage}
                         onChange={(file) =>
-                            setForm((prev) => ({ ...prev, featuredImage: file }))
+                            setForm((prev) => ({
+                                ...prev,
+                                featuredImage: file,
+                            }))
                         }
                     />
                 </div>

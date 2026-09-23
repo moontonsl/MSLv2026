@@ -18,6 +18,59 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+
+            // Personal details
+            $table->string('username')->nullable()->unique();
+            $table->string('first_name')->nullable();
+            $table->string('surname')->nullable();
+            $table->string('suffix')->nullable();
+            $table->date('birthday')->nullable();
+            $table->integer('age')->nullable();
+            $table->string('gender')->nullable();
+            $table->string('contact_number')->nullable();
+            $table->string('facebook_link')->nullable();
+
+            // MLBB fields
+            $table->string('ml_id')->nullable()->unique();
+            $table->string('ml_server')->nullable();
+            $table->string('ml_ign')->nullable();
+            $table->string('ml_avatar')->nullable();
+            $table->integer('ml_level')->nullable();
+            $table->string('ml_rank')->nullable();
+            $table->integer('ml_rank_level')->nullable();
+            $table->boolean('is_mlbb_verified')->default(false);
+            $table->string('status')->default('active');
+
+            // Academic details
+            $table->string('course')->nullable();
+            $table->string('university')->nullable();
+            $table->string('year_level')->nullable();
+            $table->string('studentId')->nullable();
+            $table->string('proofOfEnrollment')->nullable();
+
+            // Location details
+            $table->string('region')->nullable();
+            $table->string('island')->nullable();
+
+            // Squad/Game details
+            $table->string('squadAbbreviation')->nullable();
+            $table->string('squadName')->nullable();
+            $table->string('inGameRole')->nullable();
+            $table->string('mainHero')->nullable();
+
+            // User type & division
+            $table->string('user_type')->nullable();
+            $table->string('division')->nullable();
+
+            // Renewal dates
+            $table->timestamp('renewal_requested_at')->nullable();
+            $table->timestamp('renewal_submitted_at')->nullable();
+            $table->timestamp('renewal_approved_at')->nullable();
+
+            // Rejection fields
+            $table->text('rejection_reason')->nullable();
+            $table->json('rejection_checklist')->nullable();
+
             $table->timestamps();
         });
 
