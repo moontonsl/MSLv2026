@@ -65,45 +65,43 @@ function HomeHero() {
 
     return (
         <section className="bg-[#050505]">
-            <div className="container-page py-12 md:py-20">
-                <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-                    {/* Left column */}
-                    <div className="mx-auto max-w-[550px] text-center md:mx-0 md:text-left">
-                        <h1 className="font-heading text-hero-md font-extrabold tracking-normal text-white">
-                            Empowering{' '}
-                            <span className="text-brand-500">Student-Gamers</span>
-                            <br />
-                            to Become the Next
-                            <br />
-                            Generation Leaders
+            <div className="container-page py-10 md:py-[43px] md:pb-12">
+                <div className="flex flex-col items-stretch gap-10 lg:flex-row lg:items-center lg:gap-10">
+                    {/* Left column — Figma: 550px, left-aligned, 4 forced line breaks */}
+                    <div className="w-full max-w-[550px] shrink-0 text-left lg:w-[550px]">
+                        <h1 className="font-heading text-[40px] font-extrabold leading-[48px] tracking-normal text-left text-white sm:text-hero-md sm:leading-[58px]">
+                            <span className="block">Empowering</span>
+                            <span className="block text-brand-500">Student-Gamers</span>
+                            <span className="block">to Become the Next</span>
+                            <span className="block">Generation Leaders</span>
                         </h1>
 
-                        <p className="mt-6 font-sans text-body-md font-normal text-gray-400">
+                        <p className="mt-6 max-w-[550px] font-sans text-body-md font-normal text-gray-400">
                             We equip student-gamers and esports organizations with
                             recognition, resources, and professional mentorship —
                             everything you need to build a thriving campus community.
                         </p>
 
-                        <div className="mt-6 flex w-full flex-col items-center gap-4 md:flex-row md:justify-start">
+                        <div className="mt-6 flex flex-wrap items-start justify-start gap-4">
                             <button
                                 type="button"
-                                className="inline-flex w-full items-center justify-center rounded-xl border border-brand-600 bg-brand-500 px-[18px] py-3 font-sans text-body-md font-semibold text-gray-900 transition hover:bg-brand-400 md:w-auto"
+                                className="inline-flex items-center justify-center rounded-xl border border-brand-600 bg-brand-500 px-[18px] py-3 font-sans text-body-md font-semibold text-gray-900 transition hover:bg-brand-400"
                             >
                                 Be A Member
                             </button>
 
                             <button
                                 type="button"
-                                className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-[18px] py-3 font-sans text-body-md font-semibold text-white transition hover:bg-white/10 md:w-auto"
+                                className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-[18px] py-3 font-sans text-body-md font-semibold text-white transition hover:bg-white/10"
                             >
-                                Partner With US
+                                Partner With Us
                                 <ArrowRight className="h-5 w-5" />
                             </button>
                         </div>
                     </div>
 
                     {/* Right column */}
-                    <div className="w-full">
+                    <div className="min-w-0 flex-1">
                         <div className="mb-2.5 font-sans text-body-xs font-semibold text-gray-400">
                             HAPPENING NOW
                         </div>
@@ -116,10 +114,8 @@ function HomeHero() {
                                     className="absolute inset-0 h-full w-full object-cover"
                                 />
 
-                                {/* Soft dark vignette + bottom gradient for legibility */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#121212] via-[#1A1A1A]/80 to-transparent" />
 
-                                {/* Content */}
                                 <div className="absolute inset-x-0 bottom-0 p-4 sm:p-6">
                                     <div className="inline-flex items-center rounded-md bg-error-700 px-3 py-1 font-sans text-body-xs font-bold text-white">
                                         {active.badge}
@@ -149,7 +145,6 @@ function HomeHero() {
                                     </div>
                                 </div>
 
-                                {/* Indicators */}
                                 <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-2">
                                     {slides.map((_, i) => {
                                         const isActive = i === activeIndex;
@@ -409,12 +404,12 @@ function ProgramsSection() {
     return (
         <section className="bg-[#0a0a0a] py-12 md:py-20">
             <div className="container-page">
-                <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-                    <div className="text-center md:text-left">
-                        <h2 className="text-center font-heading text-section font-bold uppercase tracking-normal text-white md:text-left">
+                <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+                    <div className="max-w-[532px] text-left">
+                        <h2 className="font-heading text-section font-bold uppercase tracking-normal text-white">
                             Our Programs
                         </h2>
-                        <p className="mx-auto mt-3 max-w-2xl text-center font-sans text-body-lg font-normal text-white md:mx-0 md:text-left">
+                        <p className="mt-3 font-sans text-body-lg font-normal text-white">
                             Building opportunities for student leaders through
                             events, training, and nationwide esports initiatives.
                         </p>
@@ -422,10 +417,10 @@ function ProgramsSection() {
 
                     <button
                         type="button"
-                        className="inline-flex w-full items-center justify-center gap-2 self-stretch rounded-full border border-brand-500 px-5 py-2.5 text-sm font-medium text-brand-500 transition hover:bg-brand-500/10 md:w-auto md:self-auto md:mt-0"
+                        className="inline-flex shrink-0 items-center justify-center gap-1 self-start rounded-xl border border-brand-500 bg-white/5 px-[18px] py-3 font-sans text-body-md font-semibold text-brand-500 transition hover:bg-brand-500/10"
                     >
                         View All Programs
-                        <ArrowRight className="h-4 w-4" />
+                        <ArrowUpRight className="h-5 w-5" />
                     </button>
                 </div>
 
@@ -466,22 +461,23 @@ function ProgramsSection() {
                                     <ChevronRight className="h-4 w-4" />
                                 </button>
 
-                                <div className="absolute inset-x-0 bottom-0 z-10 flex flex-col items-start gap-1 p-6 pr-16">
+                                <div className="absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-4 p-6 md:p-8">
                                     <h3 className="font-heading text-card-title font-extrabold leading-6 text-white lg:leading-8">
                                         {program.title}
                                     </h3>
-                                    <p className="max-w-lg text-xs text-gray-300 opacity-0 -translate-y-2 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 md:text-sm">
-                                        {program.description}
-                                    </p>
+                                    <button
+                                        type="button"
+                                        aria-label={`Open ${program.title}`}
+                                        className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-brand-500 bg-brand-500 transition hover:bg-brand-400"
+                                    >
+                                        <ArrowUpRight className="h-5 w-5 text-neutral-700" />
+                                    </button>
                                 </div>
 
-                                <button
-                                    type="button"
-                                    aria-label={`Open ${program.title}`}
-                                    className="absolute bottom-6 right-6 z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-500 opacity-0 shadow-lg translate-x-4 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
-                                >
-                                    <ArrowUpRight className="h-5 w-5 text-black" />
-                                </button>
+                                {/* Keep description available for hover without shifting title row */}
+                                <p className="pointer-events-none absolute inset-x-6 bottom-20 z-10 max-w-lg text-xs text-gray-300 opacity-0 transition-opacity duration-300 group-hover:opacity-100 md:text-sm">
+                                    {program.description}
+                                </p>
                             </article>
                         ))}
                     </div>
@@ -626,11 +622,11 @@ function CommunityVoicesSection() {
                 }}
             />
             <div className="relative z-10 container-page">
-                <div className="text-center md:text-left">
-                    <h2 className="text-center font-heading text-section font-bold uppercase tracking-normal text-white md:text-left">
+                <div className="text-left">
+                    <h2 className="font-heading text-section font-bold uppercase tracking-normal text-white">
                         Community Voices
                     </h2>
-                    <p className="mx-auto mt-3 max-w-2xl text-center font-sans text-body-lg font-normal text-white md:mx-0 md:text-left">
+                    <p className="mt-3 max-w-[532px] font-sans text-body-lg font-normal text-white">
                         Hear from the student leaders, campus organizers, and
                         partners who are driving the MSL Philippines movement
                         forward.
