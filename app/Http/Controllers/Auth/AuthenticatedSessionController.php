@@ -49,8 +49,15 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('regional.admin');
         }
 
-        if (in_array($user->user_type, ['Super Admin', 'Student Leader'])) {
-            return redirect()->route('admin.dashboard');
+        if ($user->user_type === 'Super Admin') {
+            // Website controllers must authenticate through /admin/login and the
+            // dedicated admin guard, never through the student session.
+            Auth::guard('web')->logout();
+            return redirect()->route('admin.login')->with('status', 'Please use the administrator login.');
+        }
+
+        if ($user->user_type === 'Student Leader') {
+            return redirect()->route('student.leader');
         }
 
         if ($user->user_type === 'Student') {

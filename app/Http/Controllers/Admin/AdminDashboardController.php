@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Region;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,32 +15,7 @@ class AdminDashboardController extends Controller
     protected function accessibleUsers(array $types = ['Student', 'Student Leader'])
     {
         $query = User::whereIn('user_type', $types);
-        $admin = Auth::user();
-
-        if ($admin?->user_type !== 'Regional Admin') {
-            return $query;
-        }
-
-        $region = Region::query()
-            ->where(function ($builder) use ($admin) {
-                $builder->where('code', $admin->region)
-                    ->orWhere('name', $admin->region)
-                    ->orWhere('region_number', $admin->region)
-                    ->orWhere('acronym', $admin->region);
-            })
-            ->first();
-
-        $regionValues = collect([
-            $admin->region,
-            $region?->code,
-            $region?->name,
-            $region?->region_number,
-            $region?->acronym,
-        ])->filter()->unique()->values();
-
-        return $regionValues->isEmpty()
-            ? $query->whereRaw('1 = 0')
-            : $query->whereIn('region', $regionValues->all());
+        return $query;
     }
 
     /**
@@ -49,8 +23,8 @@ class AdminDashboardController extends Controller
      */
     protected function checkAdminPrivilege()
     {
-        $user = Auth::user();
-        if (!$user || !in_array($user->user_type, ['Super Admin', 'Regional Admin', 'Student Leader'])) {
+        $admin = Auth::guard('admin')->user();
+        if (!$admin) {
             abort(403, 'Unauthorized access.');
         }
     }

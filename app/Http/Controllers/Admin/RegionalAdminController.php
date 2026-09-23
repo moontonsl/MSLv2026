@@ -7,8 +7,6 @@ use App\Models\Region;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -117,24 +115,12 @@ class RegionalAdminController extends Controller
         );
 
         $request->validate([
-            'profileBackground' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'profileBackground' => ['required', 'string', 'in:/profile-background.jpg'],
         ]);
 
-        $directory = public_path('uploads/admin-backgrounds');
-        File::ensureDirectoryExists($directory);
-
-        $oldBackground = $admin->profile_background;
-        $file = $request->file('profileBackground');
-        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-        $file->move($directory, $filename);
-
-        $admin->profile_background = '/uploads/admin-backgrounds/' . $filename;
+        $admin->profile_background = $request->string('profileBackground')->toString();
         $admin->save();
 
-        if ($oldBackground && str_starts_with($oldBackground, '/uploads/admin-backgrounds/')) {
-            File::delete(public_path(ltrim($oldBackground, '/')));
-        }
-
-        return redirect()->back()->with('status', 'Background updated successfully.');
+        return redirect()->back()->with('status', 'Cover updated successfully.');
     }
 }

@@ -18,7 +18,7 @@ return new class extends Migration
                 ->constrained('users')
                 ->restrictOnDelete();
             $table->text('reason')->nullable();
-            $table->timestamp('submitted_at');
+            $table->dateTime('submitted_at');
             $table->timestamps();
 
             $table->unique(['tournament_id', 'version']);
