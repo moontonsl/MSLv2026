@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
-use App\Models\User;
-use App\Models\Permission;
+use App\Models\AdminUser;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -19,16 +17,22 @@ class AdminManagementController extends Controller
     public function index(Request $request): Response
     {
         // Fetch all admin/leader level accounts (exclude normal Students)
-        $users = User::whereIn('user_type', ['Super Admin', 'Regional Admin', 'Student Leader'])
-            ->with('permissions')
+        $users = AdminUser::query()
+            ->select('id', 'name', 'email', 'role', 'permissions')
             ->orderBy('name')
             ->get();
 
-        // Fetch all permissions
-        $permissions = Permission::all();
+        $permissions = AdminPermissionController::availablePermissions();
 
         return Inertia::render('Admin/Management', [
-            'adminUsers' => $users,
+            'adminUsers' => $users->map(fn (AdminUser $admin): array => [
+                'id' => $admin->id,
+                'name' => $admin->name,
+                'email' => $admin->email,
+                'role' => $admin->role,
+                'permissions' => $admin->permissions ?? [],
+                'is_super_admin' => $admin->isSuperAdmin(),
+            ])->values(),
             'allPermissions' => $permissions,
         ]);
     }
@@ -38,19 +42,25 @@ class AdminManagementController extends Controller
      */
     public function updatePermissions(Request $request, $id): RedirectResponse
     {
-        $request->validate([
-            'permissions' => 'nullable|array',
-            'permissions.*' => 'integer|exists:permissions,id',
+        $validated = $request->validate([
+            'permissions' => ['present', 'array'],
+            'permissions.*' => ['string'],
         ]);
 
-        $user = User::whereIn('user_type', ['Super Admin', 'Regional Admin', 'Student Leader'])->findOrFail($id);
+        $user = AdminUser::findOrFail($id);
 
-        // Do not allow modifying Super Admin permissions since they always bypass check
-        if ($user->user_type === 'Super Admin') {
+        if ($user->isSuperAdmin()) {
             return redirect()->back()->withErrors(['message' => 'Super Admin permissions cannot be modified.']);
         }
 
-        $user->permissions()->sync($request->permissions ?? []);
+        $allowed = collect(AdminPermissionController::availablePermissions())->pluck('id');
+        $user->update([
+            'permissions' => collect($validated['permissions'])
+                ->filter(fn (string $permission) => $allowed->contains($permission))
+                ->unique()
+                ->values()
+                ->all(),
+        ]);
 
         return redirect()->back()->with('status', 'Permissions updated successfully.');
     }

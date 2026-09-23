@@ -5,10 +5,10 @@ import NewsViewModal from '@/Components/Admin/NewsViewModal';
 import { MODAL_ACTION_ICON_CLASS } from '@/Components/Admin/adminModalFormStyles';
 import {
     formatNewsDisplayDate,
-    NEWS_ITEMS,
 } from '@/data/adminNewsData';
 import { Eye, Pencil, Plus, Search, Trash2 } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { router } from '@inertiajs/react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const ADD_BUTTON_CLASS =
     'inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 py-2.5 text-base font-bold text-black transition-all hover:bg-yellow-400 active:scale-[0.98] md:w-auto md:text-sm';
@@ -31,8 +31,8 @@ function mapFormToNewsItem(values, existingItem = null) {
     };
 }
 
-export default function NewsManagement() {
-    const [newsItems, setNewsItems] = useState(NEWS_ITEMS);
+export default function NewsManagement({ initialNews = [] }) {
+    const [newsItems, setNewsItems] = useState(initialNews);
     const [localSearch, setLocalSearch] = useState('');
     const [formOpen, setFormOpen] = useState(false);
     const [viewOpen, setViewOpen] = useState(false);
@@ -44,14 +44,18 @@ export default function NewsManagement() {
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
+    useEffect(() => {
+        setNewsItems(initialNews);
+    }, [initialNews]);
+
     const filteredNews = useMemo(() => {
         const q = localSearch.trim().toLowerCase();
         if (!q) return newsItems;
         return newsItems.filter(
             (item) =>
                 item.title.toLowerCase().includes(q) ||
-                item.writer.toLowerCase().includes(q) ||
-                item.description.toLowerCase().includes(q),
+                (item.writer ?? '').toLowerCase().includes(q) ||
+                (item.description ?? '').toLowerCase().includes(q),
         );
     }, [localSearch, newsItems]);
 
@@ -89,25 +93,47 @@ export default function NewsManagement() {
     const handleFormSubmit = useCallback(
         (values) => {
             const row = mapFormToNewsItem(values, editingItem);
-            if (editingItem) {
-                setNewsItems((prev) =>
-                    prev.map((item) => (item.id === editingItem.id ? row : item)),
-                );
-            } else {
-                setNewsItems((prev) => [...prev, row]);
-            }
+            const payload = {
+                category: row.category,
+                title: row.title,
+                authorName: row.authorName,
+                publishedDate: row.publishedDate || null,
+                shortDescription: row.shortDescription,
+                articleContent: row.articleContent,
+                existingImages: row.featuredImages.filter((image) => typeof image === 'string'),
+                featuredImages: row.featuredImages.filter((image) => image instanceof File),
+            };
 
-            setWasEditSubmit(editingItem != null);
-            setWasDeleteSubmit(false);
-            setFormOpen(false);
-            setEditingItem(null);
-            setSuccessOpen(true);
+            const options = {
+                preserveScroll: true,
+                forceFormData: true,
+                onSuccess: () => {
+                    setWasEditSubmit(editingItem != null);
+                    setWasDeleteSubmit(false);
+                    setFormOpen(false);
+                    setEditingItem(null);
+                    setSuccessOpen(true);
+                },
+            };
+
+            if (editingItem) {
+                router.post(route('admin.news-modern.update', editingItem.id), { ...payload, _method: 'PUT' }, options);
+            } else {
+                router.post(route('admin.news-modern.store'), payload, options);
+            }
         },
         [editingItem],
     );
 
     const handleDelete = useCallback((id) => {
-        setNewsItems((prev) => prev.filter((item) => item.id !== id));
+        router.delete(route('admin.news-modern.delete', id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                setWasEditSubmit(false);
+                setWasDeleteSubmit(true);
+                setSuccessOpen(true);
+            },
+        });
     }, []);
 
     const requestDelete = useCallback((id) => {
@@ -125,9 +151,6 @@ export default function NewsManagement() {
         handleDelete(pendingDeleteId);
         setDeleteOpen(false);
         setPendingDeleteId(null);
-        setWasEditSubmit(false);
-        setWasDeleteSubmit(true);
-        setSuccessOpen(true);
     }, [handleDelete, pendingDeleteId]);
 
     const renderActions = (item) => (

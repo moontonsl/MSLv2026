@@ -5,7 +5,6 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -133,24 +132,4 @@ class User extends Authenticatable
         return $this->hasMany(RegionAdmin::class);
     }
 
-    /**
-     * The permissions assigned to the user.
-     */
-    public function permissions(): BelongsToMany
-    {
-        return $this->belongsToMany(Permission::class);
-    }
-
-    /**
-     * Check if the user has a specific permission slug.
-     */
-    public function hasPermission(string $slug): bool
-    {
-        // Super Admins automatically bypass all permission checks
-        if ($this->user_type === 'Super Admin') {
-            return true;
-        }
-
-        return $this->permissions()->where('slug', $slug)->exists();
-    }
 }

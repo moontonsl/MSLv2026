@@ -12,10 +12,17 @@ import {
 } from '@/Components/Admin/adminFormStyles';
 import { CAROUSEL_ITEMS, CAROUSEL_LABEL_OPTIONS } from '@/data/adminHomeData';
 import { Plus } from 'lucide-react';
-import { useState } from 'react';
+import { router } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 
-export default function CarouselSection() {
-    const [items, setItems] = useState(CAROUSEL_ITEMS);
+export default function CarouselSection({ initialItems = [] }) {
+    const mappedItems = initialItems.map((item) => ({
+        id: item.id,
+        title: item.title || 'Untitled',
+        image: item.image_path?.startsWith('/') ? item.image_path : `/storage/carousel/${item.image_path}`,
+        meta: `Order: ${item.order} | ${item.is_active ? 'Active' : 'Inactive'}`,
+    }));
+    const [items, setItems] = useState(mappedItems);
     const [modalOpen, setModalOpen] = useState(false);
     const [successOpen, setSuccessOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
@@ -24,6 +31,10 @@ export default function CarouselSection() {
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
+    useEffect(() => {
+        setItems(mappedItems);
+    }, [initialItems]);
+
     const openAddModal = () => {
         setEditingItem(null);
         setModalOpen(true);
@@ -31,6 +42,8 @@ export default function CarouselSection() {
 
     const openEditModal = (item) => {
         setEditingItem({
+            id: item.id,
+            order: item.order ?? items.indexOf(item),
             label: '',
             title: item.title,
             subtitle: '',
@@ -48,7 +61,21 @@ export default function CarouselSection() {
     };
 
     const handleSubmit = (values) => {
-        console.log('Carousel submit:', values);
+        const payload = {
+            title: values.title,
+            image: values.featuredImage,
+            order: editingItem?.order ?? items.length,
+            is_active: true,
+        };
+        const options = { forceFormData: true, preserveScroll: true };
+        if (editingItem) {
+            router.post(route('admin.carousel.update', editingItem.id), { ...payload, _method: 'PUT' }, options);
+        } else {
+            router.post(route('admin.carousel.store'), payload, options);
+        }
+        setItems((prev) => editingItem
+            ? prev.map((item) => item.id === editingItem.id ? { ...item, title: values.title } : item)
+            : [...prev, { id: Date.now(), title: values.title || 'Untitled', image: values.featuredImage ? URL.createObjectURL(values.featuredImage) : '/most used hero.png', meta: `Order: ${prev.length} | Active` }]);
         setWasEditSubmit(editingItem != null);
         setWasDeleteSubmit(false);
         setModalOpen(false);
@@ -74,6 +101,7 @@ export default function CarouselSection() {
 
     const confirmDelete = () => {
         if (pendingDeleteId == null) return;
+        router.delete(route('admin.carousel.delete', pendingDeleteId), { preserveScroll: true });
         setItems((prev) => prev.filter((item) => item.id !== pendingDeleteId));
         setDeleteOpen(false);
         setPendingDeleteId(null);

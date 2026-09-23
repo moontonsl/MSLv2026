@@ -9,6 +9,7 @@ export default function FeaturedImageUpload({
     onChange,
     className = '',
     hint = DEFAULT_HINT,
+    accept = ACCEPT,
 }) {
     const inputRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -60,7 +61,7 @@ export default function FeaturedImageUpload({
             <input
                 ref={inputRef}
                 type="file"
-                accept={ACCEPT}
+                accept={accept}
                 className="hidden"
                 onChange={handleInputChange}
             />

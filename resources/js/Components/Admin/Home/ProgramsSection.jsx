@@ -50,7 +50,6 @@ export default function ProgramsSection() {
     };
 
     const handleSubmit = (values) => {
-        console.log('Program submit:', values);
         setWasEditSubmit(editingItem != null);
         setWasDeleteSubmit(false);
         setModalOpen(false);

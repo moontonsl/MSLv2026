@@ -38,7 +38,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('users')
                 ->restrictOnDelete();
-            $table->timestamp('assigned_at');
+            $table->dateTime('assigned_at');
             $table->timestamps();
 
             $table->foreign('region_code')
@@ -58,7 +58,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('users')
                 ->restrictOnDelete();
-            $table->timestamp('started_at');
+            $table->dateTime('started_at');
             $table->timestamp('ended_at')->nullable();
             $table->timestamps();
 

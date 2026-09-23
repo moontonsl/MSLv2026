@@ -23,10 +23,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
+            AdminUserSeeder::class,
             CampusTypeSeeder::class,
             CommunityTierSeeder::class,
             TournamentReferenceSeeder::class,
             FilipinoStudentSeeder::class,
+            BasicEducationInstitutionSeeder::class,
         ]);
     }
 }

@@ -85,6 +85,9 @@ const Footer = () => {
     const tiktokUrl = footer?.tiktok_url || 'https://www.tiktok.com/@mslphilippines';
     const mlbbLogo = footer?.mlbb_logo || '/mlbb-logo.png';
     const moontonLogo = footer?.moonton_logo || '/moonton-logo.png';
+    const description = footer?.description || 'The official student leader body of Mobile Legends: Bang Bang in the Philippines.';
+    const copyright = footer?.copyright || '© 2025 Moonton Student Leaders Philippines. All rights reserved.';
+    const customNavSections = Array.isArray(footer?.nav_sections) && footer.nav_sections.length > 0 ? footer.nav_sections : null;
 
     const socialClass =
         'text-gray-400 transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FFC107]';
@@ -102,10 +105,7 @@ const Footer = () => {
                                 className="h-10 w-auto object-contain"
                             />
                         </Link>
-                        <p className="mt-6 text-sm text-gray-400">
-                            The official student leader body of Mobile Legends: Bang Bang in the
-                            Philippines.
-                        </p>
+                        <p className="mt-6 text-sm text-gray-400">{description}</p>
                         <div className="mt-8 flex flex-wrap items-center gap-6">
                             <Link href="/" className="block h-9 opacity-90 transition-opacity hover:opacity-100">
                                 <img
@@ -153,35 +153,31 @@ const Footer = () => {
                         </div>
                     </div>
 
-                    <div className="lg:col-span-3">
-                        <h3 className="text-sm font-bold text-white">Programs</h3>
-                        <nav className="mt-6 flex flex-col gap-3 text-sm text-gray-400" aria-label="Programs">
-                            {PROGRAM_LINKS.map(({ label, href }) => (
-                                <Link
-                                    key={href}
-                                    href={href}
-                                    className="transition-colors hover:text-white"
-                                >
-                                    {label}
-                                </Link>
-                            ))}
-                        </nav>
-                    </div>
-
-                    <div className="lg:col-span-2">
-                        <h3 className="text-sm font-bold text-white">Resources</h3>
-                        <nav className="mt-6 flex flex-col gap-3 text-sm text-gray-400" aria-label="Resources">
-                            {RESOURCE_LINKS.map(({ label, href }) => (
-                                <Link
-                                    key={href}
-                                    href={href}
-                                    className="transition-colors hover:text-white"
-                                >
-                                    {label}
-                                </Link>
-                            ))}
-                        </nav>
-                    </div>
+                    {customNavSections ? customNavSections.map((section, sectionIndex) => (
+                        <div key={`${section.title}-${sectionIndex}`} className="lg:col-span-3">
+                            <h3 className="text-sm font-bold text-white">{section.title}</h3>
+                            <nav className="mt-6 flex flex-col gap-3 text-sm text-gray-400" aria-label={section.title}>
+                                {(section.links || []).map((link, linkIndex) => (
+                                    <Link key={`${link.href}-${linkIndex}`} href={link.href} className="transition-colors hover:text-white">
+                                        {link.label}
+                                    </Link>
+                                ))}
+                            </nav>
+                        </div>
+                    )) : <>
+                        <div className="lg:col-span-3">
+                            <h3 className="text-sm font-bold text-white">Programs</h3>
+                            <nav className="mt-6 flex flex-col gap-3 text-sm text-gray-400" aria-label="Programs">
+                                {PROGRAM_LINKS.map(({ label, href }) => <Link key={href} href={href} className="transition-colors hover:text-white">{label}</Link>)}
+                            </nav>
+                        </div>
+                        <div className="lg:col-span-2">
+                            <h3 className="text-sm font-bold text-white">Resources</h3>
+                            <nav className="mt-6 flex flex-col gap-3 text-sm text-gray-400" aria-label="Resources">
+                                {RESOURCE_LINKS.map(({ label, href }) => <Link key={href} href={href} className="transition-colors hover:text-white">{label}</Link>)}
+                            </nav>
+                        </div>
+                    </>}
 
                     <div className="lg:col-span-3">
                         <h3 className="text-sm font-bold text-white">Safe Spaces</h3>
@@ -214,7 +210,7 @@ const Footer = () => {
                 {/* Tier 3 */}
                 <div className="mt-12 flex flex-col items-center justify-between gap-4 pt-8 text-xs text-gray-500 md:flex-row">
                     <p className="text-center md:text-left">
-                        © 2025 Moonton Student Leaders Philippines. All rights reserved.
+                        {copyright}
                     </p>
                     <nav
                         className="flex flex-wrap items-center justify-center gap-6 md:justify-end"

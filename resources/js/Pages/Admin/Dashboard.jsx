@@ -10,11 +10,11 @@ import {
 } from "lucide-react";
 
 export default function AdminDashboard({ auth, students, filters }) {
-    const reviewRoles = ['Super Admin', 'Student Leader', 'Regional Admin'];
-    const canReview = reviewRoles.includes(auth?.user?.user_type);
-    const hasPermission = (slug) => {
-        return canReview && (auth?.user?.user_type === 'Super Admin' || auth?.permissions?.includes(slug) || ['approve_students', 'reject_students', 'renew_students'].includes(slug));
-    };
+    const adminRole = auth?.user?.role ?? auth?.user?.user_type;
+    const reviewRoles = ['Admin', 'Super Admin'];
+    const canReview = auth?.guard === 'admin' && reviewRoles.includes(adminRole);
+    const isSuperAdmin = auth?.is_super_admin ?? ['Super Admin', 'super_admin'].includes(adminRole);
+    const hasPermission = (slug) => canReview && (isSuperAdmin || auth?.permissions?.includes(slug));
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [rejectModalOpen, setRejectModalOpen] = useState(false);
     const [renewalModalOpen, setRenewalModalOpen] = useState(false);

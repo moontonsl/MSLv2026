@@ -21,8 +21,8 @@ export default defineConfig({
     server: {
 
         //php artisan serve --host=0.0.0.0 --port=8000
-        //host: '10.10.120.31', // your PC's local IP
-        host: '192.168.1.15',  //
+        // Bind locally so the dev server also works when the network IP changes.
+        host: '127.0.0.1',
         port: 5173,
         strictPort: true,
         cors: {
