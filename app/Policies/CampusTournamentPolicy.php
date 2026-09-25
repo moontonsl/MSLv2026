@@ -31,4 +31,11 @@ class CampusTournamentPolicy
     {
         return $this->authorization->canReview($user, $tournament->campus);
     }
+
+    public function viewOperations(User $user, CampusTournament $tournament): bool
+    {
+        return $user->status === 'active'
+            && ($this->authorization->canReview($user, $tournament->campus)
+                || $this->authorization->isActiveStudentLeader($user, $tournament->campus));
+    }
 }
