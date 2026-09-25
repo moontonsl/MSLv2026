@@ -103,6 +103,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/Tournament/Organizer', [CampusTournamentController::class, 'indexOrganizer'])
         ->name('campus.tournament.organizer');
 
+    Route::get('/campus-tournaments/{tournament}/ongoing', [CampusTournamentController::class, 'showOngoing'])
+        ->name('campus-tournaments.ongoing');
+
     Route::get('/Tournament/CampusTournament', [TournamentRegistrationController::class, 'showCaptainHub'])
         ->name('campus.captainregistration');
 
