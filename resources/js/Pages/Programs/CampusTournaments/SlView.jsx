@@ -1,12 +1,10 @@
 import CampusTournamentPageHeader from '@/Components/CampusTournament/CampusTournamentPageHeader';
-import ConfirmResultsModal from '@/Components/CampusTournament/ConfirmResultsModal';
 import CreateTournamentModal from '@/Components/CampusTournament/CreateTournamentModal';
 import RequestSection from '@/Components/CampusTournament/RequestSection';
 import SlTournamentPanel from '@/Components/CampusTournament/SlTournamentPanel';
 import DeleteConfirmationModal from '@/Components/Admin/DeleteConfirmationModal';
 import SuccessModal from '@/Components/Admin/SuccessModal';
 import {
-    getPlacementSummary,
     INITIAL_PENDING_REQUESTS,
     INITIAL_REJECTED_REQUESTS,
     INITIAL_SL_MANAGED_TOURNAMENTS,
@@ -66,11 +64,6 @@ export default function SlView({
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [pendingDelete, setPendingDelete] = useState(null);
 
-    const [resultsConfirmOpen, setResultsConfirmOpen] = useState(false);
-    const [resultsMode, setResultsMode] = useState('submit');
-    const [resultsTournamentId, setResultsTournamentId] = useState(null);
-    const [resultsPlacements, setResultsPlacements] = useState([]);
-
     const [successOpen, setSuccessOpen] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [successDescription, setSuccessDescription] = useState('');
@@ -94,9 +87,12 @@ export default function SlView({
 
     const tabCounts = useMemo(
         () => ({
-            upcoming: tournaments.filter((item) => item.status === 'upcoming').length,
-            ongoing: tournaments.filter((item) => item.status === 'ongoing').length,
-            completed: tournaments.filter((item) => item.status === 'completed').length,
+            upcoming: tournaments.filter((item) => item.status === 'upcoming')
+                .length,
+            ongoing: tournaments.filter((item) => item.status === 'ongoing')
+                .length,
+            completed: tournaments.filter((item) => item.status === 'completed')
+                .length,
         }),
         [tournaments],
     );
@@ -110,7 +106,8 @@ export default function SlView({
             if (item.mode === 'Onsite' && !showOnsite) return false;
 
             if (query) {
-                const haystack = `${item.title} ${item.schoolName ?? ''}`.toLowerCase();
+                const haystack =
+                    `${item.title} ${item.schoolName ?? ''}`.toLowerCase();
                 if (!haystack.includes(query)) return false;
             }
 
@@ -135,7 +132,11 @@ export default function SlView({
         if (!pendingDelete) return;
         const { source, id } = pendingDelete;
 
-        if (typeof id === 'number' || (!String(id).startsWith('pending-') && !String(id).startsWith('rejected-'))) {
+        if (
+            typeof id === 'number' ||
+            (!String(id).startsWith('pending-') &&
+                !String(id).startsWith('rejected-'))
+        ) {
             router.delete(`/campus-tournaments/${id}`, {
                 data: { reason: 'Cancelled by user' },
                 preserveScroll: true,
@@ -148,10 +149,16 @@ export default function SlView({
                 },
                 onError: () => {
                     if (source === 'pending') {
-                        setPendingCreates((prev) => prev.filter((item) => item.id !== id));
-                        setApprovalRequests((prev) => prev.filter((item) => item.id !== id));
+                        setPendingCreates((prev) =>
+                            prev.filter((item) => item.id !== id),
+                        );
+                        setApprovalRequests((prev) =>
+                            prev.filter((item) => item.id !== id),
+                        );
                     } else if (source === 'rejected') {
-                        setRejectedRequests((prev) => prev.filter((item) => item.id !== id));
+                        setRejectedRequests((prev) =>
+                            prev.filter((item) => item.id !== id),
+                        );
                     }
                     setDeleteOpen(false);
                     setPendingDelete(null);
@@ -165,9 +172,13 @@ export default function SlView({
 
         if (source === 'pending') {
             setPendingCreates((prev) => prev.filter((item) => item.id !== id));
-            setApprovalRequests((prev) => prev.filter((item) => item.id !== id));
+            setApprovalRequests((prev) =>
+                prev.filter((item) => item.id !== id),
+            );
         } else if (source === 'rejected') {
-            setRejectedRequests((prev) => prev.filter((item) => item.id !== id));
+            setRejectedRequests((prev) =>
+                prev.filter((item) => item.id !== id),
+            );
         }
 
         setDeleteOpen(false);
@@ -185,7 +196,9 @@ export default function SlView({
                 setCreateOpen(false);
                 setCreateError(null);
                 setSuccessMessage('Tournament Request Submitted!');
-                setSuccessDescription('Your tournament request has been submitted for approval.');
+                setSuccessDescription(
+                    'Your tournament request has been submitted for approval.',
+                );
                 setSuccessOpen(true);
             },
             onError: (errors) => {
@@ -212,78 +225,32 @@ export default function SlView({
                 resubmission_reason: 'Resubmitted with an updated schedule.',
             };
 
-            router.put(`/campus-tournaments/${editRequest.id}/resubmit`, payload, {
-                preserveScroll: true,
-                onSuccess: () => {
-                    setEditRequest(null);
-                    setEditError(null);
-                    setSuccessMessage('Tournament Request Resubmitted!');
-                    setSuccessDescription(
-                        'Your request is waiting for Regional Admin approval again.',
-                    );
-                    setSuccessOpen(true);
+            router.put(
+                `/campus-tournaments/${editRequest.id}/resubmit`,
+                payload,
+                {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        setEditRequest(null);
+                        setEditError(null);
+                        setSuccessMessage('Tournament Request Resubmitted!');
+                        setSuccessDescription(
+                            'Your request is waiting for Regional Admin approval again.',
+                        );
+                        setSuccessOpen(true);
+                    },
+                    onError: (errors) => {
+                        console.error(errors);
+                        setEditError(
+                            Object.values(errors || {})[0] ||
+                                'Failed to resubmit tournament. Please check your inputs.',
+                        );
+                    },
                 },
-                onError: (errors) => {
-                    console.error(errors);
-                    setEditError(
-                        Object.values(errors || {})[0] ||
-                            'Failed to resubmit tournament. Please check your inputs.',
-                    );
-                },
-            });
+            );
         },
         [editRequest],
     );
-
-    const handlePlacementChange = useCallback((tournamentId, teamId, placementId) => {
-        setTournaments((prev) =>
-            prev.map((tournament) => {
-                if (tournament.id !== tournamentId) return tournament;
-                return {
-                    ...tournament,
-                    teams: (tournament.teams ?? []).map((team) =>
-                        team.id === teamId ? { ...team, placement: placementId } : team,
-                    ),
-                };
-            }),
-        );
-    }, []);
-
-    const openSubmitResults = useCallback((tournament) => {
-        setResultsTournamentId(tournament.id);
-        setResultsMode(tournament.resultsSubmitted ? 'update' : 'submit');
-        setResultsPlacements(getPlacementSummary(tournament.teams ?? []));
-        setResultsConfirmOpen(true);
-    }, []);
-
-    const cancelResultsConfirm = useCallback(() => {
-        setResultsConfirmOpen(false);
-        setResultsTournamentId(null);
-        setResultsPlacements([]);
-    }, []);
-
-    const confirmResults = useCallback(() => {
-        const isUpdate = resultsMode === 'update';
-        setTournaments((prev) =>
-            prev.map((tournament) =>
-                tournament.id === resultsTournamentId
-                    ? { ...tournament, resultsSubmitted: true }
-                    : tournament,
-            ),
-        );
-        setResultsConfirmOpen(false);
-        setResultsTournamentId(null);
-        setResultsPlacements([]);
-        setSuccessMessage(
-            isUpdate ? 'Results Updated Successfully!' : 'Results Submitted Successfully!',
-        );
-        setSuccessDescription(
-            isUpdate
-                ? 'Tournament results have been updated.'
-                : 'Tournament results have been submitted.',
-        );
-        setSuccessOpen(true);
-    }, [resultsMode, resultsTournamentId]);
 
     return (
         <MainLayout fullWidth>
@@ -369,7 +336,9 @@ export default function SlView({
                                     <input
                                         type="search"
                                         value={search}
-                                        onChange={(event) => setSearch(event.target.value)}
+                                        onChange={(event) =>
+                                            setSearch(event.target.value)
+                                        }
                                         placeholder="Search School"
                                         className={SEARCH_CLASS}
                                     />
@@ -377,12 +346,17 @@ export default function SlView({
 
                                 <select
                                     value={month}
-                                    onChange={(event) => setMonth(event.target.value)}
+                                    onChange={(event) =>
+                                        setMonth(event.target.value)
+                                    }
                                     className={SELECT_CLASS}
                                     aria-label="Filter by month"
                                 >
                                     {MONTH_OPTIONS.map((option) => (
-                                        <option key={option.label} value={option.value}>
+                                        <option
+                                            key={option.label}
+                                            value={option.value}
+                                        >
                                             {option.label}
                                         </option>
                                     ))}
@@ -390,12 +364,17 @@ export default function SlView({
 
                                 <select
                                     value={year}
-                                    onChange={(event) => setYear(event.target.value)}
+                                    onChange={(event) =>
+                                        setYear(event.target.value)
+                                    }
                                     className={SELECT_CLASS}
                                     aria-label="Filter by year"
                                 >
                                     {YEAR_OPTIONS.map((option) => (
-                                        <option key={option.label} value={option.value}>
+                                        <option
+                                            key={option.label}
+                                            value={option.value}
+                                        >
                                             {option.label}
                                         </option>
                                     ))}
@@ -426,7 +405,9 @@ export default function SlView({
                                                 type="checkbox"
                                                 checked={filter.checked}
                                                 onChange={(event) =>
-                                                    filter.onChange(event.target.checked)
+                                                    filter.onChange(
+                                                        event.target.checked,
+                                                    )
                                                 }
                                                 className="h-4 w-4 rounded border-neutral-600 bg-[#1a1a1a] text-yellow-500 focus:ring-yellow-500"
                                             />
@@ -448,8 +429,6 @@ export default function SlView({
                                         key={tournament.id}
                                         tournament={tournament}
                                         defaultExpanded={index === 0}
-                                        onPlacementChange={handlePlacementChange}
-                                        onSubmitResults={openSubmitResults}
                                     />
                                 ))
                             )}
@@ -478,14 +457,6 @@ export default function SlView({
                 }}
                 onSubmit={handleEditSubmit}
                 error={editError}
-            />
-
-            <ConfirmResultsModal
-                isOpen={resultsConfirmOpen}
-                mode={resultsMode}
-                placements={resultsPlacements}
-                onCancel={cancelResultsConfirm}
-                onConfirm={confirmResults}
             />
 
             <DeleteConfirmationModal

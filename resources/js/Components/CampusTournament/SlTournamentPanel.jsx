@@ -25,15 +25,11 @@ const INNER_TABS = [
  *     rosterTeams?: Array<object>;
  *   };
  *   defaultExpanded?: boolean;
- *   onPlacementChange: (tournamentId: string, teamId: string, placementId: string) => void;
- *   onSubmitResults: (tournament: object) => void;
  * }} props
  */
 export default function SlTournamentPanel({
     tournament,
     defaultExpanded = false,
-    onPlacementChange,
-    onSubmitResults,
 }) {
     const [expanded, setExpanded] = useState(defaultExpanded);
     const [innerTab, setInnerTab] = useState("match");
@@ -61,6 +57,15 @@ export default function SlTournamentPanel({
                             className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-yellow-500 px-3 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"
                         >
                             View
+                            <ExternalLink className="h-4 w-4" />
+                        </Link>
+                    ) : null}
+                    {tournament.status === "completed" ? (
+                        <Link
+                            href={`/campus-tournaments/${tournament.id}/report`}
+                            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-yellow-500 px-3 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"
+                        >
+                            Report
                             <ExternalLink className="h-4 w-4" />
                         </Link>
                     ) : null}
@@ -115,14 +120,7 @@ export default function SlTournamentPanel({
                             page={page}
                             totalPages={10}
                             onPageChange={setPage}
-                            onPlacementChange={(teamId, placementId) =>
-                                onPlacementChange(
-                                    tournament.id,
-                                    teamId,
-                                    placementId,
-                                )
-                            }
-                            onSubmitResults={() => onSubmitResults(tournament)}
+                            readOnly
                         />
                     ) : (
                         <SlRosterPanel

@@ -472,7 +472,9 @@ export default function RaView({
                                         tournament={tournament}
                                         onView={(item) =>
                                             router.visit(
-                                                `/campus-tournaments/${item.id}/ongoing`,
+                                                item.status === "completed"
+                                                    ? `/campus-tournaments/${item.id}/report`
+                                                    : `/campus-tournaments/${item.id}/ongoing`,
                                             )
                                         }
                                         onReschedule={setRescheduleTarget}

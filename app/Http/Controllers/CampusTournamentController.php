@@ -282,6 +282,7 @@ class CampusTournamentController extends Controller
                 'tournamentType',
                 'teams.activeParticipants.user',
                 'teams.captain',
+                'currentResultRevision.entries',
             ])
             ->orderBy('starts_at', 'asc')
             ->get()
@@ -294,7 +295,8 @@ class CampusTournamentController extends Controller
                     $tabStatus = 'completed';
                 }
 
-                $teams = $t->teams->map(function (TournamentTeam $team) {
+                $resultEntries = $t->currentResultRevision?->entries->keyBy('team_id') ?? collect();
+                $teams = $t->teams->map(function (TournamentTeam $team) use ($resultEntries) {
                     $players = $team->activeParticipants->map(fn (TournamentParticipant $p) => [
                         'id' => $p->id,
                         'name' => $p->user?->name ?? 'Player',
@@ -307,7 +309,7 @@ class CampusTournamentController extends Controller
                     return [
                         'id' => $team->id,
                         'name' => $team->name,
-                        'placement' => 'participant',
+                        'placement' => $resultEntries->get($team->id)?->placement_code ?? 'participant',
                         'players' => $players,
                     ];
                 });
@@ -339,7 +341,7 @@ class CampusTournamentController extends Controller
                     'mode' => ucfirst($t->tournament_type_code ?? 'Online'),
                     'status' => $tabStatus,
                     'rosterLockDate' => $t->roster_locked_at ? $t->roster_locked_at->format('M d, Y') : $t->registration_closes_at->format('M d, Y'),
-                    'resultsSubmitted' => false,
+                    'resultsSubmitted' => $t->current_result_revision_id !== null,
                     'teams' => $teams,
                     'rosterTeams' => $rosterTeams,
                 ];
