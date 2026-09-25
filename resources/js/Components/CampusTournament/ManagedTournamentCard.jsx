@@ -24,8 +24,9 @@ export default function ManagedTournamentCard({
     onDelete,
 }) {
     const canChangeSchedule = tournament.status === "upcoming";
-    const canViewOngoing = tournament.status === "ongoing" && onView;
-    const hasActions = canViewOngoing || canChangeSchedule;
+    const canView =
+        ["ongoing", "completed"].includes(tournament.status) && onView;
+    const hasActions = canView || canChangeSchedule;
 
     return (
         <article className="rounded-2xl border border-neutral-800 bg-[#111111] p-4 sm:p-5">
@@ -77,13 +78,15 @@ export default function ManagedTournamentCard({
                             canChangeSchedule ? "grid-cols-2" : "grid-cols-1"
                         }`}
                     >
-                        {canViewOngoing ? (
+                        {canView ? (
                             <button
                                 type="button"
                                 onClick={() => onView(tournament)}
                                 className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-neutral-600 bg-[#1a1a1a] px-2 text-sm font-semibold text-white transition-colors hover:border-neutral-400 sm:px-4"
                             >
-                                View
+                                {tournament.status === "completed"
+                                    ? "Report"
+                                    : "View"}
                             </button>
                         ) : null}
                         {canChangeSchedule ? (

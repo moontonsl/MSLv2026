@@ -483,18 +483,26 @@ The future application transaction must:
 
 ## Revisioned results
 
+Implementation status (2026-09-26): the result models, transactional submission
+and correction service, role-scoped report page, immutable roster snapshots,
+and current-revision Excel export are implemented. The focused feature suite
+covers 8 scenarios with 101 assertions.
+
 `tournament_result_revisions` stores a version number, submitter, reason, and
 submission timestamp. `UNIQUE (tournament_id, version)` preserves revision
-ordering. The schema supports revision history, but the application must
-prohibit updates and deletes that would violate immutability.
+ordering. The Eloquent model rejects updates and deletes so submitted revisions
+remain immutable.
 
 `tournament_result_entries` stores one row per team and revision, its placement,
 team-name snapshot, and JSON roster snapshot. Placement is intentionally not
 unique because the workflow permits ties.
 
 `campus_tournaments.current_result_revision_id` identifies the published
-revision. The initial revision may have no reason; later corrections must
-provide one. That conditional rule requires application validation.
+revision. The initial revision has no reason; every later correction requires
+one. Submission and correction run transactionally with tournament, team, and
+participant row locks. Each registered team must appear exactly once, have five
+active players and one matching captain, and receive a seeded placement code.
+At least one team must be first place; multiple teams may share any placement.
 
 ## Existing Eloquent models and relationships
 
@@ -506,13 +514,15 @@ provide one. That conditional rule requires application validation.
 | `CommunityTier` | `hasMany(CampusCommunity)` |
 | `CampusCommunity` | belongs to campus and community tier |
 | `CampusAffiliation` | belongs to campus, user, and optional approving user |
-| `User` | has many campus affiliations and approved campus affiliations |
+| `User` | has many campus affiliations, approved campus affiliations, and submitted result revisions |
 | `City` | has many campuses |
 | `Barangay` | has many campuses |
-| `CampusTournament` | belongs to campus, creator, type, and current submission; has many submissions, reviews, and schedule revisions |
+| `CampusTournament` | belongs to campus, creator, type, current submission, and current result revision; has many submissions, reviews, schedule revisions, and result revisions |
 | `CampusTournamentSubmission` | belongs to tournament, submitter, campus, and type; has one review |
 | `CampusTournamentReview` | belongs to tournament, submission, and reviewer |
 | `RegionAdmin` | belongs to its official region, assigned user, and assigning user |
+| `TournamentResultRevision` | belongs to tournament and submitter; has many immutable result entries |
+| `TournamentResultEntry` | belongs to revision and team; stores immutable team and roster snapshots |
 
 Date casts currently implemented:
 
@@ -684,10 +694,14 @@ Laravel validation, policies, or transactional services:
 - Only one active join code may exist for a team.
 - Solo merging must run transactionally and lock relevant tournament,
   participant, and team rows.
-- Result corrections after version 1 require a reason.
+- Result submission is limited to completed tournaments and their active creator.
+- Result corrections after version 1 require a reason and are limited to the
+  active creator or Core/Super Admin.
+- Official Regional Admins can view and export reports in their region but
+  cannot submit or correct them.
 - A current result revision must belong to the same tournament.
 - A result entry's revision and team must belong to the same tournament.
-- Result-revision and result-entry rows must be treated as immutable after
+- Result-revision and result-entry models reject updates and deletes after
   submission.
 
 These application rules must be implemented before exposing campus-management

@@ -27,6 +27,7 @@ class CampusTournament extends Model
         'starts_at',
         'ends_at',
         'roster_locked_at',
+        'current_result_revision_id',
         'cancelled_by_user_id',
         'cancellation_reason',
         'cancelled_at',
@@ -139,6 +140,16 @@ class CampusTournament extends Model
     public function participants(): HasMany
     {
         return $this->hasMany(TournamentParticipant::class, 'tournament_id');
+    }
+
+    public function currentResultRevision(): BelongsTo
+    {
+        return $this->belongsTo(TournamentResultRevision::class, 'current_result_revision_id');
+    }
+
+    public function resultRevisions(): HasMany
+    {
+        return $this->hasMany(TournamentResultRevision::class, 'tournament_id');
     }
 
     /**
