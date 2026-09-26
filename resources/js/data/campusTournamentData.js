@@ -198,7 +198,9 @@ const SL_DEMO_PLAYER = {
     uid: '71244743(1234)',
 };
 
-function buildMatchTeam(id, placement) {
+const ROSTER_ROLES = ['JUNGLER', 'ROAM', 'GOLD', 'EXP', 'MID'];
+
+export function buildMatchTeam(id, placement) {
     return {
         id,
         name: 'O.M.A.D - One Meal a Day',
@@ -207,20 +209,26 @@ function buildMatchTeam(id, placement) {
             ...SL_DEMO_PLAYER,
             id: `${id}-p${index + 1}`,
             slotLabel: index === 0 ? 'Captain' : `Player ${index + 1}`,
+            role: ROSTER_ROLES[index],
         })),
     };
 }
 
-function buildRosterTeam(id) {
+export function buildRosterTeam(id) {
+    const players = ROSTER_ROLES.map((role, index) => ({
+        ...SL_DEMO_PLAYER,
+        id: `${id}-p${index + 1}`,
+        role,
+        slotLabel: index === 0 ? 'Captain' : `Player ${index + 1}`,
+    }));
+
     return {
         id,
         name: 'MSL TEAM 1',
         type: 'team',
         status: 'confirmed',
-        captain: {
-            ...SL_DEMO_PLAYER,
-            role: 'JUNGLER',
-        },
+        captain: players[0],
+        players,
         matchReady: true,
     };
 }
@@ -308,6 +316,7 @@ export const INITIAL_SL_MANAGED_TOURNAMENTS = [
         status: 'completed',
         rosterLockDate: 'March 15, 2026',
         resultsSubmitted: true,
+        resultsSubmittedOn: '03/21/2026',
         teams: [
             buildMatchTeam('sl-comp-1-t1', '1st'),
             buildMatchTeam('sl-comp-1-t2', '2nd'),
@@ -326,6 +335,7 @@ export const INITIAL_SL_MANAGED_TOURNAMENTS = [
         status: 'completed',
         rosterLockDate: 'December 10, 2025',
         resultsSubmitted: true,
+        resultsSubmittedOn: '12/16/2025',
         teams: [
             buildMatchTeam('sl-comp-2-t1', '1st'),
             buildMatchTeam('sl-comp-2-t2', '2nd'),
@@ -334,7 +344,7 @@ export const INITIAL_SL_MANAGED_TOURNAMENTS = [
     },
 ];
 
-/** Regional Admin view: approved tournaments with registration stats */
+/** Regional Admin view: approved tournaments with registration stats + match/roster demo */
 export const INITIAL_RA_MANAGED_TOURNAMENTS = [
     {
         id: 'ra-ong-1',
@@ -344,9 +354,19 @@ export const INITIAL_RA_MANAGED_TOURNAMENTS = [
         endDate: '2026-05-10',
         mode: 'Online',
         status: 'ongoing',
+        rosterLockDate: 'May 14, 2026',
+        resultsSubmitted: false,
         verifiedTeams: 12,
         pendingTeams: 3,
         totalRegistration: 15,
+        teams: [
+            buildMatchTeam('ra-ong-1-t1', '1st'),
+            buildMatchTeam('ra-ong-1-t2', '2nd'),
+            buildMatchTeam('ra-ong-1-t3', '3rd'),
+            buildMatchTeam('ra-ong-1-t4', '4th'),
+            buildMatchTeam('ra-ong-1-t5', 'participant'),
+        ],
+        rosterTeams: [buildRosterTeam('ra-ong-1-r1'), buildRosterTeam('ra-ong-1-r2')],
     },
     {
         id: 'ra-ong-2',
@@ -356,9 +376,16 @@ export const INITIAL_RA_MANAGED_TOURNAMENTS = [
         endDate: '2026-05-15',
         mode: 'Onsite',
         status: 'ongoing',
+        rosterLockDate: 'May 12, 2026',
+        resultsSubmitted: false,
         verifiedTeams: 8,
         pendingTeams: 5,
         totalRegistration: 13,
+        teams: [
+            buildMatchTeam('ra-ong-2-t1', 'participant'),
+            buildMatchTeam('ra-ong-2-t2', 'participant'),
+        ],
+        rosterTeams: [buildRosterTeam('ra-ong-2-r1')],
     },
     {
         id: 'ra-up-1',
@@ -368,9 +395,16 @@ export const INITIAL_RA_MANAGED_TOURNAMENTS = [
         endDate: '2026-06-20',
         mode: 'Onsite',
         status: 'upcoming',
+        rosterLockDate: 'June 15, 2026',
+        resultsSubmitted: false,
         verifiedTeams: 4,
         pendingTeams: 6,
         totalRegistration: 10,
+        teams: [
+            buildMatchTeam('ra-up-1-t1', 'participant'),
+            buildMatchTeam('ra-up-1-t2', 'participant'),
+        ],
+        rosterTeams: [buildRosterTeam('ra-up-1-r1')],
     },
     {
         id: 'ra-comp-1',
@@ -380,9 +414,19 @@ export const INITIAL_RA_MANAGED_TOURNAMENTS = [
         endDate: '2026-01-25',
         mode: 'Online',
         status: 'completed',
+        rosterLockDate: 'January 20, 2026',
+        resultsSubmitted: true,
+        resultsSubmittedOn: '01/26/2026',
         verifiedTeams: 16,
         pendingTeams: 0,
         totalRegistration: 16,
+        teams: [
+            buildMatchTeam('ra-comp-1-t1', '1st'),
+            buildMatchTeam('ra-comp-1-t2', '2nd'),
+            buildMatchTeam('ra-comp-1-t3', '3rd'),
+            buildMatchTeam('ra-comp-1-t4', '4th'),
+        ],
+        rosterTeams: [buildRosterTeam('ra-comp-1-r1')],
     },
     {
         id: 'ra-comp-2',
@@ -392,9 +436,17 @@ export const INITIAL_RA_MANAGED_TOURNAMENTS = [
         endDate: '2025-12-15',
         mode: 'Onsite',
         status: 'completed',
+        rosterLockDate: 'December 10, 2025',
+        resultsSubmitted: true,
+        resultsSubmittedOn: '12/16/2025',
         verifiedTeams: 10,
         pendingTeams: 0,
         totalRegistration: 10,
+        teams: [
+            buildMatchTeam('ra-comp-2-t1', '1st'),
+            buildMatchTeam('ra-comp-2-t2', '2nd'),
+        ],
+        rosterTeams: [buildRosterTeam('ra-comp-2-r1')],
     },
 ];
 

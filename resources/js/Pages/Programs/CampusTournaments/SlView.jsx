@@ -1,6 +1,7 @@
 import CampusTournamentPageHeader from '@/Components/CampusTournament/CampusTournamentPageHeader';
 import ConfirmResultsModal from '@/Components/CampusTournament/ConfirmResultsModal';
 import CreateTournamentModal from '@/Components/CampusTournament/CreateTournamentModal';
+import GenerateReportModal from '@/Components/CampusTournament/GenerateReportModal';
 import RequestSection from '@/Components/CampusTournament/RequestSection';
 import SlTournamentPanel from '@/Components/CampusTournament/SlTournamentPanel';
 import DeleteConfirmationModal from '@/Components/Admin/DeleteConfirmationModal';
@@ -74,6 +75,22 @@ export default function SlView({
     const [successOpen, setSuccessOpen] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [successDescription, setSuccessDescription] = useState('');
+
+    const [reportOpen, setReportOpen] = useState(false);
+
+    const reportSchools = useMemo(() => {
+        const names = [
+            ...new Set(
+                tournaments
+                    .map((item) => item.schoolName)
+                    .filter(Boolean),
+            ),
+        ];
+        return [
+            { value: 'all', label: 'All School' },
+            ...names.map((name) => ({ value: name, label: name })),
+        ];
+    }, [tournaments]);
 
     /** Own submissions awaiting Regional Admin review, plus anything queued locally. */
     const pendingItems = useMemo(
@@ -256,6 +273,10 @@ export default function SlView({
         setResultsConfirmOpen(true);
     }, []);
 
+    const openExportReport = useCallback(() => {
+        setReportOpen(true);
+    }, []);
+
     const cancelResultsConfirm = useCallback(() => {
         setResultsConfirmOpen(false);
         setResultsTournamentId(null);
@@ -264,10 +285,19 @@ export default function SlView({
 
     const confirmResults = useCallback(() => {
         const isUpdate = resultsMode === 'update';
+        const submittedOn = new Date().toLocaleDateString('en-US', {
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric',
+        });
         setTournaments((prev) =>
             prev.map((tournament) =>
                 tournament.id === resultsTournamentId
-                    ? { ...tournament, resultsSubmitted: true }
+                    ? {
+                          ...tournament,
+                          resultsSubmitted: true,
+                          resultsSubmittedOn: submittedOn,
+                      }
                     : tournament,
             ),
         );
@@ -450,6 +480,7 @@ export default function SlView({
                                         defaultExpanded={index === 0}
                                         onPlacementChange={handlePlacementChange}
                                         onSubmitResults={openSubmitResults}
+                                        onExport={openExportReport}
                                     />
                                 ))
                             )}
@@ -499,6 +530,19 @@ export default function SlView({
                 onClose={() => setSuccessOpen(false)}
                 message={successMessage}
                 description={successDescription}
+            />
+
+            <GenerateReportModal
+                isOpen={reportOpen}
+                schools={reportSchools}
+                onClose={() => setReportOpen(false)}
+                onDownload={() => {
+                    setSuccessMessage('Report downloaded');
+                    setSuccessDescription(
+                        'Tournament results export has been prepared.',
+                    );
+                    setSuccessOpen(true);
+                }}
             />
         </MainLayout>
     );

@@ -1,8 +1,10 @@
 import CampusTournamentPageHeader from '@/Components/CampusTournament/CampusTournamentPageHeader';
 import ConfirmActionModal from '@/Components/CampusTournament/ConfirmActionModal';
 import CreateTournamentModal from '@/Components/CampusTournament/CreateTournamentModal';
+import GenerateReportModal from '@/Components/CampusTournament/GenerateReportModal';
 import ManagedTournamentCard from '@/Components/CampusTournament/ManagedTournamentCard';
 import TournamentRequestTable from '@/Components/CampusTournament/TournamentRequestTable';
+import ViewTournamentModal from '@/Components/CampusTournament/ViewTournamentModal';
 import DeleteConfirmationModal from '@/Components/Admin/DeleteConfirmationModal';
 import SuccessModal from '@/Components/Admin/SuccessModal';
 import {
@@ -14,7 +16,7 @@ import {
 } from '@/data/campusTournamentData';
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, router } from '@inertiajs/react';
-import { Search } from 'lucide-react';
+import { FileSpreadsheet, Search } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 /** The controller sends roster teams, so registration stats are derived here. */
@@ -79,6 +81,23 @@ export default function RaView({
     const [successOpen, setSuccessOpen] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [successDescription, setSuccessDescription] = useState('');
+
+    const [reportOpen, setReportOpen] = useState(false);
+    const [viewTournament, setViewTournament] = useState(null);
+
+    const reportSchools = useMemo(() => {
+        const names = [
+            ...new Set(
+                tournaments
+                    .map((item) => item.schoolName)
+                    .filter(Boolean),
+            ),
+        ];
+        return [
+            { value: 'all', label: 'All School' },
+            ...names.map((name) => ({ value: name, label: name })),
+        ];
+    }, [tournaments]);
 
     const tabCounts = useMemo(
         () => ({
@@ -287,20 +306,30 @@ export default function RaView({
                     <CampusTournamentPageHeader />
 
                     <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
-                        <div className="mb-4 flex items-start justify-between gap-3">
-                            <div>
-                                <h2 className="text-lg font-bold text-yellow-500 sm:text-xl">
-                                    Tournament Requests
-                                </h2>
-                                {requests.length === 0 ? (
-                                    <p className="mt-1 text-sm text-gray-400">
-                                        No pending tournament requests.
-                                    </p>
-                                ) : null}
+                        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                            <div className="min-w-0 flex-1">
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <h2 className="text-lg font-bold text-yellow-500 sm:text-xl">
+                                        Tournament Requests
+                                    </h2>
+                                    <span className="inline-flex items-center rounded-full border border-yellow-500/40 bg-yellow-500/10 px-2.5 py-0.5 text-xs font-semibold text-yellow-500">
+                                        {requests.length}{' '}
+                                        {requests.length === 1 ? 'Request' : 'Requests'}
+                                    </span>
+                                </div>
+                                <p className="mt-1 text-sm text-gray-400">
+                                    Approve or reject each request. Approved tournaments will
+                                    appear on the Campus Tournament Page.
+                                </p>
                             </div>
-                            <p className="shrink-0 text-sm text-white">
-                                {requests.length} Pending
-                            </p>
+                            <button
+                                type="button"
+                                onClick={() => setReportOpen(true)}
+                                className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                            >
+                                <FileSpreadsheet className="h-4 w-4" />
+                                Export to Excel
+                            </button>
                         </div>
 
                         {requests.length > 0 ? (
@@ -311,7 +340,11 @@ export default function RaView({
                                 page={requestPage}
                                 onPageChange={setRequestPage}
                             />
-                        ) : null}
+                        ) : (
+                            <p className="rounded-lg border border-dashed border-neutral-800 py-8 text-center text-sm text-gray-500">
+                                No pending tournament requests.
+                            </p>
+                        )}
                     </section>
 
                     <div className="space-y-4 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-5">
@@ -431,6 +464,7 @@ export default function RaView({
                                     <ManagedTournamentCard
                                         key={tournament.id}
                                         tournament={tournament}
+                                        onView={setViewTournament}
                                         onReschedule={setRescheduleTarget}
                                         onDelete={setDeleteTarget}
                                     />
@@ -473,6 +507,24 @@ export default function RaView({
                 onClose={() => setSuccessOpen(false)}
                 message={successMessage}
                 description={successDescription}
+            />
+
+            <GenerateReportModal
+                isOpen={reportOpen}
+                schools={reportSchools}
+                onClose={() => setReportOpen(false)}
+                onDownload={() => {
+                    showSuccess(
+                        'Report downloaded',
+                        'Tournament results export has been prepared.',
+                    );
+                }}
+            />
+
+            <ViewTournamentModal
+                isOpen={viewTournament != null}
+                tournament={viewTournament}
+                onClose={() => setViewTournament(null)}
             />
         </MainLayout>
     );

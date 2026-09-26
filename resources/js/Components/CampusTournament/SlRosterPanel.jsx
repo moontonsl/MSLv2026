@@ -1,6 +1,7 @@
+import MatchPlayerCell from '@/Components/CampusTournament/MatchPlayerCell';
 import RosterLockCard from '@/Components/CampusTournament/RosterLockCard';
 import { SL_ROSTER_FILTER_TABS } from '@/data/campusTournamentData';
-import { Check, User } from 'lucide-react';
+import { ArrowDownUp, Check, User } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 /**
@@ -14,6 +15,7 @@ import { useMemo, useState } from 'react';
  *     type?: string;
  *     status?: string;
  *     captain?: { name: string; ign: string; uid: string; role?: string };
+ *     players?: Array<{ id: string; name: string; ign: string; uid: string; role?: string }>;
  *     matchReady?: boolean;
  *   }>;
  * }} props
@@ -87,69 +89,135 @@ export default function SlRosterPanel({ rosterLockDate = 'May 14, 2026', teams =
                 </select>
             </div>
 
-            <div className="space-y-3">
-                {filtered.length === 0 ? (
-                    <p className="rounded-xl border border-dashed border-neutral-800 py-10 text-center text-sm text-gray-500">
-                        No roster entries for this filter.
-                    </p>
-                ) : (
-                    filtered.map((team) => (
-                        <article
-                            key={team.id}
-                            className="overflow-hidden rounded-xl border border-neutral-800 bg-[#0a0a0a]"
-                        >
-                            <div className="flex items-center justify-between gap-3 border-b border-neutral-800 px-4 py-3">
-                                <h4 className="text-sm font-bold uppercase text-white">
-                                    {team.name}
-                                </h4>
-                                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/50 bg-emerald-950/40 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-emerald-400">
-                                    <Check className="h-3 w-3" />
-                                    Confirmed
-                                </span>
-                            </div>
+            {filtered.length === 0 ? (
+                <p className="rounded-xl border border-dashed border-neutral-800 py-10 text-center text-sm text-gray-500">
+                    No roster entries for this filter.
+                </p>
+            ) : (
+                <>
+                    {/* Desktop table */}
+                    <div className="hidden overflow-x-auto lg:block">
+                        <table className="w-full min-w-[980px] table-auto border-collapse">
+                            <thead>
+                                <tr className="border-b border-neutral-800">
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-yellow-500">
+                                        Team Name
+                                    </th>
+                                    {['Captain', 'Player 2', 'Player 3', 'Player 4', 'Player 5'].map(
+                                        (label) => (
+                                            <th
+                                                key={label}
+                                                className="px-3 py-3 text-left text-xs font-semibold text-yellow-500"
+                                            >
+                                                <span className="inline-flex items-center gap-1">
+                                                    {label}
+                                                    <ArrowDownUp className="h-3 w-3 opacity-60" />
+                                                </span>
+                                            </th>
+                                        ),
+                                    )}
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-yellow-500">
+                                        Status
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filtered.map((team) => {
+                                    const players =
+                                        team.players?.length > 0
+                                            ? team.players
+                                            : [team.captain].filter(Boolean);
+                                    return (
+                                        <tr
+                                            key={team.id}
+                                            className="border-b border-neutral-800/80"
+                                        >
+                                            <td className="px-3 py-3 text-sm font-semibold text-white">
+                                                {team.name}
+                                            </td>
+                                            {Array.from({ length: 5 }, (_, index) => {
+                                                const player = players[index];
+                                                return (
+                                                    <td key={`${team.id}-slot-${index}`} className="px-3 py-3">
+                                                        <MatchPlayerCell
+                                                            player={player}
+                                                            showRole
+                                                        />
+                                                    </td>
+                                                );
+                                            })}
+                                            <td className="px-3 py-3">
+                                                <span className="inline-flex min-h-[36px] items-center justify-center rounded-lg border border-emerald-600/60 bg-emerald-950/50 px-3 text-xs font-semibold text-emerald-400">
+                                                    Ready for Match
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
 
-                            <div className="border-b border-neutral-800 bg-[#111111] px-4 py-2">
-                                <p className="text-xs font-semibold text-yellow-500">Captain</p>
-                            </div>
+                    {/* Mobile cards */}
+                    <div className="space-y-3 lg:hidden">
+                        {filtered.map((team) => (
+                            <article
+                                key={team.id}
+                                className="overflow-hidden rounded-xl border border-neutral-800 bg-[#0a0a0a]"
+                            >
+                                <div className="flex items-center justify-between gap-3 border-b border-neutral-800 px-4 py-3">
+                                    <h4 className="text-sm font-bold uppercase text-white">
+                                        {team.name}
+                                    </h4>
+                                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/50 bg-emerald-950/40 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-emerald-400">
+                                        <Check className="h-3 w-3" />
+                                        Confirmed
+                                    </span>
+                                </div>
 
-                            <div className="flex items-center gap-3 px-4 py-3">
-                                <div className="relative shrink-0">
-                                    <div className="flex h-11 w-11 items-center justify-center rounded-full border border-yellow-500/40 bg-[#1a1a1a] text-yellow-500">
-                                        <User className="h-5 w-5" />
+                                <div className="border-b border-neutral-800 bg-[#111111] px-4 py-2">
+                                    <p className="text-xs font-semibold text-yellow-500">Captain</p>
+                                </div>
+
+                                <div className="flex items-center gap-3 px-4 py-3">
+                                    <div className="relative shrink-0">
+                                        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-yellow-500/40 bg-[#1a1a1a] text-yellow-500">
+                                            <User className="h-5 w-5" />
+                                        </div>
+                                        <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[#0a0a0a] bg-emerald-400" />
                                     </div>
-                                    <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[#0a0a0a] bg-emerald-400" />
+                                    <div className="min-w-0 flex-1">
+                                        <p className="truncate text-sm font-semibold text-white">
+                                            {team.captain?.name ?? '—'}
+                                        </p>
+                                        <p className="truncate text-xs text-gray-300">
+                                            <span>{team.captain?.ign ?? '—'}</span>
+                                            <span className="text-gray-500"> | </span>
+                                            <span className="text-yellow-500">
+                                                {team.captain?.role ?? 'JUNGLER'}
+                                            </span>
+                                        </p>
+                                        <p className="truncate text-[11px] text-gray-500">
+                                            {team.captain?.uid ?? ''}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div className="min-w-0 flex-1">
-                                    <p className="truncate text-sm font-semibold text-white">
-                                        {team.captain?.name ?? '—'}
-                                    </p>
-                                    <p className="truncate text-xs text-gray-300">
-                                        <span>{team.captain?.ign ?? '—'}</span>
-                                        <span className="text-gray-500"> | </span>
-                                        <span className="text-yellow-500">
-                                            {team.captain?.role ?? 'JUNGLER'}
-                                        </span>
-                                    </p>
-                                    <p className="truncate text-[11px] text-gray-500">
-                                        {team.captain?.uid ?? ''}
-                                    </p>
-                                </div>
-                            </div>
 
-                            {team.matchReady ? (
-                                <div className="px-4 pb-4">
-                                    <button
-                                        type="button"
-                                        className="inline-flex min-h-[40px] w-full items-center justify-center rounded-lg border border-emerald-600/60 bg-emerald-950/50 text-sm font-semibold text-emerald-400"
-                                    >
-                                        Ready for Match
-                                    </button>
-                                </div>
-                            ) : null}
-                        </article>
-                    ))
-                )}
-            </div>
+                                {team.matchReady ? (
+                                    <div className="px-4 pb-4">
+                                        <button
+                                            type="button"
+                                            className="inline-flex min-h-[40px] w-full items-center justify-center rounded-lg border border-emerald-600/60 bg-emerald-950/50 text-sm font-semibold text-emerald-400"
+                                        >
+                                            Ready for Match
+                                        </button>
+                                    </div>
+                                ) : null}
+                            </article>
+                        ))}
+                    </div>
+                </>
+            )}
         </div>
     );
 }

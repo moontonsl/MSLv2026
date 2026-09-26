@@ -1,14 +1,15 @@
 import { Lock } from 'lucide-react';
 
 /**
- * Roster lock deadline callout for Solo Matchmaking.
+ * Roster lock deadline callout for Solo Matchmaking / SL roster tab.
+ * Figma: yellow left border + yellow lock icon.
  *
  * @param {{ lockDate?: string; className?: string }} props
  */
 export default function RosterLockCard({ lockDate = 'May 14, 2026', className = '' }) {
     return (
         <div
-            className={`flex items-start gap-3 rounded-xl border border-neutral-700 bg-[#0a0a0a] px-4 py-3 ${className}`}
+            className={`flex items-start gap-3 rounded-xl border border-neutral-700 border-l-4 border-l-yellow-500 bg-[#0a0a0a] px-4 py-3 ${className}`}
         >
             <Lock className="mt-0.5 h-5 w-5 shrink-0 text-yellow-500" />
             <div>
