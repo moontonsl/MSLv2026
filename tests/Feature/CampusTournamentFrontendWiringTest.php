@@ -631,13 +631,120 @@ class CampusTournamentFrontendWiringTest extends TestCase
             );
     }
 
+    public function test_ongoing_tournament_view_is_available_to_sl_ra_and_core(): void
+    {
+        $tournament = $this->createOngoingTournamentWithRegisteredTeam();
+
+        $this->actingAs($this->studentLeader)
+            ->get(route('campus-tournaments.ongoing', $tournament))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Programs/CampusTournaments/OngoingTournamentView')
+                ->where('viewerRole', 'student_leader')
+                ->where('tournament.id', $tournament->id)
+                ->where('tournament.registeredTeams', 1)
+                ->where('tournament.registeredPlayers', 5)
+                ->has('tournament.teams', 1)
+                ->has('tournament.teams.0.players', 5)
+            );
+
+        $this->actingAs($this->regionalAdmin)
+            ->get(route('campus-tournaments.ongoing', $tournament))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Programs/CampusTournaments/OngoingTournamentView')
+                ->where('viewerRole', 'regional_admin')
+            );
+
+        $this->actingAs($this->superAdmin)
+            ->get(route('campus-tournaments.ongoing', $tournament))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Programs/CampusTournaments/OngoingTournamentView')
+                ->where('viewerRole', 'core')
+            );
+    }
+
+    public function test_ongoing_tournament_view_rejects_ordinary_members_and_non_ongoing_events(): void
+    {
+        $ongoing = $this->createOngoingTournamentWithRegisteredTeam();
+
+        $this->actingAs($this->student)
+            ->get(route('campus-tournaments.ongoing', $ongoing))
+            ->assertForbidden();
+
+        $upcoming = $this->createApprovedTournament();
+
+        $this->actingAs($this->studentLeader)
+            ->get(route('campus-tournaments.ongoing', $upcoming))
+            ->assertNotFound();
+    }
+
+    public function test_regional_admin_tournament_list_is_scoped_to_their_official_region(): void
+    {
+        $localTournament = $this->createApprovedTournament();
+        $island = Island::query()->firstOrFail();
+        $otherRegion = Region::query()->create([
+            'code' => '05',
+            'name' => 'Bicol Region',
+            'region_number' => 'V',
+            'acronym' => 'Bicol',
+            'island_code' => $island->code,
+        ]);
+        $otherProvince = Province::query()->create([
+            'code' => '500',
+            'name' => 'Other Province',
+            'region_code' => $otherRegion->code,
+        ]);
+        $otherCity = City::query()->create([
+            'code' => '050000000',
+            'name' => 'Other City',
+            'province_code' => $otherProvince->code,
+            'region_code' => $otherRegion->code,
+        ]);
+        $otherInstitution = Institution::query()->create([
+            'name' => 'Other Region University',
+            'slug' => 'other-region-university',
+            'status' => 'active',
+        ]);
+        $otherCampus = Campus::query()->create([
+            'institution_id' => $otherInstitution->id,
+            'campus_type_id' => $this->campus->campus_type_id,
+            'name' => 'Other Campus',
+            'city_code' => $otherCity->code,
+            'status' => 'active',
+        ]);
+        CampusTournament::query()->create([
+            'campus_id' => $otherCampus->id,
+            'created_by_user_id' => $this->studentLeader->id,
+            'name' => 'Out of Region Championship',
+            'tournament_type_code' => 'online',
+            'approval_status' => CampusTournamentApprovalStatus::Approved,
+            'registration_opens_at' => now()->subDay(),
+            'registration_closes_at' => now()->addDay(),
+            'starts_at' => now()->addDays(2),
+            'ends_at' => now()->addDays(3),
+        ]);
+
+        $this->actingAs($this->regionalAdmin)
+            ->get(route('campus.tournament.regionaladmin'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('tournaments', 1)
+                ->where('tournaments.0.id', $localTournament->id)
+            );
+
+        $this->actingAs($this->superAdmin)
+            ->get(route('campus.tournament.regionaladmin'))
+            ->assertInertia(fn (Assert $page) => $page->has('tournaments', 2));
+    }
+
     public function test_sl_view_renders_for_reviewer_and_student_leader(): void
     {
         $this->actingAs($this->regionalAdmin)
             ->get('/Tournament/RegionalAdmin')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('Programs/CampusTournaments/SlView')
+                ->component('Programs/CampusTournaments/RaView')
                 ->where('isReviewer', true)
                 ->has('approvalRequests')
                 ->has('tournaments')
@@ -688,5 +795,51 @@ class CampusTournamentFrontendWiringTest extends TestCase
             'starts_at' => now()->addDays(4),
             'ends_at' => now()->addDays(6),
         ]);
+    }
+
+    private function createOngoingTournamentWithRegisteredTeam(): CampusTournament
+    {
+        $tournament = $this->createApprovedTournament();
+        $tournament->update([
+            'registration_opens_at' => now()->subDays(5),
+            'registration_closes_at' => now()->subDays(2),
+            'starts_at' => now()->subHour(),
+            'ends_at' => now()->addHours(5),
+            'roster_locked_at' => now()->subDays(2),
+        ]);
+
+        $players = collect([
+            ['user' => $this->student, 'lane' => 'jungler'],
+            ['user' => User::factory()->create(['status' => 'active']), 'lane' => 'roam'],
+            ['user' => User::factory()->create(['status' => 'active']), 'lane' => 'gold_laner'],
+            ['user' => User::factory()->create(['status' => 'active']), 'lane' => 'exp_laner'],
+            ['user' => User::factory()->create(['status' => 'active']), 'lane' => 'mid_laner'],
+        ]);
+
+        $team = TournamentTeam::query()->create([
+            'tournament_id' => $tournament->id,
+            'name' => 'Qualified Five',
+            'active_name' => 'Qualified Five',
+            'formation_method' => TeamFormationMethod::Premade,
+            'status' => TeamStatus::Registered,
+            'captain_user_id' => $this->student->id,
+            'registered_at' => now()->subDays(2),
+        ]);
+
+        $players->each(function (array $player, int $index) use ($team, $tournament): void {
+            TournamentParticipant::query()->create([
+                'tournament_id' => $tournament->id,
+                'team_id' => $team->id,
+                'user_id' => $player['user']->id,
+                'entry_method' => TeamFormationMethod::Premade,
+                'roster_role' => $index === 0 ? 'captain' : 'member',
+                'assigned_lane_role_code' => $player['lane'],
+                'status' => ParticipantStatus::Active,
+                'registered_at' => now()->subDays(3),
+                'accepted_at' => now()->subDays(3),
+            ]);
+        });
+
+        return $tournament->refresh();
     }
 }

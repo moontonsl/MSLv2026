@@ -28,6 +28,7 @@ use App\Http\Controllers\Admin\FooterController;
 use App\Http\Controllers\Admin\ShareLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CampusTournamentController;
+use App\Http\Controllers\CampusTournamentReportController;
 use App\Http\Controllers\TournamentRegistrationController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ProfileController;
@@ -102,6 +103,18 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/Tournament/Organizer', [CampusTournamentController::class, 'indexOrganizer'])
         ->name('campus.tournament.organizer');
+
+    Route::get('/campus-tournaments/{tournament}/ongoing', [CampusTournamentController::class, 'showOngoing'])
+        ->name('campus-tournaments.ongoing');
+
+    Route::get('/campus-tournaments/{tournament}/report', [CampusTournamentReportController::class, 'show'])
+        ->name('campus-tournaments.report');
+    Route::post('/campus-tournaments/{tournament}/results', [CampusTournamentReportController::class, 'store'])
+        ->name('campus-tournaments.results.store');
+    Route::post('/campus-tournaments/{tournament}/result-revisions', [CampusTournamentReportController::class, 'correct'])
+        ->name('campus-tournaments.results.correct');
+    Route::get('/campus-tournaments/{tournament}/results/export', [CampusTournamentReportController::class, 'export'])
+        ->name('campus-tournaments.results.export');
 
     Route::get('/Tournament/CampusTournament', [TournamentRegistrationController::class, 'showCaptainHub'])
         ->name('campus.captainregistration');

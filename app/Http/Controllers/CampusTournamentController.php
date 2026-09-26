@@ -229,8 +229,21 @@ class CampusTournamentController extends Controller
 
         $rejectedRequests = CampusTournament::query()
             ->where('approval_status', CampusTournamentApprovalStatus::Rejected)
-            ->when(! $isReviewer, function ($q) use ($user) {
-                $campusIds = $user->campusAffiliations()->where('status', 'active')->pluck('campus_id');
+            ->when($user->user_type !== 'Super Admin', function ($q) use ($user, $isReviewer) {
+                if ($isReviewer) {
+                    $q->whereHas('campus.city', function ($cityQuery) use ($user): void {
+                        $cityQuery->whereIn('region_code', RegionAdmin::query()
+                            ->select('region_code')
+                            ->where('user_id', $user->id));
+                    });
+
+                    return;
+                }
+
+                $campusIds = $user->campusAffiliations()
+                    ->where('role', 'student_leader')
+                    ->where('status', 'active')
+                    ->pluck('campus_id');
                 $q->whereIn('campus_id', $campusIds);
             })
             ->with(['campus.institution', 'tournamentType'])
@@ -249,8 +262,17 @@ class CampusTournamentController extends Controller
         $managedTournamentsQuery = CampusTournament::query()
             ->where('approval_status', CampusTournamentApprovalStatus::Approved);
 
-        if (! $isReviewer) {
-            $campusIds = $user->campusAffiliations()->where('status', 'active')->pluck('campus_id');
+        if ($user->user_type !== 'Super Admin' && $isReviewer) {
+            $managedTournamentsQuery->whereHas('campus.city', function ($cityQuery) use ($user): void {
+                $cityQuery->whereIn('region_code', RegionAdmin::query()
+                    ->select('region_code')
+                    ->where('user_id', $user->id));
+            });
+        } elseif (! $isReviewer) {
+            $campusIds = $user->campusAffiliations()
+                ->where('role', 'student_leader')
+                ->where('status', 'active')
+                ->pluck('campus_id');
             $managedTournamentsQuery->whereIn('campus_id', $campusIds);
         }
 
@@ -260,6 +282,7 @@ class CampusTournamentController extends Controller
                 'tournamentType',
                 'teams.activeParticipants.user',
                 'teams.captain',
+                'currentResultRevision.entries',
             ])
             ->orderBy('starts_at', 'asc')
             ->get()
@@ -272,7 +295,8 @@ class CampusTournamentController extends Controller
                     $tabStatus = 'completed';
                 }
 
-                $teams = $t->teams->map(function (TournamentTeam $team) {
+                $resultEntries = $t->currentResultRevision?->entries->keyBy('team_id') ?? collect();
+                $teams = $t->teams->map(function (TournamentTeam $team) use ($resultEntries) {
                     $players = $team->activeParticipants->map(fn (TournamentParticipant $p) => [
                         'id' => $p->id,
                         'name' => $p->user?->name ?? 'Player',
@@ -285,7 +309,7 @@ class CampusTournamentController extends Controller
                     return [
                         'id' => $team->id,
                         'name' => $team->name,
-                        'placement' => 'participant',
+                        'placement' => $resultEntries->get($team->id)?->placement_code ?? 'participant',
                         'players' => $players,
                     ];
                 });
@@ -317,7 +341,7 @@ class CampusTournamentController extends Controller
                     'mode' => ucfirst($t->tournament_type_code ?? 'Online'),
                     'status' => $tabStatus,
                     'rosterLockDate' => $t->roster_locked_at ? $t->roster_locked_at->format('M d, Y') : $t->registration_closes_at->format('M d, Y'),
-                    'resultsSubmitted' => false,
+                    'resultsSubmitted' => $t->current_result_revision_id !== null,
                     'teams' => $teams,
                     'rosterTeams' => $rosterTeams,
                 ];
@@ -334,6 +358,98 @@ class CampusTournamentController extends Controller
             'pendingCreates' => [],
             'tournaments' => $tournaments,
             'isReviewer' => $isReviewer,
+        ]);
+    }
+
+    /**
+     * Shared read-only operations view for the host Student Leader, the
+     * campus region's current Regional Admin, and Core/Super Admins.
+     */
+    public function showOngoing(Request $request, CampusTournament $tournament): Response
+    {
+        Gate::authorize('viewOperations', $tournament);
+
+        abort_unless(
+            $tournament->approval_status === CampusTournamentApprovalStatus::Approved
+                && $tournament->lifecycle() === 'ongoing',
+            404,
+        );
+
+        $tournament->load([
+            'campus.institution',
+            'campus.city.region',
+            'creator',
+            'teams' => fn ($query) => $query
+                ->where('status', TeamStatus::Registered)
+                ->with(['activeParticipants.user', 'captain'])
+                ->orderBy('registered_at')
+                ->orderBy('id'),
+        ]);
+
+        $laneOrder = [
+            'jungler' => 1,
+            'roam' => 2,
+            'gold_laner' => 3,
+            'exp_laner' => 4,
+            'mid_laner' => 5,
+        ];
+
+        $teams = $tournament->teams->map(function (TournamentTeam $team) use ($laneOrder): array {
+            $players = $team->activeParticipants
+                ->sortBy(fn (TournamentParticipant $participant) => $laneOrder[$participant->assigned_lane_role_code] ?? 99)
+                ->values()
+                ->map(fn (TournamentParticipant $participant): array => [
+                    'id' => $participant->id,
+                    'userId' => $participant->user_id,
+                    'name' => $participant->user?->name ?? 'Player',
+                    'ign' => $participant->user?->ml_ign ?? $participant->user?->name ?? 'Player',
+                    'uid' => $participant->user?->ml_id
+                        ? $participant->user->ml_id.'('.$participant->user->ml_server.')'
+                        : 'N/A',
+                    'laneRole' => $participant->assigned_lane_role_code,
+                    'rosterRole' => $participant->roster_role,
+                ]);
+
+            return [
+                'id' => $team->id,
+                'name' => $team->name,
+                'formationMethod' => $team->formation_method->value,
+                'status' => $team->status->value,
+                'registeredAt' => $team->registered_at?->toIso8601String(),
+                'captainUserId' => $team->captain_user_id,
+                'players' => $players,
+            ];
+        });
+
+        $user = $request->user();
+        $viewerRole = $user->user_type === 'Super Admin'
+            ? 'core'
+            : (RegionAdmin::query()->where('user_id', $user->id)->exists()
+                ? 'regional_admin'
+                : 'student_leader');
+
+        return Inertia::render('Programs/CampusTournaments/OngoingTournamentView', [
+            'viewerRole' => $viewerRole,
+            'backUrl' => $viewerRole === 'student_leader'
+                ? route('campus.tournament.sl')
+                : route('campus.tournament.regionaladmin'),
+            'tournament' => [
+                'id' => $tournament->id,
+                'name' => $tournament->name,
+                'school' => $tournament->campus?->institution?->name
+                    ?? $tournament->campus?->name
+                    ?? 'MSL Campus',
+                'campus' => $tournament->campus?->name,
+                'region' => $tournament->campus?->city?->region?->name,
+                'type' => ucfirst($tournament->tournament_type_code),
+                'startsAt' => $tournament->starts_at->toIso8601String(),
+                'endsAt' => $tournament->ends_at->toIso8601String(),
+                'registeredTeams' => $teams->count(),
+                'registeredPlayers' => $teams->sum(fn (array $team): int => $team['players']->count()),
+                'premadeTeams' => $teams->where('formationMethod', TeamFormationMethod::Premade->value)->count(),
+                'soloTeams' => $teams->where('formationMethod', TeamFormationMethod::Solo->value)->count(),
+                'teams' => $teams,
+            ],
         ]);
     }
 

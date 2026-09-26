@@ -27,19 +27,19 @@ function withRegistrationStats(tournament) {
         ...tournament,
         verifiedTeams:
             tournament.verifiedTeams ??
-            rosterTeams.filter((team) => team.status === 'confirmed').length,
+            rosterTeams.filter((team) => team.status === "confirmed").length,
         pendingTeams:
             tournament.pendingTeams ??
-            rosterTeams.filter((team) => team.status !== 'confirmed').length,
+            rosterTeams.filter((team) => team.status !== "confirmed").length,
         totalRegistration: tournament.totalRegistration ?? rosterTeams.length,
     };
 }
 
 const SEARCH_CLASS =
-    'w-full min-h-[44px] rounded-lg border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-10 pr-4 text-base text-white placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none md:text-sm';
+    "w-full min-h-[44px] rounded-lg border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-10 pr-4 text-base text-white placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none md:text-sm";
 
 const SELECT_CLASS =
-    'min-h-[44px] w-full rounded-lg border border-neutral-800 bg-[#1a1a1a] px-3 py-2.5 text-base text-white outline-none focus:ring-2 focus:ring-yellow-500 md:w-auto md:min-w-[120px] md:text-sm';
+    "min-h-[44px] w-full rounded-lg border border-neutral-800 bg-[#1a1a1a] px-3 py-2.5 text-base text-white outline-none focus:ring-2 focus:ring-yellow-500 md:w-auto md:min-w-[120px] md:text-sm";
 
 /**
  * Regional Admin view — approves incoming SL tournament requests and manages
@@ -62,10 +62,10 @@ export default function RaView({
         setTournaments(initialTournaments.map(withRegistrationStats));
     }, [initialTournaments]);
 
-    const [statusTab, setStatusTab] = useState('ongoing');
-    const [search, setSearch] = useState('');
-    const [month, setMonth] = useState('');
-    const [year, setYear] = useState('');
+    const [statusTab, setStatusTab] = useState("ongoing");
+    const [search, setSearch] = useState("");
+    const [month, setMonth] = useState("");
+    const [year, setYear] = useState("");
     const [showOnline, setShowOnline] = useState(true);
     const [showOnsite, setShowOnsite] = useState(true);
     const [requestPage, setRequestPage] = useState(1);
@@ -79,8 +79,8 @@ export default function RaView({
     const [deleteTarget, setDeleteTarget] = useState(null);
 
     const [successOpen, setSuccessOpen] = useState(false);
-    const [successMessage, setSuccessMessage] = useState('');
-    const [successDescription, setSuccessDescription] = useState('');
+    const [successMessage, setSuccessMessage] = useState("");
+    const [successDescription, setSuccessDescription] = useState("");
 
     const [reportOpen, setReportOpen] = useState(false);
     const [viewTournament, setViewTournament] = useState(null);
@@ -101,9 +101,12 @@ export default function RaView({
 
     const tabCounts = useMemo(
         () => ({
-            upcoming: tournaments.filter((item) => item.status === 'upcoming').length,
-            ongoing: tournaments.filter((item) => item.status === 'ongoing').length,
-            completed: tournaments.filter((item) => item.status === 'completed').length,
+            upcoming: tournaments.filter((item) => item.status === "upcoming")
+                .length,
+            ongoing: tournaments.filter((item) => item.status === "ongoing")
+                .length,
+            completed: tournaments.filter((item) => item.status === "completed")
+                .length,
         }),
         [tournaments],
     );
@@ -113,11 +116,12 @@ export default function RaView({
 
         return tournaments.filter((item) => {
             if (item.status !== statusTab) return false;
-            if (item.mode === 'Online' && !showOnline) return false;
-            if (item.mode === 'Onsite' && !showOnsite) return false;
+            if (item.mode === "Online" && !showOnline) return false;
+            if (item.mode === "Onsite" && !showOnsite) return false;
 
             if (query) {
-                const haystack = `${item.title} ${item.schoolName ?? ''}`.toLowerCase();
+                const haystack =
+                    `${item.title} ${item.schoolName ?? ""}`.toLowerCase();
                 if (!haystack.includes(query)) return false;
             }
 
@@ -128,7 +132,7 @@ export default function RaView({
         });
     }, [tournaments, statusTab, search, showOnline, showOnsite, month, year]);
 
-    const showSuccess = useCallback((message, description = '') => {
+    const showSuccess = useCallback((message, description = "") => {
         setSuccessMessage(message);
         setSuccessDescription(description);
         setSuccessOpen(true);
@@ -136,13 +140,13 @@ export default function RaView({
 
     const openApprove = useCallback((request) => {
         setActiveRequest(request);
-        setConfirmAction('approve');
+        setConfirmAction("approve");
         setConfirmOpen(true);
     }, []);
 
     const openReject = useCallback((request) => {
         setActiveRequest(request);
-        setConfirmAction('reject');
+        setConfirmAction("reject");
         setConfirmOpen(true);
     }, []);
 
@@ -155,15 +159,20 @@ export default function RaView({
     const handleConfirmAction = useCallback(() => {
         if (!activeRequest || !confirmAction) return;
 
-        const isApprove = confirmAction === 'approve';
+        const isApprove = confirmAction === "approve";
         const requestId = activeRequest.id;
         const isPersisted =
-            typeof requestId === 'number' || !String(requestId).startsWith('sl-req-');
+            typeof requestId === "number" ||
+            !String(requestId).startsWith("sl-req-");
 
         if (isPersisted) {
             router.post(
-                `/campus-tournaments/${requestId}/${isApprove ? 'approve' : 'reject'}`,
-                { reason: isApprove ? 'Approved by Regional Admin' : 'Rejected by Regional Admin' },
+                `/campus-tournaments/${requestId}/${isApprove ? "approve" : "reject"}`,
+                {
+                    reason: isApprove
+                        ? "Approved by Regional Admin"
+                        : "Rejected by Regional Admin",
+                },
                 {
                     preserveScroll: true,
                     onSuccess: () => {
@@ -172,11 +181,11 @@ export default function RaView({
                         setConfirmAction(null);
                         showSuccess(
                             isApprove
-                                ? 'Tournament Approved Successfully!'
-                                : 'Tournament Rejected',
+                                ? "Tournament Approved Successfully!"
+                                : "Tournament Rejected",
                             isApprove
-                                ? 'The tournament request has been approved and is now available for student registration'
-                                : 'The tournament request has been rejected.',
+                                ? "The tournament request has been approved and is now available for student registration"
+                                : "The tournament request has been rejected.",
                         );
                     },
                     onError: (errors) => console.error(errors),
@@ -185,9 +194,11 @@ export default function RaView({
             return;
         }
 
-        setRequests((prev) => prev.filter((item) => item.id !== activeRequest.id));
+        setRequests((prev) =>
+            prev.filter((item) => item.id !== activeRequest.id),
+        );
 
-        if (confirmAction === 'approve') {
+        if (confirmAction === "approve") {
             setTournaments((prev) => [
                 {
                     id: `ra-up-${Date.now()}`,
@@ -196,7 +207,7 @@ export default function RaView({
                     startDate: activeRequest.startDate,
                     endDate: activeRequest.endDate,
                     mode: activeRequest.type,
-                    status: 'upcoming',
+                    status: "upcoming",
                     verifiedTeams: 0,
                     pendingTeams: 0,
                     totalRegistration: 0,
@@ -204,11 +215,14 @@ export default function RaView({
                 ...prev,
             ]);
             showSuccess(
-                'Tournament Approved Successfully!',
-                'The tournament request has been approved and is now available for student registration',
+                "Tournament Approved Successfully!",
+                "The tournament request has been approved and is now available for student registration",
             );
         } else {
-            showSuccess('Tournament Rejected', 'The tournament request has been rejected.');
+            showSuccess(
+                "Tournament Rejected",
+                "The tournament request has been rejected.",
+            );
         }
 
         setConfirmOpen(false);
@@ -236,34 +250,40 @@ export default function RaView({
                 );
                 setRescheduleTarget(null);
                 showSuccess(
-                    'Tournament Updated Successfully!',
-                    'The new schedule has been saved.',
+                    "Tournament Updated Successfully!",
+                    "The new schedule has been saved.",
                 );
             };
 
-            if (typeof rescheduleTarget.id === 'string' && rescheduleTarget.id.startsWith('ra-')) {
+            if (
+                typeof rescheduleTarget.id === "string" &&
+                rescheduleTarget.id.startsWith("ra-")
+            ) {
                 applyLocally();
                 return;
             }
 
             router.put(
                 `/campus-tournaments/${rescheduleTarget.id}/resubmit`,
-                { ...values, resubmission_reason: 'Rescheduled by Regional Admin.' },
+                {
+                    ...values,
+                    resubmission_reason: "Rescheduled by Regional Admin.",
+                },
                 {
                     preserveScroll: true,
                     onSuccess: () => {
                         setRescheduleTarget(null);
                         setRescheduleError(null);
                         showSuccess(
-                            'Tournament Updated Successfully!',
-                            'The new schedule has been saved.',
+                            "Tournament Updated Successfully!",
+                            "The new schedule has been saved.",
                         );
                     },
                     onError: (errors) => {
                         console.error(errors);
                         setRescheduleError(
                             Object.values(errors || {})[0] ||
-                                'Failed to reschedule this tournament.',
+                                "Failed to reschedule this tournament.",
                         );
                     },
                 },
@@ -276,22 +296,27 @@ export default function RaView({
         if (!deleteTarget) return;
 
         const removeLocally = () => {
-            setTournaments((prev) => prev.filter((item) => item.id !== deleteTarget.id));
+            setTournaments((prev) =>
+                prev.filter((item) => item.id !== deleteTarget.id),
+            );
             setDeleteTarget(null);
-            showSuccess('Data has been deleted!');
+            showSuccess("Data has been deleted!");
         };
 
-        if (typeof deleteTarget.id === 'string' && deleteTarget.id.startsWith('ra-')) {
+        if (
+            typeof deleteTarget.id === "string" &&
+            deleteTarget.id.startsWith("ra-")
+        ) {
             removeLocally();
             return;
         }
 
         router.delete(`/campus-tournaments/${deleteTarget.id}`, {
-            data: { reason: 'Cancelled by Regional Admin' },
+            data: { reason: "Cancelled by Regional Admin" },
             preserveScroll: true,
             onSuccess: () => {
                 setDeleteTarget(null);
-                showSuccess('Data has been deleted!');
+                showSuccess("Data has been deleted!");
             },
             onError: removeLocally,
         });
@@ -361,16 +386,16 @@ export default function RaView({
                                             onClick={() => setStatusTab(tab.id)}
                                             className={`inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors sm:flex-none ${
                                                 isActive
-                                                    ? 'bg-yellow-500 text-black'
-                                                    : 'text-gray-300 hover:text-white'
+                                                    ? "bg-yellow-500 text-black"
+                                                    : "text-gray-300 hover:text-white"
                                             }`}
                                         >
                                             {tab.label}
                                             <span
                                                 className={`inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-bold ${
                                                     isActive
-                                                        ? 'bg-black text-yellow-500'
-                                                        : 'bg-yellow-500 text-black'
+                                                        ? "bg-black text-yellow-500"
+                                                        : "bg-yellow-500 text-black"
                                                 }`}
                                             >
                                                 {count}
@@ -386,7 +411,9 @@ export default function RaView({
                                     <input
                                         type="search"
                                         value={search}
-                                        onChange={(event) => setSearch(event.target.value)}
+                                        onChange={(event) =>
+                                            setSearch(event.target.value)
+                                        }
                                         placeholder="Search School"
                                         className={SEARCH_CLASS}
                                     />
@@ -394,12 +421,17 @@ export default function RaView({
 
                                 <select
                                     value={month}
-                                    onChange={(event) => setMonth(event.target.value)}
+                                    onChange={(event) =>
+                                        setMonth(event.target.value)
+                                    }
                                     className={SELECT_CLASS}
                                     aria-label="Filter by month"
                                 >
                                     {MONTH_OPTIONS.map((option) => (
-                                        <option key={option.label} value={option.value}>
+                                        <option
+                                            key={option.label}
+                                            value={option.value}
+                                        >
                                             {option.label}
                                         </option>
                                     ))}
@@ -407,12 +439,17 @@ export default function RaView({
 
                                 <select
                                     value={year}
-                                    onChange={(event) => setYear(event.target.value)}
+                                    onChange={(event) =>
+                                        setYear(event.target.value)
+                                    }
                                     className={SELECT_CLASS}
                                     aria-label="Filter by year"
                                 >
                                     {YEAR_OPTIONS.map((option) => (
-                                        <option key={option.label} value={option.value}>
+                                        <option
+                                            key={option.label}
+                                            value={option.value}
+                                        >
                                             {option.label}
                                         </option>
                                     ))}
@@ -421,14 +458,14 @@ export default function RaView({
                                 <div className="flex items-center gap-4 px-1">
                                     {[
                                         {
-                                            id: 'ra-filter-online',
-                                            label: 'Online',
+                                            id: "ra-filter-online",
+                                            label: "Online",
                                             checked: showOnline,
                                             onChange: setShowOnline,
                                         },
                                         {
-                                            id: 'ra-filter-onsite',
-                                            label: 'Onsite',
+                                            id: "ra-filter-onsite",
+                                            label: "Onsite",
                                             checked: showOnsite,
                                             onChange: setShowOnsite,
                                         },
@@ -443,7 +480,9 @@ export default function RaView({
                                                 type="checkbox"
                                                 checked={filter.checked}
                                                 onChange={(event) =>
-                                                    filter.onChange(event.target.checked)
+                                                    filter.onChange(
+                                                        event.target.checked,
+                                                    )
                                                 }
                                                 className="h-4 w-4 rounded border-neutral-600 bg-[#1a1a1a] text-yellow-500 focus:ring-yellow-500"
                                             />
@@ -479,8 +518,8 @@ export default function RaView({
                 isOpen={confirmOpen}
                 onCancel={cancelConfirm}
                 onConfirm={handleConfirmAction}
-                actionLabel={confirmAction ?? 'approve'}
-                subjectName={activeRequest?.schoolName ?? 'this school'}
+                actionLabel={confirmAction ?? "approve"}
+                subjectName={activeRequest?.schoolName ?? "this school"}
                 stackedButtons={false}
             />
 

@@ -5,8 +5,8 @@ import { Check, ChevronDown, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
 const INNER_TABS = [
-    { id: 'match', label: 'Match Management' },
-    { id: 'roster', label: 'Roster & Solo Players' },
+    { id: "match", label: "Match Management" },
+    { id: "roster", label: "Roster & Solo Players" },
 ];
 
 /**
@@ -39,7 +39,7 @@ export default function SlTournamentPanel({
     onExport,
 }) {
     const [expanded, setExpanded] = useState(defaultExpanded);
-    const [innerTab, setInnerTab] = useState('match');
+    const [innerTab, setInnerTab] = useState("match");
     const [page, setPage] = useState(1);
     const [isEditing, setIsEditing] = useState(false);
 
@@ -73,19 +73,43 @@ export default function SlTournamentPanel({
                         )}
                     </p>
                 </div>
-                <button
-                    type="button"
-                    onClick={() => setExpanded((prev) => !prev)}
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-yellow-500 text-black transition-colors hover:bg-yellow-400"
-                    aria-expanded={expanded}
-                    aria-label={expanded ? 'Collapse tournament details' : 'Expand tournament details'}
-                >
-                    {expanded ? (
-                        <ChevronDown className="h-5 w-5" />
-                    ) : (
-                        <ChevronRight className="h-5 w-5" />
-                    )}
-                </button>
+                <div className="flex shrink-0 items-center gap-2">
+                    {tournament.status === "ongoing" ? (
+                        <Link
+                            href={`/campus-tournaments/${tournament.id}/ongoing`}
+                            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-yellow-500 px-3 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"
+                        >
+                            View
+                            <ExternalLink className="h-4 w-4" />
+                        </Link>
+                    ) : null}
+                    {tournament.status === "completed" ? (
+                        <Link
+                            href={`/campus-tournaments/${tournament.id}/report`}
+                            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-yellow-500 px-3 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"
+                        >
+                            Report
+                            <ExternalLink className="h-4 w-4" />
+                        </Link>
+                    ) : null}
+                    <button
+                        type="button"
+                        onClick={() => setExpanded((prev) => !prev)}
+                        className="flex h-10 w-10 items-center justify-center rounded-md bg-yellow-500 text-black transition-colors hover:bg-yellow-400"
+                        aria-expanded={expanded}
+                        aria-label={
+                            expanded
+                                ? "Collapse tournament details"
+                                : "Expand tournament details"
+                        }
+                    >
+                        {expanded ? (
+                            <ChevronDown className="h-5 w-5" />
+                        ) : (
+                            <ChevronRight className="h-5 w-5" />
+                        )}
+                    </button>
+                </div>
             </div>
 
             {expanded ? (
@@ -100,8 +124,8 @@ export default function SlTournamentPanel({
                                     onClick={() => setInnerTab(tab.id)}
                                     className={`relative pb-3 pt-4 text-sm font-semibold transition-colors ${
                                         isActive
-                                            ? 'text-yellow-500'
-                                            : 'text-gray-400 hover:text-white'
+                                            ? "text-yellow-500"
+                                            : "text-gray-400 hover:text-white"
                                     }`}
                                 >
                                     {tab.label}
@@ -113,7 +137,7 @@ export default function SlTournamentPanel({
                         })}
                     </div>
 
-                    {innerTab === 'match' ? (
+                    {innerTab === "match" ? (
                         <SlMatchManagement
                             teams={tournament.teams ?? []}
                             page={page}
