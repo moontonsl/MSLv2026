@@ -47,7 +47,6 @@ export default function CommunityVoiceSection() {
     };
 
     const handleSubmit = (values) => {
-        console.log('Community voice submit:', values);
         setWasEditSubmit(editingItem != null);
         setWasDeleteSubmit(false);
         setModalOpen(false);

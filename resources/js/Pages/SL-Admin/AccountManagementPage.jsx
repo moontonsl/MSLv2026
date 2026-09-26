@@ -17,6 +17,7 @@ import {
     Search,
     Sparkles,
     Venus,
+    X,
 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import NewStudentProfileModal from './modals/NewStudentProfileModal';
@@ -34,6 +35,9 @@ const ROLE_OPTIONS = [
     { value: 'student', label: 'Student' },
     { value: 'student-leader', label: 'Student Leader' },
     { value: 'regional-admin', label: 'Regional Admin' },
+];
+const COVER_OPTIONS = [
+    { id: 'default', label: 'MSL Default Cover', image: '/profile-background.jpg' },
 ];
 
 const roleToValue = (role) => role.toLowerCase().replace(/\s+/g, '-');
@@ -303,6 +307,52 @@ function Pagination({ currentPage, pageCount, onChange }) {
     );
 }
 
+function CoverPickerModal({ open, selectedCover, onSelect, onClose, onSave, saving }) {
+    if (!open) return null;
+
+    return (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/75 px-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="choose-cover-title">
+            <div className="w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-[#0B0B0B] shadow-2xl">
+                <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+                    <div>
+                        <h2 id="choose-cover-title" className="text-lg font-bold text-white">Choose Cover</h2>
+                        <p className="mt-1 text-sm text-gray-400">Select a cover photo for your profile.</p>
+                    </div>
+                    <button type="button" onClick={onClose} aria-label="Close choose cover dialog" className="rounded-lg p-2 text-gray-400 transition hover:bg-white/5 hover:text-white">
+                        <X className="h-5 w-5" />
+                    </button>
+                </div>
+
+                <div className="p-5">
+                    <div className="grid grid-cols-1 gap-3">
+                        {COVER_OPTIONS.map((cover) => (
+                            <button
+                                key={cover.id}
+                                type="button"
+                                onClick={() => onSelect(cover.id)}
+                                className={`group relative overflow-hidden rounded-xl border-2 text-left transition ${selectedCover === cover.id ? 'border-brand-500' : 'border-white/10 hover:border-white/30'}`}
+                            >
+                                <img src={cover.image} alt={cover.label} className="h-32 w-full object-cover" />
+                                <span className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-black/70 px-3 py-2 text-sm font-semibold text-white">
+                                    {cover.label}
+                                    {selectedCover === cover.id ? <Check className="h-5 w-5 text-brand-500" /> : null}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="flex justify-end gap-3 border-t border-white/10 px-5 py-4">
+                    <button type="button" onClick={onClose} className="rounded-lg border border-white/15 px-4 py-2.5 text-sm font-semibold text-gray-300 transition hover:bg-white/5">Cancel</button>
+                    <button type="button" onClick={onSave} disabled={!selectedCover || saving} className="rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-semibold text-black transition hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-50">
+                        {saving ? 'Saving...' : 'Use This Cover'}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function AccountManagementPage({ accountView, allowedRoles, title, students = [], profile = slAdminProfile, backgroundRoute = null }) {
     const [statusFilter, setStatusFilter] = useState('all');
     const [roleFilter, setRoleFilter] = useState('all');
@@ -311,8 +361,10 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
     const [sort, setSort] = useState({ column: 'account', direction: 'asc' });
     const [selectedStudent, setSelectedStudent] = useState(null);
     const searchRef = useRef(null);
-    const backgroundInputRef = useRef(null);
     const [backgroundUrl, setBackgroundUrl] = useState(profile.cover);
+    const [coverModalOpen, setCoverModalOpen] = useState(false);
+    const [selectedCover, setSelectedCover] = useState('default');
+    const [savingCover, setSavingCover] = useState(false);
     const allowedRoleValues = useMemo(() => allowedRoles.map(roleToValue), [allowedRoles]);
     const visibleRoleOptions = useMemo(() => [
         { value: 'all', label: 'All Roles' },
@@ -327,17 +379,16 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
         setBackgroundUrl(profile.cover);
     }, [profile.cover]);
 
-    const handleBackgroundChange = (event) => {
-        const file = event.target.files?.[0];
-        if (!file || !backgroundRoute) return;
+    const handleCoverSave = () => {
+        const cover = COVER_OPTIONS.find((option) => option.id === selectedCover);
+        if (!cover || !backgroundRoute) return;
 
-        setBackgroundUrl(URL.createObjectURL(file));
-        router.post(backgroundRoute, { profileBackground: file }, {
-            forceFormData: true,
+        setSavingCover(true);
+        setBackgroundUrl(cover.image);
+        router.post(backgroundRoute, { profileBackground: cover.image }, {
             preserveScroll: true,
-            onFinish: () => {
-                event.target.value = '';
-            },
+            onSuccess: () => setCoverModalOpen(false),
+            onFinish: () => setSavingCover(false),
         });
     };
     const statCards = useMemo(() => [
@@ -477,22 +528,13 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
                         >
                             <button
                                 type="button"
-                                onClick={() => backgroundInputRef.current?.click()}
+                                onClick={() => setCoverModalOpen(true)}
                                 disabled={!backgroundRoute}
                                 className="absolute right-5 top-5 inline-flex items-center gap-1 rounded-xl border border-white/10 bg-black/60 px-3 py-1 text-sm font-semibold leading-[22px] text-white shadow-sm sm:right-8 sm:top-8"
                             >
                                 <Camera className="h-5 w-5" />
-                                Edit Background
+                                Choose Cover
                             </button>
-                            {backgroundRoute && (
-                                <input
-                                    ref={backgroundInputRef}
-                                    type="file"
-                                    accept="image/jpeg,image/png,image/webp"
-                                    onChange={handleBackgroundChange}
-                                    className="hidden"
-                                />
-                            )}
                         </div>
 
                         <div className="flex flex-col items-center gap-8 px-5 py-6 sm:px-10 lg:flex-row lg:items-start lg:justify-between lg:gap-12 lg:px-12 xl:gap-16 xl:pr-32">
@@ -817,6 +859,14 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
                 student={selectedStudent?.status === 'Inactive' ? selectedStudent : null}
                 accountView={accountView}
                 onClose={() => setSelectedStudent(null)}
+            />
+            <CoverPickerModal
+                open={coverModalOpen}
+                selectedCover={selectedCover}
+                onSelect={setSelectedCover}
+                onClose={() => setCoverModalOpen(false)}
+                onSave={handleCoverSave}
+                saving={savingCover}
             />
         </MainLayout>
     );

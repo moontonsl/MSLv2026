@@ -59,7 +59,7 @@ return new class extends Migration
                 'withdrawn',
                 'not_qualified',
             ])->default('pending');
-            $table->timestamp('registered_at');
+            $table->dateTime('registered_at');
             $table->timestamp('accepted_at')->nullable();
             $table->timestamp('withdrawn_at')->nullable();
             $table->timestamps();
@@ -131,7 +131,7 @@ return new class extends Migration
             $table->unsignedInteger('pooled_participant_count')->default(0);
             $table->unsignedInteger('formed_team_count')->default(0);
             $table->unsignedInteger('not_qualified_count')->default(0);
-            $table->timestamp('started_at');
+            $table->dateTime('started_at');
             $table->timestamp('completed_at')->nullable();
             $table->text('failure_message')->nullable();
             $table->timestamps();
@@ -158,7 +158,7 @@ return new class extends Migration
             $table->string('final_assigned_lane_role_code', 20)->nullable();
             $table->unsignedInteger('ordering_position');
             $table->enum('outcome', ['assigned', 'not_qualified']);
-            $table->timestamp('assigned_at');
+            $table->dateTime('assigned_at');
             $table->timestamps();
 
             $table->foreign(

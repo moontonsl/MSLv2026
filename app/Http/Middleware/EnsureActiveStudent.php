@@ -16,7 +16,26 @@ class EnsureActiveStudent
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Student status restrictions must never intercept the separate website
+        // controller session or its admin routes.
+        if (Auth::guard('admin')->check() || $request->is('admin/*') || $request->is('Oppo-settings')) {
+            return $next($request);
+        }
+
         $user = Auth::user();
+
+        // Students who need to renew may only use the portal to complete renewal.
+        // This also catches direct URL navigation to public, profile, admin, and
+        // other authenticated routes because this middleware runs globally.
+        if (
+            $user?->user_type === 'Student'
+            && $user->status === 'renewal-required'
+            && !$request->is('studentportal')
+            && !$request->is('studentportal/*')
+            && !$request->is('logout')
+        ) {
+            return redirect()->route('student.portal');
+        }
 
         // A submitted renewal locks the student account to the review page.
         // Keep only the review page and logout available until an admin approves it.

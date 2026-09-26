@@ -2,11 +2,11 @@ import FAQModal from '@/Components/Admin/FAQModal';
 import DeleteConfirmationModal from '@/Components/Admin/DeleteConfirmationModal';
 import SuccessModal from '@/Components/Admin/SuccessModal';
 import { MODAL_ACTION_ICON_CLASS } from '@/Components/Admin/adminModalFormStyles';
-import { FAQ_FILTER_CATEGORIES, FAQ_ITEMS } from '@/data/adminFaqData';
+import { FAQ_FILTER_CATEGORIES } from '@/data/adminFaqData';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const ADD_BUTTON_CLASS =
     'inline-flex w-full items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 py-2.5 text-sm font-bold text-black transition-all hover:bg-yellow-400 active:scale-[0.98] sm:w-auto';
@@ -14,16 +14,20 @@ const ADD_BUTTON_CLASS =
 const FILTER_SELECT_CLASS =
     'w-full min-h-[44px] rounded-md bg-[#1a1a1a] px-4 py-2.5 text-base text-white outline-none transition-shadow focus:ring-2 focus:ring-yellow-500 md:min-w-[160px] md:text-sm';
 
-export default function Faq() {
+export default function Faq({ faqs: initialFaqs = [] }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [successOpen, setSuccessOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
     const [wasEditSubmit, setWasEditSubmit] = useState(false);
     const [wasDeleteSubmit, setWasDeleteSubmit] = useState(false);
     const [categoryFilter, setCategoryFilter] = useState('All');
-    const [faqs, setFaqs] = useState(FAQ_ITEMS);
+    const [faqs, setFaqs] = useState(initialFaqs);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
+
+    useEffect(() => {
+        setFaqs(initialFaqs);
+    }, [initialFaqs]);
 
     const openAddModal = useCallback(() => {
         setEditingItem(null);
@@ -51,24 +55,14 @@ export default function Faq() {
             const wasEditing = editingItem != null;
 
             if (wasEditing) {
-                setFaqs((prev) =>
-                    prev.map((item) =>
-                        item.id === editingItem.id ? { ...item, ...values } : item,
-                    ),
-                );
+                router.put(route('admin.faq.update', editingItem.id), values, { preserveScroll: true });
             } else {
-                setFaqs((prev) => [
-                    ...prev,
-                    {
-                        id: Date.now(),
-                        ...values,
-                    },
-                ]);
+                router.post(route('admin.faq.store'), values, { preserveScroll: true });
             }
 
-        setWasEditSubmit(wasEditing);
-        setWasDeleteSubmit(false);
-        setModalOpen(false);
+            setWasEditSubmit(wasEditing);
+            setWasDeleteSubmit(false);
+            setModalOpen(false);
             setEditingItem(null);
             setSuccessOpen(true);
         },
@@ -91,6 +85,7 @@ export default function Faq() {
 
     const confirmDelete = useCallback(() => {
         if (pendingDeleteId == null) return;
+        router.delete(route('admin.faq.delete', pendingDeleteId), { preserveScroll: true });
         handleRemove(pendingDeleteId);
         setDeleteOpen(false);
         setPendingDeleteId(null);

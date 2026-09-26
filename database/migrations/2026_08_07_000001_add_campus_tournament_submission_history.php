@@ -17,12 +17,12 @@ return new class extends Migration
             $table->unsignedBigInteger('campus_id');
             $table->string('name');
             $table->string('tournament_type_code', 20);
-            $table->timestamp('registration_opens_at');
-            $table->timestamp('registration_closes_at');
-            $table->timestamp('starts_at');
-            $table->timestamp('ends_at');
+            $table->dateTime('registration_opens_at');
+            $table->dateTime('registration_closes_at');
+            $table->dateTime('starts_at');
+            $table->dateTime('ends_at');
             $table->text('resubmission_reason')->nullable();
-            $table->timestamp('submitted_at');
+            $table->dateTime('submitted_at');
             $table->timestamps();
 
             $table->unique(['tournament_id', 'version'], 'ct_submissions_tournament_version_unique');

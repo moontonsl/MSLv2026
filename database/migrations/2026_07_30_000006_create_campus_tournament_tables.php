@@ -24,10 +24,10 @@ return new class extends Migration
                 'rejected',
                 'cancelled',
             ])->default('pending');
-            $table->timestamp('registration_opens_at');
-            $table->timestamp('registration_closes_at');
-            $table->timestamp('starts_at');
-            $table->timestamp('ends_at');
+            $table->dateTime('registration_opens_at');
+            $table->dateTime('registration_closes_at');
+            $table->dateTime('starts_at');
+            $table->dateTime('ends_at');
             $table->timestamp('roster_locked_at')->nullable();
             $table->foreignId('cancelled_by_user_id')
                 ->nullable()
@@ -73,14 +73,14 @@ return new class extends Migration
             $table->foreignId('changed_by_user_id')
                 ->constrained('users')
                 ->restrictOnDelete();
-            $table->timestamp('previous_registration_opens_at');
-            $table->timestamp('previous_registration_closes_at');
-            $table->timestamp('previous_starts_at');
-            $table->timestamp('previous_ends_at');
-            $table->timestamp('new_registration_opens_at');
-            $table->timestamp('new_registration_closes_at');
-            $table->timestamp('new_starts_at');
-            $table->timestamp('new_ends_at');
+            $table->dateTime('previous_registration_opens_at');
+            $table->dateTime('previous_registration_closes_at');
+            $table->dateTime('previous_starts_at');
+            $table->dateTime('previous_ends_at');
+            $table->dateTime('new_registration_opens_at');
+            $table->dateTime('new_registration_closes_at');
+            $table->dateTime('new_starts_at');
+            $table->dateTime('new_ends_at');
             $table->text('reason');
             $table->timestamps();
 

@@ -20,4 +20,9 @@ class News extends Model
         'news_img3',
         'news_content',
     ];
+
+    protected function casts(): array
+    {
+        return ['news_published' => 'datetime'];
+    }
 }

@@ -83,6 +83,9 @@ const Footer = () => {
     const tiktokUrl = footer?.tiktok_url || 'https://www.tiktok.com/@mslphilippines';
     const mlbbLogo = footer?.mlbb_logo || '/mlbb-logo.png';
     const moontonLogo = footer?.moonton_logo || '/moonton-logo.png';
+    const description = footer?.description || 'The official student leader body of Mobile Legends: Bang Bang in the Philippines.';
+    const copyright = footer?.copyright || '© 2025 Moonton Student Leaders Philippines. All rights reserved.';
+    const customNavSections = Array.isArray(footer?.nav_sections) && footer.nav_sections.length > 0 ? footer.nav_sections : null;
 
     const socialBase =
         'inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#1A1A1A] text-white transition-colors';
