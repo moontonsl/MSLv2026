@@ -170,6 +170,11 @@ class TournamentRegistrationController extends Controller
         return response()->json(['data' => $users]);
     }
 
+    public function showMemberJoin(): Response
+    {
+        return Inertia::render('Programs/CampusTournaments/MemberJoinCode');
+    }
+
     public function showMemberInvitations(Request $request): Response
     {
         $invitations = TournamentTeamInvitation::query()

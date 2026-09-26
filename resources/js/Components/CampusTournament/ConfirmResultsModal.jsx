@@ -30,20 +30,20 @@ export default function ConfirmResultsModal({
             scrollable={false}
             maxWidth="max-w-md"
             footer={
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <button
-                        type="button"
-                        onClick={onCancel}
-                        className="order-2 min-h-[44px] w-full rounded-lg border border-yellow-500 bg-transparent text-base font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10 sm:order-1 md:text-sm"
-                    >
-                        Cancel
-                    </button>
+                <div className="flex flex-col gap-3">
                     <button
                         type="button"
                         onClick={onConfirm}
-                        className="order-1 min-h-[44px] w-full rounded-lg bg-yellow-500 text-base font-bold text-black transition-colors hover:bg-yellow-400 sm:order-2 md:text-sm"
+                        className="min-h-[44px] w-full rounded-lg bg-yellow-500 text-base font-bold text-black transition-colors hover:bg-yellow-400 md:text-sm"
                     >
                         Submit
+                    </button>
+                    <button
+                        type="button"
+                        onClick={onCancel}
+                        className="min-h-[44px] w-full rounded-lg border border-yellow-500 bg-transparent text-base font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10 md:text-sm"
+                    >
+                        Cancel
                     </button>
                 </div>
             }
