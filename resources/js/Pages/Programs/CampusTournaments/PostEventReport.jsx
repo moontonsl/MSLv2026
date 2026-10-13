@@ -2,6 +2,7 @@ import CampusTournamentPageHeader from '@/Components/CampusTournament/CampusTour
 import ConfirmResultsModal from '@/Components/CampusTournament/ConfirmResultsModal';
 import MatchPlayerCell from '@/Components/CampusTournament/MatchPlayerCell';
 import PlacementStatusDropdown from '@/Components/CampusTournament/PlacementStatusDropdown';
+import AdminLayout from '@/Layouts/AdminLayout';
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import {
@@ -44,10 +45,15 @@ function initialPlacementMap(teams) {
 
 export default function PostEventReport({
     viewerRole,
+    isAdminPortal = false,
     backUrl,
+    submitUrl,
+    correctionUrl,
+    exportUrl,
     tournament,
     permissions,
 }) {
+    const Layout = isAdminPortal ? AdminLayout : MainLayout;
     const [placements, setPlacements] = useState(() =>
         initialPlacementMap(tournament.teams),
     );
@@ -108,9 +114,7 @@ export default function PostEventReport({
     };
 
     const confirmSubmit = () => {
-        const url = isCorrection
-            ? `/campus-tournaments/${tournament.id}/result-revisions`
-            : `/campus-tournaments/${tournament.id}/results`;
+        const url = isCorrection ? correctionUrl : submitUrl;
         const payload = {
             entries: tournament.teams.map((team) => ({
                 team_id: team.id,
@@ -141,7 +145,7 @@ export default function PostEventReport({
     };
 
     return (
-        <MainLayout fullWidth>
+        <Layout fullWidth activeNavId="campus-reports">
             <Head title={`${tournament.name} — Post-Event Report`} />
 
             <div className="min-h-screen bg-[#0a0a0a] px-4 py-8 text-white sm:px-6 lg:px-8">
@@ -196,7 +200,7 @@ export default function PostEventReport({
                             <div className="flex flex-wrap gap-2">
                                 {permissions.canExport ? (
                                     <a
-                                        href={`/campus-tournaments/${tournament.id}/results/export`}
+                                        href={exportUrl}
                                         className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black hover:bg-yellow-400"
                                     >
                                         <Download className="h-4 w-4" /> Excel
@@ -511,7 +515,7 @@ export default function PostEventReport({
                 onCancel={() => setConfirmOpen(false)}
                 onConfirm={confirmSubmit}
             />
-        </MainLayout>
+        </Layout>
     );
 }
 

@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\AdminUser;
 use App\Models\Campus;
 use App\Models\CampusTournament;
 use App\Models\User;
@@ -39,8 +40,12 @@ class CampusTournamentPolicy
                 || $this->authorization->isActiveStudentLeader($user, $tournament->campus));
     }
 
-    public function viewReport(User $user, CampusTournament $tournament): bool
+    public function viewReport(User|AdminUser $user, CampusTournament $tournament): bool
     {
+        if ($user instanceof AdminUser) {
+            return $user->isSuperAdmin();
+        }
+
         if ($user->status !== 'active') {
             return false;
         }
@@ -56,8 +61,12 @@ class CampusTournamentPolicy
             && $this->authorization->isActiveStudentLeader($user, $tournament->campus);
     }
 
-    public function correctResults(User $user, CampusTournament $tournament): bool
+    public function correctResults(User|AdminUser $user, CampusTournament $tournament): bool
     {
+        if ($user instanceof AdminUser) {
+            return $user->isSuperAdmin();
+        }
+
         return $user->status === 'active'
             && ($user->user_type === 'Super Admin' || $this->submitResults($user, $tournament));
     }

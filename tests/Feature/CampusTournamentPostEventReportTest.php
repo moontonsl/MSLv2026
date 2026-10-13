@@ -6,6 +6,7 @@ use App\Enums\CampusTournamentApprovalStatus;
 use App\Enums\ParticipantStatus;
 use App\Enums\TeamFormationMethod;
 use App\Enums\TeamStatus;
+use App\Models\AdminUser;
 use App\Models\Campus;
 use App\Models\CampusAffiliation;
 use App\Models\CampusTournament;
@@ -38,6 +39,8 @@ class CampusTournamentPostEventReportTest extends TestCase
     private User $regionalAdmin;
 
     private User $core;
+
+    private AdminUser $coreAdmin;
 
     protected function setUp(): void
     {
@@ -94,6 +97,13 @@ class CampusTournamentPostEventReportTest extends TestCase
         $this->core = User::factory()->create([
             'status' => 'active',
             'user_type' => 'Super Admin',
+        ]);
+
+        $this->coreAdmin = AdminUser::query()->create([
+            'name' => 'Core Report Admin',
+            'email' => 'core.report@example.test',
+            'password' => 'password',
+            'role' => 'Super Admin',
         ]);
     }
 
@@ -304,6 +314,136 @@ class CampusTournamentPostEventReportTest extends TestCase
             'assigned_at' => now(),
         ]);
         $this->actingAs($wrongAdmin)->get(route('campus-tournaments.report', $tournament))->assertForbidden();
+    }
+
+    public function test_completed_tournament_card_only_links_to_a_report_the_leader_can_view(): void
+    {
+        [$tournament] = $this->completedTournamentWithTeams(1);
+        $otherLeader = User::factory()->create(['status' => 'active']);
+        CampusAffiliation::query()->create([
+            'campus_id' => $this->campus->id,
+            'user_id' => $otherLeader->id,
+            'role' => 'student_leader',
+            'status' => 'active',
+        ]);
+
+        $this->actingAs($otherLeader)
+            ->get(route('campus.tournament.sl'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('tournaments.0.id', $tournament->id)
+                ->where('tournaments.0.canViewReport', false));
+
+        $this->actingAs($this->leader)
+            ->get(route('campus.tournament.sl'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('tournaments.0.id', $tournament->id)
+                ->where('tournaments.0.canViewReport', true));
+    }
+
+    public function test_admin_guard_super_admin_can_discover_correct_and_export_a_report_with_accurate_attribution(): void
+    {
+        [$tournament, $teams] = $this->completedTournamentWithTeams(2);
+        $this->actingAs($this->leader)->post(route('campus-tournaments.results.store', $tournament), [
+            'entries' => $this->entries($teams, ['1st', '2nd']),
+        ])->assertRedirect();
+
+        $this->actingAs($this->coreAdmin, 'admin')
+            ->get(route('admin.campus-tournaments.reports.index'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Admin/CampusTournamentReports')
+                ->where('tournaments.data.0.id', $tournament->id)
+                ->where('tournaments.data.0.revision', 1));
+
+        $this->actingAs($this->coreAdmin, 'admin')
+            ->get(route('admin.campus-tournaments.reports.show', $tournament))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Programs/CampusTournaments/PostEventReport')
+                ->where('isAdminPortal', true)
+                ->where('permissions.canSubmit', false)
+                ->where('permissions.canCorrect', true)
+                ->where('permissions.canExport', true));
+
+        $this->actingAs($this->coreAdmin, 'admin')
+            ->post(route('admin.campus-tournaments.reports.correct', $tournament), [
+                'entries' => $this->entries($teams, ['2nd', '1st']),
+            ])->assertSessionHasErrors('reason');
+
+        $this->actingAs($this->coreAdmin, 'admin')
+            ->post(route('admin.campus-tournaments.reports.correct', $tournament), [
+                'reason' => 'Corrected the official final match result.',
+                'entries' => $this->entries($teams, ['2nd', '1st']),
+            ])->assertRedirect();
+
+        $tournament->refresh();
+        $this->assertSame(2, $tournament->currentResultRevision->version);
+        $this->assertNull($tournament->currentResultRevision->submitted_by_user_id);
+        $this->assertSame($this->coreAdmin->id, $tournament->currentResultRevision->submitted_by_admin_user_id);
+        $this->assertSame('Core Report Admin', $tournament->currentResultRevision->adminSubmitter->name);
+
+        $this->actingAs($this->coreAdmin, 'admin')
+            ->get(route('admin.campus-tournaments.reports.show', $tournament))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('tournament.currentResult.version', 2)
+                ->where('tournament.currentResult.submittedBy', 'Core Report Admin')
+                ->where('tournament.revisionHistory.0.submittedBy', 'Core Report Admin')
+                ->where('tournament.revisionHistory.1.submittedBy', 'Report Leader'));
+
+        $response = $this->actingAs($this->coreAdmin, 'admin')
+            ->get(route('admin.campus-tournaments.reports.export', $tournament));
+        $response->assertOk()
+            ->assertHeader('content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+        $path = tempnam(sys_get_temp_dir(), 'msl-core-results-').'.xlsx';
+        file_put_contents($path, $response->streamedContent());
+        $spreadsheet = IOFactory::load($path);
+        $this->assertSame('Core Report Admin', $spreadsheet->getActiveSheet()->getCell('B8')->getValue());
+        $spreadsheet->disconnectWorksheets();
+        unlink($path);
+    }
+
+    public function test_non_super_admin_cannot_access_core_reports(): void
+    {
+        [$tournament, $teams] = $this->completedTournamentWithTeams(1);
+        $this->actingAs($this->leader)->post(route('campus-tournaments.results.store', $tournament), [
+            'entries' => $this->entries($teams, ['1st']),
+        ])->assertRedirect();
+
+        $admin = AdminUser::query()->create([
+            'name' => 'Ordinary Admin',
+            'email' => 'ordinary.admin@example.test',
+            'password' => 'password',
+            'role' => 'Admin',
+        ]);
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.campus-tournaments.reports.index'))
+            ->assertForbidden();
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.campus-tournaments.reports.show', $tournament))
+            ->assertForbidden();
+        $this->actingAs($admin, 'admin')
+            ->post(route('admin.campus-tournaments.reports.correct', $tournament), [
+                'reason' => 'Unauthorized correction',
+                'entries' => $this->entries($teams, ['1st']),
+            ])
+            ->assertForbidden();
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.campus-tournaments.reports.export', $tournament))
+            ->assertForbidden();
+    }
+
+    public function test_core_admin_login_opens_report_index_with_the_real_admin_guard(): void
+    {
+        $this->post(route('admin.login.submit'), [
+            'email' => $this->coreAdmin->email,
+            'password' => 'password',
+        ])->assertRedirect(route('admin.dashboard'));
+
+        $this->get(route('admin.campus-tournaments.reports.index'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('Admin/CampusTournamentReports'));
     }
 
     public function test_excel_export_uses_current_revision_and_historical_player_snapshots(): void

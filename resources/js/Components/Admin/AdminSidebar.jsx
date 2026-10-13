@@ -18,6 +18,7 @@ const NAV_ITEMS = [
     { id: 'event-photos', label: 'Event Photos', href: '/admin/event-photos', icon: Image, permission: 'manage_event_photos' },
     { id: 'events', label: 'Event Calendar', href: '/admin/events', icon: CalendarDays, permission: 'manage_events' },
     { id: 'msl-events', label: 'MSL Events', href: '/admin/msl-events', icon: Trophy, permission: 'manage_msl_events' },
+    { id: 'campus-reports', label: 'Campus Tournament Reports', href: '/admin/campus-tournaments/reports', icon: Trophy, permission: null, superAdminOnly: true },
     { id: 'mcc-seasons', label: 'MCC Seasons', href: '/admin/mcc-seasons', icon: Trophy, permission: 'manage_mcc_seasons' },
     { id: 'violations', label: 'Violation Reports', href: '/admin/violation-reports', icon: AlertTriangle, permission: 'manage_violation_reports' },
     { id: 'settings', label: 'Settings', href: '/admin/settings', icon: Settings, permission: 'manage_settings' },
@@ -63,7 +64,10 @@ export default function AdminSidebar({ activeId = 'account-creation', isOpen = f
             </div>
 
             <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-6">
-                {NAV_ITEMS.filter(({ permission }) => permission === null || isSuperAdmin || permissions.includes(permission)).map(({ id, label, href, icon: Icon }) => {
+                {NAV_ITEMS.filter(({ permission, superAdminOnly }) =>
+                    (!superAdminOnly || isSuperAdmin) &&
+                    (permission === null || isSuperAdmin || permissions.includes(permission))
+                ).map(({ id, label, href, icon: Icon }) => {
                     const isActive = id === activeId;
 
                     return (

@@ -13,6 +13,7 @@ class TournamentResultRevision extends Model
         'tournament_id',
         'version',
         'submitted_by_user_id',
+        'submitted_by_admin_user_id',
         'reason',
         'submitted_at',
     ];
@@ -38,6 +39,11 @@ class TournamentResultRevision extends Model
     public function submitter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'submitted_by_user_id');
+    }
+
+    public function adminSubmitter(): BelongsTo
+    {
+        return $this->belongsTo(AdminUser::class, 'submitted_by_admin_user_id');
     }
 
     public function entries(): HasMany
