@@ -60,7 +60,7 @@ export default function SlTournamentPanel({
                             <ExternalLink className="h-4 w-4" />
                         </Link>
                     ) : null}
-                    {tournament.status === "completed" ? (
+                    {tournament.status === "completed" && tournament.canViewReport ? (
                         <Link
                             href={`/campus-tournaments/${tournament.id}/report`}
                             className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-yellow-500 px-3 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"

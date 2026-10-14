@@ -185,6 +185,14 @@ Route::middleware('guest:admin')->group(function () {
 /** Admin CMS pages from Evren branch */
 Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
     Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+    Route::get('/admin/campus-tournaments/reports', [CampusTournamentReportController::class, 'indexCore'])
+        ->name('admin.campus-tournaments.reports.index');
+    Route::get('/admin/campus-tournaments/reports/{tournament}', [CampusTournamentReportController::class, 'show'])
+        ->name('admin.campus-tournaments.reports.show');
+    Route::post('/admin/campus-tournaments/reports/{tournament}/corrections', [CampusTournamentReportController::class, 'correct'])
+        ->name('admin.campus-tournaments.reports.correct');
+    Route::get('/admin/campus-tournaments/reports/{tournament}/export', [CampusTournamentReportController::class, 'export'])
+        ->name('admin.campus-tournaments.reports.export');
     Route::get('/admin/profile', [AdminProfileController::class, 'index'])->name('admin.profile');
     Route::put('/admin/profile', [AdminProfileController::class, 'update'])->name('admin.profile.update');
     Route::put('/admin/profile/password', [AdminProfileController::class, 'updatePassword'])->name('admin.profile.password.update');

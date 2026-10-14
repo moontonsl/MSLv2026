@@ -5,12 +5,14 @@ namespace App\Actions\CampusTournaments;
 use App\Enums\CampusTournamentApprovalStatus;
 use App\Enums\ParticipantStatus;
 use App\Enums\TeamStatus;
+use App\Models\AdminUser;
 use App\Models\CampusTournament;
 use App\Models\TournamentParticipant;
 use App\Models\TournamentResultRevision;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
@@ -26,7 +28,7 @@ class PersistTournamentResultRevision
 
     public function handle(
         CampusTournament $tournament,
-        User $submitter,
+        User|AdminUser $submitter,
         array $entries,
         ?string $reason = null,
         bool $isCorrection = false,
@@ -36,6 +38,11 @@ class PersistTournamentResultRevision
                 ->whereKey($tournament->id)
                 ->lockForUpdate()
                 ->firstOrFail();
+
+            Gate::forUser($submitter)->authorize(
+                $isCorrection ? 'correctResults' : 'submitResults',
+                $lockedTournament,
+            );
 
             if ($lockedTournament->approval_status !== CampusTournamentApprovalStatus::Approved
                 || $lockedTournament->lifecycle() !== 'completed') {
@@ -107,7 +114,8 @@ class PersistTournamentResultRevision
             $revision = TournamentResultRevision::query()->create([
                 'tournament_id' => $lockedTournament->id,
                 'version' => $version,
-                'submitted_by_user_id' => $submitter->id,
+                'submitted_by_user_id' => $submitter instanceof User ? $submitter->id : null,
+                'submitted_by_admin_user_id' => $submitter instanceof AdminUser ? $submitter->id : null,
                 'reason' => $isCorrection ? trim((string) $reason) : null,
                 'submitted_at' => now(),
             ]);
@@ -124,7 +132,7 @@ class PersistTournamentResultRevision
 
             $lockedTournament->update(['current_result_revision_id' => $revision->id]);
 
-            return $revision->load(['entries', 'submitter']);
+            return $revision->load(['entries', 'submitter', 'adminSubmitter']);
         }, 3);
     }
 

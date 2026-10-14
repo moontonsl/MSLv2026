@@ -340,6 +340,8 @@ class CampusTournamentController extends Controller
                     'endDate' => $t->ends_at->format('Y-m-d'),
                     'mode' => ucfirst($t->tournament_type_code ?? 'Online'),
                     'status' => $tabStatus,
+                    'canViewReport' => $tabStatus === 'completed'
+                        && Gate::allows('viewReport', $t),
                     'rosterLockDate' => $t->roster_locked_at ? $t->roster_locked_at->format('M d, Y') : $t->registration_closes_at->format('M d, Y'),
                     'resultsSubmitted' => $t->current_result_revision_id !== null,
                     'teams' => $teams,

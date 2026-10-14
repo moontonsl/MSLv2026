@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Actions\CampusTournaments\PersistTournamentResultRevision;
+use App\Enums\CampusTournamentApprovalStatus;
 use App\Enums\ParticipantStatus;
 use App\Enums\TeamStatus;
 use App\Http\Requests\CorrectTournamentResultsRequest;
 use App\Http\Requests\SubmitTournamentResultsRequest;
+use App\Models\AdminUser;
 use App\Models\CampusTournament;
 use App\Models\RegionAdmin;
 use App\Models\TournamentParticipant;
@@ -31,6 +33,32 @@ class CampusTournamentReportController extends Controller
         'mid_laner' => 5,
     ];
 
+    public function indexCore(Request $request): Response
+    {
+        $admin = $request->user();
+        abort_unless($admin instanceof AdminUser && $admin->isSuperAdmin(), 403);
+
+        $tournaments = CampusTournament::query()
+            ->where('approval_status', CampusTournamentApprovalStatus::Approved)
+            ->where('ends_at', '<=', now())
+            ->with(['campus.institution', 'currentResultRevision'])
+            ->orderByDesc('ends_at')
+            ->paginate(20)
+            ->through(fn (CampusTournament $tournament): array => [
+                'id' => $tournament->id,
+                'name' => $tournament->name,
+                'campus' => $tournament->campus?->name,
+                'institution' => $tournament->campus?->institution?->name,
+                'endedAt' => $tournament->ends_at->toIso8601String(),
+                'revision' => $tournament->currentResultRevision?->version,
+                'url' => route('admin.campus-tournaments.reports.show', $tournament),
+            ]);
+
+        return Inertia::render('Admin/CampusTournamentReports', [
+            'tournaments' => $tournaments,
+        ]);
+    }
+
     public function show(Request $request, CampusTournament $tournament): Response
     {
         Gate::authorize('viewReport', $tournament);
@@ -42,15 +70,17 @@ class CampusTournamentReportController extends Controller
             'creator',
             'tournamentType',
             'currentResultRevision.submitter',
+            'currentResultRevision.adminSubmitter',
             'currentResultRevision.entries.team',
-            'resultRevisions' => fn ($query) => $query->with('submitter')->orderByDesc('version'),
+            'resultRevisions' => fn ($query) => $query->with(['submitter', 'adminSubmitter'])->orderByDesc('version'),
         ]);
 
         $teams = $tournament->currentResultRevision
             ? $this->snapshotTeams($tournament->currentResultRevision->entries)
             : $this->registeredTeams($tournament);
         $user = $request->user();
-        $viewerRole = $user->user_type === 'Super Admin'
+        $isAdmin = $user instanceof AdminUser;
+        $viewerRole = $isAdmin || $user->user_type === 'Super Admin'
             ? 'core'
             : (RegionAdmin::query()->where('user_id', $user->id)->exists()
                 ? 'regional_admin'
@@ -58,9 +88,19 @@ class CampusTournamentReportController extends Controller
 
         return Inertia::render('Programs/CampusTournaments/PostEventReport', [
             'viewerRole' => $viewerRole,
-            'backUrl' => $viewerRole === 'student_leader'
-                ? route('campus.tournament.sl')
-                : route('campus.tournament.regionaladmin'),
+            'isAdminPortal' => $isAdmin,
+            'backUrl' => $isAdmin
+                ? route('admin.campus-tournaments.reports.index')
+                : ($viewerRole === 'student_leader'
+                    ? route('campus.tournament.sl')
+                    : route('campus.tournament.regionaladmin')),
+            'submitUrl' => $isAdmin ? null : route('campus-tournaments.results.store', $tournament),
+            'correctionUrl' => $isAdmin
+                ? route('admin.campus-tournaments.reports.correct', $tournament)
+                : route('campus-tournaments.results.correct', $tournament),
+            'exportUrl' => $isAdmin
+                ? route('admin.campus-tournaments.reports.export', $tournament)
+                : route('campus-tournaments.results.export', $tournament),
             'placements' => TournamentPlacement::query()
                 ->orderBy('sort_order')
                 ->get(['code', 'name'])
@@ -69,7 +109,7 @@ class CampusTournamentReportController extends Controller
                     'name' => $placement->name,
                 ]),
             'permissions' => [
-                'canSubmit' => $tournament->current_result_revision_id === null
+                'canSubmit' => ! $isAdmin && $tournament->current_result_revision_id === null
                     && Gate::allows('submitResults', $tournament),
                 'canCorrect' => $tournament->current_result_revision_id !== null
                     && Gate::allows('correctResults', $tournament),
@@ -90,13 +130,14 @@ class CampusTournamentReportController extends Controller
                 'currentResult' => $tournament->currentResultRevision ? [
                     'version' => $tournament->currentResultRevision->version,
                     'submittedAt' => $tournament->currentResultRevision->submitted_at->toIso8601String(),
-                    'submittedBy' => $tournament->currentResultRevision->submitter?->name,
+                    'submittedBy' => $tournament->currentResultRevision->adminSubmitter?->name
+                        ?? $tournament->currentResultRevision->submitter?->name,
                     'reason' => $tournament->currentResultRevision->reason,
                 ] : null,
                 'revisionHistory' => $tournament->resultRevisions->map(fn ($revision): array => [
                     'version' => $revision->version,
                     'submittedAt' => $revision->submitted_at->toIso8601String(),
-                    'submittedBy' => $revision->submitter?->name,
+                    'submittedBy' => $revision->adminSubmitter?->name ?? $revision->submitter?->name,
                     'reason' => $revision->reason,
                     'isCurrent' => $revision->id === $tournament->current_result_revision_id,
                 ]),
@@ -142,7 +183,7 @@ class CampusTournamentReportController extends Controller
 
         $tournament->load(['campus.institution', 'tournamentType']);
         $revision = $tournament->currentResultRevision()
-            ->with(['submitter', 'entries'])
+            ->with(['submitter', 'adminSubmitter', 'entries'])
             ->firstOrFail();
 
         return $workbook->download($tournament, $revision);
