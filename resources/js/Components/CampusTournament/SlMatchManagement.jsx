@@ -17,7 +17,7 @@ import { ArrowDownUp, ChevronLeft, ChevronRight, FileSpreadsheet, Pencil } from 
  *   resultsSubmitted?: boolean;
  *   isEditing?: boolean;
  *   onPageChange?: (page: number) => void;
- *   onPlacementChange: (teamId: string, placementId: string) => void;
+ *   canViewReport?: boolean;
  *   onSubmitResults: () => void;
  *   onEditResults?: () => void;
  *   onCancelEdit?: () => void;
@@ -30,17 +30,16 @@ export default function SlMatchManagement({
     page = 1,
     totalPages = 10,
     resultsSubmitted = false,
+    canViewReport = false,
     isEditing = false,
     onPageChange,
-    onPlacementChange,
     onSubmitResults,
     onEditResults,
     onCancelEdit,
     onSaveEdit,
     onExport,
 }) {
-    const placementsLocked = resultsSubmitted && !isEditing;
-    const showEditToolbar = resultsSubmitted && !isEditing;
+    const showEditToolbar = resultsSubmitted && canViewReport && !isEditing;
     const showEditingFooter = resultsSubmitted && isEditing;
 
     return (
@@ -118,14 +117,7 @@ export default function SlMatchManagement({
                                 <td className="px-3 py-3">
                                     <PlacementStatusDropdown
                                         value={team.placement}
-                                        disabled={readOnly}
-                                        onChange={(placementId) =>
-                                            onPlacementChange(
-                                                team.id,
-                                                placementId,
-                                            )
-                                        }
-                                        disabled={placementsLocked}
+                                        disabled
                                     />
                                 </td>
                             </tr>
@@ -154,11 +146,7 @@ export default function SlMatchManagement({
                             <MatchPlayerCell player={captain} compact />
                             <PlacementStatusDropdown
                                 value={team.placement}
-                                disabled={readOnly}
-                                onChange={(placementId) =>
-                                    onPlacementChange(team.id, placementId)
-                                }
-                                disabled={placementsLocked}
+                                disabled
                             />
                         </div>
                     );
@@ -222,7 +210,7 @@ export default function SlMatchManagement({
                     </button>
                 </div>
 
-                {!resultsSubmitted ? (
+                {!resultsSubmitted && canViewReport ? (
                     <button
                         type="button"
                         onClick={onSubmitResults}

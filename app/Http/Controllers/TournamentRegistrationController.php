@@ -118,25 +118,31 @@ class TournamentRegistrationController extends Controller
         ]);
     }
 
-    public function searchSchoolPlayers(Request $request): JsonResponse
+    public function searchSchoolPlayers(Request $request, TournamentRegistrationGuard $guard): JsonResponse
     {
         $data = $request->validate([
             'search' => ['required', 'string', 'min:2', 'max:100'],
             'tournament' => ['required', 'integer', 'exists:campus_tournaments,id'],
-            'team' => ['required', 'integer', 'exists:tournament_teams,id'],
+            'team' => ['sometimes', 'required', 'integer', 'exists:tournament_teams,id'],
         ]);
         $user = $request->user();
         $tournament = $this->availableTournamentsFor($user)->firstWhere('id', (int) $data['tournament']);
 
         abort_unless($tournament, 404);
 
-        $team = TournamentTeam::query()
-            ->whereKey($data['team'])
-            ->where('tournament_id', $tournament->id)
-            ->where('captain_user_id', $user->id)
-            ->where('formation_method', TeamFormationMethod::Premade)
-            ->where('status', TeamStatus::Assembling)
-            ->firstOrFail();
+        if (isset($data['team'])) {
+            $team = TournamentTeam::query()
+                ->whereKey($data['team'])
+                ->where('tournament_id', $tournament->id)
+                ->where('captain_user_id', $user->id)
+                ->where('formation_method', TeamFormationMethod::Premade)
+                ->where('status', TeamStatus::Assembling)
+                ->firstOrFail();
+        } else {
+            $guard->assertEligibleForCampus($tournament, $user);
+            $guard->assertNotAlreadyParticipating($tournament, $user);
+            $team = null;
+        }
 
         $users = User::query()
             ->whereKeyNot($user->id)
@@ -145,20 +151,31 @@ class TournamentRegistrationController extends Controller
             ->where('is_mlbb_verified', true)
             ->whereHas('campusAffiliations', fn ($query) => $query
                 ->where('campus_id', $tournament->campus_id)
-                ->where('status', 'active'))
-            ->whereDoesntHave('receivedInvitations', fn ($query) => $query
-                ->where('team_id', $team->id)
-                ->where('status', InvitationStatus::Pending)
-                ->where('expires_at', '>', now()))
-            ->whereDoesntHave('tournamentParticipations', fn ($query) => $query
-                ->where('team_id', $team->id)
-                ->where('status', ParticipantStatus::Active))
+                ->where('status', 'active')
+                ->where(fn ($query) => $query->whereNull('started_at')->orWhere('started_at', '<=', now()))
+                ->where(fn ($query) => $query->whereNull('ended_at')->orWhere('ended_at', '>', now())))
             ->where(function ($query) use ($data): void {
                 $search = '%'.$data['search'].'%';
                 $query->where('username', 'like', $search)
                     ->orWhere('name', 'like', $search)
                     ->orWhere('ml_ign', 'like', $search);
-            })
+            });
+
+        if ($team) {
+            $users->whereDoesntHave('receivedInvitations', fn ($query) => $query
+                ->where('team_id', $team->id)
+                ->where('status', InvitationStatus::Pending)
+                ->where('expires_at', '>', now()))
+                ->whereDoesntHave('tournamentParticipations', fn ($query) => $query
+                    ->where('team_id', $team->id)
+                    ->where('status', ParticipantStatus::Active));
+        } else {
+            $users->whereNotNull('username')
+                ->whereDoesntHave('tournamentParticipations', fn ($query) => $query
+                    ->where('tournament_id', $tournament->id));
+        }
+
+        $users = $users
             ->orderBy('name')
             ->limit(10)
             ->get()
@@ -325,9 +342,14 @@ class TournamentRegistrationController extends Controller
     ): RedirectResponse {
         Gate::authorize('create', [TournamentTeam::class, $tournament]);
 
-        $action->handle($request->user(), $tournament, $request->validated());
+        $data = $request->validated();
+        $action->handle($request->user(), $tournament, $data);
 
-        return redirect()->route('campus.team')->with('status', 'Team created. Invite members to fill the remaining slots.');
+        $message = isset($data['members'])
+            ? 'Team created and four invitations sent. Your team registers when every player accepts.'
+            : 'Team created. Invite members to fill the remaining slots.';
+
+        return redirect()->route('campus.team')->with('status', $message);
     }
 
     /**

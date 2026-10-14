@@ -1,7 +1,8 @@
 import SlMatchManagement from '@/Components/CampusTournament/SlMatchManagement';
 import SlRosterPanel from '@/Components/CampusTournament/SlRosterPanel';
 import { formatDateRange } from '@/data/campusTournamentData';
-import { Check, ChevronDown, ChevronRight } from 'lucide-react';
+import { Link } from '@inertiajs/react';
+import { Check, ChevronDown, ChevronRight, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
 
 const INNER_TABS = [
@@ -26,7 +27,6 @@ const INNER_TABS = [
  *     rosterTeams?: Array<object>;
  *   };
  *   defaultExpanded?: boolean;
- *   onPlacementChange: (tournamentId: string, teamId: string, placementId: string) => void;
  *   onSubmitResults: (tournament: object) => void;
  *   onExport?: (tournament: object) => void;
  * }} props
@@ -34,14 +34,12 @@ const INNER_TABS = [
 export default function SlTournamentPanel({
     tournament,
     defaultExpanded = false,
-    onPlacementChange,
     onSubmitResults,
     onExport,
 }) {
     const [expanded, setExpanded] = useState(defaultExpanded);
     const [innerTab, setInnerTab] = useState("match");
     const [page, setPage] = useState(1);
-    const [isEditing, setIsEditing] = useState(false);
 
     const resultsSubmitted = Boolean(tournament.resultsSubmitted);
 
@@ -141,20 +139,12 @@ export default function SlTournamentPanel({
                         <SlMatchManagement
                             teams={tournament.teams ?? []}
                             page={page}
-                            totalPages={10}
+                            totalPages={1}
                             resultsSubmitted={resultsSubmitted}
-                            isEditing={isEditing}
+                            canViewReport={tournament.status === 'completed' && tournament.canViewReport}
                             onPageChange={setPage}
-                            onPlacementChange={(teamId, placementId) =>
-                                onPlacementChange(tournament.id, teamId, placementId)
-                            }
                             onSubmitResults={() => onSubmitResults(tournament)}
-                            onEditResults={() => setIsEditing(true)}
-                            onCancelEdit={() => setIsEditing(false)}
-                            onSaveEdit={() => {
-                                setIsEditing(false);
-                                onSubmitResults(tournament);
-                            }}
+                            onEditResults={() => onSubmitResults(tournament)}
                             onExport={() => onExport?.(tournament)}
                         />
                     ) : (
