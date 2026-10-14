@@ -134,7 +134,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/Tournament/MemberInvite', [TournamentRegistrationController::class, 'showMemberInvitations'])
         ->name('campus.member.invite');
 
-    Route::redirect('/Tournament/MemberJoin', '/Tournament/MemberInvite')->name('campus.member.join');
+    Route::get('/Tournament/MemberJoin', [TournamentRegistrationController::class, 'showMemberJoin'])
+        ->name('campus.member.join');
 });
 
 /** Compatibility redirects from earlier /programs/... CT paths */
@@ -146,7 +147,7 @@ Route::redirect('/programs/campus-tournaments/captain/team', '/Tournament/Campus
 Route::redirect('/programs/campus-tournaments/captain/join', '/Tournament/SoloPlayer');
 Route::redirect('/programs/campus-tournaments/solo', '/Tournament/SoloPlayer');
 Route::redirect('/programs/campus-tournaments/member', '/Tournament/MemberInvite');
-Route::redirect('/programs/campus-tournaments/member/join', '/Tournament/MemberInvite');
+Route::redirect('/programs/campus-tournaments/member/join', '/Tournament/MemberJoin');
 Route::redirect('/sl/campus-tournament', '/Tournament/SL');
 Route::redirect('/captain/campus-tournament', '/Tournament/CampusTournament');
 Route::redirect('/member/campus-tournament', '/Tournament/MemberInvite');

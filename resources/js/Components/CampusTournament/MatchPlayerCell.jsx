@@ -4,11 +4,12 @@ import { User } from 'lucide-react';
  * Compact player cell for Match Management table / mobile cards.
  *
  * @param {{
- *   player?: { name?: string; ign?: string; uid?: string } | null;
+ *   player?: { name?: string; ign?: string; uid?: string; role?: string } | null;
  *   compact?: boolean;
+ *   showRole?: boolean;
  * }} props
  */
-export default function MatchPlayerCell({ player, compact = false }) {
+export default function MatchPlayerCell({ player, compact = false, showRole = false }) {
     if (!player) {
         return <span className="text-sm text-gray-500">—</span>;
     }
@@ -27,7 +28,15 @@ export default function MatchPlayerCell({ player, compact = false }) {
                         ? `${player.name.slice(0, 5)}…`
                         : (player.name ?? '—')}
                 </p>
-                <p className="truncate text-[11px] text-gray-400">{player.ign ?? ''}</p>
+                {showRole && player.role ? (
+                    <p className="truncate text-[11px] text-gray-400">
+                        <span>{player.ign ?? ''}</span>
+                        <span className="text-gray-500"> | </span>
+                        <span className="text-yellow-500">{player.role}</span>
+                    </p>
+                ) : (
+                    <p className="truncate text-[11px] text-gray-400">{player.ign ?? ''}</p>
+                )}
                 {!compact ? (
                     <p className="truncate text-[10px] text-gray-500">{player.uid ?? ''}</p>
                 ) : null}
