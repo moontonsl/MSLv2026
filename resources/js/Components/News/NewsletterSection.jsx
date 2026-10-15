@@ -7,10 +7,10 @@ export default function NewsletterSection() {
                 </h2>
 
                 <p className="mb-8 max-w-2xl font-sans text-sm leading-relaxed text-gray-300 md:text-base">
-                    Subscribe to our{' '}
-                    <span className="font-bold text-white">monthly digest</span> for the latest
-                    tournament announcements, community spotlights, and game updates directly to your
-                    inbox.
+                    Subscribe to our{" "}
+                    <span className="font-bold text-white">monthly digest</span>{" "}
+                    for the latest tournament announcements, community
+                    spotlights, and game updates directly to your inbox.
                 </p>
 
                 <form
@@ -34,8 +34,9 @@ export default function NewsletterSection() {
                 </form>
 
                 <p className="max-w-3xl text-[10px] text-gray-500 md:text-xs">
-                    By subscribing, you consent to our collection of your email for newsletter
-                    purposes in compliance with the Data Privacy Act of 2012. Unsubscribe at any time.
+                    By subscribing, you consent to our collection of your email
+                    for newsletter purposes in compliance with the Data Privacy
+                    Act of 2012. Unsubscribe at any time.
                 </p>
             </div>
         </section>
