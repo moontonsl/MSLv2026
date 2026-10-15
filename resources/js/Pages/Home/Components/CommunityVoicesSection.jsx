@@ -5,7 +5,7 @@ import {
     SectionDescription,
     SectionHeading,
 } from "./HomeUI";
-import useCardScroller from "./hooks/useCardScroller";
+import useCardScroller from "../hooks/useCardScroller";
 
 function VoiceCard({ voice }) {
     return (

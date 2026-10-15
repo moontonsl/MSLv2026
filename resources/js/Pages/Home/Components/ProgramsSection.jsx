@@ -7,7 +7,7 @@ import {
     SectionDescription,
     SectionHeading,
 } from "./HomeUI";
-import useCardScroller from "./hooks/useCardScroller";
+import useCardScroller from "../hooks/useCardScroller";
 
 const GRID_SPANS = [
     "lg:col-span-1",

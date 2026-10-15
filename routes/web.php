@@ -42,7 +42,7 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Home');
+    return Inertia::render('Home/Index');
 });
 
 Route::get('/s/{code}', [ShortLinkController::class, 'redirect'])->name('short-link.redirect');
@@ -158,7 +158,7 @@ Route::get('/CampusTournament', function () {
 })->name('campus.tournament.listing');
 
 Route::get('/Programs', function () {
-    return Inertia::render('Home');
+    return Inertia::render('Home/Index');
 })->name('programs');
 
 Route::get('/Partnerships', function () {
