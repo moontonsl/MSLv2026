@@ -1,96 +1,175 @@
-import ArticleCard from '@/Components/ArticleCard';
-import { Link } from '@inertiajs/react';
-import { Clock, Search, User } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from "@inertiajs/react";
+import { Calendar, Clock, Search, Tag, User } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
-const ACCENT = '#FBBF24';
+import { demoArticles, demoHighlights } from "@/data/articleData";
 
-const FILTER_OPTIONS = ['All', 'Esports', 'Community', 'Events', 'Game Update', 'Reports'];
+// Set to false to load articles and highlights from your database.
+const USE_DEMO_DATA = true;
 
-/** Display labels for mobile section headers (matches article `category` values). */
-const MOBILE_CATEGORY_ORDER = [
-    { label: 'Esports', match: 'Esports' },
-    { label: 'Community', match: 'Community' },
-    { label: 'Events', match: 'Events' },
-    { label: 'Game Updates', match: 'Game Update' },
-    { label: 'Reports', match: 'Reports' },
+const FONTS = {
+    heading: { fontFamily: "'Manrope', sans-serif" },
+    body: { fontFamily: "'Inter', sans-serif" },
+    newsletter: { fontFamily: "'Figtree', sans-serif" },
+};
+
+const CATEGORIES = [
+    { value: "Esports", label: "Esports" },
+    { value: "Community", label: "Community" },
+    { value: "Events", label: "Events" },
+    { value: "Game Update", label: "Game Updates" },
 ];
 
-function useCarouselActiveIndex(ref, itemCount, depsKey) {
-    const [active, setActive] = useState(0);
+const FOCUS =
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FBBF24] focus-visible:ring-offset-2 focus-visible:ring-offset-[#080808]";
 
-    useEffect(() => {
-        const el = ref.current;
-        if (!el || itemCount <= 1) {
-            setActive(0);
-            return;
-        }
+function formatDate(value) {
+    if (!value) return "";
 
-        const onScroll = () => {
-            const children = Array.from(el.children);
-            if (!children.length) return;
-            const center = el.scrollLeft + el.clientWidth / 2;
-            let best = 0;
-            let bestDist = Infinity;
-            children.forEach((child, idx) => {
-                const c = child.offsetLeft + child.offsetWidth / 2;
-                const d = Math.abs(c - center);
-                if (d < bestDist) {
-                    bestDist = d;
-                    best = idx;
-                }
-            });
-            setActive(best);
-        };
+    const date = new Date(value);
 
-        onScroll();
-        el.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', onScroll);
-        return () => {
-            el.removeEventListener('scroll', onScroll);
-            window.removeEventListener('resize', onScroll);
-        };
-    }, [ref, itemCount, depsKey]);
+    if (Number.isNaN(date.getTime())) return "";
 
-    return active;
+    return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+    });
 }
 
-function FeaturedSlideCard({ slide, reserveDotsSpace = false }) {
+function normalizeHref(value) {
+    return String(value || "").replace(/^\/news\//i, "/News/");
+}
+
+function getReadTime(content = "") {
+    const text = String(content)
+        .replace(/<[^>]*>/g, " ")
+        .trim();
+
+    if (!text) return "3 min read";
+
+    const words = text.split(/\s+/).length;
+
+    return `${Math.max(1, Math.ceil(words / 200))} min read`;
+}
+
+function normalizeArticle(article) {
+    const slug = article.canonical || `article-${article.id}`;
+
+    return {
+        id: article.id ?? slug,
+        slug,
+        title: String(article.title || "Untitled article"),
+        excerpt: String(article.subtitle || ""),
+        category:
+            article.category === "Game Updates"
+                ? "Game Update"
+                : String(article.category || "News"),
+        date: formatDate(article.date),
+        author: String(article.author || "MSL Philippines"),
+        image: article.image || "",
+        href: `/News/${encodeURIComponent(slug)}`,
+        readTime: getReadTime(article.content),
+    };
+}
+
+async function fetchNews(url, signal) {
+    const response = await fetch(url, {
+        signal,
+        headers: {
+            Accept: "application/json",
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Unable to load news (${response.status}).`);
+    }
+
+    const payload = await response.json();
+
+    if (!Array.isArray(payload)) {
+        throw new Error("The news API returned an unexpected response.");
+    }
+
+    return payload;
+}
+
+function NewsImage({ src, className = "", eager = false }) {
+    if (!src) return null;
+
+    return (
+        <img
+            src={src}
+            alt=""
+            loading={eager ? "eager" : "lazy"}
+            className={className}
+            onError={(event) => {
+                event.currentTarget.style.display = "none";
+            }}
+        />
+    );
+}
+
+function FeaturedArticle({ article }) {
+    if (!article) return null;
+
     return (
         <Link
-            href={slide.href}
-            className="group relative block min-h-[280px] w-full shrink-0 snap-center overflow-hidden rounded-2xl border border-neutral-700 bg-black sm:min-h-[300px] md:min-h-[380px] lg:rounded-3xl"
+            href={article.href}
+            className={`group relative flex min-h-[460px] w-full items-end overflow-hidden rounded-[20px] bg-[#151515] text-white hover:text-white md:min-h-[540px] lg:min-h-[600px] ${FOCUS}`}
         >
-            <img
-                src={slide.imageSrc}
-                alt=""
-                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+            <NewsImage
+                src={article.image}
+                eager
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 motion-safe:group-hover:scale-[1.025]"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
 
-            <div
-                className={`absolute bottom-0 left-0 flex max-w-full flex-col items-start p-5 sm:p-6 md:max-w-[85%] md:p-10 lg:max-w-3xl ${reserveDotsSpace ? 'pb-12' : 'pb-8 md:pb-10'}`}
-            >
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/10" />
+
+            <div className="relative z-10 w-full p-6 sm:p-8 lg:p-12">
                 <span
-                    className="mb-3 font-sans text-xs font-bold uppercase tracking-wider md:mb-4"
-                    style={{ color: ACCENT }}
+                    style={FONTS.body}
+                    className="mb-3 inline-flex rounded-md bg-[#FBBF24] px-3 py-1 text-[14px] font-bold leading-[22px] text-black"
                 >
                     FEATURED
                 </span>
-                <h2 className="font-sans text-xl font-black leading-tight tracking-tight text-white sm:text-2xl md:text-3xl lg:text-4xl">
-                    {slide.title}
+
+                <h2
+                    style={FONTS.heading}
+                    className="max-w-[900px] text-[30px] font-extrabold leading-[38px] text-white md:text-[48px] md:leading-[58px]"
+                >
+                    {article.title}
                 </h2>
-                <p className="mt-2 font-sans text-xs leading-relaxed text-white sm:text-sm md:mt-3 md:text-base">
-                    {slide.excerpt}
-                </p>
-                <div className="mt-4 flex flex-wrap items-center gap-3 font-sans text-xs text-white sm:text-sm md:mt-6 md:gap-4">
-                    <span className="inline-flex items-center gap-2">
-                        <Clock className="h-3.5 w-3.5 shrink-0 md:h-4 md:w-4" style={{ color: ACCENT }} />
-                        {slide.date}
-                    </span>
-                    <span className="inline-flex items-center gap-2">
-                        <User className="h-3.5 w-3.5 shrink-0 md:h-4 md:w-4" style={{ color: ACCENT }} />
-                        {slide.author}
+
+                {article.excerpt && (
+                    <p
+                        style={FONTS.body}
+                        className="mt-2 max-w-[900px] text-[18px] font-normal leading-[28px] text-[#D1D5DB]"
+                    >
+                        {article.excerpt}
+                    </p>
+                )}
+
+                <div
+                    style={FONTS.body}
+                    className="mt-3 flex flex-wrap gap-3 text-[14px] font-semibold leading-[22px] text-white"
+                >
+                    {article.date && (
+                        <span className="inline-flex items-center gap-2 rounded bg-black/70 px-3 py-1.5">
+                            <Calendar
+                                aria-hidden="true"
+                                className="h-4 w-4 text-[#FBBF24]"
+                            />
+                            {article.date}
+                        </span>
+                    )}
+
+                    <span className="inline-flex items-center gap-2 rounded bg-black/70 px-3 py-1.5">
+                        <User
+                            aria-hidden="true"
+                            className="h-4 w-4 text-[#FBBF24]"
+                        />
+                        {article.author}
                     </span>
                 </div>
             </div>
@@ -98,311 +177,490 @@ function FeaturedSlideCard({ slide, reserveDotsSpace = false }) {
     );
 }
 
-export default function NewsUpdatesFullPage() {
-    const [activeFilter, setActiveFilter] = useState('All');
-    const [searchQuery, setSearchQuery] = useState('');
-    const [articlesData, setArticlesData] = useState([]);
-    const [highlightsData, setHighlightsData] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        Promise.all([
-            fetch('/api/news/articles').then((res) => res.json()),
-            fetch('/api/news/highlights').then((res) => res.json()),
-        ]).then(([articles, highlights]) => {
-            // Map backend data to frontend schema if necessary
-            const mappedArticles = articles.map((a) => ({
-                slug: a.canonical,
-                title: a.title,
-                excerpt: a.subtitle,
-                date: new Date(a.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
-                author: a.author,
-                category: a.category,
-                readTime: '3 min read', // Placeholder or add to backend
-                imageSrc: a.image,
-                href: a.link,
-            }));
-
-            const mappedHighlights = highlights.map((h) => ({
-                title: h.title,
-                excerpt: '', // Add subtitle to highlights endpoint if needed
-                date: new Date(h.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
-                author: h.author,
-                imageSrc: h.src,
-                href: h.link,
-            }));
-
-            setArticlesData(mappedArticles);
-            setHighlightsData(mappedHighlights.length > 0 ? mappedHighlights : [
-                 {
-                     title: 'Welcome to MSL News',
-                     excerpt: 'Check back soon for featured stories.',
-                     date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
-                     author: 'MSL Admin',
-                     imageSrc: '/images/default-news-placeholder.jpg',
-                     href: '#',
-                 }
-            ]);
-            setIsLoading(false);
-        }).catch((err) => {
-            console.error("Failed to fetch news:", err);
-            setIsLoading(false);
-        });
-    }, []);
-
-    const FEATURED_SLIDES = highlightsData;
-
-    const featuredScrollerRef = useRef(null);
-    const featuredActive = useCarouselActiveIndex(
-        featuredScrollerRef,
-        FEATURED_SLIDES.length,
-        FEATURED_SLIDES.length,
-    );
-
-    const filteredArticles = useMemo(() => {
-        let list = articlesData;
-        if (activeFilter !== 'All') {
-            list = list.filter((a) => a.category === activeFilter);
-        }
-        const q = searchQuery.trim().toLowerCase();
-        if (q) {
-            list = list.filter(
-                (a) =>
-                    a.title.toLowerCase().includes(q) ||
-                    a.excerpt.toLowerCase().includes(q) ||
-                    a.category.toLowerCase().includes(q),
-            );
-        }
-        return list;
-    }, [activeFilter, searchQuery, articlesData]);
-
-    const mobileGrouped = useMemo(() => {
-        const map = new Map();
-        filteredArticles.forEach((a) => {
-            if (!map.has(a.category)) map.set(a.category, []);
-            map.get(a.category).push(a);
-        });
-        return MOBILE_CATEGORY_ORDER.filter(({ match }) => map.has(match)).map(({ label, match }) => ({
-            label,
-            articles: map.get(match),
-        }));
-    }, [filteredArticles]);
-
-    const featuredDesktop = FEATURED_SLIDES[0];
-
+function NewsArticleCard({ article }) {
     return (
-        <div className="w-full bg-[#0A0A0A] font-sans text-white">
-            {/* Page header */}
-            <section className="w-full px-4 pb-4 pt-14 md:px-8 md:pb-10 md:pt-20">
-                <div className="mx-auto flex max-w-6xl flex-col items-center px-1 text-center sm:px-0">
-                    <h1 className="font-sans text-3xl font-black tracking-tighter text-white sm:text-4xl md:text-5xl lg:text-6xl">
-                        News{' '}
-                        <span style={{ color: ACCENT }}>& Updates</span>
-                    </h1>
-                    <p className="mt-4 max-w-2xl px-1 text-sm leading-relaxed text-gray-400 md:mt-5 md:text-base">
-                        Stay ahead of the meta. The latest stories, tournament results, and community
-                        highlights from MSL Philippines.
-                    </p>
-                    <hr className="my-8 w-full max-w-6xl border-neutral-800" />
-                </div>
-            </section>
+        <article className="group flex h-full min-h-[500px] overflow-hidden rounded-xl border border-[#424650] bg-[#111111] transition-colors hover:border-[#A88410]">
+            <Link
+                href={article.href}
+                className={`flex w-full flex-col text-white no-underline hover:text-white ${FOCUS}`}
+            >
+                <div className="relative h-[230px] shrink-0 overflow-hidden bg-[#181818]">
+                    <NewsImage
+                        src={article.image}
+                        className="h-full w-full object-cover transition-transform duration-500 motion-safe:group-hover:scale-[1.03]"
+                    />
 
-            {isLoading ? (
-                <div className="flex justify-center py-20 text-white">Loading news...</div>
-            ) : (
-                <>
-            {/* Featured article — mobile carousel */}
-            <section className="w-full px-4 md:hidden">
-                <div className="relative mx-auto max-w-6xl">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+
+                    <span
+                        style={FONTS.body}
+                        className="absolute left-4 top-4 inline-flex max-w-[calc(100%-2rem)] items-center gap-2 rounded border border-white/10 bg-black/75 px-3 py-1 text-[14px] font-semibold leading-[22px] text-white"
+                    >
+                        <Tag
+                            aria-hidden="true"
+                            className="h-3.5 w-3.5 shrink-0 text-[#FBBF24]"
+                        />
+
+                        <span className="truncate">{article.category}</span>
+                    </span>
+                </div>
+
+                <div className="flex flex-1 flex-col p-5">
                     <div
-                        ref={featuredScrollerRef}
-                        className="hide-scrollbar flex w-full snap-x snap-mandatory overflow-x-auto [-webkit-overflow-scrolling:touch]"
+                        style={FONTS.body}
+                        className="mb-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[14px] font-semibold leading-[22px] text-[#9CA3AF]"
                     >
-                        {FEATURED_SLIDES.map((slide) => (
-                            <div
-                                key={slide.href}
-                                className="w-full shrink-0 snap-center basis-full flex-[0_0_100%]"
-                            >
-                                <FeaturedSlideCard slide={slide} reserveDotsSpace />
-                            </div>
-                        ))}
-                    </div>
-                    <div className="pointer-events-none absolute bottom-3 left-0 z-10 flex w-full justify-center md:bottom-4">
-                        <div className="flex items-center justify-center gap-2 pointer-events-none">
-                            {FEATURED_SLIDES.map((_, i) => (
-                                <div
-                                    key={i}
-                                    className={`h-1.5 rounded-full ${
-                                        i === featuredActive ? 'w-8 bg-[#FBBF24]' : 'w-4 bg-neutral-600'
-                                    }`}
+                        {article.date && (
+                            <span className="inline-flex items-center gap-1.5">
+                                <Calendar
+                                    aria-hidden="true"
+                                    className="h-3.5 w-3.5 shrink-0"
                                 />
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </section>
+                                {article.date}
+                            </span>
+                        )}
 
-            {/* Featured article — desktop single */}
-            <section className="hidden w-full px-4 md:block md:px-8">
-                <div className="mx-auto max-w-6xl">
-                    <FeaturedSlideCard slide={featuredDesktop} />
-                </div>
-            </section>
-
-            {/* Filters + search */}
-            <section className="w-full px-4 pt-10 md:px-8 md:pt-16">
-                <div className="mx-auto flex max-w-6xl flex-col md:flex-row md:items-center md:justify-between md:gap-6">
-                    <div className="hide-scrollbar flex w-full gap-3 overflow-x-auto whitespace-nowrap pb-2 md:flex-wrap md:overflow-visible md:whitespace-normal">
-                        {FILTER_OPTIONS.map((label) => {
-                            const active = activeFilter === label;
-                            return (
-                                <button
-                                    key={label}
-                                    type="button"
-                                    onClick={() => setActiveFilter(label)}
-                                    className={
-                                        active
-                                            ? 'inline-flex shrink-0 rounded-lg px-4 py-2 font-sans text-sm font-semibold text-black transition-colors'
-                                            : 'inline-flex shrink-0 rounded-lg border border-neutral-600 bg-black px-4 py-2 font-sans text-sm font-medium text-gray-400 transition-colors hover:border-neutral-500 hover:text-white'
-                                    }
-                                    style={
-                                        active
-                                            ? { backgroundColor: ACCENT }
-                                            : undefined
-                                    }
-                                >
-                                    {label}
-                                </button>
-                            );
-                        })}
+                        <span className="inline-flex items-center gap-1.5">
+                            <Clock
+                                aria-hidden="true"
+                                className="h-3.5 w-3.5 shrink-0"
+                            />
+                            {article.readTime}
+                        </span>
                     </div>
 
-                    <div className="relative mt-4 w-full md:mt-0 md:w-72 md:shrink-0">
-                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-                        <input
-                            type="search"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Search articles..."
-                            className="w-full rounded-lg border border-neutral-600 bg-black py-2.5 pl-10 pr-4 font-sans text-sm text-white placeholder:text-gray-500 focus:border-neutral-500 focus:outline-none"
-                        />
-                    </div>
-                </div>
-            </section>
-
-            {/* Article grid — desktop */}
-            <section className="hidden w-full px-4 py-12 md:block md:px-8 md:py-16">
-                <div className="mx-auto max-w-6xl">
-                    {filteredArticles.length === 0 ? (
-                        <p className="py-12 text-center text-sm text-gray-500">
-                            No articles match your filters.
-                        </p>
-                    ) : (
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-                            {filteredArticles.map((article) => (
-                                <ArticleCard key={article.slug} article={article} />
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </section>
-
-            {/* Mobile: grouped category carousels */}
-            <section className="w-full px-4 py-10 md:hidden md:py-0">
-                <div className="mx-auto max-w-6xl">
-                    {filteredArticles.length === 0 ? (
-                        <p className="py-8 text-center text-sm text-gray-500">
-                            No articles match your filters.
-                        </p>
-                    ) : (
-                        mobileGrouped.map(({ label, articles }) => (
-                            <MobileCategoryCarousel key={label} label={label} articles={articles} />
-                        ))
-                    )}
-                </div>
-            </section>
-
-            {/* Newsletter */}
-            <section className="w-full px-4 pb-16 pt-4 md:px-8 md:pb-24 md:pt-8">
-                <div className="mx-auto mt-16 w-full max-w-5xl rounded-2xl border border-white/5 bg-[#8979F01A] p-6 text-center md:mt-24 md:p-16">
-                    <h2 className="mb-4 font-heading text-2xl font-black text-white md:text-4xl">
-                        Never Miss an Update
-                    </h2>
-                    <p className="mx-auto mb-8 max-w-2xl text-sm text-gray-300 md:text-base">
-                        Subscribe to our{' '}
-                        <span className="font-bold text-white">monthly digest</span>{' '}
-                        for the latest tournament announcements, community spotlights, and game updates directly to
-                        your inbox.
-                    </p>
-
-                    <form
-                        className="mx-auto flex w-full max-w-lg flex-col gap-3 sm:flex-row sm:items-stretch"
-                        onSubmit={(e) => e.preventDefault()}
+                    <h3
+                        style={FONTS.heading}
+                        className="line-clamp-2 text-[24px] font-extrabold leading-[24px] text-white transition-colors group-hover:text-[#FBBF24]"
                     >
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="Enter your email address"
-                            required
-                            autoComplete="email"
-                            className="min-h-[44px] w-full min-w-0 flex-1 rounded-xl border border-neutral-600 bg-neutral-900/80 px-4 py-3 font-sans text-base text-white placeholder:text-gray-500 focus:border-neutral-400 focus:outline-none focus:ring-1 focus:ring-white/20 sm:text-sm md:py-3"
-                        />
-                        <button
-                            type="submit"
-                            className="min-h-[44px] w-full shrink-0 rounded-xl px-6 py-3 font-sans text-sm font-bold text-black transition hover:brightness-110 sm:w-auto sm:px-8 md:text-base"
-                            style={{ backgroundColor: ACCENT }}
-                        >
-                            Subscribe
-                        </button>
-                    </form>
+                        {article.title}
+                    </h3>
 
-                    <p className="mx-auto mt-6 max-w-2xl text-[10px] leading-relaxed text-gray-400 md:text-xs">
-                        By subscribing, you consent to our collection of your email for newsletter purposes in
-                        compliance with the Data Privacy Act of 2012. Unsubscribe at any time.
+                    <p
+                        style={FONTS.body}
+                        className="mt-2 line-clamp-3 text-[12px] font-normal leading-[18px] text-[#A6A6AE]"
+                    >
+                        {article.excerpt}
                     </p>
+
+                    <span
+                        style={FONTS.body}
+                        className="mt-auto inline-block pt-8 text-[16px] font-bold leading-[24px] text-[#FBBF24]"
+                    >
+                        Read Article
+                    </span>
                 </div>
-            </section>
-            </>
-            )}
-        </div>
+            </Link>
+        </article>
     );
 }
 
-function MobileCategoryCarousel({ label, articles }) {
-    const scrollerRef = useRef(null);
-    const depsKey = articles.map((a) => a.slug).join(',');
-    const activeIndex = useCarouselActiveIndex(scrollerRef, articles.length, depsKey);
-    const dotActive = Math.min(activeIndex, 2);
+export default function NewsUpdatesFullPage() {
+    const [articles, setArticles] = useState(USE_DEMO_DATA ? demoArticles : []);
+    const [highlights, setHighlights] = useState(
+        USE_DEMO_DATA ? demoHighlights : [],
+    );
+    const [activeFilter, setActiveFilter] = useState("All");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [isLoading, setIsLoading] = useState(!USE_DEMO_DATA);
+    const [loadError, setLoadError] = useState("");
+
+    useEffect(() => {
+        if (USE_DEMO_DATA) return;
+
+        const controller = new AbortController();
+
+        async function loadNews() {
+            const [articleResult, highlightResult] = await Promise.allSettled([
+                fetchNews("/api/news/articles", controller.signal),
+                fetchNews("/api/news/highlights", controller.signal),
+            ]);
+
+            if (controller.signal.aborted) return;
+
+            const loadedArticles =
+                articleResult.status === "fulfilled"
+                    ? articleResult.value.map(normalizeArticle)
+                    : [];
+
+            const loadedHighlights =
+                highlightResult.status === "fulfilled"
+                    ? highlightResult.value.map((highlight) => {
+                          const href = normalizeHref(highlight.link);
+
+                          const matchingArticle = loadedArticles.find(
+                              (article) =>
+                                  article.href === href ||
+                                  article.title === highlight.title,
+                          );
+
+                          return {
+                              ...matchingArticle,
+                              id: highlight.id ?? href,
+                              title:
+                                  highlight.title ||
+                                  matchingArticle?.title ||
+                                  "Featured story",
+                              excerpt: matchingArticle?.excerpt || "",
+                              image:
+                                  highlight.src || matchingArticle?.image || "",
+                              href: href || matchingArticle?.href || "/News",
+                              date: formatDate(highlight.date),
+                              author:
+                                  highlight.author ||
+                                  matchingArticle?.author ||
+                                  "MSL Philippines",
+                          };
+                      })
+                    : [];
+
+            setArticles(loadedArticles);
+            setHighlights(loadedHighlights);
+            setLoadError(
+                articleResult.status === "rejected"
+                    ? "We could not load the articles. Please refresh to try again."
+                    : "",
+            );
+            setIsLoading(false);
+        }
+
+        loadNews();
+
+        return () => controller.abort();
+    }, []);
+
+    const filterOptions = useMemo(() => {
+        const additionalCategories = [
+            ...new Set(
+                articles
+                    .map((article) => article.category)
+                    .filter((category) => category !== "Highlight"),
+            ),
+        ].filter(
+            (category) =>
+                !CATEGORIES.some((option) => option.value === category),
+        );
+
+        return [
+            { value: "All", label: "All" },
+            ...CATEGORIES,
+            ...additionalCategories.map((category) => ({
+                value: category,
+                label: category,
+            })),
+        ];
+    }, [articles]);
+
+    const filteredArticles = useMemo(() => {
+        const query = searchQuery.trim().toLowerCase();
+
+        return articles.filter((article) => {
+            const matchesCategory =
+                activeFilter === "All" || article.category === activeFilter;
+
+            const matchesSearch =
+                !query ||
+                [
+                    article.title,
+                    article.excerpt,
+                    article.category,
+                    article.author,
+                ].some((value) =>
+                    String(value || "")
+                        .toLowerCase()
+                        .includes(query),
+                );
+
+            return matchesCategory && matchesSearch;
+        });
+    }, [activeFilter, articles, searchQuery]);
+
+    const mobileGroups = useMemo(() => {
+        const grouped = new Map();
+
+        filteredArticles.forEach((article) => {
+            if (!grouped.has(article.category)) {
+                grouped.set(article.category, []);
+            }
+
+            grouped.get(article.category).push(article);
+        });
+
+        const categoryOrder = [
+            ...filterOptions
+                .filter((option) => option.value !== "All")
+                .map((option) => option.value),
+            ...[...grouped.keys()].filter(
+                (category) =>
+                    !filterOptions.some((option) => option.value === category),
+            ),
+        ];
+
+        return categoryOrder
+            .filter((category) => grouped.has(category))
+            .map((category) => ({
+                value: category,
+                label:
+                    filterOptions.find((option) => option.value === category)
+                        ?.label || category,
+                articles: grouped.get(category),
+            }));
+    }, [filterOptions, filteredArticles]);
+
+    const featuredSlides = highlights.length
+        ? highlights
+        : articles.slice(0, 1);
 
     return (
-        <div className="mb-10 w-full">
-            <h3 className="mb-4 font-heading text-xl font-bold text-[#FBBF24]">{label}</h3>
-            <div className="relative w-full">
-                <div
-                    ref={scrollerRef}
-                    className="hide-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto [-webkit-overflow-scrolling:touch]"
+        <div
+            style={{
+                ...FONTS.body,
+                backgroundImage:
+                    "radial-gradient(ellipse 65% 30% at 50% 4%, rgba(251,191,36,0.055), transparent)",
+            }}
+            className="w-full bg-[#080808] text-white"
+        >
+            <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-[76px]">
+                <header className="border-b border-[#292929] pb-16 pt-16 text-center lg:pb-20 lg:pt-24">
+                    <h1
+                        style={FONTS.heading}
+                        className="text-[40px] font-extrabold leading-[48px] text-[#FAFAF5] md:text-[60px] md:leading-[72px]"
+                    >
+                        News <span className="text-[#FBBF24]">&amp;</span>{" "}
+                        Updates
+                    </h1>
+
+                    <p className="mx-auto mt-3 max-w-[640px] text-[18px] font-normal leading-[28px] text-[#D2D2CC]">
+                        Stay ahead of the meta. The latest stories, tournament
+                        results, and community highlights from MSL Philippines.
+                    </p>
+                </header>
+
+                {isLoading ? (
+                    <p
+                        role="status"
+                        className="py-24 text-center text-[18px] leading-[28px] text-gray-400"
+                    >
+                        Loading news…
+                    </p>
+                ) : (
+                    <>
+                        {featuredSlides.length > 0 && (
+                            <section
+                                aria-label="Featured news"
+                                className="mt-12 lg:mt-20"
+                            >
+                                <div className="hidden md:block">
+                                    <FeaturedArticle
+                                        article={featuredSlides[0]}
+                                    />
+                                </div>
+
+                                <div className="hide-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto md:hidden">
+                                    {featuredSlides.map((article) => (
+                                        <div
+                                            key={article.id}
+                                            className="w-full shrink-0 snap-center"
+                                        >
+                                            <FeaturedArticle
+                                                article={article}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {featuredSlides.length > 1 && (
+                                    <p className="mt-3 text-center text-[12px] leading-[18px] text-gray-400 md:hidden">
+                                        Swipe to explore featured stories
+                                    </p>
+                                )}
+                            </section>
+                        )}
+
+                        <section
+                            aria-label="Browse news articles"
+                            className={
+                                featuredSlides.length
+                                    ? "mt-24 lg:mt-48"
+                                    : "mt-12"
+                            }
+                        >
+                            <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+                                <div
+                                    aria-label="Article categories"
+                                    className="hide-scrollbar flex gap-4 overflow-x-auto pb-1"
+                                >
+                                    {filterOptions.map(({ value, label }) => {
+                                        const selected = activeFilter === value;
+
+                                        return (
+                                            <button
+                                                key={value}
+                                                type="button"
+                                                aria-pressed={selected}
+                                                onClick={() =>
+                                                    setActiveFilter(value)
+                                                }
+                                                className={`inline-flex min-h-[52px] shrink-0 items-center justify-center rounded-xl border px-4 text-[18px] font-semibold leading-[28px] transition-colors ${FOCUS} ${
+                                                    selected
+                                                        ? "border-[#EAB308] bg-[#EAB308] text-black"
+                                                        : "border-[#454952] bg-[#141414] text-[#9CA3AF] hover:border-gray-400 hover:text-white"
+                                                }`}
+                                            >
+                                                {label}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                <label className="relative block w-full shrink-0 xl:w-[350px]">
+                                    <span className="sr-only">
+                                        Search articles
+                                    </span>
+
+                                    <Search
+                                        aria-hidden="true"
+                                        className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500"
+                                    />
+
+                                    <input
+                                        type="search"
+                                        value={searchQuery}
+                                        onChange={(event) =>
+                                            setSearchQuery(event.target.value)
+                                        }
+                                        placeholder="Search articles..."
+                                        className="h-[52px] w-full rounded-xl border border-[#7A7A7A] bg-[#141414] pl-11 pr-4 text-[18px] font-normal leading-[28px] text-white placeholder:text-gray-500 focus:border-[#FBBF24] focus:outline-none focus:ring-1 focus:ring-[#FBBF24]"
+                                    />
+                                </label>
+                            </div>
+
+                            {loadError ? (
+                                <p
+                                    role="alert"
+                                    className="py-16 text-center text-[18px] leading-[28px] text-gray-300"
+                                >
+                                    {loadError}
+                                </p>
+                            ) : filteredArticles.length === 0 ? (
+                                <p
+                                    role="status"
+                                    className="py-16 text-center text-[18px] leading-[28px] text-gray-400"
+                                >
+                                    {articles.length
+                                        ? "No articles match your search or category."
+                                        : "No articles have been published yet."}
+                                </p>
+                            ) : (
+                                <>
+                                    <div className="mt-12 hidden gap-10 md:grid md:grid-cols-2 lg:mt-20 lg:grid-cols-3">
+                                        {filteredArticles.map((article) => (
+                                            <NewsArticleCard
+                                                key={article.id}
+                                                article={article}
+                                            />
+                                        ))}
+                                    </div>
+
+                                    <div className="mt-10 space-y-10 md:hidden">
+                                        {mobileGroups.map((group) => (
+                                            <section key={group.value}>
+                                                <h2
+                                                    style={FONTS.heading}
+                                                    className="mb-4 text-[24px] font-extrabold leading-[24px] text-[#FBBF24]"
+                                                >
+                                                    {group.label}
+                                                </h2>
+
+                                                <div className="hide-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2">
+                                                    {group.articles.map(
+                                                        (article) => (
+                                                            <div
+                                                                key={article.id}
+                                                                className="w-[85%] max-w-[400px] shrink-0 snap-start"
+                                                            >
+                                                                <NewsArticleCard
+                                                                    article={
+                                                                        article
+                                                                    }
+                                                                />
+                                                            </div>
+                                                        ),
+                                                    )}
+                                                </div>
+                                            </section>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                        </section>
+                    </>
+                )}
+
+                <section
+                    aria-labelledby="news-subscribe-heading"
+                    className="pb-20 pt-24 lg:pb-32 lg:pt-44"
                 >
-                    {articles.map((article) => (
-                        <ArticleCard
-                            key={article.slug}
-                            article={article}
-                            articleClassName="w-[85vw] max-w-[380px] shrink-0 snap-center"
-                        />
-                    ))}
-                </div>
-                <div className="pointer-events-none absolute bottom-3 left-0 z-10 flex w-full justify-center md:bottom-4">
-                    <div className="flex items-center justify-center gap-2 pointer-events-none">
-                        <div
-                            className={`h-1.5 rounded-full ${dotActive === 0 ? 'w-8 bg-[#FBBF24]' : 'w-4 bg-neutral-600'}`}
-                        />
-                        <div
-                            className={`h-1.5 rounded-full ${dotActive === 1 ? 'w-8 bg-[#FBBF24]' : 'w-4 bg-neutral-600'}`}
-                        />
-                        <div
-                            className={`h-1.5 rounded-full ${dotActive === 2 ? 'w-8 bg-[#FBBF24]' : 'w-4 bg-neutral-600'}`}
-                        />
+                    <div
+                        style={{
+                            background:
+                                "linear-gradient(115deg, #121020 0%, #151020 55%, #251821 100%)",
+                        }}
+                        className="rounded-xl border border-[#3B3445] px-6 py-12 text-center md:px-12 md:py-16"
+                    >
+                        <h2
+                            id="news-subscribe-heading"
+                            style={FONTS.heading}
+                            className="text-[32px] font-extrabold leading-[40px] text-white md:text-[48px] md:leading-[58px]"
+                        >
+                            Never Miss an Update
+                        </h2>
+
+                        <p
+                            style={FONTS.newsletter}
+                            className="mx-auto mt-3 max-w-[820px] text-[20px] font-normal leading-[32px] text-[#C1BEC8]"
+                        >
+                            Subscribe to our{" "}
+                            <strong style={FONTS.body} className="font-bold">
+                                monthly digest
+                            </strong>{" "}
+                            for the latest tournament announcements, community
+                            spotlights, and game updates directly to your inbox.
+                        </p>
+
+                        <form
+                            onSubmit={(event) => event.preventDefault()}
+                            className="mx-auto mt-12 flex max-w-[540px] flex-col gap-5 sm:flex-row"
+                        >
+                            <label className="min-w-0 flex-1">
+                                <span className="sr-only">Email address</span>
+
+                                <input
+                                    type="email"
+                                    name="email"
+                                    autoComplete="email"
+                                    required
+                                    placeholder="Enter your email address"
+                                    className="h-[52px] w-full rounded-xl border border-[#393240] bg-[#100D19] px-4 text-[16px] font-normal leading-[24px] text-white placeholder:text-gray-500 focus:border-[#FBBF24] focus:outline-none focus:ring-1 focus:ring-[#FBBF24]"
+                                />
+                            </label>
+
+                            <button
+                                type="submit"
+                                className={`inline-flex min-h-[52px] shrink-0 items-center justify-center rounded-xl bg-[#FBBF24] px-5 text-[16px] font-semibold leading-[24px] text-black transition-colors hover:bg-[#FCD34D] ${FOCUS}`}
+                            >
+                                Subscribe
+                            </button>
+                        </form>
+
+                        <p className="mx-auto mt-12 max-w-[960px] text-[12px] font-normal leading-[18px] text-[#9B97A4]">
+                            By subscribing, you consent to our collection of
+                            your email for newsletter purposes in compliance
+                            with the Data Privacy Act of 2012. Unsubscribe at
+                            any time.
+                        </p>
                     </div>
-                </div>
+                </section>
             </div>
         </div>
     );
