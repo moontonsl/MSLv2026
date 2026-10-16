@@ -174,13 +174,20 @@ Route::redirect('/about/general-affairs', '/GeneralAffairs');
 
 Route::redirect('/Login', '/login')->name('Login');
 
+Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])
+    ->name('admin.login');
+
+Route::get('/admin/custom-user-list/login', [AdminAuthController::class, 'showLogin'])
+    ->name('admin.custom-user-list.login');
+
 Route::middleware('guest:admin')->group(function () {
-    Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
     Route::post('/admin/login', [AdminAuthController::class, 'login'])
-        ->middleware('throttle:10,1')->name('admin.login.submit');
-    Route::get('/admin/custom-user-list/login', [AdminAuthController::class, 'showLogin'])->name('admin.custom-user-list.login');
+        ->middleware('throttle:10,1')
+        ->name('admin.login.submit');
+
     Route::post('/admin/custom-user-list/login', [AdminAuthController::class, 'login'])
-        ->middleware('throttle:10,1')->name('admin.custom-user-list.login.submit');
+        ->middleware('throttle:10,1')
+        ->name('admin.custom-user-list.login.submit');
 });
 
 /** Admin CMS pages from Evren branch */
