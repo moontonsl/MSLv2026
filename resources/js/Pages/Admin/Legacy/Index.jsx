@@ -27,8 +27,13 @@ export default function Index({ module, records, createRoute }) {
     return (
         <AdminLayout activeNavId="management">
             <Head title={module} />
-            <div className="mb-6 flex items-center justify-between gap-4">
-                <h1 className="text-3xl font-bold">{module}</h1>
+            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold text-white sm:text-3xl">{module}</h1>
+                    <p className="mt-2 text-sm leading-6 text-gray-400">
+                        Review and manage {module.toLowerCase()} records.
+                    </p>
+                </div>
                 {createRoute && <Link href={route(createRoute)} className="rounded bg-amber-400 px-4 py-2 font-semibold text-black">Create</Link>}
             </div>
             <div className="space-y-3">

@@ -9,7 +9,12 @@ export default function HomePage({ carousels = [] }) {
     return (
         <AdminLayout activeNavId="home-page">
             <Head title="Home Page Settings" />
-            <h1 className="mb-8 text-3xl font-bold text-white">Home Page</h1>
+            <header className="mb-6 sm:mb-8">
+                <h1 className="text-2xl font-bold text-white sm:text-3xl">Home Page</h1>
+                <p className="mt-2 text-sm leading-6 text-gray-400">
+                    Manage the content and visuals displayed on the public homepage.
+                </p>
+            </header>
 
             <HighlightLinkSection />
             <CarouselSection initialItems={carousels} />

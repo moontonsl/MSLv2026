@@ -52,7 +52,7 @@ export default function PendingUsers({ users, filters = {} }) {
         <AdminLayout activeNavId="pending-users" showGlobalSearch>
             <Head title="Pending Users" />
 
-            <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+            <div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
                 <div>
                     <h1 className="mb-2 text-2xl font-bold text-white sm:text-3xl">Pending Users</h1>
                     <p className="text-sm text-gray-400">Accounts awaiting email or initial verification.</p>

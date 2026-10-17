@@ -87,14 +87,21 @@ export default function EventPhotos({ eventPhotos: initialEventPhotos = [] }) {
     return (
         <AdminLayout activeNavId="event-photos" showGlobalSearch>
             <Head title="Event Photos Management" />
-            <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+            <div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
                 <div>
                     <h1 className="mb-2 text-2xl font-bold text-white sm:text-3xl">Event Photos</h1>
-                    <p className="text-sm text-gray-400">Manage photos displayed on the Buffs and Support page.</p>
+                    <p className="text-sm leading-6 text-gray-400">Manage photos displayed on the Buffs and Support page.</p>
                 </div>
-                <button type="button" onClick={openCreate} className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 py-2.5 text-sm font-bold text-black hover:bg-yellow-400">
-                    <Plus className="h-4 w-4" />Add Event Photo
-                </button>
+                <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
+                    <label className="relative block min-w-0 flex-1 sm:w-64 sm:flex-none">
+                        <span className="sr-only">Search event photos</span>
+                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                        <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search event or school" aria-label="Search event photos" className="min-h-[44px] w-full rounded-md border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-9 pr-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" />
+                    </label>
+                    <button type="button" onClick={openCreate} className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 py-2.5 text-sm font-bold text-black hover:bg-yellow-400">
+                        <Plus className="h-4 w-4" />Add Event Photo
+                    </button>
+                </div>
             </div>
 
             {formOpen && (
@@ -127,12 +134,9 @@ export default function EventPhotos({ eventPhotos: initialEventPhotos = [] }) {
             )}
 
             <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6 md:p-8">
-                <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div><h2 className="text-lg font-bold text-yellow-500 sm:text-xl">Current Event Photos</h2><p className="mt-1 text-sm text-gray-400">{eventPhotos.length} photo{eventPhotos.length === 1 ? '' : 's'}</p></div>
-                    <div className="relative w-full sm:max-w-xs">
-                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-                        <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search event or school" className="min-h-[42px] w-full rounded-md border border-neutral-800 bg-[#1a1a1a] pl-9 pr-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" aria-label="Search event photos" />
-                    </div>
+                <div className="mb-6">
+                    <h2 className="text-lg font-bold text-yellow-500 sm:text-xl">Current Event Photos</h2>
+                    <p className="mt-1 text-sm text-gray-400">{eventPhotos.length} photo{eventPhotos.length === 1 ? '' : 's'}</p>
                 </div>
                 {filteredPhotos.length === 0 ? <div className="py-14 text-center"><ImagePlus className="mx-auto mb-4 h-10 w-10 text-gray-600" /><p className="text-sm text-gray-400">{search ? 'No event photos match your search.' : 'No event photos found. Add your first photo above.'}</p></div> : <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">{filteredPhotos.map((photo) => <PhotoCard key={photo.id} photo={photo} onEdit={openEdit} onDelete={deletePhoto} />)}</div>}
             </section>

@@ -41,7 +41,7 @@ export default function AdminLayout({
                     </button>
                     <AdminUserProfile />
                 </header>
-                <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+                <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 font-sans sm:px-6 lg:px-8 lg:py-8 [&_.font-heading]:font-sans [&_.font-inter]:font-sans [&_.font-league-spartan]:font-sans [&_.font-manrope]:font-sans [&_button]:font-sans [&_h1]:font-sans [&_h1]:text-[#FFFBEB] [&_h2]:font-sans [&_h3]:font-sans [&_h4]:font-sans [&_h5]:font-sans [&_h6]:font-sans [&_input]:font-sans [&_select]:font-sans [&_textarea]:font-sans">
                     {isLoading ? <AdminPageSkeleton /> : children}
                 </main>
             </div>

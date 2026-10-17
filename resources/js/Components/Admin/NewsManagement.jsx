@@ -184,48 +184,45 @@ export default function NewsManagement({ initialNews = [] }) {
 
     return (
         <>
-            <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-start sm:justify-between">
+            <div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
                 <div>
                     <h1 className="mb-2 text-2xl font-bold text-white sm:text-3xl">
                         News & Updates
                     </h1>
-                    <p className="text-sm text-gray-400">Simple description here</p>
+                    <p className="text-sm leading-6 text-gray-400">
+                        Manage articles and announcements shown on the public news page.
+                    </p>
                 </div>
-                <button
-                    type="button"
-                    onClick={openAddModal}
-                    className={`${ADD_BUTTON_CLASS} hidden sm:inline-flex`}
-                >
-                    <Plus className="h-4 w-4" />
-                    Create News
-                </button>
-            </div>
-
-            <div className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6 md:p-8">
-                <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <h2 className="text-lg font-bold text-yellow-500 sm:text-xl">
-                        News Management
-                    </h2>
-                    <div className="relative w-full sm:w-56">
+                <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
+                    <label className="relative block min-w-0 flex-1 sm:w-64 sm:flex-none">
+                        <span className="sr-only">Search news articles</span>
                         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
                         <input
                             type="search"
                             value={localSearch}
-                            onChange={(e) => setLocalSearch(e.target.value)}
-                            placeholder="Search..."
-                            className={SEARCH_CLASS}
+                            onChange={(event) => setLocalSearch(event.target.value)}
+                            placeholder="Search articles"
+                            aria-label="Search news articles"
+                            className={`${SEARCH_CLASS} pl-10`}
                         />
-                    </div>
+                    </label>
+                    <button
+                        type="button"
+                        onClick={openAddModal}
+                        className={ADD_BUTTON_CLASS}
+                    >
+                        <Plus className="h-4 w-4" />
+                        Create News
+                    </button>
                 </div>
+            </div>
 
-                <button
-                    type="button"
-                    onClick={openAddModal}
-                    className={`${ADD_BUTTON_CLASS} mb-6 sm:hidden`}
-                >
-                    <Plus className="h-4 w-4" />
-                    Create News
-                </button>
+            <div className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6 md:p-8">
+                <div className="mb-6">
+                    <h2 className="text-lg font-bold text-yellow-500 sm:text-xl">
+                        News Management
+                    </h2>
+                </div>
 
                 {filteredNews.length === 0 ? (
                     <p className="py-12 text-center text-sm text-gray-500">

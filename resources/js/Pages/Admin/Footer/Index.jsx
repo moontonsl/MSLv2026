@@ -89,7 +89,7 @@ export default function FooterIndex({ footer = {} }) {
 
             <div className="mb-6 sm:mb-8"><h1 className="text-2xl font-bold text-white sm:text-3xl">Footer Management</h1><p className="mt-2 text-sm text-gray-400">Manage the public footer content, social links, logos, and navigation sections.</p></div>
 
-            <form onSubmit={submit} className="max-w-6xl space-y-6">
+            <form onSubmit={submit} className="w-full space-y-6">
                 <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6 md:p-8">
                     <div className="mb-6"><h2 className="text-lg font-bold text-yellow-500">Basic information</h2><p className="mt-1 text-sm text-gray-400">These values are shared with the public MSLv2026 footer.</p></div>
                     <div className="space-y-5">

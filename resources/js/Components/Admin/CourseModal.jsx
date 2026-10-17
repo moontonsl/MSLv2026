@@ -1,3 +1,4 @@
+import AdminFilterSelect from '@/Components/Admin/AdminFilterSelect';
 import BaseModal from "@/Components/Admin/BaseModal";
 import {
     MODAL_INPUT_CLASS,
@@ -116,7 +117,7 @@ export default function CourseModal({
                     >
                         Department
                     </label>
-                    <select
+                    <AdminFilterSelect
                         id="course-department"
                         name="department"
                         value={form.department}
@@ -128,7 +129,7 @@ export default function CourseModal({
                                 {department}
                             </option>
                         ))}
-                    </select>
+                    </AdminFilterSelect>
                 </div>
 
                 <div>

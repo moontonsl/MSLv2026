@@ -1,3 +1,4 @@
+import AdminFilterSelect from '@/Components/Admin/AdminFilterSelect';
 import BaseModal from "@/Components/Admin/BaseModal";
 import {
     MODAL_INPUT_CLASS,
@@ -125,7 +126,7 @@ export default function StrandModal({
                     >
                         Related Course / Track
                     </label>
-                    <select
+                    <AdminFilterSelect
                         id="strand-related-course"
                         name="relatedCourse"
                         value={form.relatedCourse}
@@ -137,7 +138,7 @@ export default function StrandModal({
                                 {course}
                             </option>
                         ))}
-                    </select>
+                    </AdminFilterSelect>
                 </div>
 
                 <div>

@@ -191,9 +191,14 @@ export default function AccountCreation() {
     return (
         <AdminLayout activeNavId="account-creation">
             <Head title="Account Creation" />
-            <h1 className="mb-6 text-2xl font-bold text-white sm:mb-8 sm:text-3xl">
-                Account Creation
-            </h1>
+            <header className="mb-6 sm:mb-8">
+                <h1 className="text-2xl font-bold text-white sm:text-3xl">
+                    Account Creation
+                </h1>
+                <p className="mt-2 text-sm leading-6 text-gray-400">
+                    Manage the schools, courses, and strands used in student accounts.
+                </p>
+            </header>
 
             <AdminTable
                 title="Schools"

@@ -3,6 +3,7 @@ import { Head, router } from "@inertiajs/react";
 import Toast from "./components/Toast";
 import ConfirmModal from "./components/ConfirmModal";
 import AdminLayout from "@/Layouts/AdminLayout";
+import AdminFilterSelect from "@/Components/Admin/AdminFilterSelect";
 import {
     Users,
     Search,
@@ -423,19 +424,18 @@ export default function AdminDashboard({ auth, students, filters }) {
                                     />
                                 </label>
 
-                                <select
+                                <AdminFilterSelect
                                     id="dashboard-division-filter"
                                     aria-label="Filter by division"
                                     value={divisionFilter}
                                     onChange={(event) =>
                                         setDivisionFilter(event.target.value)
                                     }
-                                    className="min-h-[44px] w-full rounded-md border border-neutral-800 bg-[#1a1a1a] px-3 py-2.5 text-sm text-white outline-none focus:ring-2 focus:ring-yellow-500"
                                 >
                                     <option value="">All Divisions</option>
                                     <option value="shs">Senior High School</option>
                                     <option value="college">College / University</option>
-                                </select>
+                                </AdminFilterSelect>
 
                                 <button
                                     type="submit"
