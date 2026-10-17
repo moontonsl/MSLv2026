@@ -86,7 +86,7 @@ export default function EventPhotos({ eventPhotos: initialEventPhotos = [] }) {
 
     return (
         <AdminLayout activeNavId="event-photos" showGlobalSearch>
-            <Head title="Event Photos Management" />
+            <Head title="Event Photos" />
             <div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
                 <div>
                     <h1 className="mb-2 text-2xl font-bold text-white sm:text-3xl">Event Photos</h1>

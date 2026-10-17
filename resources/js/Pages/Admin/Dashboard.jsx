@@ -351,18 +351,18 @@ export default function AdminDashboard({ auth, students, filters }) {
         <AdminLayout activeNavId="dashboard" showGlobalSearch>
             <div className="relative isolate min-h-full">
                 <Head>
-                    <title>Moonton SLPH Admin Dashboard</title>
+                    <title>Dashboard | MSL Philippines Admin</title>
                     <meta
                         name="description"
-                        content="Manage Moonton Student Leader Philippines registrations, approval workflow, and student leader status."
+                        content="Monitor student registrations, approvals, renewals, and account status."
                     />
                     <meta
                         property="og:title"
-                        content="Moonton SLPH Admin Dashboard"
+                        content="Dashboard | MSL Philippines Admin"
                     />
                     <meta
                         property="og:description"
-                        content="Manage Moonton Student Leader Philippines registrations, approval workflow, and student leader status."
+                        content="Monitor student registrations, approvals, renewals, and account status."
                     />
                 </Head>
 
@@ -374,10 +374,10 @@ export default function AdminDashboard({ auth, students, filters }) {
                 <div className="relative z-10 w-full space-y-6">
                     <header className="space-y-2">
                         <h1 className="text-2xl font-bold text-white sm:text-3xl">
-                            Student Account Management
+                            Dashboard
                         </h1>
                         <p className="max-w-2xl text-sm leading-6 text-gray-400">
-                            Review registrations and manage student account status.
+                            Monitor registrations, approvals, renewals, and student account status.
                         </p>
                     </header>
 

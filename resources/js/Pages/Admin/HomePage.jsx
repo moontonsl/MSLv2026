@@ -8,7 +8,7 @@ import { Head } from '@inertiajs/react';
 export default function HomePage({ carousels = [] }) {
     return (
         <AdminLayout activeNavId="home-page">
-            <Head title="Home Page Settings" />
+            <Head title="Home Page" />
             <header className="mb-6 sm:mb-8">
                 <h1 className="text-2xl font-bold text-white sm:text-3xl">Home Page</h1>
                 <p className="mt-2 text-sm leading-6 text-gray-400">

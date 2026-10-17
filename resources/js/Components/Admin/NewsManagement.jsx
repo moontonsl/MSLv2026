@@ -187,10 +187,10 @@ export default function NewsManagement({ initialNews = [] }) {
             <div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
                 <div>
                     <h1 className="mb-2 text-2xl font-bold text-white sm:text-3xl">
-                        News & Updates
+                        News Articles
                     </h1>
                     <p className="text-sm leading-6 text-gray-400">
-                        Manage articles and announcements shown on the public news page.
+                        Create and manage articles and announcements shown on the public news page.
                     </p>
                 </div>
                 <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
@@ -212,7 +212,7 @@ export default function NewsManagement({ initialNews = [] }) {
                         className={ADD_BUTTON_CLASS}
                     >
                         <Plus className="h-4 w-4" />
-                        Create News
+                        Create Article
                     </button>
                 </div>
             </div>
@@ -220,7 +220,7 @@ export default function NewsManagement({ initialNews = [] }) {
             <div className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6 md:p-8">
                 <div className="mb-6">
                     <h2 className="text-lg font-bold text-yellow-500 sm:text-xl">
-                        News Management
+                        News Articles
                     </h2>
                 </div>
 

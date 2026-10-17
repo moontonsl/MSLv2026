@@ -105,12 +105,12 @@ export default function Faq({ faqs: initialFaqs = [] }) {
 
     return (
         <AdminLayout activeNavId="faq">
-            <Head title="FAQ Settings" />
+            <Head title="FAQ" />
 
             <div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
                 <div>
                     <h1 className="mb-2 text-2xl font-bold text-white sm:text-3xl">
-                        Frequently Asked Questions
+                        FAQ
                     </h1>
                     <p className="text-sm leading-6 text-gray-400">
                         Create and organize answers to common questions about MSL Philippines.

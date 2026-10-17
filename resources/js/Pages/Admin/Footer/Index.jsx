@@ -85,9 +85,9 @@ export default function FooterIndex({ footer = {} }) {
 
     return (
         <AdminLayout activeNavId="footer" showGlobalSearch>
-            <Head title="Footer Management" />
+            <Head title="Footer Content" />
 
-            <div className="mb-6 sm:mb-8"><h1 className="text-2xl font-bold text-white sm:text-3xl">Footer Management</h1><p className="mt-2 text-sm text-gray-400">Manage the public footer content, social links, logos, and navigation sections.</p></div>
+            <div className="mb-6 sm:mb-8"><h1 className="text-2xl font-bold text-white sm:text-3xl">Footer Content</h1><p className="mt-2 text-sm text-gray-400">Manage the public footer content, social links, logos, and navigation sections.</p></div>
 
             <form onSubmit={submit} className="w-full space-y-6">
                 <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6 md:p-8">

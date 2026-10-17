@@ -11,6 +11,11 @@ function values(record) {
 
 export default function Index({ module, records, createRoute }) {
     const items = records?.data ?? records ?? [];
+    const isLegacyNews = module === 'News Management';
+    const pageTitle = isLegacyNews ? 'Legacy News Manager' : module;
+    const pageDescription = isLegacyNews
+        ? 'Review and manage news records from the legacy publishing workflow.'
+        : `Review and manage ${module.toLowerCase()} records.`;
     const editRoute = module.includes('News Management') ? 'admin.news.edit'
         : module.includes('Event Calendar') ? 'admin.events.edit'
             : module.includes('MSL Event') ? 'admin.msl-events.edit'
@@ -25,13 +30,13 @@ export default function Index({ module, records, createRoute }) {
                             : null;
 
     return (
-        <AdminLayout activeNavId="management">
-            <Head title={module} />
+        <AdminLayout activeNavId={isLegacyNews ? 'legacy-news' : 'management'}>
+            <Head title={pageTitle} />
             <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <h1 className="text-2xl font-bold text-white sm:text-3xl">{module}</h1>
+                    <h1 className="text-2xl font-bold text-white sm:text-3xl">{pageTitle}</h1>
                     <p className="mt-2 text-sm leading-6 text-gray-400">
-                        Review and manage {module.toLowerCase()} records.
+                        {pageDescription}
                     </p>
                 </div>
                 {createRoute && <Link href={route(createRoute)} className="rounded bg-amber-400 px-4 py-2 font-semibold text-black">Create</Link>}

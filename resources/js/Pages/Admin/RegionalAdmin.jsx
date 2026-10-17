@@ -258,16 +258,16 @@ export default function RegionalAdmin({ regionalAdmins }) {
 
     return (
         <AdminLayout activeNavId="regional-admin">
-            <Head title="Regional Admin" />
+            <Head title="Regional Admin Assignments" />
 
             <div className="min-w-0 w-full overflow-x-hidden">
                 <header className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
                     <div>
                         <h1 className="text-2xl font-bold tracking-tight text-[#FFFBEB] sm:text-3xl">
-                            Regional Admin
+                            Regional Admin Assignments
                         </h1>
                         <p className="mt-2 text-sm leading-6 text-gray-400">
-                            Assign regional administrators and manage their school coverage.
+                            Assign regional administrators to the regions and schools they oversee.
                         </p>
                     </div>
                     <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">

@@ -132,11 +132,11 @@ export default function Events({ events, filters = {}, showForm: initialShowForm
 
     return (
         <AdminLayout activeNavId="events" showGlobalSearch>
-            <Head title="Event Calendar" />
+            <Head title="Scheduled Events" />
             <div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
                 <div>
-                    <h1 className="mb-2 text-2xl font-bold text-white sm:text-3xl">Event Calendar</h1>
-                    <p className="text-sm text-gray-400">Manage public MSL events, schedules, and locations.</p>
+                    <h1 className="mb-2 text-2xl font-bold text-white sm:text-3xl">Scheduled Events</h1>
+                    <p className="text-sm text-gray-400">Manage event dates, locations, and schedules shown in the calendar.</p>
                 </div>
                 <div className="flex w-full flex-col gap-2 xl:flex-row xl:w-auto">
                     <form onSubmit={submitFilters} className="grid w-full grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto] xl:w-[620px]">
