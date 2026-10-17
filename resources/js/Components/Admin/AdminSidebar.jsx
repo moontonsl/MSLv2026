@@ -104,12 +104,12 @@ export default function AdminSidebar({
         ['Super Admin', 'super_admin'].includes(role);
     const permissions = auth?.permissions ?? [];
 
-    const [openGroups, setOpenGroups] = useState(() => {
+    const [openGroup, setOpenGroup] = useState(() => {
         const activeGroup = NAV_GROUPS.find(({ items }) =>
             items.some(({ id }) => id === activeId)
         );
 
-        return new Set([activeGroup?.label ?? NAV_GROUPS[0].label]);
+        return activeGroup?.label ?? NAV_GROUPS[0].label;
     });
 
     useEffect(() => {
@@ -119,27 +119,13 @@ export default function AdminSidebar({
 
         if (!activeGroup) return;
 
-        setOpenGroups((currentGroups) => {
-            if (currentGroups.has(activeGroup.label)) return currentGroups;
-
-            const nextGroups = new Set(currentGroups);
-            nextGroups.add(activeGroup.label);
-            return nextGroups;
-        });
+        setOpenGroup(activeGroup.label);
     }, [activeId]);
 
     const toggleGroup = (groupLabel) => {
-        setOpenGroups((currentGroups) => {
-            const nextGroups = new Set(currentGroups);
-
-            if (nextGroups.has(groupLabel)) {
-                nextGroups.delete(groupLabel);
-            } else {
-                nextGroups.add(groupLabel);
-            }
-
-            return nextGroups;
-        });
+        setOpenGroup((currentGroup) =>
+            currentGroup === groupLabel ? null : groupLabel
+        );
     };
 
     return (
@@ -232,7 +218,7 @@ export default function AdminSidebar({
 
                         if (visibleItems.length === 0) return null;
 
-                        const isGroupOpen = openGroups.has(groupLabel);
+                        const isGroupOpen = openGroup === groupLabel;
                         const groupId = `admin-nav-${groupLabel
                             .toLowerCase()
                             .replace(/[^a-z0-9]+/g, '-')}`;

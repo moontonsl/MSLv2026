@@ -34,6 +34,7 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShortLinkController;
 use App\Http\Controllers\Student\StudentPortalController;
+use App\Models\Faq;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -42,7 +43,13 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Home/Index');
+    return Inertia::render('Home/Index', [
+        'pinnedFaqs' => Faq::query()
+            ->where('is_active', true)
+            ->where('is_pinned', true)
+            ->orderBy('id')
+            ->get(['id', 'question', 'answer']),
+    ]);
 });
 
 Route::get('/s/{code}', [ShortLinkController::class, 'redirect'])->name('short-link.redirect');
@@ -158,7 +165,13 @@ Route::get('/CampusTournament', function () {
 })->name('campus.tournament.listing');
 
 Route::get('/Programs', function () {
-    return Inertia::render('Home/Index');
+    return Inertia::render('Home/Index', [
+        'pinnedFaqs' => Faq::query()
+            ->where('is_active', true)
+            ->where('is_pinned', true)
+            ->orderBy('id')
+            ->get(['id', 'question', 'answer']),
+    ]);
 })->name('programs');
 
 Route::get('/Partnerships', function () {
@@ -221,6 +234,8 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->middleware('admin.permission:manage_faq')->name('admin.faq.store');
     Route::put('/admin/faq/{faq}', [FaqController::class, 'update'])
         ->middleware('admin.permission:manage_faq')->name('admin.faq.update');
+    Route::patch('/admin/faq/{faq}/pin', [FaqController::class, 'updatePin'])
+        ->middleware('admin.permission:manage_faq')->name('admin.faq.pin');
     Route::delete('/admin/faq/{faq}', [FaqController::class, 'destroy'])
         ->middleware('admin.permission:manage_faq')->name('admin.faq.delete');
 
