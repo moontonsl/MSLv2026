@@ -45,7 +45,8 @@ class AdminPermissionsTest extends TestCase
                 ->where('adminUsers.0.is_super_admin', false)
                 ->where('adminUsers.1.is_super_admin', true)
                 ->where('allPermissions.0.group', 'Student operations')
-                ->where('allPermissions.12.group', 'Website content'));
+                ->where('allPermissions.12.group', 'Website content')
+                ->where('roleOptions', ['Admin', 'Content Manager', 'Regional Admin', 'Event Manager']));
     }
 
     public function test_super_admin_can_update_only_allowed_unique_permissions(): void
@@ -92,6 +93,51 @@ class AdminPermissionsTest extends TestCase
         ])->assertSessionHasErrors('permissions');
     }
 
+    public function test_super_admin_can_update_an_admin_role(): void
+    {
+        $this->signInSuperAdmin();
+        $admin = AdminUser::create([
+            'name' => 'Content Admin',
+            'email' => 'content@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'Admin',
+        ]);
+
+        $this->put(route('admin.users.role.update', $admin), [
+            'role' => 'Regional Admin',
+        ])->assertRedirect();
+
+        $this->assertSame('Regional Admin', $admin->refresh()->role);
+    }
+
+    public function test_super_admin_role_cannot_be_changed(): void
+    {
+        $superAdmin = $this->signInSuperAdmin();
+
+        $this->put(route('admin.users.role.update', $superAdmin), [
+            'role' => 'Admin',
+        ])->assertRedirect()->assertSessionHasErrors('role');
+
+        $this->assertSame('Super Admin', $superAdmin->refresh()->role);
+    }
+
+    public function test_role_update_rejects_unavailable_roles(): void
+    {
+        $this->signInSuperAdmin();
+        $admin = AdminUser::create([
+            'name' => 'Content Admin',
+            'email' => 'content@example.com',
+            'password' => Hash::make('password'),
+            'role' => 'Admin',
+        ]);
+
+        $this->put(route('admin.users.role.update', $admin), [
+            'role' => 'Super Admin',
+        ])->assertSessionHasErrors('role');
+
+        $this->assertSame('Admin', $admin->refresh()->role);
+    }
+
     public function test_admin_without_permissions_management_access_is_denied(): void
     {
         $admin = AdminUser::create([
@@ -104,5 +150,6 @@ class AdminPermissionsTest extends TestCase
 
         $this->get(route('admin.management'))->assertForbidden();
         $this->post(route('admin.users.permissions.update', $admin), ['permissions' => []])->assertForbidden();
+        $this->put(route('admin.users.role.update', $admin), ['role' => 'Regional Admin'])->assertForbidden();
     }
 }

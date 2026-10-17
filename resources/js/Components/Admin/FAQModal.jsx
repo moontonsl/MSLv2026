@@ -1,3 +1,4 @@
+import AdminFilterSelect from '@/Components/Admin/AdminFilterSelect';
 import BaseModal from "@/Components/Admin/BaseModal";
 import {
     MODAL_INPUT_CLASS,
@@ -85,7 +86,7 @@ export default function FAQModal({
                     <label htmlFor="faq-category" className={MODAL_LABEL_CLASS}>
                         Category
                     </label>
-                    <select
+                    <AdminFilterSelect
                         id="faq-category"
                         name="category"
                         value={form.category}
@@ -97,7 +98,7 @@ export default function FAQModal({
                                 {category}
                             </option>
                         ))}
-                    </select>
+                    </AdminFilterSelect>
                 </div>
 
                 <div>

@@ -1,4 +1,5 @@
 import AdminLayout from '@/Layouts/AdminLayout';
+import AdminFilterSelect from '@/Components/Admin/AdminFilterSelect';
 import { Head, Link, router } from '@inertiajs/react';
 import { ClipboardList, Search } from 'lucide-react';
 import { useState } from 'react';
@@ -51,13 +52,13 @@ export default function AuditLogs({ logs, actions = [], admins = [], filters = {
 
     return <AdminLayout activeNavId="audit-logs" showGlobalSearch>
         <Head title="Audit Logs" />
-        <div className="mb-6 flex flex-col gap-4 sm:mb-8 lg:flex-row lg:items-end lg:justify-between">
-            <div><h1 className="flex items-center gap-3 text-2xl font-bold text-white sm:text-3xl"><ClipboardList className="h-7 w-7 text-yellow-500" />Audit Logs</h1><p className="mt-2 text-sm text-gray-400">Review administrator actions without exposing sensitive form payloads.</p></div>
+        <div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
+            <div><h1 className="text-2xl font-bold sm:text-3xl">Audit Logs</h1><p className="mt-2 text-sm text-gray-400">Review administrator actions without exposing sensitive form payloads.</p></div>
             <form onSubmit={submitFilters} className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:w-auto lg:grid-cols-3">
                 <label htmlFor="audit-search" className="sr-only">Search audit logs</label>
                 <div className="relative sm:col-span-2 lg:col-span-1"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" /><input id="audit-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search admin or action" className="min-h-[42px] w-full rounded-md border border-neutral-800 bg-[#1a1a1a] pl-9 pr-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" /></div>
-                <select value={routeName} onChange={(event) => setRouteName(event.target.value)} className="min-h-[42px] rounded-md border border-neutral-800 bg-[#1a1a1a] px-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"><option value="">All actions</option>{actions.map((action) => <option key={action} value={action}>{action}</option>)}</select>
-                <select value={adminId} onChange={(event) => setAdminId(event.target.value)} className="min-h-[42px] rounded-md border border-neutral-800 bg-[#1a1a1a] px-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-yellow-500"><option value="">All administrators</option>{admins.map((admin) => <option key={admin.id} value={admin.id}>{admin.name}</option>)}</select>
+                <AdminFilterSelect value={routeName} onChange={(event) => setRouteName(event.target.value)} aria-label="Filter by action"><option value="">All actions</option>{actions.map((action) => <option key={action} value={action}>{action}</option>)}</AdminFilterSelect>
+                <AdminFilterSelect value={adminId} onChange={(event) => setAdminId(event.target.value)} aria-label="Filter by administrator"><option value="">All administrators</option>{admins.map((admin) => <option key={admin.id} value={admin.id}>{admin.name}</option>)}</AdminFilterSelect>
                 <input aria-label="From date" type="date" value={from} onChange={(event) => setFrom(event.target.value)} className="min-h-[42px] rounded-md border border-neutral-800 bg-[#1a1a1a] px-3 text-sm text-white [color-scheme:dark] focus:outline-none focus:ring-2 focus:ring-yellow-500" />
                 <input aria-label="To date" type="date" value={to} onChange={(event) => setTo(event.target.value)} className="min-h-[42px] rounded-md border border-neutral-800 bg-[#1a1a1a] px-3 text-sm text-white [color-scheme:dark] focus:outline-none focus:ring-2 focus:ring-yellow-500" />
                 <div className="flex gap-2"><button type="submit" className="min-h-[42px] flex-1 rounded-md bg-yellow-500 px-4 text-sm font-bold text-black hover:bg-yellow-400">Filter</button>{hasFilters && <button type="button" onClick={clearFilters} className="min-h-[42px] rounded-md border border-neutral-700 px-4 text-sm text-gray-300 hover:border-neutral-500 hover:text-white">Clear</button>}</div>

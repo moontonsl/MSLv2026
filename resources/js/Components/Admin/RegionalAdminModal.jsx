@@ -1,3 +1,4 @@
+import AdminFilterSelect from '@/Components/Admin/AdminFilterSelect';
 import BaseModal from "@/Components/Admin/BaseModal";
 import RegionalAdminSchoolConfirmationModal from "@/Components/Admin/RegionalAdminSchoolConfirmationModal";
 
@@ -118,7 +119,7 @@ function SelectField({
 }) {
     return (
         <div className="relative">
-            <select
+            <AdminFilterSelect
                 id={id}
                 value={value}
                 onChange={onChange}
@@ -138,7 +139,7 @@ function SelectField({
                 }}
             >
                 {children}
-            </select>
+            </AdminFilterSelect>
 
             <ChevronDown
                 aria-hidden="true"

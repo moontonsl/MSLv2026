@@ -82,7 +82,7 @@ export default function StudentLeaders({ slUsers, students, filters = {} }) {
         <AdminLayout activeNavId="sl-management" showGlobalSearch>
             <Head title="Student Leaders" />
 
-            <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+            <div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
                 <div>
                     <h1 className="mb-2 text-2xl font-bold text-white sm:text-3xl">Student Leaders</h1>
                     <p className="text-sm text-gray-400">Manage Student Leader assignments and eligible active students.</p>

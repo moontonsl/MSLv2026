@@ -50,12 +50,12 @@ export default function PendingUsers({ users, filters = {} }) {
 
     return (
         <AdminLayout activeNavId="pending-users" showGlobalSearch>
-            <Head title="Pending Users" />
+            <Head title="Pending Account Approvals" />
 
-            <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+            <div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
                 <div>
-                    <h1 className="mb-2 text-2xl font-bold text-white sm:text-3xl">Pending Users</h1>
-                    <p className="text-sm text-gray-400">Accounts awaiting email or initial verification.</p>
+                    <h1 className="mb-2 text-2xl font-bold text-white sm:text-3xl">Pending Account Approvals</h1>
+                    <p className="text-sm text-gray-400">Review accounts awaiting email or initial verification.</p>
                 </div>
                 <form onSubmit={submitSearch} className="flex w-full gap-2 sm:w-auto">
                     <label htmlFor="pending-users-search" className="sr-only">Search pending users</label>

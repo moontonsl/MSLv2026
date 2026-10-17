@@ -1,3 +1,4 @@
+import AdminFilterSelect from '@/Components/Admin/AdminFilterSelect';
 import CommunityVoiceModal from '@/Components/Admin/CommunityVoiceModal';
 import DeleteConfirmationModal from '@/Components/Admin/DeleteConfirmationModal';
 import SuccessModal from '@/Components/Admin/SuccessModal';
@@ -111,7 +112,7 @@ export default function CommunityVoiceSection() {
                             <AdminFieldLabel htmlFor="community-school" required>
                                 School
                             </AdminFieldLabel>
-                            <select id="community-school" className={ADMIN_SELECT_CLASS} defaultValue="">
+                            <AdminFilterSelect id="community-school" className={ADMIN_SELECT_CLASS} defaultValue="">
                                 <option value="" disabled>
                                     Select school
                                 </option>
@@ -120,7 +121,7 @@ export default function CommunityVoiceSection() {
                                         {school}
                                     </option>
                                 ))}
-                            </select>
+                            </AdminFilterSelect>
                         </div>
                     </div>
 

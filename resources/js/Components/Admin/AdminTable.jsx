@@ -2,8 +2,6 @@ import { MODAL_ACTION_ICON_CLASS } from "@/Components/Admin/adminModalFormStyles
 import { Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 
-const ACCENT = "#FBBF24";
-
 const SEARCH_CLASS =
     "w-full min-h-[44px] rounded-md border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-10 pr-4 text-base text-white placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none md:text-sm";
 
@@ -57,10 +55,7 @@ export default function AdminTable({
     return (
         <div className="mb-8 w-full rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
             <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <h3
-                    className="text-lg font-bold sm:text-xl"
-                    style={{ color: ACCENT }}
-                >
+                <h3 className="text-lg font-bold text-yellow-500 sm:text-xl">
                     {title}
                 </h3>
                 <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
@@ -77,8 +72,7 @@ export default function AdminTable({
                     <button
                         type="button"
                         onClick={onAdd}
-                        className={ADD_BUTTON_CLASS}
-                        style={{ backgroundColor: ACCENT }}
+                        className={`${ADD_BUTTON_CLASS} bg-yellow-500 transition-colors hover:bg-yellow-400`}
                     >
                         <Plus className="h-4 w-4" />
                         Add {entityName}

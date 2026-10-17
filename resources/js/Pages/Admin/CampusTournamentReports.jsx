@@ -11,7 +11,7 @@ export default function CampusTournamentReports({ tournaments }) {
         <AdminLayout activeNavId="campus-reports">
             <Head title="Campus Tournament Reports" />
 
-            <div className="mx-auto max-w-5xl space-y-6">
+            <div className="w-full space-y-6">
                 <div>
                     <h1 className="text-2xl font-bold text-white">
                         Campus Tournament Reports
