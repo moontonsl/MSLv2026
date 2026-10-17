@@ -447,6 +447,10 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->middleware('admin.permission:access_admin_management')
         ->name('admin.users.permissions.update');
 
+    Route::put('/admin/users/{id}/role', [AdminManagementController::class, 'updateRole'])
+        ->middleware('admin.permission:access_admin_management')
+        ->name('admin.users.role.update');
+
     Route::get('/admin/administrator-accounts', [AdminAccountController::class, 'index'])
         ->middleware('admin.permission:manage_admin_accounts')
         ->name('admin.accounts.index');

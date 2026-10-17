@@ -4,6 +4,7 @@ import Toast from "./components/Toast";
 import ConfirmModal from "./components/ConfirmModal";
 import AdminLayout from "@/Layouts/AdminLayout";
 import AdminFilterSelect from "@/Components/Admin/AdminFilterSelect";
+import DashboardStudentMobileList from "./components/DashboardStudentMobileList";
 import {
     Users,
     Search,
@@ -604,8 +605,8 @@ export default function AdminDashboard({ auth, students, filters }) {
                     </section>
 
                     {/* Registration results */}
-                    <div className="overflow-hidden rounded-2xl border border-white/10 bg-zinc-950 shadow-2xl">
-                            <div className="overflow-x-auto">
+                    <div className="admin-dashboard-results-table overflow-hidden rounded-2xl border border-white/10 bg-zinc-950 shadow-2xl">
+                            <div className="hidden overflow-x-auto md:block">
                                 <table className="w-full text-left border-collapse">
                                     <thead>
                                         <tr className="bg-zinc-900/60 border-b border-white/10 text-xs font-bold uppercase tracking-wider text-gray-400">
@@ -784,6 +785,11 @@ export default function AdminDashboard({ auth, students, filters }) {
                                     </tbody>
                                 </table>
                             </div>
+
+                            <DashboardStudentMobileList
+                                students={paginatedStudents}
+                                onReview={setSelectedStudent}
+                            />
 
                             {/* Premium Pagination Footer */}
                             {totalCount > 0 && (
