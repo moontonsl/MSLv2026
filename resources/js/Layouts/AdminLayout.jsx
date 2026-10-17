@@ -1,4 +1,3 @@
-import AdminGlobalSearch from '@/Components/Admin/AdminGlobalSearch';
 import AdminPageSkeleton from '@/Components/Admin/AdminPageSkeleton';
 import AdminSidebar from '@/Components/Admin/AdminSidebar';
 import AdminUserProfile from '@/Components/Admin/AdminUserProfile';
@@ -9,7 +8,6 @@ import { useEffect, useState } from 'react';
 export default function AdminLayout({
     children,
     activeNavId = 'account-creation',
-    showGlobalSearch = false,
 }) {
     const [isLoading, setIsLoading] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -31,7 +29,7 @@ export default function AdminLayout({
         <div className="min-h-screen overflow-x-hidden bg-[#0A0A0A] text-white">
             <AdminSidebar activeId={activeNavId} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
             <div className="ml-0 flex min-h-screen min-w-0 flex-1 flex-col overflow-hidden lg:ml-64">
-                <header className={`flex shrink-0 items-center border-b border-neutral-800 px-4 py-4 sm:px-6 lg:px-8 lg:py-5 ${showGlobalSearch ? 'gap-6' : 'justify-end'}`}>
+                <header className="relative z-30 flex h-20 shrink-0 items-center justify-end border-b border-neutral-800 bg-[#0A0A0A] px-4 sm:px-6 lg:px-8">
                     <button
                         type="button"
                         aria-label="Open admin navigation"
@@ -41,7 +39,6 @@ export default function AdminLayout({
                     >
                         <Menu className="h-5 w-5" />
                     </button>
-                    {showGlobalSearch ? <AdminGlobalSearch /> : null}
                     <AdminUserProfile />
                 </header>
                 <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
