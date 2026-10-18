@@ -57,12 +57,14 @@ export default function TeamInviteCodeModal({ isOpen, onClose, inviteCode }) {
                     Send this code to your team members so they can join!
                 </p>
 
-                <div className="mt-5 flex min-h-[44px] items-center justify-between gap-3 rounded-lg border border-neutral-700 bg-[#0a0a0a] px-4 py-3">
-                    <span className="text-base font-bold text-yellow-500">{inviteCode}</span>
+                <div className="mt-5 flex items-center gap-2">
+                    <div className="flex min-h-[44px] flex-1 items-center justify-center rounded-lg border border-neutral-700 bg-[#0a0a0a] px-4 py-3">
+                        <span className="text-base font-bold text-yellow-500">{inviteCode}</span>
+                    </div>
                     <button
                         type="button"
                         onClick={handleCopy}
-                        className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-yellow-500 transition-colors hover:bg-yellow-500/10"
+                        className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg border border-neutral-700 text-yellow-500 transition-colors hover:bg-yellow-500/10"
                         aria-label="Copy invite code"
                     >
                         <Copy className="h-4 w-4" />

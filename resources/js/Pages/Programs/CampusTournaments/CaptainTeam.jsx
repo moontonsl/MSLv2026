@@ -1,6 +1,7 @@
 import CampusTournamentPageHeader from '@/Components/CampusTournament/CampusTournamentPageHeader';
 import CaptainTeamCard from '@/Components/CampusTournament/CaptainTeamCard';
 import TeamInviteCodeModal from '@/Components/CampusTournament/TeamInviteCodeModal';
+import TeamNoticeBanner from '@/Components/CampusTournament/TeamNoticeBanner';
 import { ROLE_SLOTS } from '@/data/campusTournamentCaptainData';
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, Link, router } from '@inertiajs/react';
@@ -38,7 +39,7 @@ export default function CaptainTeam({ team }) {
             inviteCode: inviteCode || undefined,
             players: (team.players ?? []).map((player) => ({
                 ...player,
-                id: `${player.status}-${player.id}`,
+                id: `${player.status}-${player.id}-${player.role}`,
             })),
         }),
         [team, inviteCode],
@@ -121,7 +122,23 @@ export default function CaptainTeam({ team }) {
         });
     };
 
-    const canInvite = team.status !== 'approved' && (team.availableLaneRoles ?? []).length > 0;
+    const vacatedPlayers = useMemo(
+        () =>
+            (team.players ?? []).filter(
+                (player) => player.status === 'declined' || player.status === 'withdrawn',
+            ),
+        [team.players],
+    );
+
+    const canInvite =
+        (team.status === 'pending' || team.status === 'incomplete') &&
+        (team.availableLaneRoles ?? []).length > 0;
+
+    const handleEdit = () => {
+        document
+            .getElementById(canInvite ? 'invite-player' : 'pending-invitations')
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
 
     const handleGenerateCode = () => {
         const nextCode = inviteCode || createInviteCode();
@@ -159,16 +176,37 @@ export default function CaptainTeam({ team }) {
                         </div>
                     ) : null}
 
+                    {team.status === 'disqualified' ? (
+                        <TeamNoticeBanner label="Notice">
+                            Your team was disqualified due to incomplete members.
+                        </TeamNoticeBanner>
+                    ) : (
+                        vacatedPlayers.map((player) => (
+                            <TeamNoticeBanner
+                                key={`${player.status}-${player.id}-${player.role}`}
+                                label="Action Required"
+                            >
+                                <span className="font-semibold text-white">
+                                    {player.name}
+                                </span>{' '}
+                                {player.status === 'declined'
+                                    ? 'declined the invitation.'
+                                    : 'left your team.'}{' '}
+                                Please edit your roster to replace them.
+                            </TeamNoticeBanner>
+                        ))
+                    )}
+
                     <CaptainTeamCard
                         team={rosterTeam}
                         showInviteCode
-                        onEdit={() => router.visit('/Tournament/CampusTournamentReg')}
+                        onEdit={handleEdit}
                         onGenerateCode={handleGenerateCode}
                         onCopyCode={handleCopyCode}
                     />
 
                     {pendingInvites.length > 0 ? (
-                        <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
+                        <section id="pending-invitations" className="scroll-mt-24 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
                             <div className="mb-4 flex items-start justify-between gap-3">
                                 <h2 className="text-lg font-bold text-yellow-500 sm:text-xl">
                                     Pending Invitations
@@ -216,7 +254,7 @@ export default function CaptainTeam({ team }) {
                     ) : null}
 
                     {canInvite ? (
-                        <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
+                        <section id="invite-player" className="scroll-mt-24 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
                             <h2 className="text-lg font-bold text-yellow-500 sm:text-xl">
                                 Invite a Verified Campus Player
                             </h2>

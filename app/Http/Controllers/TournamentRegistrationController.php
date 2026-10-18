@@ -71,11 +71,16 @@ class TournamentRegistrationController extends Controller
         $team = TournamentTeam::query()
             ->where('captain_user_id', $request->user()->id)
             ->where('formation_method', TeamFormationMethod::Premade)
-            ->whereIn('status', [TeamStatus::Assembling, TeamStatus::Registered])
+            ->where(fn ($query) => $query
+                ->whereIn('status', [TeamStatus::Assembling, TeamStatus::Registered])
+                ->orWhere(fn ($query) => $query
+                    ->where('status', TeamStatus::NotQualified)
+                    ->whereHas('tournament', fn ($query) => $query
+                        ->where(fn ($query) => $query->whereNull('ends_at')->orWhere('ends_at', '>', now())))))
             ->whereHas('tournament', fn ($query) => $query
                 ->where('approval_status', CampusTournamentApprovalStatus::Approved)
                 ->whereNull('cancelled_at'))
-            ->with(['tournament.campus.institution', 'captain', 'activeParticipants.user', 'invitations.invitedUser'])
+            ->with(['tournament.campus.institution', 'captain', 'participants.user', 'invitations.invitedUser'])
             ->latest('id')
             ->first();
 
@@ -94,7 +99,8 @@ class TournamentRegistrationController extends Controller
                 'expiresAt' => $invitation->expires_at?->toIso8601String(),
             ])->values();
 
-        $participants = $team->activeParticipants
+        $participants = $team->participants
+            ->where('status', ParticipantStatus::Active)
             ->sortByDesc(fn (TournamentParticipant $participant) => $participant->user_id === $team->captain_user_id)
             ->map(fn (TournamentParticipant $participant) => [
                 ...$this->player($participant->user),
@@ -104,15 +110,50 @@ class TournamentRegistrationController extends Controller
 
         $occupiedRoles = $participants->pluck('role')->merge($pendingInvitations->pluck('role'))->filter()->all();
 
+        // Lanes vacated by a decline or a withdrawal stay visible until the captain refills them.
+        $declined = $team->invitations
+            ->where('status', InvitationStatus::Declined)
+            ->map(fn (TournamentTeamInvitation $invitation) => [
+                ...$this->player($invitation->invitedUser),
+                'role' => $invitation->intended_lane_role_code,
+                'status' => 'declined',
+                'at' => $invitation->updated_at,
+            ]);
+        $withdrawn = $team->participants
+            ->where('status', ParticipantStatus::Withdrawn)
+            ->where('user_id', '!=', $team->captain_user_id)
+            ->map(fn (TournamentParticipant $participant) => [
+                ...$this->player($participant->user),
+                'role' => $participant->assigned_lane_role_code,
+                'status' => 'withdrawn',
+                'at' => $participant->withdrawn_at ?? $participant->updated_at,
+            ]);
+        $vacated = $declined->concat($withdrawn)
+            ->filter(fn (array $entry) => $entry['role'] && ! in_array($entry['role'], $occupiedRoles, true))
+            ->sortByDesc('at')
+            ->unique('role')
+            ->map(fn (array $entry) => collect($entry)->except('at')->all())
+            ->values();
+
+        $status = match (true) {
+            $team->status === TeamStatus::Registered => 'registered',
+            in_array($team->status, [TeamStatus::NotQualified, TeamStatus::Withdrawn], true) => 'disqualified',
+            $vacated->isNotEmpty() => 'incomplete',
+            default => 'pending',
+        };
+
         return Inertia::render('Programs/CampusTournaments/CaptainTeam', [
             'team' => [
                 'id' => $team->id,
                 'tournamentId' => $team->tournament_id,
                 'name' => $team->name,
                 'school' => $team->tournament->campus?->institution?->name ?? $team->tournament->campus?->name,
-                'status' => $team->status === TeamStatus::Registered ? 'approved' : 'assembling',
+                'status' => $status,
                 'captain' => $participants->firstWhere('id', $team->captain_user_id),
-                'players' => $participants->where('id', '!=', $team->captain_user_id)->concat($pendingInvitations)->values(),
+                'players' => $participants->where('id', '!=', $team->captain_user_id)
+                    ->concat($pendingInvitations)
+                    ->concat($vacated)
+                    ->values(),
                 'availableLaneRoles' => array_values(array_diff(TournamentRegistrationGuard::LANE_ROLE_CODES, $occupiedRoles)),
             ],
         ]);
