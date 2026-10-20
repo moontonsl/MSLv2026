@@ -13,15 +13,15 @@ use Inertia\Response;
 class AuthController extends Controller
 {
     public function showLogin(): Response
-{
-    $admin = Auth::guard('admin')->user();
+    {
+        $admin = Auth::guard('admin')->user();
 
-    return Inertia::render('Auth/AdminLogin', [
-        'authenticatedAdmin' => $admin
-            ? ['name' => $admin->name, 'email' => $admin->email]
-            : null,
-    ]);
-}
+        return Inertia::render('Admin/Auth/Login', [
+            'authenticatedAdmin' => $admin
+                ? ['name' => $admin->name, 'email' => $admin->email]
+                : null,
+        ]);
+    }
 
     public function login(Request $request): RedirectResponse
     {
