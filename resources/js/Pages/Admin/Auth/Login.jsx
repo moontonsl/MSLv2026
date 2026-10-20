@@ -1,15 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ShieldCheck, Mail, Lock, Eye, EyeOff, ArrowLeft, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function AdminLogin({ errors = {}, status, main_site_url }) {
     const [showPassword, setShowPassword] = useState(false);
+    const cursorGlowRef = useRef(null);
+    const cursorSpotlightRef = useRef(null);
 
     const { data, setData, post, processing, reset } = useForm({
         email: '',
         password: '',
         remember: false,
     });
+
+    useEffect(() => {
+        // Only run on devices with a fine pointer (mouse)
+        if (window.matchMedia('(pointer: coarse)').matches) {
+            return;
+        }
+
+        let animationFrameId;
+
+        const handleMouseMove = (e) => {
+            const { clientX: x, clientY: y } = e;
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = requestAnimationFrame(() => {
+                if (cursorGlowRef.current) {
+                    cursorGlowRef.current.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+                    cursorGlowRef.current.style.opacity = '1';
+                }
+                if (cursorSpotlightRef.current) {
+                    cursorSpotlightRef.current.style.background = `radial-gradient(650px circle at ${x}px ${y}px, rgba(245, 158, 11, 0.12), transparent 75%)`;
+                    cursorSpotlightRef.current.style.opacity = '1';
+                }
+            });
+        };
+
+        const handleMouseLeave = () => {
+            if (cursorGlowRef.current) cursorGlowRef.current.style.opacity = '0';
+            if (cursorSpotlightRef.current) cursorSpotlightRef.current.style.opacity = '0';
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseleave', handleMouseLeave);
+
+        return () => {
+            cancelAnimationFrame(animationFrameId);
+            window.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseleave', handleMouseLeave);
+        };
+    }, []);
 
     const submit = (event) => {
         event.preventDefault();
@@ -21,6 +61,29 @@ export default function AdminLogin({ errors = {}, status, main_site_url }) {
     return (
         <div className="relative min-h-screen w-full flex items-center justify-center bg-[#070709] text-white selection:bg-brand-500 selection:text-black overflow-hidden px-4 py-8">
             <Head title="Admin Portal Login | MSL Philippines" />
+
+            {/* Interactive Cursor Ambient Spotlight */}
+            <div
+                ref={cursorSpotlightRef}
+                className="fixed inset-0 pointer-events-none z-0 transition-opacity duration-300 opacity-0"
+            />
+
+            {/* Glowing Pointer Following Mouse */}
+            <div
+                ref={cursorGlowRef}
+                className="fixed top-0 left-0 pointer-events-none z-50 opacity-0 transition-opacity duration-300 will-change-transform"
+            >
+                <div
+                    className="-translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none"
+                    style={{
+                        width: '32px',
+                        height: '32px',
+                        background: 'radial-gradient(circle, rgba(251, 191, 36, 0.9) 0%, rgba(245, 158, 11, 0.4) 45%, transparent 75%)',
+                        boxShadow: '0 0 24px 8px rgba(245, 158, 11, 0.55), 0 0 50px 18px rgba(245, 158, 11, 0.25)',
+                        mixBlendMode: 'screen',
+                    }}
+                />
+            </div>
 
             {/* Ambient Lighting & Esports Glow Effects */}
             <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-gradient-to-b from-amber-500/15 via-brand-500/5 to-transparent blur-[120px] pointer-events-none rounded-full" />
