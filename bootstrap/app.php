@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->redirectGuestsTo(function (Request $request): string {
-            $adminDomain = env('ADMIN_DOMAIN');
+            $adminDomain = config('app.admin_domain') ?: env('ADMIN_DOMAIN');
             $isAdminHost = $adminDomain && $request->getHost() === $adminDomain;
 
             return $isAdminHost || $request->is('admin/*') || $request->is('admin') || $request->is('Oppo-settings')

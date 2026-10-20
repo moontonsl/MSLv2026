@@ -195,7 +195,7 @@ Route::get('/admin', function () {
 });
 
 // Admin Subdomain Routing (e.g. admin.moontonslph.org)
-$adminDomain = env('ADMIN_DOMAIN');
+$adminDomain = config('app.admin_domain') ?: env('ADMIN_DOMAIN');
 if (!empty($adminDomain)) {
     Route::domain($adminDomain)->group(function () {
         Route::get('/', function () {
