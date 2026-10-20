@@ -335,7 +335,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                 <div className="relative z-[61] flex shrink-0 items-center justify-end">
                     {!loggedIn ? (
                         <Link
-                            href="/Login"
+                            href="/login"
                             className="inline-flex items-center justify-center"
                             aria-label="Log in"
                         >

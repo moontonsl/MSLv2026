@@ -82,6 +82,7 @@ Route::get('/About', function () {
     return Inertia::render('About');
 })->name('about');
 Route::redirect('/about', '/About');
+Route::redirect('/Login', '/login');
 
 Route::get('/report-violation', function () {
     return Inertia::render('SafeSpaces/ReportViolation');
