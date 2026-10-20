@@ -13,7 +13,6 @@ import {
     Search,
     Shield,
     ShieldCheck,
-    Sparkles,
     Trophy,
     Undo2,
     UserCog,
@@ -135,7 +134,6 @@ export default function Management({
     const [savedPermissions, setSavedPermissions] = useState([]);
     const [selectedRole, setSelectedRole] = useState(roleOptions[0] ?? 'Admin');
     const [savedRole, setSavedRole] = useState(roleOptions[0] ?? 'Admin');
-    const [appliedPresetNotice, setAppliedPresetNotice] = useState(null);
     const [saving, setSaving] = useState(false);
     const [saveMessage, setSaveMessage] = useState(null);
 
@@ -179,7 +177,6 @@ export default function Management({
         setSelectedRole(currentRole);
         setSavedRole(currentRole);
 
-        setAppliedPresetNotice(null);
         setSaveMessage(null);
     }, [selectedUser?.id]);
 
@@ -242,28 +239,16 @@ export default function Management({
                 ? prev.filter((id) => id !== permissionId)
                 : [...prev, permissionId]
         );
-        setAppliedPresetNotice(null);
-    };
-
-    const applyPreset = (preset) => {
-        if (isSuperAdmin) return;
-        const validIds = allPermissions.map((p) => p.id);
-        const presetIds = preset.permissions.filter((id) => validIds.includes(id));
-        setSelectedPermissions(presetIds);
-        setAppliedPresetNotice(preset.name);
-        setSaveMessage(null);
     };
 
     const selectAll = () => {
         if (isSuperAdmin) return;
         setSelectedPermissions(allPermissions.map((p) => p.id));
-        setAppliedPresetNotice('Full Platform Grants');
     };
 
     const clearAll = () => {
         if (isSuperAdmin) return;
         setSelectedPermissions([]);
-        setAppliedPresetNotice(null);
     };
 
     const toggleGroup = (groupName) => {
@@ -276,13 +261,11 @@ export default function Management({
         } else {
             setSelectedPermissions((prev) => Array.from(new Set([...prev, ...groupPermIds])));
         }
-        setAppliedPresetNotice(null);
     };
 
     const discardChanges = () => {
         setSelectedPermissions(savedPermissions);
         setSelectedRole(savedRole);
-        setAppliedPresetNotice(null);
         setSaveMessage(null);
     };
 
@@ -335,7 +318,6 @@ export default function Management({
 
         Promise.all(promises)
             .then(() => {
-                setAppliedPresetNotice(null);
                 setSaveMessage({
                     type: 'success',
                     text: `Account settings for ${selectedUser.name} saved successfully.`,
@@ -688,55 +670,13 @@ export default function Management({
                                 </div>
 
                                 {/* Super Admin Explanation Notice */}
-                                {isSuperAdmin ? (
+                                {isSuperAdmin && (
                                     <div className="mt-5 rounded-2xl border border-amber-400/20 bg-amber-400/[0.06] p-4 sm:p-5 text-xs text-amber-200/90 leading-relaxed">
                                         <div className="flex items-start gap-3">
                                             <Crown className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
                                             <div>
                                                 <strong className="text-amber-300">Full Platform Bypass:</strong> This root account possesses unconditional authorization across all admin modules, bypasses individual permission gates, and cannot be restricted. The matrix below displays active capabilities in read-only audit mode.
                                             </div>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    /* Quick Role Presets Toolbar for Custom Admins */
-                                    <div className="mt-6 border-t border-white/10 pt-5">
-                                        <div className="flex items-center justify-between mb-3.5">
-                                            <div className="flex items-center gap-2">
-                                                <Sparkles className="h-4 w-4 text-amber-400" />
-                                                <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400">
-                                                    1-Click Role Presets (Templates)
-                                                </h3>
-                                            </div>
-                                            {appliedPresetNotice && (
-                                                <span className="text-[11px] font-semibold text-emerald-400 animate-pulse">
-                                                    ✓ Applied template: {appliedPresetNotice}
-                                                </span>
-                                            )}
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-                                            {rolePresets.map((preset) => {
-                                                return (
-                                                    <button
-                                                        key={preset.id}
-                                                        type="button"
-                                                        onClick={() => applyPreset(preset)}
-                                                        className="group flex items-start gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-3 sm:p-3.5 text-left transition-all hover:border-amber-400/50 hover:bg-white/[0.06]"
-                                                    >
-                                                        <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-amber-400 group-hover:bg-amber-400 group-hover:text-black transition-colors">
-                                                            <Sparkles className="h-3.5 w-3.5" />
-                                                        </div>
-                                                        <div className="min-w-0">
-                                                            <p className="truncate text-xs font-bold text-white group-hover:text-amber-400">
-                                                                {preset.name}
-                                                            </p>
-                                                            <p className="line-clamp-1 text-[10px] text-gray-400">
-                                                                {preset.permissions.length} capabilities
-                                                            </p>
-                                                        </div>
-                                                    </button>
-                                                );
-                                            })}
                                         </div>
                                     </div>
                                 )}
