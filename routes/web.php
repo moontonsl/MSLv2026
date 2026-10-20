@@ -43,6 +43,29 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
+// Admin Subdomain Routing (e.g. admin.moontonslph.org)
+$adminDomain = config('app.admin_domain') ?: env('ADMIN_DOMAIN');
+if (!empty($adminDomain)) {
+    Route::domain($adminDomain)->group(function () {
+        Route::get('/', function () {
+            if (auth()->guard('admin')->check()) {
+                return redirect()->route('admin.dashboard');
+            }
+            return redirect()->route('admin.login');
+        });
+
+        Route::get('/admin', function () {
+            return redirect('/');
+        });
+
+        Route::middleware('guest:admin')->group(function () {
+            Route::get('/login', [AdminAuthController::class, 'showLogin']);
+            Route::post('/login', [AdminAuthController::class, 'login'])
+                ->middleware('throttle:10,1');
+        });
+    });
+}
+
 Route::get('/', function () {
     return Inertia::render('Home/Index', [
         'pinnedFaqs' => Faq::query()
@@ -194,24 +217,7 @@ Route::get('/admin', function () {
     return redirect()->route('admin.login');
 });
 
-// Admin Subdomain Routing (e.g. admin.moontonslph.org)
-$adminDomain = config('app.admin_domain') ?: env('ADMIN_DOMAIN');
-if (!empty($adminDomain)) {
-    Route::domain($adminDomain)->group(function () {
-        Route::get('/', function () {
-            if (auth()->guard('admin')->check()) {
-                return redirect()->route('admin.dashboard');
-            }
-            return redirect()->route('admin.login');
-        });
 
-        Route::middleware('guest:admin')->group(function () {
-            Route::get('/login', [AdminAuthController::class, 'showLogin']);
-            Route::post('/login', [AdminAuthController::class, 'login'])
-                ->middleware('throttle:10,1');
-        });
-    });
-}
 
 Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])
     ->name('admin.login');
