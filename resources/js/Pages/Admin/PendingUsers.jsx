@@ -170,13 +170,13 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
 
     return (
         <AdminLayout activeNavId="pending-users" showGlobalSearch>
-            <Head title="Pending Queue | Student Verification" />
+            <Head title="Pending Verification | Student Verification" />
 
             {/* Header Section */}
             <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                     <div className="flex items-center gap-2.5">
-                        <h1 className="text-2xl font-black tracking-tight text-white sm:text-3xl">Pending Queue</h1>
+                        <h1 className="text-2xl font-black tracking-tight text-white sm:text-3xl">Pending Verification</h1>
                         <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-2.5 py-0.5 text-xs font-bold text-amber-400">
                             {stats.all ?? items.length} awaiting review
                         </span>
