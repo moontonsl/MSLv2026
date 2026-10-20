@@ -14,25 +14,89 @@ class StudentLeaderController extends Controller
     public function index(Request $request): Response
     {
         $search = $request->string('search')->toString();
+        $region = $request->string('region')->toString();
+        $tab = $request->string('tab', 'leaders')->toString();
 
-        $slUsers = $this->search($this->studentLeadersQuery(), $search)
-            ->latest('created_at')
-            ->paginate(20, ['*'], 'sl_page')
+        $slQuery = $this->studentLeadersQuery();
+        $studentQuery = $this->eligibleStudentsQuery();
+
+        if ($region !== '') {
+            $slQuery->where('region', $region);
+            $studentQuery->where('region', $region);
+        }
+
+        $slUsers = $this->search($slQuery, $search)
+            ->latest('updated_at')
+            ->paginate(15, ['*'], 'sl_page')
             ->withQueryString();
 
-        $students = $this->search($this->eligibleStudentsQuery(), $search)
+        $students = $this->search($studentQuery, $search)
             ->latest('created_at')
-            ->paginate(20, ['*'], 'student_page')
+            ->paginate(15, ['*'], 'student_page')
             ->withQueryString();
+
+        $stats = [
+            'total_leaders' => User::query()->where('user_type', 'Student Leader')->count(),
+            'total_students' => User::query()->where('user_type', 'Student')->where('status', 'active')->count(),
+            'total_campuses' => User::query()->where('user_type', 'Student Leader')->whereNotNull('university')->distinct('university')->count('university'),
+            'total_regions' => User::query()->where('user_type', 'Student Leader')->whereNotNull('region')->distinct('region')->count('region'),
+        ];
+
+        $regionsList = User::query()
+            ->whereNotNull('region')
+            ->where('region', '!=', '')
+            ->distinct()
+            ->pluck('region')
+            ->sort()
+            ->values();
+
+        $campusBreakdown = User::query()
+            ->where('user_type', 'Student Leader')
+            ->whereNotNull('university')
+            ->where('university', '!=', '')
+            ->selectRaw('university, count(*) as leaders_count, max(region) as region')
+            ->groupBy('university')
+            ->orderByDesc('leaders_count')
+            ->get();
+
+        $regionBreakdown = User::query()
+            ->where('user_type', 'Student Leader')
+            ->whereNotNull('region')
+            ->where('region', '!=', '')
+            ->selectRaw('region, count(*) as leaders_count')
+            ->groupBy('region')
+            ->orderByDesc('leaders_count')
+            ->get();
+
+        $allLeaders = User::query()
+            ->where('user_type', 'Student Leader')
+            ->select($this->columns())
+            ->latest('updated_at')
+            ->get();
+
+        $institutions = \App\Models\Institution::query()
+            ->select(['name', 'region'])
+            ->orderBy('name')
+            ->get();
 
         return Inertia::render('Admin/StudentLeaders', [
             'slUsers' => $slUsers,
             'students' => $students,
-            'filters' => $request->only('search'),
+            'filters' => [
+                'search' => $search,
+                'region' => $region,
+                'tab' => $tab,
+            ],
+            'stats' => $stats,
+            'regionsList' => $regionsList,
+            'campusBreakdown' => $campusBreakdown,
+            'regionBreakdown' => $regionBreakdown,
+            'allLeaders' => $allLeaders,
+            'institutions' => $institutions,
         ]);
     }
 
-    public function promote(User $user): RedirectResponse
+    public function promote(Request $request, User $user): RedirectResponse
     {
         abort_unless(
             $user->user_type === 'Student' && $user->status === 'active',
@@ -40,9 +104,26 @@ class StudentLeaderController extends Controller
             'Only active students can be promoted to Student Leader.'
         );
 
-        $user->update(['user_type' => 'Student Leader']);
+        $validated = $request->validate([
+            'university' => 'nullable|string|max:255',
+            'division' => 'nullable|string|max:100',
+            'region' => 'nullable|string|max:100',
+        ]);
 
-        return back()->with('success', 'User promoted to Student Leader successfully.');
+        $updates = ['user_type' => 'Student Leader'];
+        if (!empty($validated['university'])) {
+            $updates['university'] = $validated['university'];
+        }
+        if (!empty($validated['division'])) {
+            $updates['division'] = $validated['division'];
+        }
+        if (!empty($validated['region'])) {
+            $updates['region'] = $validated['region'];
+        }
+
+        $user->update($updates);
+
+        return back()->with('success', "Student {$user->name} has been appointed as Student Leader.");
     }
 
     public function demote(User $user): RedirectResponse
@@ -53,9 +134,11 @@ class StudentLeaderController extends Controller
             'User is not a Student Leader.'
         );
 
-        $user->update(['user_type' => 'Student']);
+        $user->update([
+            'user_type' => 'Student',
+        ]);
 
-        return back()->with('success', 'Student Leader demoted to Student successfully.');
+        return back()->with('success', "Student Leader {$user->name} has been demoted to regular Student.");
     }
 
     private function studentLeadersQuery()
@@ -84,6 +167,8 @@ class StudentLeaderController extends Controller
                 ->orWhere('email', 'like', "%{$search}%")
                 ->orWhere('username', 'like', "%{$search}%")
                 ->orWhere('ml_id', 'like', "%{$search}%")
+                ->orWhere('ml_ign', 'like', "%{$search}%")
+                ->orWhere('studentId', 'like', "%{$search}%")
                 ->orWhere('university', 'like', "%{$search}%")
                 ->orWhere('region', 'like', "%{$search}%");
         });
@@ -94,14 +179,29 @@ class StudentLeaderController extends Controller
         return [
             'id',
             'name',
+            'first_name',
+            'surname',
             'email',
             'username',
             'ml_id',
+            'ml_server',
+            'ml_ign',
+            'ml_rank',
             'university',
+            'course',
+            'year_level',
+            'studentId',
             'region',
+            'island',
+            'division',
+            'contact_number',
+            'facebook_link',
+            'proofOfEnrollment',
             'status',
             'user_type',
             'created_at',
+            'updated_at',
         ];
     }
 }
+

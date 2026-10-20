@@ -13,12 +13,16 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->redirectGuestsTo(function (Request $request): string {
-            return $request->is('admin/*') || $request->is('Oppo-settings')
+            $adminDomain = env('ADMIN_DOMAIN');
+            $isAdminHost = $adminDomain && $request->getHost() === $adminDomain;
+
+            return $isAdminHost || $request->is('admin/*') || $request->is('admin') || $request->is('Oppo-settings')
                 ? route('admin.login')
                 : route('login');
         });
 
         $middleware->web(append: [
+            \App\Http\Middleware\TrackPageViews::class,
             \App\Http\Middleware\EnsureActiveStudent::class,
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,

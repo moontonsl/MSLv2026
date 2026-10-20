@@ -4,6 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\News;
+use App\Models\Event;
+use App\Models\CampusTournament;
+use App\Models\MCCSeason;
+use App\Services\AnalyticsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,6 +17,13 @@ use Inertia\Response;
 
 class AdminDashboardController extends Controller
 {
+    protected $analyticsService;
+
+    public function __construct(AnalyticsService $analyticsService)
+    {
+        $this->analyticsService = $analyticsService;
+    }
+
     protected function accessibleUsers(array $types = ['Student', 'Student Leader'])
     {
         $query = User::whereIn('user_type', $types);
@@ -38,7 +50,7 @@ class AdminDashboardController extends Controller
 
         $query = $this->accessibleUsers();
 
-        // Apply filters if present (status filter is now handled on the client side to keep accurate counts)
+        // Apply filters if present
         if ($request->filled('region')) {
             $query->where('region', 'like', '%' . $request->region . '%');
         }
@@ -57,7 +69,30 @@ class AdminDashboardController extends Controller
 
         $users = $query->orderBy('created_at', 'desc')->get();
 
+        // Gather MSL-1 detailed analytics & operational counters
+        $analytics = $this->analyticsService->getKeyMetrics();
+        $pageViewsData = $this->analyticsService->getPageViewsLast7Days();
+        $topPages = $this->analyticsService->getTopPages();
+        $realTimeData = $this->analyticsService->getRealTimeData();
+
+        $pendingUsers = User::whereIn('status', ['pending-review', 'pending'])->count();
+        $activeUsers = User::where('status', 'active')->count();
+        $totalNews = News::count();
+        $upcomingEvents = Event::where('start_date', '>=', now())->count();
+        $tournaments = CampusTournament::count() + MCCSeason::count();
+
         return Inertia::render('Admin/Dashboard', [
+            'pendingUsers' => $pendingUsers,
+            'activeUsers' => $activeUsers,
+            'totalNews' => $totalNews,
+            'upcomingEvents' => $upcomingEvents,
+            'tournaments' => $tournaments,
+            'analytics' => [
+                'pageViews' => $pageViewsData,
+                'metrics' => $analytics,
+                'topPages' => $topPages,
+                'realTime' => $realTimeData,
+            ],
             'students' => $users,
             'filters' => $request->only(['status', 'region', 'division', 'search']),
         ]);

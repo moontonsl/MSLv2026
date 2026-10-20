@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\HomePageController;
 use App\Http\Controllers\Admin\PendingUserController;
 use App\Http\Controllers\Admin\StudentLeaderController;
 use App\Http\Controllers\Admin\RegionalAdminManagementController;
+use App\Http\Controllers\Admin\SchoolManagementController;
 use App\Http\Controllers\Admin\CarouselController;
 use App\Http\Controllers\Admin\EventPhotoController;
 use App\Http\Controllers\Admin\EventCalendarController;
@@ -158,7 +159,32 @@ Route::get('/GeneralAffairs', function () {
 })->name('general.affairs');
 Route::redirect('/about/general-affairs', '/GeneralAffairs');
 
-Route::redirect('/Login', '/login')->name('Login');
+// Admin root redirect (so /admin never 404s)
+Route::get('/admin', function () {
+    if (auth()->guard('admin')->check()) {
+        return redirect()->route('admin.dashboard');
+    }
+    return redirect()->route('admin.login');
+});
+
+// Admin Subdomain Routing (e.g. admin.moontonslph.org)
+$adminDomain = env('ADMIN_DOMAIN');
+if (!empty($adminDomain)) {
+    Route::domain($adminDomain)->group(function () {
+        Route::get('/', function () {
+            if (auth()->guard('admin')->check()) {
+                return redirect()->route('admin.dashboard');
+            }
+            return redirect()->route('admin.login');
+        });
+
+        Route::middleware('guest:admin')->group(function () {
+            Route::get('/login', [AdminAuthController::class, 'showLogin']);
+            Route::post('/login', [AdminAuthController::class, 'login'])
+                ->middleware('throttle:10,1');
+        });
+    });
+}
 
 Route::middleware('guest:admin')->group(function () {
     Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
@@ -387,6 +413,10 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])
         ->middleware('admin.permission:access_admin_dashboard')
         ->name('admin.dashboard');
+    Route::get('/api/analytics/real-time', function () {
+        $analyticsService = app(\App\Services\AnalyticsService::class);
+        return response()->json($analyticsService->getRealTimeData());
+    })->name('admin.analytics.real-time');
     Route::post('/admin/users/{id}/approve', [AdminDashboardController::class, 'approve'])
         ->middleware('admin.permission:approve_students')
         ->name('admin.users.approve');
@@ -412,7 +442,7 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->middleware('admin.permission:access_admin_management')
         ->name('admin.management');
 
-    Route::post('/admin/users/{user}/permissions', [AdminManagementController::class, 'updatePermissions'])
+    Route::post('/admin/users/{id}/permissions', [AdminManagementController::class, 'updatePermissions'])
         ->middleware('admin.permission:access_admin_management')
         ->name('admin.users.permissions.update');
 
@@ -442,6 +472,10 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->middleware('admin.permission:manage_accounts')->name('admin.users.pending');
     Route::post('/admin/users/{user}/verify', [PendingUserController::class, 'verify'])
         ->middleware('admin.permission:manage_accounts')->name('admin.users.verify');
+    Route::post('/admin/users/{user}/pending-approve', [PendingUserController::class, 'approve'])
+        ->middleware('admin.permission:manage_accounts')->name('admin.users.pending-approve');
+    Route::post('/admin/users/{user}/pending-reject', [PendingUserController::class, 'reject'])
+        ->middleware('admin.permission:manage_accounts')->name('admin.users.pending-reject');
 
     Route::get('/admin/news', [LegacyContentController::class, 'news'])
         ->middleware('admin.permission:manage_news')->name('admin.news');
@@ -559,6 +593,16 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
     Route::post('/admin/users/{user}/demote-regional-admin', [RegionalAdminManagementController::class, 'demote'])
         ->middleware('admin.permission:manage_regional_admins')->name('admin.users.demote-regional-admin');
 
+    // School Management
+    Route::get('/admin/school-management', [SchoolManagementController::class, 'index'])
+        ->middleware('admin.permission:manage_schools')->name('admin.school-management');
+    Route::post('/admin/school-management', [SchoolManagementController::class, 'store'])
+        ->middleware('admin.permission:manage_schools')->name('admin.schools.store');
+    Route::put('/admin/school-management/{id}', [SchoolManagementController::class, 'update'])
+        ->middleware('admin.permission:manage_schools')->name('admin.schools.update');
+    Route::post('/admin/school-management/{id}/toggle-status', [SchoolManagementController::class, 'toggleStatus'])
+        ->middleware('admin.permission:manage_schools')->name('admin.schools.toggle-status');
+
     Route::get('/admin/violation-reports', [ViolationReportAdminController::class, 'index'])
         ->middleware('admin.permission:manage_violation_reports')->name('admin.violation-reports.index');
     Route::put('/admin/violation-reports/{report}', [ViolationReportAdminController::class, 'update'])
@@ -652,3 +696,8 @@ Route::redirect('/register/college', '/AccountCreation/College');
 Route::get('/api/news/articles', [NewsController::class, 'getArticles']);
 Route::get('/api/news/highlights', [NewsController::class, 'getHighlights']);
 Route::get('/api/news/related', [NewsController::class, 'getRelatedArticles']);
+
+// Public school search routes for registration autocomplete
+Route::get('/api/schools/college', [\App\Http\Controllers\Api\SchoolSearchController::class, 'searchCollege'])->name('schools.search.college');
+Route::get('/api/schools/shs', [\App\Http\Controllers\Api\SchoolSearchController::class, 'searchSHS'])->name('schools.search.shs');
+

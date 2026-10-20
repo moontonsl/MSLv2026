@@ -36,6 +36,17 @@ class StudentPortalController extends Controller
             ->mapWithKeys(fn (string $requirement) => [$requirement => 'needupdate'])
             ->all();
 
+        $avatarUrl = '/Featured%20icon.png';
+        if (!empty($user->ml_avatar)) {
+            if (str_starts_with($user->ml_avatar, 'http://') || str_starts_with($user->ml_avatar, 'https://') || str_starts_with($user->ml_avatar, '/')) {
+                $avatarUrl = $user->ml_avatar;
+            } else {
+                $avatarUrl = "https://api.dicebear.com/7.x/adventurer/svg?seed=avatar-{$user->ml_avatar}";
+            }
+        } elseif (!empty($user->name)) {
+            $avatarUrl = "https://api.dicebear.com/7.x/adventurer/svg?seed=" . urlencode($user->name);
+        }
+
         return Inertia::render('StudentProfile/Index', [
             'profile' => [
                 'playerName' => $user->name,
@@ -43,6 +54,7 @@ class StudentPortalController extends Controller
                 'playerGender' => strtolower($user->gender ?: 'male'),
                 'isVerified' => $user->status === 'active',
                 'playerLevel' => 'LVL ' . ($user->ml_level ?: 1),
+                'featuredIcon' => $avatarUrl,
                 'profileBackground' => $user->profile_background ?: '/profile-background.jpg',
                 'schoolName' => $user->university ?: 'N/A',
                 'yearLevel' => $user->year_level ?: 'N/A',
@@ -59,6 +71,8 @@ class StudentPortalController extends Controller
                     'server' => $user->ml_server ?: 'N/A',
                     'squad' => $user->squadName ?: 'N/A',
                     'role' => $user->inGameRole ?: 'N/A',
+                    'rank' => $user->ml_rank ?: 'N/A',
+                    'rankLevel' => $user->ml_rank_level ?: null,
                 ],
             ],
             'accountRenewal' => $renewalRequirements,

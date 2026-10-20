@@ -16,6 +16,8 @@ Route::middleware('guest')->group(function () {
         ->name('register');
 
     Route::post('register', [RegisteredUserController::class, 'store']);
+    Route::post('account-creation/register', [RegisteredUserController::class, 'registerStudent'])
+        ->name('account.creation.register');
 
     // MLBB & Email Verification routes
     Route::post('mlbb/send-vc', [\App\Http\Controllers\Auth\MLBBVerificationController::class, 'sendCode'])

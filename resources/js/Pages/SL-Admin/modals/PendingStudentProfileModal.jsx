@@ -27,11 +27,27 @@ export default function PendingStudentProfileModal({ student, accountView, onClo
                 <button type="button" onClick={onClose} aria-label="Close student profile" className="absolute right-5 top-5 z-10 rounded-lg bg-black/60 p-2 text-gray-300 transition hover:bg-white/10 hover:text-white"><X className="h-5 w-5" /></button>
                 <aside className="overflow-hidden rounded-xl border border-brand-500/20 bg-[#0B0B0B] pb-6 sm:pb-10">
                     <div className="flex min-h-[260px] flex-col items-center justify-end bg-cover bg-center px-6 pb-5 pt-14 text-center" style={{ backgroundImage: `linear-gradient(180deg, rgba(102,102,102,0) 0%, rgba(0,0,0,.55) 100%), url("${slAdminProfile.cover}")` }}>
-                        <div className="flex h-28 w-28 items-center justify-center rounded-2xl border-[2.5px] border-brand-700 bg-[#111111] shadow-sm"><GenderIcon gender={student.gender} className="h-14 w-14" /></div>
+                        <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-2xl border-[2.5px] border-brand-700 bg-[#111111] shadow-sm">
+                            {(student.avatar || student.ml_avatar) ? (
+                                <img
+                                    src={(student.avatar || student.ml_avatar).startsWith('http') || (student.avatar || student.ml_avatar).startsWith('/') ? (student.avatar || student.ml_avatar) : `https://api.dicebear.com/7.x/adventurer/svg?seed=avatar-${student.avatar || student.ml_avatar}`}
+                                    alt="Avatar"
+                                    className="h-full w-full object-cover"
+                                />
+                            ) : (
+                                <GenderIcon gender={student.gender} className="h-14 w-14" />
+                            )}
+                        </div>
                         <div className="mt-3 flex max-w-full items-center justify-center gap-1.5"><h2 className="truncate font-heading text-2xl font-extrabold leading-tight text-brand-400 sm:text-3xl" title={student.name}>{student.name}</h2><GenderIcon gender={student.gender} className="h-5 w-5" /></div>
-                        <div className="mt-1 flex flex-wrap items-center justify-center gap-2 text-sm font-semibold text-gray-500"><span>@{student.ign.toLowerCase()}.gg</span><Copy className="h-4 w-4" /><span className="inline-flex items-center gap-1 rounded-md bg-brand-500/20 px-2 py-0.5 text-xs font-medium text-brand-500"><Clock3 className="h-3 w-3" /> Pending</span></div>
+                        <div className="mt-1 flex flex-wrap items-center justify-center gap-2 text-sm font-semibold text-gray-500"><span>@{student.ign?.toLowerCase()}.gg</span><Copy className="h-4 w-4" /><span className="inline-flex items-center gap-1 rounded-md bg-brand-500/20 px-2 py-0.5 text-xs font-medium text-brand-500"><Clock3 className="h-3 w-3" /> Pending</span></div>
                     </div>
-                    <div className="space-y-3 px-6 pt-5"><DetailCard label="Role" value={student.role} /><DetailCard label="MLBB ID" value={student.uid} /><DetailCard label="Server" value={student.server} /><DetailCard label="IGN" value={student.ign} /></div>
+                    <div className="space-y-3 px-6 pt-5">
+                        <DetailCard label="Role" value={student.role || student.inGameRole} />
+                        {(student.rank || student.ml_rank) && <DetailCard label="Rank" value={student.rank || student.ml_rank} />}
+                        <DetailCard label="MLBB ID" value={student.uid || student.ml_id} />
+                        <DetailCard label="Server" value={student.server || student.ml_server} />
+                        <DetailCard label="IGN" value={student.ign || student.ml_ign} />
+                    </div>
                     {canDemoteRegional && <div className="px-6 pt-5"><button type="button" className="w-full rounded-xl border border-red-500 bg-red-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600">Demote from Regional Admin</button></div>}
                 </aside>
                 <section className="min-w-0 rounded-xl border border-brand-500/20 bg-[#0B0B0B] py-6 sm:py-10 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
