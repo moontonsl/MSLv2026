@@ -59,8 +59,22 @@ export default function AdminLogin({ errors = {}, status, main_site_url }) {
                     <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-amber-500 via-brand-500 to-amber-300" />
 
                     {/* Logo & Header */}
-                    <div className="text-center mb-8">
-                        <div className="relative inline-flex items-center justify-center mb-4">
+                    <div className="flex items-center justify-between gap-4 mb-8">
+                        <div>
+                            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-zinc-800/80 border border-white/5 text-[10px] font-bold uppercase tracking-widest text-zinc-300 mb-2">
+                                <ShieldCheck className="w-3.5 h-3.5 text-brand-400" />
+                                Authorized Staff Only
+                            </div>
+
+                            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white uppercase leading-none">
+                                Admin <span className="text-brand-400">Portal</span>
+                            </h1>
+                            <p className="mt-1.5 text-xs text-zinc-400">
+                                Enter your verified MSL administrative credentials to proceed.
+                            </p>
+                        </div>
+
+                        <div className="relative shrink-0 flex items-center justify-center">
                             <div className="absolute inset-0 bg-brand-500/20 blur-xl rounded-full" />
                             <img
                                 src="/MSL_LOGO.png"
@@ -72,18 +86,6 @@ export default function AdminLogin({ errors = {}, status, main_site_url }) {
                                 }}
                             />
                         </div>
-
-                        <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-md bg-zinc-800/80 border border-white/5 text-[10px] font-bold uppercase tracking-widest text-zinc-300 mb-2">
-                            <ShieldCheck className="w-3.5 h-3.5 text-brand-400" />
-                            Authorized Staff Only
-                        </div>
-
-                        <h1 className="text-2xl font-black tracking-tight text-white uppercase">
-                            Admin <span className="text-brand-400">Portal</span>
-                        </h1>
-                        <p className="mt-1.5 text-xs text-zinc-400">
-                            Enter your verified MSL administrative credentials to proceed.
-                        </p>
                     </div>
 
                     {/* Status Feedback (e.g. Password reset or logout status) */}
