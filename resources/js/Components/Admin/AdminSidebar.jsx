@@ -17,7 +17,7 @@ const NAV_SECTIONS = [
     {
         title: "Community & Students",
         items: [
-            { id: 'pending-users', label: 'Pending Queue', href: '/admin/users/pending', icon: ClipboardCheck, permission: 'manage_accounts' },
+            { id: 'pending-users', label: 'Pending Verification', href: '/admin/users/pending', icon: ClipboardCheck, permission: 'manage_accounts' },
             { id: 'sl-management', label: 'Student Leaders', href: '/admin/sl-management', icon: UserCog, permission: 'manage_sl' },
             { id: 'regional-admins', label: 'Regional Admins', href: '/admin/regional-admin-management', icon: MapPin, permission: 'manage_regional_admins' },
             { id: 'school-management', label: 'School Management', href: '/admin/school-management', icon: School, permission: 'manage_schools' },
