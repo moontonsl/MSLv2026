@@ -43,7 +43,7 @@ export default function Settings({ settings = {} }) {
                 <p className="mt-2 text-sm text-gray-400">Manage the public website identity and maintenance notice.</p>
             </div>
 
-            <form onSubmit={submit} className="max-w-4xl space-y-6">
+            <form onSubmit={submit} className="w-full space-y-6">
                 <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6 md:p-8">
                     <div className="mb-6 flex items-start gap-3">
                         <div className="rounded-lg bg-yellow-500/10 p-2 text-yellow-500"><ShieldCheck className="h-5 w-5" /></div>

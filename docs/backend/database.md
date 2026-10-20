@@ -483,18 +483,38 @@ The future application transaction must:
 
 ## Revisioned results
 
-`tournament_result_revisions` stores a version number, submitter, reason, and
-submission timestamp. `UNIQUE (tournament_id, version)` preserves revision
-ordering. The schema supports revision history, but the application must
-prohibit updates and deletes that would violate immutability.
+Implementation status (2026-10-13): transactional submission and correction,
+role-scoped report pages, immutable roster snapshots, and current-revision Excel
+export are implemented. Core Super Admin corrections are available through the
+separate admin login and report index at `/admin/campus-tournaments/reports`.
+
+`tournament_result_revisions` stores a version number, reason, submission
+timestamp, and exactly one application-assigned submitter: either
+`submitted_by_user_id` (a `users` account) or `submitted_by_admin_user_id` (an
+`admin_users` account). The latter supports corrections by Core Super Admins
+who authenticate through the admin guard. Both columns are nullable at the
+database level; the transactional service sets exactly one. `UNIQUE
+(tournament_id, version)` preserves revision ordering. The Eloquent model
+rejects updates and deletes so submitted revisions remain immutable.
+MySQL enforces the admin-submitter foreign key; the SQLite test migration
+omits that one foreign key because SQLite cannot drop it during rollback.
 
 `tournament_result_entries` stores one row per team and revision, its placement,
 team-name snapshot, and JSON roster snapshot. Placement is intentionally not
 unique because the workflow permits ties.
 
 `campus_tournaments.current_result_revision_id` identifies the published
-revision. The initial revision may have no reason; later corrections must
-provide one. That conditional rule requires application validation.
+revision. The initial revision has no reason; every later correction requires
+one. Submission and correction run transactionally with tournament, team, and
+participant row locks. Each registered team must appear exactly once, have five
+active players and one matching captain, and receive a seeded placement code.
+At least one team must be first place; multiple teams may share any placement.
+Student Leaders submit the initial report; an active tournament creator or a
+Core Super Admin may correct it with a reason. Regional Admins may only view
+and export reports in their official region. The admin report index lists
+completed tournaments, including those awaiting an initial Student Leader
+report; Core cannot create the initial report. Excel exports include the
+recorded submitter name and the selected current revision's roster snapshot.
 
 ## Existing Eloquent models and relationships
 
@@ -506,13 +526,15 @@ provide one. That conditional rule requires application validation.
 | `CommunityTier` | `hasMany(CampusCommunity)` |
 | `CampusCommunity` | belongs to campus and community tier |
 | `CampusAffiliation` | belongs to campus, user, and optional approving user |
-| `User` | has many campus affiliations and approved campus affiliations |
+| `User` | has many campus affiliations, approved campus affiliations, and submitted result revisions |
 | `City` | has many campuses |
 | `Barangay` | has many campuses |
-| `CampusTournament` | belongs to campus, creator, type, and current submission; has many submissions, reviews, and schedule revisions |
+| `CampusTournament` | belongs to campus, creator, type, current submission, and current result revision; has many submissions, reviews, schedule revisions, and result revisions |
 | `CampusTournamentSubmission` | belongs to tournament, submitter, campus, and type; has one review |
 | `CampusTournamentReview` | belongs to tournament, submission, and reviewer |
 | `RegionAdmin` | belongs to its official region, assigned user, and assigning user |
+| `TournamentResultRevision` | belongs to tournament, optional user submitter, and optional admin submitter; has many immutable result entries |
+| `TournamentResultEntry` | belongs to revision and team; stores immutable team and roster snapshots |
 
 Date casts currently implemented:
 
@@ -684,10 +706,15 @@ Laravel validation, policies, or transactional services:
 - Only one active join code may exist for a team.
 - Solo merging must run transactionally and lock relevant tournament,
   participant, and team rows.
-- Result corrections after version 1 require a reason.
+- Result submission is limited to completed tournaments and their active creator.
+- Result corrections after version 1 require a reason and are limited to the
+  active creator or Core/Super Admin. Exactly one of the two result-revision
+  submitter foreign keys must be set by the application.
+- Official Regional Admins can view and export reports in their region but
+  cannot submit or correct them.
 - A current result revision must belong to the same tournament.
 - A result entry's revision and team must belong to the same tournament.
-- Result-revision and result-entry rows must be treated as immutable after
+- Result-revision and result-entry models reject updates and deletes after
   submission.
 
 These application rules must be implemented before exposing campus-management

@@ -38,6 +38,22 @@ class FaqController extends Controller
         return back()->with('success', 'FAQ updated successfully.');
     }
 
+    public function updatePin(Request $request, Faq $faq): RedirectResponse
+    {
+        $validated = $request->validate([
+            'is_pinned' => ['required', 'boolean'],
+        ]);
+
+        $faq->update(['is_pinned' => $validated['is_pinned']]);
+
+        return back()->with(
+            'success',
+            $validated['is_pinned']
+                ? 'FAQ added to the public FAQ section.'
+                : 'FAQ removed from the public FAQ section.',
+        );
+    }
+
     public function destroy(Faq $faq): RedirectResponse
     {
         $faq->delete();

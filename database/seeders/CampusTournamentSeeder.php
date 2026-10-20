@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\AdminUser;
 use App\Models\Campus;
 use App\Models\CampusAffiliation;
 use App\Models\CampusType;
@@ -91,6 +92,16 @@ class CampusTournamentSeeder extends Seeder
                 ],
             );
 
+            AdminUser::query()->updateOrCreate(
+                ['email' => 'lspu.core.admin@example.test'],
+                [
+                    'name' => 'MSL Test Core Admin',
+                    'password' => 'password',
+                    'role' => 'Super Admin',
+                    'permissions' => [],
+                ],
+            );
+
             $manualTestAccounts = [
                 ['lspu_premade_captain', 'LSPU Premade Captain', 'PREMADECAP', true],
                 ['lspu_premade_player_2', 'LSPU Premade Player 2', 'PREMADE02', true],
@@ -164,7 +175,7 @@ class CampusTournamentSeeder extends Seeder
                 ['Campus ID', $fixtures['campus']->id],
                 ['Regional Admin', 'lspu_regional_admin / password'],
                 ['Student Leader', 'lspu_student_leader / password'],
-                ['Core/Super Admin', 'lspu_core_admin / password'],
+                ['Core/Super Admin (/admin/login)', 'lspu.core.admin@example.test / password'],
                 ['Premade Captain', 'lspu_premade_captain / password'],
                 ['Premade Invitees', 'lspu_premade_player_2 through lspu_premade_player_5 / password'],
                 ['Solo Players', 'lspu_solo_player_1 through lspu_solo_player_6 / password'],

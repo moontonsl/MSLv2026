@@ -1,177 +1,360 @@
+import { useEffect, useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
-import { 
-    LayoutGrid, Megaphone, MessageSquare, Gauge, Shield, Users, 
-    CalendarDays, Image, Settings, Trophy, UserCog, Link2, 
-    AlertTriangle, ClipboardCheck, ClipboardList, School, MapPin, X, Bell 
+import {
+    AlertTriangle,
+    Bell,
+    CalendarDays,
+    CalendarPlus,
+    ChevronDown,
+    ClipboardCheck,
+    ClipboardList,
+    Gauge,
+    Image,
+    LayoutGrid,
+    Link2,
+    Megaphone,
+    MessageSquare,
+    PanelLeftClose,
+    PanelLeftOpen,
+    School,
+    Settings,
+    Shield,
+    Trophy,
+    UserCog,
+    UserPlus,
+    UserRoundCog,
+    Users,
+    X,
 } from 'lucide-react';
 
-const ACCENT = "#FBBF24";
-
-const NAV_SECTIONS = [
+const NAV_GROUPS = [
     {
-        title: "Overview",
+        label: 'Overview',
+        icon: Gauge,
         items: [
             { id: 'dashboard', label: 'Dashboard', href: '/admin/dashboard', icon: Gauge, permission: 'access_admin_dashboard' },
-        ]
+            { id: 'notifications', label: 'Notifications', href: '/admin/notifications', icon: Bell, permission: null },
+        ],
     },
     {
-        title: "Community & Students",
+        label: 'People & Accounts',
+        icon: Users,
         items: [
-            { id: 'pending-users', label: 'Pending Queue', href: '/admin/users/pending', icon: ClipboardCheck, permission: 'manage_accounts' },
-            { id: 'sl-management', label: 'Student Leaders', href: '/admin/sl-management', icon: UserCog, permission: 'manage_sl' },
-            { id: 'regional-admins', label: 'Regional Admins', href: '/admin/regional-admin-management', icon: MapPin, permission: 'manage_regional_admins' },
-            { id: 'school-management', label: 'School Management', href: '/admin/school-management', icon: School, permission: 'manage_schools' },
-        ]
+            { id: 'account-creation', label: 'School Management', href: '/admin/schools', icon: UserPlus, permission: 'manage_accounts' },
+            { id: 'pending-users', label: 'Pending Account Approvals', href: '/admin/pending-account-approvals', icon: ClipboardCheck, permission: 'manage_accounts' },
+            { id: 'sl-management', label: 'Student Leaders', href: '/admin/student-leaders', icon: UserCog, permission: 'manage_sl' },
+            { id: 'regional-admins', label: 'Regional Admin Accounts', href: '/admin/regional-admin-accounts', icon: School, permission: 'manage_regional_admins' },
+            { id: 'regional-admin', label: 'Regional Admin Assignments', href: '/admin/regional-admin-assignments', icon: UserRoundCog, permission: null },
+            { id: 'accounts', label: 'Administrator Accounts', href: '/admin/administrator-accounts', icon: Users, permission: 'manage_admin_accounts' },
+            { id: 'management', label: 'Account Roles & Permissions', href: '/admin/account-roles-permissions', icon: Shield, permission: 'access_admin_management' },
+        ],
     },
     {
-        title: "Esports & Operations",
+        label: 'Website Content',
+        icon: LayoutGrid,
         items: [
+            { id: 'home-page', label: 'Home Page', href: '/admin/home-page', icon: LayoutGrid, permission: 'manage_homepage' },
+            { id: 'faq', label: 'FAQ', href: '/admin/faq', icon: MessageSquare, permission: 'manage_faq' },
+            { id: 'news', label: 'News Articles', href: '/admin/news-articles', icon: Megaphone, permission: 'manage_news' },
+            { id: 'legacy-news', label: 'Legacy News Manager', href: '/admin/legacy-news', icon: Megaphone, permission: 'manage_news' },
+            { id: 'carousel', label: 'Carousel', href: '/admin/carousel', icon: Image, permission: 'manage_carousel' },
+            { id: 'event-photos', label: 'Event Photos', href: '/admin/event-photos', icon: Image, permission: 'manage_event_photos' },
+            { id: 'settings', label: 'Website Settings', href: '/admin/website-settings', icon: Settings, permission: 'manage_settings' },
+            { id: 'footer', label: 'Footer Content', href: '/admin/footer-content', icon: LayoutGrid, permission: 'manage_footer' },
+            { id: 'share-links', label: 'Share Links', href: '/admin/share-links', icon: Link2, permission: 'manage_share_links' },
+        ],
+    },
+    {
+        label: 'Events & Tournaments',
+        icon: CalendarDays,
+        items: [
+            { id: 'events', label: 'Scheduled Events', href: '/admin/scheduled-events', icon: CalendarDays, permission: 'manage_events' },
+            { id: 'msl-events', label: 'Public MSL Events', href: '/admin/public-msl-events', icon: Trophy, permission: 'manage_msl_events' },
+            { id: 'event-management', label: 'Event Management', href: '/admin/event-management', icon: CalendarPlus, permission: null },
+            { id: 'registration-management', label: 'Registration Management', href: '/admin/registration-management', icon: ClipboardCheck, permission: null },
             { id: 'mcc-seasons', label: 'MCC Seasons', href: '/admin/mcc-seasons', icon: Trophy, permission: 'manage_mcc_seasons' },
-            { id: 'msl-events', label: 'MSL Tournaments', href: '/admin/msl-events', icon: Trophy, permission: 'manage_msl_events' },
-            { id: 'events', label: 'Event Calendar', href: '/admin/events', icon: CalendarDays, permission: 'manage_events' },
-            { id: 'event-photos', label: 'Event Gallery', href: '/admin/event-photos', icon: Image, permission: 'manage_event_photos' },
-        ]
+            { id: 'campus-reports', label: 'Campus Tournament Reports', href: '/admin/campus-tournaments/reports', icon: Trophy, permission: null, superAdminOnly: true },
+        ],
     },
     {
-        title: "Content & CMS",
+        label: 'Safety & Audit',
+        icon: Shield,
         items: [
-            { id: 'news', label: 'News & Updates', href: '/admin/news-updates', icon: Megaphone, permission: 'manage_news' },
-            { id: 'carousel', label: 'Carousel Banners', href: '/admin/carousel', icon: Image, permission: 'manage_carousel' },
-            { id: 'faq', label: 'FAQ Manager', href: '/admin/faq', icon: MessageSquare, permission: 'manage_faq' },
-            { id: 'footer', label: 'Footer Links', href: '/admin/footer', icon: LayoutGrid, permission: 'manage_footer' },
-            { id: 'home-page', label: 'Landing Settings', href: '/admin/home-page', icon: LayoutGrid, permission: 'manage_homepage' },
-        ]
-    },
-    {
-        title: "System & Governance",
-        items: [
-            { id: 'accounts', label: 'Admin Accounts', href: '/admin/accounts', icon: Users, permission: 'manage_admin_accounts' },
-            { id: 'management', label: 'Permissions & Roles', href: '/admin/management', icon: Shield, permission: 'access_admin_management' },
-            { id: 'audit-logs', label: 'Audit Trail', href: '/admin/audit-logs', icon: ClipboardList, permission: 'manage_audit_logs' },
             { id: 'violations', label: 'Violation Reports', href: '/admin/violation-reports', icon: AlertTriangle, permission: 'manage_violation_reports' },
-            { id: 'share-links', label: 'Short Links', href: '/admin/share-links', icon: Link2, permission: 'manage_share_links' },
-            { id: 'settings', label: 'System Settings', href: '/admin/settings', icon: Settings, permission: 'manage_settings' },
-        ]
-    }
+            { id: 'audit-logs', label: 'Audit Logs', href: '/admin/audit-logs', icon: ClipboardList, permission: 'manage_audit_logs' },
+        ],
+    },
 ];
 
-export default function AdminSidebar({ activeId = 'dashboard', isOpen = false, onClose = () => {} }) {
-    const { auth, admin_notifications_unread_count: unreadCount = 0 } = usePage().props;
+export default function AdminSidebar({
+    activeId = 'dashboard',
+    isOpen = false,
+    isCollapsed = false,
+    onClose = () => {},
+    onToggleCollapse = () => {},
+}) {
+    const {
+        auth,
+        admin_notifications_unread_count: unreadCount = 0,
+    } = usePage().props;
+
     const role = auth?.user?.role;
-    const isSuperAdmin = auth?.is_super_admin ?? ['Super Admin', 'super_admin'].includes(role);
+    const isSuperAdmin =
+        auth?.is_super_admin ??
+        ['Super Admin', 'super_admin'].includes(role);
     const permissions = auth?.permissions ?? [];
 
-    const isPermitted = (permission) => permission === null || isSuperAdmin || permissions.includes(permission);
+    const [openGroup, setOpenGroup] = useState(() => {
+        const activeGroup = NAV_GROUPS.find(({ items }) =>
+            items.some(({ id }) => id === activeId)
+        );
+
+        return activeGroup?.label ?? NAV_GROUPS[0].label;
+    });
+
+    useEffect(() => {
+        const activeGroup = NAV_GROUPS.find(({ items }) =>
+            items.some(({ id }) => id === activeId)
+        );
+
+        if (!activeGroup) return;
+
+        setOpenGroup(activeGroup.label);
+    }, [activeId]);
+
+    const toggleGroup = (groupLabel) => {
+        setOpenGroup((currentGroup) =>
+            currentGroup === groupLabel ? null : groupLabel
+        );
+    };
 
     return (
         <>
-            {/* Mobile Backdrop */}
             <button
                 type="button"
                 aria-label="Close admin navigation"
                 aria-hidden={!isOpen}
                 tabIndex={isOpen ? 0 : -1}
-                className={`fixed inset-0 z-40 bg-black/70 backdrop-blur-sm transition-opacity lg:hidden ${
-                    isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+                className={`fixed inset-0 z-40 bg-black/60 transition-opacity lg:hidden ${
+                    isOpen
+                        ? 'opacity-100'
+                        : 'pointer-events-none opacity-0'
                 }`}
                 onClick={onClose}
             />
 
-            {/* Sidebar Aside */}
-            <aside 
-                className={`fixed left-0 top-0 z-50 flex h-screen w-64 shrink-0 flex-col border-r border-white/10 bg-[#0e0e12] transition-transform duration-200 ease-in-out lg:translate-x-0 ${
-                    isOpen ? 'translate-x-0' : '-translate-x-full'
+            <aside
+                className={`fixed inset-y-0 left-0 z-50 flex h-screen w-64 flex-col overflow-hidden border-r border-neutral-800 bg-[#141414] transition-all duration-200 ${
+                    isCollapsed ? 'lg:w-20' : 'lg:w-72'
+                } ${
+                    isOpen
+                        ? 'translate-x-0'
+                        : '-translate-x-full lg:translate-x-0'
                 }`}
             >
-                {/* Brand Header */}
-                <div className="flex items-center gap-3 border-b border-white/10 px-5 py-5 bg-[#0a0a0d]">
-                    <div className="relative flex items-center justify-center">
-                        <img 
-                            src="/MSL_LOGO.png" 
-                            alt="MSL" 
-                            className="h-9 w-auto object-contain drop-shadow-[0_2px_8px_rgba(242,194,26,0.3)]" 
-                            onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.src = '/msl-logo.png';
-                            }}
-                        />
-                    </div>
-                    <div className="flex flex-col min-w-0">
-                        <span className="text-sm font-extrabold tracking-wide text-white uppercase truncate">
-                            MSL <span className="text-brand-400">Admin</span>
-                        </span>
-                        <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest">
-                            Control Panel
-                        </span>
-                    </div>
+                <div
+                    className={`flex min-h-20 shrink-0 items-center border-b border-neutral-800 ${
+                        isCollapsed
+                            ? 'gap-3 px-4 lg:flex-col lg:justify-center lg:gap-2 lg:px-2 lg:py-3'
+                            : 'gap-3 px-4'
+                    }`}
+                >
+                    <img
+                        src="/Images/Admin/logo/msl-logo.png"
+                        alt=""
+                        className="h-10 w-10 shrink-0 object-contain"
+                    />
+
+                    <span
+                        className={`whitespace-nowrap text-base font-bold leading-tight text-white ${
+                            isCollapsed ? 'lg:hidden' : ''
+                        }`}
+                    >
+                        MSL Philippines
+                    </span>
+
+                    <button
+                        type="button"
+                        aria-label={
+                            isCollapsed
+                                ? 'Expand admin navigation'
+                                : 'Collapse admin navigation'
+                        }
+                        aria-expanded={!isCollapsed}
+                        onClick={onToggleCollapse}
+                        className={`hidden h-10 w-10 shrink-0 items-center justify-center rounded-md text-gray-400 hover:bg-white/5 hover:text-white lg:inline-flex ${
+                            isCollapsed ? '' : 'ml-auto'
+                        }`}
+                    >
+                        {isCollapsed ? (
+                            <PanelLeftOpen className="h-5 w-5" />
+                        ) : (
+                            <PanelLeftClose className="h-5 w-5" />
+                        )}
+                    </button>
+
                     <button
                         type="button"
                         aria-label="Close admin navigation"
-                        className="ml-auto rounded-lg p-1.5 text-zinc-400 hover:bg-white/10 hover:text-white transition-colors lg:hidden"
                         onClick={onClose}
+                        className="ml-auto rounded-md p-2 text-gray-400 hover:bg-white/5 hover:text-white lg:hidden"
                     >
                         <X className="h-5 w-5" />
                     </button>
                 </div>
 
-                {/* Grouped Navigation Links */}
-                <nav className="flex flex-1 flex-col gap-5 overflow-y-auto px-3 py-4 text-xs font-medium scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
-                    {NAV_SECTIONS.map((section) => {
-                        const visibleItems = section.items.filter(item => isPermitted(item.permission));
+                <nav
+                    aria-label="Admin navigation"
+                    className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-2 py-4"
+                >
+                    {NAV_GROUPS.map(({ label: groupLabel, icon: GroupIcon, items }) => {
+                        const visibleItems = items.filter(
+                            ({ permission, superAdminOnly }) =>
+                                (!superAdminOnly || isSuperAdmin) &&
+                                (permission === null ||
+                                    isSuperAdmin ||
+                                    permissions.includes(permission))
+                        );
+
                         if (visibleItems.length === 0) return null;
 
+                        const isGroupOpen = openGroup === groupLabel;
+                        const groupId = `admin-nav-${groupLabel
+                            .toLowerCase()
+                            .replace(/[^a-z0-9]+/g, '-')}`;
+
                         return (
-                            <div key={section.title} className="space-y-1">
-                                <div className="px-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
-                                    {section.title}
-                                </div>
+                            <section key={groupLabel} className="space-y-1">
+                                <button
+                                    type="button"
+                                    aria-expanded={isGroupOpen}
+                                    aria-controls={groupId}
+                                    aria-label={
+                                        isCollapsed
+                                            ? `Toggle ${groupLabel}`
+                                            : undefined
+                                    }
+                                    title={isCollapsed ? groupLabel : undefined}
+                                    onClick={() => toggleGroup(groupLabel)}
+                                    className={`flex min-h-10 w-full items-center rounded-md text-left text-[10px] font-semibold uppercase tracking-[0.14em] text-gray-500 transition-colors hover:bg-white/5 hover:text-gray-300 ${
+                                        isCollapsed
+                                            ? 'justify-start gap-2 px-3 lg:justify-center lg:px-2'
+                                            : 'gap-2 px-4'
+                                    }`}
+                                >
+                                    <GroupIcon
+                                        className={`h-4 w-4 shrink-0 text-gray-400 ${
+                                            isCollapsed
+                                                ? 'hidden lg:block'
+                                                : 'hidden'
+                                        }`}
+                                    />
 
-                                <div className="space-y-0.5">
-                                    {visibleItems.map(({ id, label, href, icon: Icon }) => {
-                                        const isActive = id === activeId;
+                                    <span
+                                        className={`min-w-0 flex-1 truncate ${
+                                            isCollapsed ? 'lg:hidden' : ''
+                                        }`}
+                                    >
+                                        {groupLabel}
+                                    </span>
 
-                                        return (
-                                            <Link
-                                                key={id}
-                                                href={href}
-                                                onClick={onClose}
-                                                className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold transition-all duration-150 ${
-                                                    isActive
-                                                        ? "bg-brand-500/15 text-brand-400 border border-brand-500/30 shadow-[0_0_12px_rgba(242,194,26,0.1)]"
-                                                        : "text-zinc-400 hover:bg-white/5 hover:text-zinc-200 border border-transparent"
-                                                }`}
-                                            >
-                                                <Icon 
-                                                    className={`h-4 w-4 shrink-0 transition-transform duration-150 group-hover:scale-105 ${
-                                                        isActive ? 'text-brand-400' : 'text-zinc-500 group-hover:text-zinc-300'
-                                                    }`} 
-                                                />
-                                                <span className="flex-1 truncate">{label}</span>
-                                                {id === 'notifications' && unreadCount > 0 ? (
-                                                    <span className="rounded-full bg-rose-500 px-1.5 py-0.5 text-[9px] font-bold text-white leading-none">
-                                                        {unreadCount > 99 ? '99+' : unreadCount}
+                                    <ChevronDown
+                                        className={`h-4 w-4 shrink-0 transition-transform ${
+                                            isGroupOpen ? 'rotate-180' : ''
+                                        } ${isCollapsed ? 'lg:hidden' : ''}`}
+                                    />
+                                </button>
+
+                                <div
+                                    id={groupId}
+                                    className={isGroupOpen ? 'space-y-1' : 'hidden'}
+                                >
+                                    {visibleItems.map(
+                                        ({ id, label: itemLabel, href, icon: Icon }) => {
+                                            const isActive = id === activeId;
+                                            const hasUnreadNotifications =
+                                                id === 'notifications' && unreadCount > 0;
+                                            const accessibleLabel =
+                                                hasUnreadNotifications
+                                                    ? `${itemLabel} (${unreadCount} unread)`
+                                                    : itemLabel;
+
+                                            return (
+                                                <Link
+                                                    key={id}
+                                                    href={href}
+                                                    onClick={onClose}
+                                                    title={
+                                                        isCollapsed
+                                                            ? accessibleLabel
+                                                            : undefined
+                                                    }
+                                                    aria-label={
+                                                        isCollapsed
+                                                            ? accessibleLabel
+                                                            : undefined
+                                                    }
+                                                    aria-current={
+                                                        isActive ? 'page' : undefined
+                                                    }
+                                                    className={`group flex min-h-11 min-w-0 items-center rounded-md py-2.5 text-sm font-medium transition-colors ${
+                                                        isCollapsed
+                                                            ? 'justify-start gap-3 px-4 lg:justify-center lg:gap-0 lg:px-2'
+                                                            : 'gap-3 px-4'
+                                                    } ${
+                                                        isActive
+                                                            ? 'bg-[#FBBF24]/10 text-[#FBBF24]'
+                                                            : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                                                    }`}
+                                                >
+                                                    <Icon
+                                                        className={`h-5 w-5 shrink-0 ${
+                                                            isActive
+                                                                ? 'text-[#FBBF24]'
+                                                                : 'text-gray-400 group-hover:text-white'
+                                                        }`}
+                                                    />
+
+                                                    <span
+                                                        className={`min-w-0 flex-1 truncate ${
+                                                            isCollapsed ? 'lg:hidden' : ''
+                                                        }`}
+                                                    >
+                                                        {itemLabel}
                                                     </span>
-                                                ) : null}
-                                                {isActive && (
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-brand-400 shadow-[0_0_6px_#F2C21A]" />
-                                                )}
-                                            </Link>
-                                        );
-                                    })}
+
+                                                    {hasUnreadNotifications && (
+                                                        <>
+                                                            <span
+                                                                className={`shrink-0 rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-bold text-white ${
+                                                                    isCollapsed
+                                                                        ? 'lg:hidden'
+                                                                        : ''
+                                                                }`}
+                                                            >
+                                                                {unreadCount > 99
+                                                                    ? '99+'
+                                                                    : unreadCount}
+                                                            </span>
+
+                                                            {isCollapsed && (
+                                                                <span
+                                                                    aria-hidden="true"
+                                                                    className="hidden h-2 w-2 shrink-0 rounded-full bg-red-500 lg:block"
+                                                                />
+                                                            )}
+                                                        </>
+                                                    )}
+                                                </Link>
+                                            );
+                                        }
+                                    )}
                                 </div>
-                            </div>
+                            </section>
                         );
                     })}
                 </nav>
-
-                {/* Footer Brand Tag */}
-                <div className="border-t border-white/5 p-3 text-center bg-[#0a0a0d]/60">
-                    <p className="text-[10px] text-zinc-400 font-medium">
-                        MSL Philippines &copy; {new Date().getFullYear()}
-                    </p>
-                </div>
             </aside>
         </>
     );
 }
-

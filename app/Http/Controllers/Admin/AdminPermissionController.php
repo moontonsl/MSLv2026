@@ -14,40 +14,36 @@ class AdminPermissionController extends Controller
     public static function availablePermissions(): array
     {
         return [
-            // Group: Community & Student Operations
-            ['id' => 'access_admin_dashboard', 'name' => 'Dashboard Access', 'description' => 'View command center overview and real-time live metrics', 'group' => 'Community & Student Operations'],
-            ['id' => 'manage_accounts', 'name' => 'Pending Queue & Verification', 'description' => 'Access verification queue to review student ID and COR documents', 'group' => 'Community & Student Operations'],
-            ['id' => 'approve_students', 'name' => 'Approve Students', 'description' => 'Verify and activate pending student profiles', 'group' => 'Community & Student Operations'],
-            ['id' => 'reject_students', 'name' => 'Reject Students', 'description' => 'Reject invalid document submissions with custom deficiency checklists', 'group' => 'Community & Student Operations'],
-            ['id' => 'renew_students', 'name' => 'Require Renewal', 'description' => 'Flag expired student records and request updated school credentials', 'group' => 'Community & Student Operations'],
-            ['id' => 'block_students', 'name' => 'Block / Suspend Students', 'description' => 'Restrict misbehaving student profiles from platform participation', 'group' => 'Community & Student Operations'],
-            ['id' => 'promote_students', 'name' => 'Promote Students', 'description' => 'Promote students to campus leadership or regional ranks', 'group' => 'Community & Student Operations'],
-            ['id' => 'manage_sl', 'name' => 'Student Leader Management', 'description' => 'Appoint, assign campus chapters, and oversee student leaders', 'group' => 'Community & Student Operations'],
-            ['id' => 'manage_regional_admins', 'name' => 'Regional Admin Governance', 'description' => 'Designate regional directors and oversee island cluster territories', 'group' => 'Community & Student Operations'],
-            ['id' => 'manage_schools', 'name' => 'School Directory & Management', 'description' => 'Browse, filter, edit, and oversee affiliated colleges and basic education institutions', 'group' => 'Community & Student Operations'],
+            ['id' => 'access_admin_dashboard', 'name' => 'Dashboard', 'description' => 'View command center overview and real-time live metrics', 'group' => 'Student operations'],
+            ['id' => 'manage_accounts', 'name' => 'School Management & Account Approvals', 'description' => 'Access verification queue to review student ID and COR documents', 'group' => 'Student operations'],
+            ['id' => 'approve_students', 'name' => 'Approve Students', 'description' => 'Verify and activate pending student profiles', 'group' => 'Student operations'],
+            ['id' => 'reject_students', 'name' => 'Reject Students', 'description' => 'Reject invalid document submissions with custom deficiency checklists', 'group' => 'Student operations'],
+            ['id' => 'renew_students', 'name' => 'Require Student Renewal', 'description' => 'Flag expired student records and request updated school credentials', 'group' => 'Student operations'],
+            ['id' => 'block_students', 'name' => 'Block Students', 'description' => 'Restrict misbehaving student profiles from platform participation', 'group' => 'Student operations'],
+            ['id' => 'promote_students', 'name' => 'Promote Students', 'description' => 'Promote students to campus leadership or regional ranks', 'group' => 'Student operations'],
+            ['id' => 'manage_sl', 'name' => 'Student Leaders', 'description' => 'Appoint, assign campus chapters, and oversee student leaders', 'group' => 'Student operations'],
+            ['id' => 'manage_regional_admins', 'name' => 'Regional Admin Accounts', 'description' => 'Designate regional directors and oversee island cluster territories', 'group' => 'Student operations'],
+            ['id' => 'manage_schools', 'name' => 'School Directory & Management', 'description' => 'Browse, filter, edit, and oversee affiliated colleges and basic education institutions', 'group' => 'Student operations'],
 
-            // Group: Esports & Tournaments
-            ['id' => 'manage_mcc_seasons', 'name' => 'MCC Seasons', 'description' => 'Manage Mobile Legends Campus Championship tournament seasons', 'group' => 'Esports & Tournaments'],
-            ['id' => 'manage_msl_events', 'name' => 'MSL Tournaments', 'description' => 'Organize collegiate cups, brackets, stages, and match scheduling', 'group' => 'Esports & Tournaments'],
-            ['id' => 'manage_events', 'name' => 'Event Calendar', 'description' => 'Schedule campus qualifiers, registration deadlines, and scrims', 'group' => 'Esports & Tournaments'],
-            ['id' => 'manage_event_photos', 'name' => 'Event Gallery / Buffs & Support', 'description' => 'Upload tournament photography, live photos, and highlight albums', 'group' => 'Esports & Tournaments'],
+            ['id' => 'manage_mcc_seasons', 'name' => 'MCC Seasons', 'description' => 'Manage Mobile Legends Campus Championship tournament seasons', 'group' => 'Website content'],
+            ['id' => 'manage_msl_events', 'name' => 'Public MSL Events', 'description' => 'Organize collegiate cups, brackets, stages, and match scheduling', 'group' => 'Website content'],
+            ['id' => 'manage_events', 'name' => 'Scheduled Events', 'description' => 'Schedule campus qualifiers, registration deadlines, and scrims', 'group' => 'Website content'],
+            ['id' => 'manage_event_photos', 'name' => 'Event Photos', 'description' => 'Upload tournament photography, live photos, and highlight albums', 'group' => 'Website content'],
+            ['id' => 'manage_news', 'name' => 'News Articles & Legacy News', 'description' => 'Publish articles, tournament recaps, and community updates', 'group' => 'Website content'],
+            ['id' => 'manage_carousel', 'name' => 'Carousel', 'description' => 'Manage homepage hero banners, promotions, and slide order', 'group' => 'Website content'],
+            ['id' => 'manage_faq', 'name' => 'FAQ', 'description' => 'Create and maintain student knowledge base and FAQs', 'group' => 'Website content'],
+            ['id' => 'manage_footer', 'name' => 'Footer Content', 'description' => 'Update portal footer navigation and community links', 'group' => 'Website content'],
+            ['id' => 'manage_homepage', 'name' => 'Home Page', 'description' => 'Configure homepage sections, statistics counters, and displays', 'group' => 'Website content'],
+            ['id' => 'manage_share_links', 'name' => 'Share Links', 'description' => 'Manage marketing short URLs, QR codes, and tracking redirects', 'group' => 'Website content'],
+            ['id' => 'manage_settings', 'name' => 'Website Settings', 'description' => 'Configure global system parameters, maintenance mode, and flags', 'group' => 'Website content'],
 
-            // Group: Content & Media Management
-            ['id' => 'manage_news', 'name' => 'News & Announcements', 'description' => 'Publish articles, tournament recaps, and community updates', 'group' => 'Content & Media Management'],
-            ['id' => 'manage_carousel', 'name' => 'Carousel Banners', 'description' => 'Manage homepage hero banners, promotions, and slide order', 'group' => 'Content & Media Management'],
-            ['id' => 'manage_faq', 'name' => 'FAQ Manager', 'description' => 'Create and maintain student knowledge base and FAQs', 'group' => 'Content & Media Management'],
-            ['id' => 'manage_footer', 'name' => 'Footer Links', 'description' => 'Update portal footer navigation and community links', 'group' => 'Content & Media Management'],
-            ['id' => 'manage_homepage', 'name' => 'Landing Settings', 'description' => 'Configure homepage sections, statistics counters, and displays', 'group' => 'Content & Media Management'],
-            ['id' => 'manage_share_links', 'name' => 'Share & Short Links', 'description' => 'Manage marketing short URLs, QR codes, and tracking redirects', 'group' => 'Content & Media Management'],
+            ['id' => 'access_admin_management', 'name' => 'Account Roles & Permissions', 'description' => 'Access and configure staff role capability matrices', 'group' => 'Admin security'],
+            ['id' => 'manage_admin_accounts', 'name' => 'Administrator Accounts', 'description' => 'Create, invite, and delete back-office admin login accounts', 'group' => 'Admin security'],
+            ['id' => 'manage_admin_permissions', 'name' => 'Legacy Permissions Endpoint', 'description' => 'Authorize or restrict specific functional abilities for staff', 'group' => 'Admin security'],
 
-            // Group: System Security & Governance
-            ['id' => 'access_admin_management', 'name' => 'Permissions & Roles Tab', 'description' => 'Access and configure staff role capability matrices', 'group' => 'System Security & Governance'],
-            ['id' => 'manage_admin_accounts', 'name' => 'Admin Accounts', 'description' => 'Create, invite, and delete back-office admin login accounts', 'group' => 'System Security & Governance'],
-            ['id' => 'manage_admin_permissions', 'name' => 'Grant / Revoke Permissions', 'description' => 'Authorize or restrict specific functional abilities for staff', 'group' => 'System Security & Governance'],
-            ['id' => 'manage_audit_logs', 'name' => 'Security Audit Trail', 'description' => 'Inspect comprehensive back-office operational audit logs', 'group' => 'System Security & Governance'],
-            ['id' => 'manage_violation_reports', 'name' => 'Violation Reports', 'description' => 'Review and process student code of conduct breach reports', 'group' => 'System Security & Governance'],
-            ['id' => 'manage_oppo_settings', 'name' => 'Oppo Partnership Modules', 'description' => 'Manage brand partnership banners and promotional integration', 'group' => 'System Security & Governance'],
-            ['id' => 'manage_settings', 'name' => 'Platform Settings', 'description' => 'Configure global system parameters, maintenance mode, and flags', 'group' => 'System Security & Governance'],
+            ['id' => 'manage_oppo_settings', 'name' => 'Oppo Settings', 'description' => 'Manage brand partnership banners and promotional integration', 'group' => 'Special modules'],
+            ['id' => 'manage_violation_reports', 'name' => 'Violation Reports', 'description' => 'Review and process student code of conduct breach reports', 'group' => 'Special modules'],
+            ['id' => 'manage_audit_logs', 'name' => 'Audit Logs', 'description' => 'Inspect comprehensive back-office operational audit logs', 'group' => 'Special modules'],
         ];
     }
 

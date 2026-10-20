@@ -29,11 +29,13 @@ use App\Http\Controllers\Admin\FooterController;
 use App\Http\Controllers\Admin\ShareLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CampusTournamentController;
+use App\Http\Controllers\CampusTournamentReportController;
 use App\Http\Controllers\TournamentRegistrationController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShortLinkController;
 use App\Http\Controllers\Student\StudentPortalController;
+use App\Models\Faq;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -42,7 +44,13 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Home');
+    return Inertia::render('Home/Index', [
+        'pinnedFaqs' => Faq::query()
+            ->where('is_active', true)
+            ->where('is_pinned', true)
+            ->orderBy('id')
+            ->get(['id', 'question', 'answer']),
+    ]);
 });
 
 Route::get('/s/{code}', [ShortLinkController::class, 'redirect'])->name('short-link.redirect');
@@ -104,6 +112,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/Tournament/Organizer', [CampusTournamentController::class, 'indexOrganizer'])
         ->name('campus.tournament.organizer');
 
+    Route::get('/campus-tournaments/{tournament}/ongoing', [CampusTournamentController::class, 'showOngoing'])
+        ->name('campus-tournaments.ongoing');
+
+    Route::get('/campus-tournaments/{tournament}/report', [CampusTournamentReportController::class, 'show'])
+        ->name('campus-tournaments.report');
+    Route::post('/campus-tournaments/{tournament}/results', [CampusTournamentReportController::class, 'store'])
+        ->name('campus-tournaments.results.store');
+    Route::post('/campus-tournaments/{tournament}/result-revisions', [CampusTournamentReportController::class, 'correct'])
+        ->name('campus-tournaments.results.correct');
+    Route::get('/campus-tournaments/{tournament}/results/export', [CampusTournamentReportController::class, 'export'])
+        ->name('campus-tournaments.results.export');
+
     Route::get('/Tournament/CampusTournament', [TournamentRegistrationController::class, 'showCaptainHub'])
         ->name('campus.captainregistration');
 
@@ -122,7 +142,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/Tournament/MemberInvite', [TournamentRegistrationController::class, 'showMemberInvitations'])
         ->name('campus.member.invite');
 
-    Route::redirect('/Tournament/MemberJoin', '/Tournament/MemberInvite')->name('campus.member.join');
+    Route::get('/Tournament/MemberJoin', [TournamentRegistrationController::class, 'showMemberJoin'])
+        ->name('campus.member.join');
 });
 
 /** Compatibility redirects from earlier /programs/... CT paths */
@@ -134,7 +155,7 @@ Route::redirect('/programs/campus-tournaments/captain/team', '/Tournament/Campus
 Route::redirect('/programs/campus-tournaments/captain/join', '/Tournament/SoloPlayer');
 Route::redirect('/programs/campus-tournaments/solo', '/Tournament/SoloPlayer');
 Route::redirect('/programs/campus-tournaments/member', '/Tournament/MemberInvite');
-Route::redirect('/programs/campus-tournaments/member/join', '/Tournament/MemberInvite');
+Route::redirect('/programs/campus-tournaments/member/join', '/Tournament/MemberJoin');
 Route::redirect('/sl/campus-tournament', '/Tournament/SL');
 Route::redirect('/captain/campus-tournament', '/Tournament/CampusTournament');
 Route::redirect('/member/campus-tournament', '/Tournament/MemberInvite');
@@ -145,7 +166,13 @@ Route::get('/CampusTournament', function () {
 })->name('campus.tournament.listing');
 
 Route::get('/Programs', function () {
-    return Inertia::render('Home');
+    return Inertia::render('Home/Index', [
+        'pinnedFaqs' => Faq::query()
+            ->where('is_active', true)
+            ->where('is_pinned', true)
+            ->orderBy('id')
+            ->get(['id', 'question', 'answer']),
+    ]);
 })->name('programs');
 
 Route::get('/Partnerships', function () {
@@ -186,18 +213,33 @@ if (!empty($adminDomain)) {
     });
 }
 
+Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])
+    ->name('admin.login');
+
+Route::get('/admin/custom-user-list/login', [AdminAuthController::class, 'showLogin'])
+    ->name('admin.custom-user-list.login');
+
 Route::middleware('guest:admin')->group(function () {
-    Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
     Route::post('/admin/login', [AdminAuthController::class, 'login'])
-        ->middleware('throttle:10,1')->name('admin.login.submit');
-    Route::get('/admin/custom-user-list/login', [AdminAuthController::class, 'showLogin'])->name('admin.custom-user-list.login');
+        ->middleware('throttle:10,1')
+        ->name('admin.login.submit');
+
     Route::post('/admin/custom-user-list/login', [AdminAuthController::class, 'login'])
-        ->middleware('throttle:10,1')->name('admin.custom-user-list.login.submit');
+        ->middleware('throttle:10,1')
+        ->name('admin.custom-user-list.login.submit');
 });
 
 /** Admin CMS pages from Evren branch */
 Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
     Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
+    Route::get('/admin/campus-tournaments/reports', [CampusTournamentReportController::class, 'indexCore'])
+        ->name('admin.campus-tournaments.reports.index');
+    Route::get('/admin/campus-tournaments/reports/{tournament}', [CampusTournamentReportController::class, 'show'])
+        ->name('admin.campus-tournaments.reports.show');
+    Route::post('/admin/campus-tournaments/reports/{tournament}/corrections', [CampusTournamentReportController::class, 'correct'])
+        ->name('admin.campus-tournaments.reports.correct');
+    Route::get('/admin/campus-tournaments/reports/{tournament}/export', [CampusTournamentReportController::class, 'export'])
+        ->name('admin.campus-tournaments.reports.export');
     Route::get('/admin/profile', [AdminProfileController::class, 'index'])->name('admin.profile');
     Route::put('/admin/profile', [AdminProfileController::class, 'update'])->name('admin.profile.update');
     Route::put('/admin/profile/password', [AdminProfileController::class, 'updatePassword'])->name('admin.profile.password.update');
@@ -205,7 +247,7 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
     Route::post('/admin/notifications/{id}/read', [AdminNotificationController::class, 'markRead'])->name('admin.notifications.read');
     Route::post('/admin/notifications/read-all', [AdminNotificationController::class, 'markAllRead'])->name('admin.notifications.read-all');
 
-    Route::get('/admin/account-creation', function () {
+    Route::get('/admin/schools', function () {
         return Inertia::render('Admin/AccountCreation');
     })->middleware('admin.permission:manage_accounts')->name('admin.account-creation');
 
@@ -218,22 +260,25 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->middleware('admin.permission:manage_faq')->name('admin.faq.store');
     Route::put('/admin/faq/{faq}', [FaqController::class, 'update'])
         ->middleware('admin.permission:manage_faq')->name('admin.faq.update');
+    Route::patch('/admin/faq/{faq}/pin', [FaqController::class, 'updatePin'])
+        ->middleware('admin.permission:manage_faq')->name('admin.faq.pin');
     Route::delete('/admin/faq/{faq}', [FaqController::class, 'destroy'])
         ->middleware('admin.permission:manage_faq')->name('admin.faq.delete');
 
-    Route::get('/admin/news-updates', [ModernNewsController::class, 'index'])
+    Route::get('/admin/news-articles', [ModernNewsController::class, 'index'])
         ->middleware('admin.permission:manage_news')->name('admin.news-updates');
-    Route::post('/admin/news-updates', [ModernNewsController::class, 'store'])
+    Route::post('/admin/news-articles', [ModernNewsController::class, 'store'])
         ->middleware('admin.permission:manage_news')->name('admin.news-modern.store');
-    Route::put('/admin/news-updates/{news}', [ModernNewsController::class, 'update'])
+    Route::put('/admin/news-articles/{news}', [ModernNewsController::class, 'update'])
         ->middleware('admin.permission:manage_news')->name('admin.news-modern.update');
-    Route::delete('/admin/news-updates/{news}', [ModernNewsController::class, 'destroy'])
+    Route::delete('/admin/news-articles/{news}', [ModernNewsController::class, 'destroy'])
         ->middleware('admin.permission:manage_news')->name('admin.news-modern.delete');
+
+    Route::redirect('/admin/account-creation', '/admin/schools');
+    Route::redirect('/admin/news-updates', '/admin/news-articles');
 });
 
-Route::get('/admin/account-management', function () {
-    return Inertia::render('Admin/AccountManagement');
-})->name('admin.account-management');
+Route::redirect('/admin/account-management', '/admin/administrator-accounts');
 
 Route::get('/admin/registration-management', function () {
    return Inertia::render('Admin/RegistrationManagement');
@@ -243,9 +288,10 @@ Route::get('/admin/event-management', function () {
     return Inertia::render('Admin/EventManagement');
 })->name('admin.event-management');
 
-Route::get('/admin/regional-admin', function () {
+Route::get('/admin/regional-admin-assignments', function () {
     return Inertia::render('Admin/RegionalAdmin');
 })->name('admin.regional-admin');
+Route::redirect('/admin/regional-admin', '/admin/regional-admin-assignments');
 
 
 Route::get('/SL-Admin', function () {
@@ -438,7 +484,7 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->name('admin.users.promote');
 
     // Admin Management Page
-    Route::get('/admin/management', [AdminManagementController::class, 'index'])
+    Route::get('/admin/account-roles-permissions', [AdminManagementController::class, 'index'])
         ->middleware('admin.permission:access_admin_management')
         ->name('admin.management');
 
@@ -446,18 +492,22 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->middleware('admin.permission:access_admin_management')
         ->name('admin.users.permissions.update');
 
-    Route::get('/admin/accounts', [AdminAccountController::class, 'index'])
+    Route::put('/admin/users/{id}/role', [AdminManagementController::class, 'updateRole'])
+        ->middleware('admin.permission:access_admin_management')
+        ->name('admin.users.role.update');
+
+    Route::get('/admin/administrator-accounts', [AdminAccountController::class, 'index'])
         ->middleware('admin.permission:manage_admin_accounts')
         ->name('admin.accounts.index');
-    Route::post('/admin/accounts', [AdminAccountController::class, 'store'])
+    Route::post('/admin/administrator-accounts', [AdminAccountController::class, 'store'])
         ->middleware('admin.permission:manage_admin_accounts')
         ->name('admin.accounts.store');
-    Route::delete('/admin/accounts/{id}', [AdminAccountController::class, 'destroy'])
+    Route::delete('/admin/administrator-accounts/{id}', [AdminAccountController::class, 'destroy'])
         ->middleware('admin.permission:manage_admin_accounts')
         ->name('admin.accounts.destroy');
 
-    Route::get('/admin/permissions', [AdminPermissionController::class, 'index'])
-        ->middleware('admin.permission:manage_admin_permissions')
+    Route::redirect('/admin/permissions', '/admin/account-roles-permissions')
+        ->middleware('admin.permission:access_admin_management')
         ->name('admin.permissions.index');
     Route::put('/admin/permissions/{id}', [AdminPermissionController::class, 'update'])
         ->middleware('admin.permission:manage_admin_permissions')
@@ -468,7 +518,7 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->name('admin.audit-logs.index');
 
     // Legacy MSL-1 admin modules adapted to MSLv2026.
-    Route::get('/admin/users/pending', [PendingUserController::class, 'index'])
+    Route::get('/admin/pending-account-approvals', [PendingUserController::class, 'index'])
         ->middleware('admin.permission:manage_accounts')->name('admin.users.pending');
     Route::post('/admin/users/{user}/verify', [PendingUserController::class, 'verify'])
         ->middleware('admin.permission:manage_accounts')->name('admin.users.verify');
@@ -477,17 +527,17 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
     Route::post('/admin/users/{user}/pending-reject', [PendingUserController::class, 'reject'])
         ->middleware('admin.permission:manage_accounts')->name('admin.users.pending-reject');
 
-    Route::get('/admin/news', [LegacyContentController::class, 'news'])
+    Route::get('/admin/legacy-news', [LegacyContentController::class, 'news'])
         ->middleware('admin.permission:manage_news')->name('admin.news');
-    Route::get('/admin/news/create', [LegacyContentController::class, 'createNews'])
+    Route::get('/admin/legacy-news/create', [LegacyContentController::class, 'createNews'])
         ->middleware('admin.permission:manage_news')->name('admin.news.create');
-    Route::post('/admin/news', [LegacyContentController::class, 'storeNews'])
+    Route::post('/admin/legacy-news', [LegacyContentController::class, 'storeNews'])
         ->middleware('admin.permission:manage_news')->name('admin.news.store');
-    Route::get('/admin/news/{news}/edit', [LegacyContentController::class, 'editNews'])
+    Route::get('/admin/legacy-news/{news}/edit', [LegacyContentController::class, 'editNews'])
         ->middleware('admin.permission:manage_news')->name('admin.news.edit');
-    Route::put('/admin/news/{news}', [LegacyContentController::class, 'updateNews'])
+    Route::put('/admin/legacy-news/{news}', [LegacyContentController::class, 'updateNews'])
         ->middleware('admin.permission:manage_news')->name('admin.news.update');
-    Route::delete('/admin/news/{news}', [LegacyContentController::class, 'deleteNews'])
+    Route::delete('/admin/legacy-news/{news}', [LegacyContentController::class, 'deleteNews'])
         ->middleware('admin.permission:manage_news')->name('admin.news.delete');
 
     Route::get('/admin/carousel', [CarouselController::class, 'index'])
@@ -514,41 +564,41 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
     Route::delete('/admin/event-photos/{eventPhoto}', [EventPhotoController::class, 'destroy'])
         ->middleware('admin.permission:manage_event_photos')->name('admin.event-photos.delete');
 
-    Route::get('/admin/events', [EventCalendarController::class, 'index'])
+    Route::get('/admin/scheduled-events', [EventCalendarController::class, 'index'])
         ->middleware('admin.permission:manage_events')->name('admin.events');
-    Route::get('/admin/events/create', [EventCalendarController::class, 'create'])
+    Route::get('/admin/scheduled-events/create', [EventCalendarController::class, 'create'])
         ->middleware('admin.permission:manage_events')->name('admin.events.create');
-    Route::post('/admin/events', [EventCalendarController::class, 'store'])
+    Route::post('/admin/scheduled-events', [EventCalendarController::class, 'store'])
         ->middleware('admin.permission:manage_events')->name('admin.events.store');
-    Route::get('/admin/events/{event}/edit', [EventCalendarController::class, 'edit'])
+    Route::get('/admin/scheduled-events/{event}/edit', [EventCalendarController::class, 'edit'])
         ->middleware('admin.permission:manage_events')->name('admin.events.edit');
-    Route::put('/admin/events/{event}', [EventCalendarController::class, 'update'])
+    Route::put('/admin/scheduled-events/{event}', [EventCalendarController::class, 'update'])
         ->middleware('admin.permission:manage_events')->name('admin.events.update');
-    Route::delete('/admin/events/{event}', [EventCalendarController::class, 'destroy'])
+    Route::delete('/admin/scheduled-events/{event}', [EventCalendarController::class, 'destroy'])
         ->middleware('admin.permission:manage_events')->name('admin.events.delete');
 
-    Route::get('/admin/msl-events', [MslEventController::class, 'index'])
+    Route::get('/admin/public-msl-events', [MslEventController::class, 'index'])
         ->middleware('admin.permission:manage_msl_events')->name('admin.msl-events.index');
-    Route::get('/admin/msl-events/create', [MslEventController::class, 'create'])
+    Route::get('/admin/public-msl-events/create', [MslEventController::class, 'create'])
         ->middleware('admin.permission:manage_msl_events')->name('admin.msl-events.create');
-    Route::post('/admin/msl-events', [MslEventController::class, 'store'])
+    Route::post('/admin/public-msl-events', [MslEventController::class, 'store'])
         ->middleware('admin.permission:manage_msl_events')->name('admin.msl-events.store');
-    Route::get('/admin/msl-events/{mslEvent}/edit', [MslEventController::class, 'edit'])
+    Route::get('/admin/public-msl-events/{mslEvent}/edit', [MslEventController::class, 'edit'])
         ->middleware('admin.permission:manage_msl_events')->name('admin.msl-events.edit');
-    Route::put('/admin/msl-events/{mslEvent}', [MslEventController::class, 'update'])
+    Route::put('/admin/public-msl-events/{mslEvent}', [MslEventController::class, 'update'])
         ->middleware('admin.permission:manage_msl_events')->name('admin.msl-events.update');
-    Route::put('/admin/msl-events/{mslEvent}/status', [MslEventController::class, 'updateStatus'])
+    Route::put('/admin/public-msl-events/{mslEvent}/status', [MslEventController::class, 'updateStatus'])
         ->middleware('admin.permission:manage_msl_events')->name('admin.msl-events.update-status');
-    Route::delete('/admin/msl-events/{mslEvent}', [MslEventController::class, 'destroy'])
+    Route::delete('/admin/public-msl-events/{mslEvent}', [MslEventController::class, 'destroy'])
         ->middleware('admin.permission:manage_msl_events')->name('admin.msl-events.destroy');
 
-    Route::get('/admin/settings', [SettingsController::class, 'index'])
+    Route::get('/admin/website-settings', [SettingsController::class, 'index'])
         ->middleware('admin.permission:manage_settings')->name('admin.settings');
-    Route::post('/admin/settings', [SettingsController::class, 'update'])
+    Route::post('/admin/website-settings', [SettingsController::class, 'update'])
         ->middleware('admin.permission:manage_settings')->name('admin.settings.update');
-    Route::get('/admin/footer', [FooterController::class, 'index'])
+    Route::get('/admin/footer-content', [FooterController::class, 'index'])
         ->middleware('admin.permission:manage_footer')->name('admin.footer');
-    Route::post('/admin/footer', [FooterController::class, 'update'])
+    Route::post('/admin/footer-content', [FooterController::class, 'update'])
         ->middleware('admin.permission:manage_footer')->name('admin.footer.update');
 
     Route::get('/admin/share-links', [ShareLinkController::class, 'index'])
@@ -580,13 +630,13 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
     Route::get('/admin/user-regions', [LegacyContentController::class, 'userRegions'])
         ->middleware('admin.permission:manage_accounts')->name('admin.user-regions');
 
-    Route::get('/admin/sl-management', [StudentLeaderController::class, 'index'])
+    Route::get('/admin/student-leaders', [StudentLeaderController::class, 'index'])
         ->middleware('admin.permission:manage_sl')->name('admin.sl-management');
     Route::post('/admin/users/{user}/promote-sl', [StudentLeaderController::class, 'promote'])
         ->middleware('admin.permission:manage_sl')->name('admin.users.promote-sl');
     Route::post('/admin/users/{user}/demote-sl', [StudentLeaderController::class, 'demote'])
         ->middleware('admin.permission:manage_sl')->name('admin.users.demote-sl');
-    Route::get('/admin/regional-admin-management', [RegionalAdminManagementController::class, 'index'])
+    Route::get('/admin/regional-admin-accounts', [RegionalAdminManagementController::class, 'index'])
         ->middleware('admin.permission:manage_regional_admins')->name('admin.regional-admin-management');
     Route::post('/admin/users/{user}/promote-regional-admin', [RegionalAdminManagementController::class, 'promote'])
         ->middleware('admin.permission:manage_regional_admins')->name('admin.users.promote-regional-admin');
@@ -633,6 +683,24 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->middleware('admin.permission:manage_mcc_seasons')->name('admin.mcc-seasons.update-content');
     Route::delete('/admin/mcc-seasons/{seasonId}/content/{contentId}', [MCCSeasonController::class, 'deleteContent'])
         ->middleware('admin.permission:manage_mcc_seasons')->name('admin.mcc-seasons.delete-content');
+
+    // Legacy URLs redirect to the renamed admin pages.
+    Route::redirect('/admin/management', '/admin/account-roles-permissions');
+    Route::redirect('/admin/accounts', '/admin/administrator-accounts');
+    Route::redirect('/admin/users/pending', '/admin/pending-account-approvals');
+    Route::redirect('/admin/news', '/admin/legacy-news');
+    Route::get('/admin/news/create', fn () => redirect()->route('admin.news.create'));
+    Route::get('/admin/news/{news}/edit', fn ($news) => redirect()->route('admin.news.edit', $news))->whereNumber('news');
+    Route::redirect('/admin/events', '/admin/scheduled-events');
+    Route::get('/admin/events/create', fn () => redirect()->route('admin.events.create'));
+    Route::get('/admin/events/{event}/edit', fn ($event) => redirect()->route('admin.events.edit', $event))->whereNumber('event');
+    Route::redirect('/admin/msl-events', '/admin/public-msl-events');
+    Route::get('/admin/msl-events/create', fn () => redirect()->route('admin.msl-events.create'));
+    Route::get('/admin/msl-events/{mslEvent}/edit', fn ($mslEvent) => redirect()->route('admin.msl-events.edit', $mslEvent))->whereNumber('mslEvent');
+    Route::redirect('/admin/settings', '/admin/website-settings');
+    Route::redirect('/admin/footer', '/admin/footer-content');
+    Route::redirect('/admin/sl-management', '/admin/student-leaders');
+    Route::redirect('/admin/regional-admin-management', '/admin/regional-admin-accounts');
 
     Route::get('/Oppo-settings', [OppoSettingsController::class, 'index'])
         ->middleware('admin.permission:manage_oppo_settings')->name('admin.oppo-settings.index');

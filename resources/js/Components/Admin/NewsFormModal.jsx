@@ -1,3 +1,4 @@
+import AdminFilterSelect from '@/Components/Admin/AdminFilterSelect';
 import BaseModal from "@/Components/Admin/BaseModal";
 import FeaturedImagesUpload from "@/Components/Admin/FeaturedImagesUpload";
 import {
@@ -99,7 +100,7 @@ export default function NewsFormModal({
                     >
                         Category
                     </label>
-                    <select
+                    <AdminFilterSelect
                         id="news-category"
                         name="category"
                         value={form.category}
@@ -111,7 +112,7 @@ export default function NewsFormModal({
                                 {option}
                             </option>
                         ))}
-                    </select>
+                    </AdminFilterSelect>
                 </div>
 
                 <div>

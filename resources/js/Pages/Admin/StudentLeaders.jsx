@@ -222,7 +222,7 @@ export default function StudentLeaders({
             <Head title="Student Leader Management | MSL Admin" />
 
             {/* Header & Live Telemetry Badge */}
-            <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+            <div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
                 <div>
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-400 text-xs font-bold tracking-wider uppercase mb-3">
                         <Crown className="w-3.5 h-3.5" />

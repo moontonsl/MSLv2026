@@ -1,3 +1,4 @@
+import AdminFilterSelect from '@/Components/Admin/AdminFilterSelect';
 import BaseModal from "@/Components/Admin/BaseModal";
 import FeaturedImageUpload from "@/Components/Admin/FeaturedImageUpload";
 import {
@@ -172,7 +173,7 @@ function SelectField({
 }) {
     return (
         <div className="relative">
-            <select
+            <AdminFilterSelect
                 id={id}
                 value={value}
                 onChange={(event) => onChange(event.target.value)}
@@ -192,7 +193,7 @@ function SelectField({
                         {option.label}
                     </option>
                 ))}
-            </select>
+            </AdminFilterSelect>
 
             <ChevronDown
                 aria-hidden="true"

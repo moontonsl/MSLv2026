@@ -1,11 +1,11 @@
-import ArticleCard from '@/Components/ArticleCard';
-import MainLayout from '@/Layouts/MainLayout';
-import { Head, Link } from '@inertiajs/react';
-import { newsArticles } from '@/data/newsData';
-import { Calendar, ChevronLeft, Clock, Share2, User } from 'lucide-react';
+import ArticleCard from "@/Components/ArticleCard";
+import MainLayout from "@/Layouts/MainLayout";
+import { Head, Link } from "@inertiajs/react";
+import { newsArticles } from "@/data/newsData";
+import { Calendar, ChevronLeft, Clock, Share2, User } from "lucide-react";
 
 const articleBodyTypography =
-    '[&_p]:mb-6 [&_p]:leading-relaxed [&_p]:text-gray-300 [&_ul]:mb-6 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:text-gray-300 [&_li]:mb-2 [&_strong]:font-bold [&_strong]:text-white';
+    "[&_p]:mb-6 [&_p]:leading-relaxed [&_p]:text-gray-300 [&_ul]:mb-6 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:text-gray-300 [&_li]:mb-2 [&_strong]:font-bold [&_strong]:text-white";
 
 export default function ArticleDetail({ article, readNext = [] }) {
     if (!article) {
@@ -13,8 +13,13 @@ export default function ArticleDetail({ article, readNext = [] }) {
             <MainLayout>
                 <Head title="Article not found" />
                 <div className="min-h-[50vh] bg-[#0A0A0A] px-4 py-24 text-center text-white">
-                    <p className="mb-6 text-gray-400">This article could not be found.</p>
-                    <Link href="/News" className="font-bold text-[#FBBF24] hover:underline">
+                    <p className="mb-6 text-gray-400">
+                        This article could not be found.
+                    </p>
+                    <Link
+                        href="/News"
+                        className="font-bold text-[#FBBF24] hover:underline"
+                    >
                         Back to News
                     </Link>
                 </div>
@@ -23,7 +28,7 @@ export default function ArticleDetail({ article, readNext = [] }) {
     }
 
     const handleShare = async () => {
-        const url = typeof window !== 'undefined' ? window.location.href : '';
+        const url = typeof window !== "undefined" ? window.location.href : "";
         try {
             if (navigator.share) {
                 await navigator.share({
@@ -87,8 +92,10 @@ export default function ArticleDetail({ article, readNext = [] }) {
                             <div className="flex items-center gap-2 text-xs text-gray-400 md:hidden">
                                 <User className="h-4 w-4 shrink-0 text-[#FBBF24]" />
                                 <span>
-                                    Written by{' '}
-                                    <strong className="text-white">{article.author.role}</strong>
+                                    Written by{" "}
+                                    <strong className="text-white">
+                                        {article.author.role}
+                                    </strong>
                                 </span>
                             </div>
 
@@ -108,7 +115,9 @@ export default function ArticleDetail({ article, readNext = [] }) {
                                     <p className="truncate text-sm font-bold text-white md:text-base">
                                         {article.author.name}
                                     </p>
-                                    <p className="text-sm text-gray-400">{article.author.role}</p>
+                                    <p className="text-sm text-gray-400">
+                                        {article.author.role}
+                                    </p>
                                 </div>
                             </div>
 
@@ -129,7 +138,9 @@ export default function ArticleDetail({ article, readNext = [] }) {
 
                     <div
                         className={articleBodyTypography}
-                        dangerouslySetInnerHTML={{ __html: article.content.trim() }}
+                        dangerouslySetInnerHTML={{
+                            __html: article.content.trim(),
+                        }}
                     />
 
                     <hr className="my-8 border-neutral-800" />

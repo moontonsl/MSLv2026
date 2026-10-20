@@ -128,6 +128,11 @@ class User extends Authenticatable
         return $this->hasMany(CampusTournamentReview::class, 'reviewer_user_id');
     }
 
+    public function tournamentResultRevisions(): HasMany
+    {
+        return $this->hasMany(TournamentResultRevision::class, 'submitted_by_user_id');
+    }
+
     public function regionAdminAssignments(): HasMany
     {
         return $this->hasMany(RegionAdmin::class);

@@ -83,6 +83,121 @@ class TournamentRegistrationTest extends TestCase
         ]);
     }
 
+    public function test_captain_can_search_eligible_players_before_creating_a_team(): void
+    {
+        $eligible = $this->createEligibleUser();
+        $eligible->update(['username' => 'searchable_teammate', 'ml_ign' => 'Searchable IGN']);
+        $outsider = User::factory()->create(['username' => 'searchable_outsider']);
+        $unverified = $this->createEligibleUser();
+        $unverified->update(['username' => 'searchable_unverified', 'is_mlbb_verified' => false]);
+
+        $this->actingAs($this->student)->getJson(route('campus.school-players', [
+            'search' => 'searchable',
+            'tournament' => $this->tournament->id,
+        ]))->assertOk()
+            ->assertJsonFragment(['username' => 'searchable_teammate'])
+            ->assertJsonMissing(['username' => $outsider->username])
+            ->assertJsonMissing(['username' => $unverified->username]);
+    }
+
+    public function test_player_search_before_team_creation_requires_an_eligible_captain(): void
+    {
+        $candidate = $this->createEligibleUser();
+        $candidate->update(['username' => 'searchable_candidate']);
+        $outsider = User::factory()->create();
+
+        $this->actingAs($outsider)->getJson(route('campus.school-players', [
+            'search' => 'searchable',
+            'tournament' => $this->tournament->id,
+        ]))->assertNotFound();
+    }
+
+    public function test_captain_can_create_team_and_invite_four_players_from_registration_form(): void
+    {
+        $players = collect(range(2, 5))->map(function (int $number): User {
+            $player = $this->createEligibleUser();
+            $player->update(['username' => "player_{$number}"]);
+
+            return $player;
+        });
+        $lanes = ['roam', 'gold_laner', 'exp_laner', 'mid_laner'];
+
+        $this->actingAs($this->student)->post(route('tournament.teams.store', $this->tournament), [
+            'name' => 'Complete Invitation Form',
+            'assigned_lane_role_code' => 'jungler',
+            'members' => $players->values()->map(fn (User $player, int $index): array => [
+                'username' => $player->username,
+                'intended_lane_role_code' => $lanes[$index],
+            ])->all(),
+        ])->assertRedirect();
+
+        $team = TournamentTeam::query()->where('name', 'Complete Invitation Form')->firstOrFail();
+        $this->assertSame(TeamStatus::Assembling, $team->status);
+        $this->assertDatabaseCount('tournament_team_invitations', 4);
+        $this->assertDatabaseCount('tournament_participants', 1);
+
+        foreach ($players->values() as $index => $player) {
+            $invitation = TournamentTeamInvitation::query()
+                ->where('team_id', $team->id)
+                ->where('invited_user_id', $player->id)
+                ->firstOrFail();
+            $this->assertSame($lanes[$index], $invitation->intended_lane_role_code);
+            $this->actingAs($player)->post(route('tournament.invitations.respond', $invitation), [
+                'decision' => 'accepted',
+            ])->assertRedirect();
+        }
+
+        $this->assertSame(TeamStatus::Registered, $team->refresh()->status);
+        $this->assertSame(5, $team->activeParticipants()->count());
+    }
+
+    public function test_registration_form_rejects_duplicate_lanes_without_creating_team(): void
+    {
+        $players = collect(range(2, 5))->map(function (int $number): User {
+            $player = $this->createEligibleUser();
+            $player->update(['username' => "duplicate_lane_player_{$number}"]);
+
+            return $player;
+        });
+
+        $this->actingAs($this->student)->post(route('tournament.teams.store', $this->tournament), [
+            'name' => 'Invalid Lane Form',
+            'assigned_lane_role_code' => 'jungler',
+            'members' => $players->map(fn (User $player): array => [
+                'username' => $player->username,
+                'intended_lane_role_code' => 'roam',
+            ])->all(),
+        ])->assertSessionHasErrors();
+
+        $this->assertDatabaseMissing('tournament_teams', ['name' => 'Invalid Lane Form']);
+        $this->assertDatabaseCount('tournament_team_invitations', 0);
+    }
+
+    public function test_registration_form_rejects_ineligible_invitee_atomically(): void
+    {
+        $players = collect(range(2, 5))->map(function (int $number): User {
+            $player = $this->createEligibleUser();
+            $player->update(['username' => "eligible_player_{$number}"]);
+
+            return $player;
+        });
+        $players->last()->update(['is_mlbb_verified' => false]);
+        $lanes = ['roam', 'gold_laner', 'exp_laner', 'mid_laner'];
+
+        $this->actingAs($this->student)->post(route('tournament.teams.store', $this->tournament), [
+            'name' => 'Ineligible Invitation Form',
+            'assigned_lane_role_code' => 'jungler',
+            'members' => $players->values()->map(fn (User $player, int $index): array => [
+                'username' => $player->username,
+                'intended_lane_role_code' => $lanes[$index],
+            ])->all(),
+        ])->assertSessionHasErrors('user_id');
+
+        $this->assertDatabaseMissing('tournament_teams', ['name' => 'Ineligible Invitation Form']);
+        $this->assertDatabaseCount('tournament_team_invitations', 0);
+        $this->assertDatabaseCount('tournament_participants', 0);
+    }
+
     public function test_unauthenticated_user_cannot_register_team(): void
     {
         $this->post(route('tournament.teams.store', $this->tournament), [

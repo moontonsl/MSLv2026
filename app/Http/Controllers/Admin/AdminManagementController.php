@@ -8,11 +8,24 @@ use App\Models\AdminUser;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class AdminManagementController extends Controller
 {
+    private const EDITABLE_ROLES = [
+        'Admin',
+        'Content Manager',
+        'Regional Admin',
+        'Event Manager',
+    ];
+
+    public static function editableRoles(): array
+    {
+        return self::EDITABLE_ROLES;
+    }
+
     /**
      * Display the admin management interface with users, permissions, presets, and stats.
      */
@@ -51,6 +64,7 @@ class AdminManagementController extends Controller
             'allPermissions' => $allPermissions,
             'rolePresets' => $rolePresets,
             'stats' => $stats,
+            'roleOptions' => self::editableRoles(),
         ]);
     }
 
@@ -102,5 +116,27 @@ class AdminManagementController extends Controller
         ]);
 
         return redirect()->back()->with('status', 'Permissions updated successfully.');
+    }
+
+    /**
+     * Update the role assigned to an administrator account.
+     */
+    public function updateRole(Request $request, int $id): RedirectResponse
+    {
+        $validated = $request->validate([
+            'role' => ['required', 'string', Rule::in(self::EDITABLE_ROLES)],
+        ]);
+
+        $user = AdminUser::findOrFail($id);
+
+        if ($user->isSuperAdmin()) {
+            return redirect()->back()->withErrors([
+                'role' => 'The Super Admin role cannot be changed.',
+            ]);
+        }
+
+        $user->update(['role' => $validated['role']]);
+
+        return redirect()->back()->with('status', 'Admin role updated successfully.');
     }
 }
