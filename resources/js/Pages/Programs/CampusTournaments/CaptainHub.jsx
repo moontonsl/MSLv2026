@@ -13,9 +13,9 @@ const OPTIONS = [
     },
     {
         id: 'join',
-        title: 'Team Invitations',
-        description: 'View and respond to direct team invitations.',
-        href: '/Tournament/MemberInvite',
+        title: 'Join an Existing Team',
+        description: 'Enter a team invite code from your captain.',
+        href: '/Tournament/MemberJoin',
         icon: ChevronRight,
         highlight: false,
     },

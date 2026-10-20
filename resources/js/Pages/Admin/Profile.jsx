@@ -1,6 +1,7 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { KeyRound, ShieldCheck, UserRound } from 'lucide-react';
+import { useState } from 'react';
 
 const FIELD_CLASS = 'min-h-[44px] w-full rounded-md border border-neutral-800 bg-[#1a1a1a] px-4 py-2.5 text-white outline-none focus:ring-2 focus:ring-yellow-500';
 const ERROR_CLASS = 'mt-1 text-sm text-red-400';
@@ -12,23 +13,32 @@ function ErrorMessage({ message }) {
 export default function Profile({ admin }) {
     const profileForm = useForm({ name: admin?.name ?? '', email: admin?.email ?? '' });
     const passwordForm = useForm({ current_password: '', password: '', password_confirmation: '' });
+    const [successMessage, setSuccessMessage] = useState('');
 
     const updateProfile = (event) => {
         event.preventDefault();
-        profileForm.put(route('admin.profile.update'), { preserveScroll: true });
+        profileForm.put(route('admin.profile.update'), {
+            preserveScroll: true,
+            onSuccess: () => setSuccessMessage('Admin profile updated successfully.'),
+        });
     };
 
     const updatePassword = (event) => {
         event.preventDefault();
         passwordForm.put(route('admin.profile.password.update'), {
             preserveScroll: true,
-            onSuccess: () => passwordForm.reset(),
+            onSuccess: () => {
+                passwordForm.reset();
+                setSuccessMessage('Admin password changed successfully.');
+            },
         });
     };
 
-    return <AdminLayout showGlobalSearch>
-        <Head title="Admin Profile" />
-        <div className="mb-6 sm:mb-8"><h1 className="text-2xl font-bold text-white sm:text-3xl">Admin Profile</h1><p className="mt-2 text-sm text-gray-400">Manage your administrator identity and sign-in security.</p></div>
+    return <AdminLayout activeNavId="profile">
+        <Head title="Change Admin Profile" />
+        <div className="mb-6 sm:mb-8"><h1 className="text-2xl font-bold text-white sm:text-3xl">Change Admin Profile</h1><p className="mt-2 text-sm text-gray-400">Update your administrator name, email address, and sign-in security.</p></div>
+
+        {successMessage && <p role="status" className="mb-6 rounded-lg border border-emerald-800 bg-emerald-950/40 px-4 py-3 text-sm font-medium text-emerald-300">{successMessage}</p>}
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
             <section className="rounded-xl border border-neutral-800 bg-[#111111] p-5 sm:p-7">

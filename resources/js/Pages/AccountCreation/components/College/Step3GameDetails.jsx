@@ -1,6 +1,7 @@
 import React from 'react';
+import { usePage } from '@inertiajs/react';
 import styles from '../../register.module.scss';
-import { ChevronDown, Search, X, Gamepad2 } from 'lucide-react';
+import { ChevronDown, Search, X, Gamepad2, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { mlbbRanks, mlbbRoles, mlbbVerificationSample } from '../../data/mlbbOptions';
 
 const Step3GameDetails = React.forwardRef(function Step3GameDetails(
@@ -245,7 +246,10 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
     };
 
     const handleSendCode = async (e) => {
-        if (e) e.preventDefault();
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         if (!mlId || !mlServer) {
             setVerificationError('Please enter both User ID and Server ID.');
             return;
@@ -272,7 +276,10 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
     };
 
     const handleVerifyCode = async (e) => {
-        if (e) e.preventDefault();
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         if (!otp) {
             setVerificationError('Please enter the verification code.');
             return;
@@ -294,6 +301,9 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                 if (profile.rank) {
                     handleInputChange({ target: { name: 'rank', value: profile.rank } });
                 }
+                handleInputChange({ target: { name: 'avatar', value: profile.avatar || '' } });
+                handleInputChange({ target: { name: 'level', value: profile.level || '' } });
+                handleInputChange({ target: { name: 'rankLevel', value: profile.rank_level || '' } });
                 clearFieldError('userId');
                 clearFieldError('serverId');
                 clearFieldError('ign');
@@ -409,7 +419,7 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                             </div>
                         ) : (
                             /* REAL FLOW / INTERACTIVE API ACTIONS */
-                            <form onSubmit={verificationStep === 1 ? handleSendCode : handleVerifyCode} className="space-y-4">
+                            <div className="space-y-4">
                                 {verificationStep === 1 ? (
                                     <>
                                         <div className="space-y-3">
@@ -421,6 +431,13 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                                                     type="text"
                                                     value={mlId}
                                                     onChange={(e) => setMlId(e.target.value)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            handleSendCode(e);
+                                                        }
+                                                    }}
                                                     placeholder="e.g. 123456789"
                                                     className="w-full p-3 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 outline-none text-white transition-all text-sm"
                                                     required
@@ -434,6 +451,13 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                                                     type="text"
                                                     value={mlServer}
                                                     onChange={(e) => setMlServer(e.target.value)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            handleSendCode(e);
+                                                        }
+                                                    }}
                                                     placeholder="e.g. 1234"
                                                     className="w-full p-3 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 outline-none text-white transition-all text-sm"
                                                     required
@@ -442,7 +466,8 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                                         </div>
 
                                         <button
-                                            type="submit"
+                                            type="button"
+                                            onClick={handleSendCode}
                                             disabled={verificationLoading}
                                             className="w-full py-3 mt-2 rounded-xl bg-yellow-500 text-black font-semibold hover:bg-yellow-400 transition disabled:opacity-50"
                                         >
@@ -474,6 +499,13 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                                                         type="text"
                                                         value={otp}
                                                         onChange={(e) => setOtp(e.target.value)}
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === 'Enter') {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                handleVerifyCode(e);
+                                                            }
+                                                        }}
                                                         placeholder="Check in-game mail"
                                                         className="w-full p-3 rounded-lg bg-zinc-900 border border-zinc-800 focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 outline-none text-white transition-all text-sm text-center font-bold tracking-widest"
                                                         required
@@ -484,7 +516,8 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
 
                                         <div className="flex flex-col gap-2 mt-2">
                                             <button
-                                                type="submit"
+                                                type="button"
+                                                onClick={handleVerifyCode}
                                                 disabled={verificationLoading}
                                                 className="w-full py-3 rounded-xl bg-yellow-500 text-black font-semibold hover:bg-yellow-400 transition disabled:opacity-50"
                                             >
@@ -502,9 +535,49 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
                                         </div>
                                     </>
                                 )}
-                            </form>
+                            </div>
                         )}
                     </div>
+                </div>
+            )}
+
+            {/* Verification Status Banner */}
+            {(!data.userId || !data.ign) ? (
+                <div className="mb-4 p-4 rounded-xl border border-yellow-500/30 bg-yellow-500/10 flex flex-col md:flex-row items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                        <Gamepad2 className="h-6 w-6 text-yellow-400 shrink-0" />
+                        <div>
+                            <p className="text-sm font-semibold text-white">MLBB Account Verification Required</p>
+                            <p className="text-xs text-white/60">Verify your Mobile Legends account to proceed.</p>
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setVerificationStep(1);
+                            setShowVerificationModal(true);
+                        }}
+                        className="px-4 py-2 rounded-lg bg-yellow-500 text-black font-semibold text-xs hover:bg-yellow-400 transition shrink-0"
+                    >
+                        Verify MLBB Account
+                    </button>
+                </div>
+            ) : (
+                <div className="mb-4 p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs text-emerald-400 font-medium">
+                        <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
+                        <span>MLBB Account Verified: <strong className="text-white ml-1">{data.ign}</strong> ({data.userId})</span>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setVerificationStep(1);
+                            setShowVerificationModal(true);
+                        }}
+                        className="text-xs text-yellow-400 hover:underline font-semibold"
+                    >
+                        Change Account
+                    </button>
                 </div>
             )}
 

@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\AdminUser;
 use App\Models\Campus;
 use App\Models\CampusTournament;
 use App\Models\User;
@@ -30,5 +31,43 @@ class CampusTournamentPolicy
     public function review(User $user, CampusTournament $tournament): bool
     {
         return $this->authorization->canReview($user, $tournament->campus);
+    }
+
+    public function viewOperations(User $user, CampusTournament $tournament): bool
+    {
+        return $user->status === 'active'
+            && ($this->authorization->canReview($user, $tournament->campus)
+                || $this->authorization->isActiveStudentLeader($user, $tournament->campus));
+    }
+
+    public function viewReport(User|AdminUser $user, CampusTournament $tournament): bool
+    {
+        if ($user instanceof AdminUser) {
+            return $user->isSuperAdmin();
+        }
+
+        if ($user->status !== 'active') {
+            return false;
+        }
+
+        return $this->authorization->canReview($user, $tournament->campus)
+            || ($user->id === $tournament->created_by_user_id
+                && $this->authorization->isActiveStudentLeader($user, $tournament->campus));
+    }
+
+    public function submitResults(User $user, CampusTournament $tournament): bool
+    {
+        return $user->id === $tournament->created_by_user_id
+            && $this->authorization->isActiveStudentLeader($user, $tournament->campus);
+    }
+
+    public function correctResults(User|AdminUser $user, CampusTournament $tournament): bool
+    {
+        if ($user instanceof AdminUser) {
+            return $user->isSuperAdmin();
+        }
+
+        return $user->status === 'active'
+            && ($user->user_type === 'Super Admin' || $this->submitResults($user, $tournament));
     }
 }

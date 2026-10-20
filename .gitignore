@@ -26,5 +26,7 @@ Thumbs.db
 
 /agent.md
 /.agent
+/.agents
+/.agents/
 /docs
 *.md

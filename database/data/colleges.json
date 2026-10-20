@@ -1,0 +1,3920 @@
+[
+  {
+    "name": "South Cotabato State College",
+    "acronym": "",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mindanao State University–Sultan Naga Dimaporo",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Philippine Nazarene College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Philippines Los Baños College of Forestry and Natural Resources",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Colegio San Agustin – Biñan",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Colegio de San Benildo",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Colegio de San Pascual Baylon",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "College of St. John-Roxas",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "CvSU-College of Arts and Sciences",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Far Eastern University - Institute of Law",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "West Visayas State University",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Pontificio Collegio Filippino",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Colegio San Agustin–Bacolod",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Colegio de Dagupan",
+    "acronym": "",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Colegio de Sta. Rosa-Makati",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Colegio de Santo Tomas – Recoletos",
+    "acronym": "",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Cor Jesu College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Cebu Normal University",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Cebu Technological University",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Davao Doctors' College",
+    "acronym": "",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "National Aviation Academy of the Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "De La Salle University College of Science",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "De La Salle University College of Education",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "De La Salle University College of Law",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "De La Salle Andres Soriano Memorial College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Davao Oriental State University",
+    "acronym": "",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "De La Salle Lipa",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "De La Salle Lipa College of Law",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Divine Word College of Vigan",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Don Bosco College, Canlubang",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Dominican College of Santa Rosa",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Iloilo Science and Technology University",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Divine Word College of San Jose",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Dumaguete Academy for Culinary Arts",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Don Bosco Technical Institute, Victorias",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Colegio de San Lorenzo",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Divine Word College of Calapan",
+    "acronym": "",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "College of Technological Sciences–Cebu",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Divine Word College of Urdaneta",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Colegio de Santa Ana",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Zamboanga Peninsula Polytechnic State University",
+    "acronym": "",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Escuela de Nuestra Señora de La Salette",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "De La Salle Canlubang",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "FEATI University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Far Eastern University - Institute of Architecture and Fine Arts",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Far Eastern University - Institute of Nursing",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Far Eastern University – Institute of Technology",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Foundation University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palompon Institute of Technology",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Dominican College of Tarlac",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Eastern Samar State University",
+    "acronym": "",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Eastern Visayas State University",
+    "acronym": "",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Colegio de Kidapawan",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Columban College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Negros Oriental State University",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Franciscan College of the Immaculate Conception",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Enderun Colleges",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Divine Word College of Bangued",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Marinduque State College",
+    "acronym": "",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Far Eastern University - Diliman",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "General de Jesus College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "De La Salle University – Dasmariñas",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Divine Word College of Laoag",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Benguet State University",
+    "acronym": "",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pampanga State University",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Don Bosco Technical Institute, Tarlac",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Filamer Christian University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Western Mindanao State University",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Eastern Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southern Philippines Agri-Business and Marine and Aquatic School of Technology",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mindanao State University",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Centro Escolar University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "San Beda University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Manuel S. Enverga University Foundation",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Paul University Dumaguete",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Aklan State University",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Southern Luzon State University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Paul University Surigao",
+    "acronym": "",
+    "region": "CARAGA",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Saint Paul University Iloilo",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of Bohol",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of Santo Tomas–Legazpi",
+    "acronym": "",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Guimaras State University",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Father Saturnino Urios University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Gokongwei College of Engineering",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "John B. Lacson Foundation Maritime University",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Universidad de Zamboanga",
+    "acronym": "",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "First Asia Institute of Technology and Humanities",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ateneo de Zamboanga University",
+    "acronym": "",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Asia and the Pacific",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Bataan Peninsula State University",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Cebu",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Trinity University of Asia",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Angelicum College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Manuel L. Quezon University",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "New Era University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Manila Central University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Caloocan City",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Caraga State University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Manila Tytana Colleges",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Batangas",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Romblon State University",
+    "acronym": "",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Adventist University of the Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Santo Tomas",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Holy Rosary Seminary",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Apayao State College",
+    "acronym": "",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of San Carlos",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "ACSI College",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Abra State Institute of Science and Technology",
+    "acronym": "",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mariano Marcos State University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "HNU College of Law",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Philippine Women's University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "De La Salle University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southern Leyte State University",
+    "acronym": "",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "International Academy of Film and Television",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Bulacan State University",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Central Mindanao University",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "AMA Computer University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Cavite State University",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Aklan Catholic College",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Asian Social Institute",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Bacolod City College",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Baguio Central University",
+    "acronym": "",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Angelicum School Iloilo",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of Camarines Norte",
+    "acronym": "",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Far Eastern University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Manila Adventist Medical Center and Colleges",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Rizal Technological University",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Gordon College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Tarlac State University",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Benito Soliven Academy",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Andres Soriano College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Central Bicol State University of Agriculture",
+    "acronym": "",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ateneo de Davao University",
+    "acronym": "",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Adiong Memorial Polytechnic State College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Holy Name University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Aurora State College of Technology",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Assumption College of Davao",
+    "acronym": "",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Philippine Military Academy",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Baliuag University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Cagayan State University",
+    "acronym": "",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Holy Cross College of Sasa",
+    "acronym": "",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Holy Cross of Davao College",
+    "acronym": "",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Asian College of Technology",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Asian Institute of Maritime Studies",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Agusan del Sur State College of Agriculture and Technology",
+    "acronym": "",
+    "region": "CARAGA",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Surigao del Sur State University",
+    "acronym": "",
+    "region": "CARAGA",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Adventist International Institute of Advanced Studies",
+    "acronym": "AIIAS",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Bohol Island State University",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Isabela State University",
+    "acronym": "",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Xavier University – Ateneo de Cagayan",
+    "acronym": "",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Batangas State University Jose P. Laurel Polytechnic College",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Luzon",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Northern Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mindanao Sanitarium and Hospital College",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Capitol University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Central Luzon State University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Carlos Hilado Memorial State College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Adamson University College of Engineering",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Adamson University College of Education",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Adamson University College of Liberal Arts",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Adamson University College of Law",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Adamson University Graduate School",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Agusan del Sur College",
+    "acronym": "",
+    "region": "CARAGA",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Arellano University School of Law",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Batangas State University Apolinario R. Apacible School of Fisheries",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Nueva Vizcaya State University",
+    "acronym": "",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Binalbagan Catholic College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "CAP College Foundation",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic State University of Bicol",
+    "acronym": "",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Central Colleges of the Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Cabalum Western College",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Philippine National Police Academy",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Central Philippine Adventist College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "International School of Asia and the Pacific",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Araullo University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Cagayan de Oro College – PHINMA Education Network",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mountain View College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "National Defense College of the Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "South Philippine Adventist College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Southeastern Philippines",
+    "acronym": "",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Mindanao",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of the East",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Arellano University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Saint Louis Tuguegarao",
+    "acronym": "",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Visayas",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Adamson University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Christ the King College, Gingoog City",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University",
+    "acronym": "",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Mary's University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Caraga State University – Cabadbaran",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Cebu Institute of Technology – University",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Pangasinan State University",
+    "acronym": "",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Western Philippines University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Camiguin Polytechnic State College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Philippines Diliman",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Capiz State University",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Ateneo de Naga University",
+    "acronym": "",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "City University of Pasay",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Iloilo State College of Fisheries",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Philippine Normal University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Manila",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "La Salle University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of St. La Salle",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Asia Pacific College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Angeles University Foundation",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Lyceum of the Philippines University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Philippine Christian University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Universidad de Sta. Isabel",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Cordilleras",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Metropolitan Hospital College of Nursing",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Holy Angel University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Sultan Kudarat State University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Taguig City University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Tarlac Agricultural University",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Tawi-Tawi Regional Agricultural College",
+    "acronym": "",
+    "region": "BARMM",
+    "island": "Mindanao"
+  },
+  {
+    "name": "The Fisher Valley College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Unida Christian Colleges",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Union College of Laguna",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Baguio",
+    "acronym": "",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Makati",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Negros Occidental – Recoletos",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Unciano Colleges and General Hospital",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Pangasinan",
+    "acronym": "",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Perpetual Help System DALTA – Calamba Campus",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Rizal System",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Tomas del Rosario College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Perpetual Help System JONELTA - GMA Campus",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "VMA Global College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of La Salette",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Assumption",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Perpetual Help System JONELTA – Manila Campus",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the East College of Computer Studies and System",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the East College of Dentistry",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Philippines Los Baños Limnological Research Station",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Urdaneta City University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Iloilo",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of San Agustin",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "West Negros University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Perpetual Help System Laguna",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "UP Diliman Institute of Civil Engineering",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "UP National College of Public Administration and Governance",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Immaculate Conception",
+    "acronym": "",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Perpetual Help System DALTA",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "The Mabini Academy",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "UP Diliman Electrical and Electronics Engineering Institute",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Perpetual Help System JONELTA – Isabela Campus",
+    "acronym": "",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Santo Tomas College of Nursing",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Santo Tomas College of Science",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Santo Tomas Faculty of Engineering",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Philippines Diliman Extension Program in Olongapo",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Philippines Diliman Extension Program in Pampanga",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Philippines Computer Center",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Philippines Technology Management Center",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of San Jose–Recoletos",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of Southern Philippines Foundation",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of the Philippines Cebu",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of Saint Anthony",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Perpetual Help System JONELTA – Pangasinan Campus",
+    "acronym": "",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Perpetual Help System DALTA – Molino Campus",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "West Visayas State University, Calinog",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "West Visayas State University, Pototan",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Wesleyan University Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "West Visayas State University, Janiuay",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Northwestern Mindanao",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Notre Dame of Kidapawan College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Notre Dame of Midsayap College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Notre Dame of Surala",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Our Lady of the Holy Rosary School",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pangasinan State University—Urdaneta",
+    "acronym": "",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Olivarez College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Northern Iloilo State University",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Our Lady of Mercy College – Bacolod",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "PLM Emeritus College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "PLM Graduate School of Law",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Our Lady of Assumption College, Santa Rosa",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pamantasan ng Montalban",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "PLM College of Law",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "PMI Colleges",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Notre Dame University",
+    "acronym": "",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Notre Dame of Jolo College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Partido State University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Philippine College of Health Sciences",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Philippine Women's University – School of Fine Arts and Design",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines, Maragondon",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines, Mulanay",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines, Parañaque",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines, San Pedro",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines, Sablayan",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines, Unisan",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Northern Negros State College of Science and Technology",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines, Santa Rosa",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines Open University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines, Santa Maria",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines, General Luna",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines, Lopez",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pamantasan ng Lungsod ng Marikina",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines, Bansud",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Notre Dame of Isulan",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Notre Dame of Tacurong College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ramon Magsaysay Technological University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pilar College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pamantasan ng Lungsod ng Muntinlupa",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines, Biñan",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Our Lady of Mount Carmel Learning Center",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Our Lady of Lourdes College Foundation",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ateneo de Manila University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Northwest Samar State University",
+    "acronym": "",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Polytechnic University of the Philippines, Bataan",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines, Taguig",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Nueva Ecija University of Science and Technology",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pamantasan ng Cabuyao",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Notre Dame – RVM College of Cotabato",
+    "acronym": "",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Polytechnic University of the Philippines, Calauan",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Liceo de Cagayan University",
+    "acronym": "",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "La Consolacion College-Iriga City",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Peter's College of Toril",
+    "acronym": "",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Sorsogon State University",
+    "acronym": "",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Notre Dame of Dadiangas University",
+    "acronym": "",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "St. Francis College Guihulngan",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Rita's College of Balingasag",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Mary's College of Meycauayan",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Pius X Seminary",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "La Fortuna College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Lyceum-Northwestern University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Notre Dame of Marbel University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Paul University Manila",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "National Christian Life College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mindoro State College of Agriculture and Technology",
+    "acronym": "",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "MCL E.T. Yuchengco College of Business at Laguna",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "MCL Mapúa Institute of Technology at Laguna",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Loyola Schools",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "San Carlos Seminary",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mapúa Malayan Colleges Laguna",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southwestern University",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Montessori dei San Lorenzo",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "San Jacinto Seminary",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mindanao Polytechnic College",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mendero College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Marine Science Institute",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Holy Trinity University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Immaculate Heart of Mary Seminary",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mindanao State University – Iligan Institute of Technology",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Science and Technology of Southern Philippines",
+    "acronym": "",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Kalinga State University",
+    "acronym": "",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Divine Word Seminary Tagaytay",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "National Teachers College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "La Consolacion College–Bacolod",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Laguna College of Business and Arts",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Negros State College of Agriculture",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Manila Central University College of Nursing",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Maranatha Living Hope Academy",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Medina College-Pagadian",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pope Paul VI Minor Seminary",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mindanao State University – Naawan",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "SBC Rizal",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Augustine Major Seminary",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "San Agustin Center of Studies",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "School of Computing and Information Sciences, Saint Louis University, Baguio City",
+    "acronym": "",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Silliman University College of Arts and Sciences",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Silliman University College of Nursing",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southern de Oro Philippines College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Dominic College Of Asia",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. James College of Parañaque",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Joseph College of Bulacan",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Joseph School, Gagalangin",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Santo Tomas Faculties of Ecclesiastical Studies",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Zamboanga State College of Marine Sciences and Technology",
+    "acronym": "",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Misamis University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Biliran Province State University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mountain Province State Polytechnic College",
+    "acronym": "",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "John B. Lacson Colleges Foundation – Bacolod, Inc.",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "La Salle Academy",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Anthony College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Christ the King Mission Seminary",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Joseph Marello Institute",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Riverside College, Inc.",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Louis University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Christopher Academy",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Paul College of Makati",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "National College of Science and Technology",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Joseph College of Maasin",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Samar State University",
+    "acronym": "",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "School of the Holy Child, Angeles, Inc.",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Recaredo Castillo College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Immaculate Conception School of Theology",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Rizal Special Education Learning Center",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Columban College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Michael's School of Padada",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Michael's College of Laguna",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "NAMEI Polytechnic Institute",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Roosevelt College Quirino",
+    "acronym": "",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "San Pedro College",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mother of Good Counsel Seminary",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Laguna State Polytechnic University",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "La Consolacion College Manila",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Mary's Academy of San Nicolas, Cebu City",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Saint Theresa's College of Cebu City",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Saint Mary's College of Quezon City",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Paul University Quezon City",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Kalayaan College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "San Sebastian College – Recoletos de Cavite",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "La Salette of Roxas",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "John Paul II Minor Seminary",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "San Lorenzo Ruiz Academy of Polomolok",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Laguna College",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Augustine School, Tanza",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Sancta Maria, Mater et Regina, Seminarium",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Siquijor State College",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "La Consolacion University Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Michael College of Caraga",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Therese – MTC colleges",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Southern Mindanao Colleges",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "St. Michael's College, Iligan City",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Vincent Ferrer Seminary",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Joseph's College, Balanga City",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Fu Jen Faculty of Theology of St. Robert Bellarmine",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Thomas More Academy Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Casa Del Niño Schools System",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "PGA-ASU School of Nursing",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Canossa School of Santa Rosa",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mother of Divine Providence School",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Santo Tomas–General Santos City",
+    "acronym": "",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Batangas State University",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Philippines Film Institute",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "José Rizal University",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines College of Computer and Information Sciences",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Visayas State University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Bulacan State Agricultural University",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Ferdinand College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Skill Power Institute",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Virgen Milagrosa University Foundation",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Don Mariano Marcos Memorial State University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southern Luzon State University Tiaong Campus",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Diaz College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Davao de Oro State College",
+    "acronym": "",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Bohol Northern Star Colleges",
+    "acronym": "",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Philippine Public Safety Academy",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Santo Tomas Santa Rosa",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Holy Child Academy",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Misamis Oriental State College of Agriculture and Technology",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Ilocos Philippines",
+    "acronym": "",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Immaculate Heart of Mary College-Parañaque",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Marikina Polytechnic College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "National University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Leyte Normal University",
+    "acronym": "",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Saint Francis of Assisi College Las Piñas",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Philippines Los Baños",
+    "acronym": "UPLB",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mapúa Malayan Colleges Mindanao",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Far Eastern University - Alabang",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines, Pulilan",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Silliman University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Josefina H. Cerilles Polytechnic College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Technological University of the Philippines-Visayas Campus",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the East Graduate School",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "iAcademy",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Lipa City Colleges",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mindanao State University – General Santos",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Bicol University",
+    "acronym": "",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Jose Rizal Memorial State University - Katipunan Campus",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Philippines Visayas",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "MCL College of Arts and Science",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Philippines Manila",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "La Salle College Antipolo",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Goldenville school of Montessori",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines Ragay",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Lyceum of the Philippines University–Batangas",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Lyceum of the Philippines University-Laguna",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Silliman University College of Law",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "ICCT Colleges Foundation Inc.",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Medical Colleges of Northern Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "PNTC Colleges",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Jose Rizal Memorial State University - Dipolog Campus",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Paul University Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "CIIT College of Arts and Technology",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Notre Dame of Genio Edcor",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Our Lady of Fatima Academy, Davao City",
+    "acronym": "",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Polytechnic University of the Philippines College of Communication",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines College of Social Sciences and Development",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines College of Political Science and Public Administration",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pampanga State Agricultural University",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Philippines Los Baños College of Agriculture and Food Science",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Philippines Open University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mabalacat College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Colegio del Santissimo Rosario",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Northern Luzon Adventist College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Technological University of the Philippines-Taguig Campus",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Central Philippine University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Philippine Public Safety College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Jose Rizal Memorial State University - Siocon Campus",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Misamis Institute of Technology",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Andres Bonifacio College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Occidental Mindoro State University",
+    "acronym": "",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Far Eastern University - Dr. Nicanor Reyes Medical Foundation",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Medina College-Ozamiz",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Jude College Dasmariñas Cavite",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the City of Manila",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Dr. Emilio B. Espinosa Sr. Memorial State College of Agriculture and Technology",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Development Academy of the Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Antique",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Mindanao State University-Sulu",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Nueva Caceres",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Philippines Los Baños Graduate School",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Paul University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Technological University of the Philippines-Cavite Campus",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mapúa University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "La Verdad Christian College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines, Cabiao",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Basilan State University",
+    "acronym": "",
+    "region": "BARMM",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Zamboanga del Sur State University",
+    "acronym": "",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Southern Mindanao",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Colegio de San Juan de Dios",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Jose Rizal Memorial State University",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mindanao State University – Maguindanao",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "College of the Immaculate Conception, Cabanatuan",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Cagayan Valley",
+    "acronym": "",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southeast Asian University of Technology",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ramon Magsaysay Memorial Colleges",
+    "acronym": "",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of the Philippines Baguio",
+    "acronym": "",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Cavite State University – CCAT Campus",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Technological University of the Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ifugao State University",
+    "acronym": "",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southeast Asia Interdisciplinary Development Institute (SAIDI)",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Panpacific University North Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Paul University Manila",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Perpetual Help System JONELTA",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Saint La Salle",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "De La Salle Araneta University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Northern Christian College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Northwestern University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Philippines Mindanao",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mindanao State University–Zamboanga Sibugay",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Bukidnon State University",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mindanao State University–Iligan Institute of Technology",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mindanao State University–General Santos",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Adiong Memorial State College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Agusan del Sur State University",
+    "acronym": "",
+    "region": "CARAGA",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Batanes State College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Bulacan Agricultural State College",
+    "acronym": "",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Camarines Sur Polytechnic Colleges",
+    "acronym": "",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Carlos Hilado Memorial State University",
+    "acronym": "",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Catanduanes State University",
+    "acronym": "",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Central Philippines State University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Cotabato Foundation College of Science and Technology",
+    "acronym": "",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Cotabato State University",
+    "acronym": "",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Davao del Norte State College",
+    "acronym": "",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Davao del Sur State College",
+    "acronym": "",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Eulogio \"Amang\" Rodriguez Institute of Science and Technology",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ilocos Sur Polytechnic State College",
+    "acronym": "",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Iloilo State University of Fisheries Science and Technology",
+    "acronym": "",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Local Colleges and Universities (Philippines)",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Marinduque State University",
+    "acronym": "",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mindanao State University–Maguindanao",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mindanao State University–Tawi-Tawi College of Technology and Oceanography",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mindoro State University",
+    "acronym": "",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Misamis Occidental State College",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mountain Province State University",
+    "acronym": "",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "North Eastern Mindanao State University",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Northern Bukidnon State College",
+    "acronym": "",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Philippine Merchant Marine Academy",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "President Ramon Magsaysay State University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "President of the Polytechnic University of the Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "President of the University of the Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Quirino State University",
+    "acronym": "",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "State University of Northern Negros",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Sulu State University",
+    "acronym": "",
+    "region": "BARMM",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Surigao del Norte State University",
+    "acronym": "",
+    "region": "CARAGA",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Technological University of the Philippines Visayas",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Abra",
+    "acronym": "",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Philippines Tacloban",
+    "acronym": "",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Zamboanga del Sur Polytechnic State College",
+    "acronym": "",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Rinconada State College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Iligan City Polytechnic State College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Association of Local Colleges and Universities",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Community college",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "National university",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "State Universities and Colleges (Philippines)",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "State university system",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Air Link International Aviation College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Asian College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Asian Institute for Distance Education",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Asian Institute of Computer Studies",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Asian Institute of Journalism and Communication",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Asian Institute of Management",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Assumption College San Lorenzo",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ateneo De Manila University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Centro Escolar University Makati",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Chiang Kai Shek College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Chinese General Hospital Colleges",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "College of Arts & Sciences of Asia & the Pacific",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "College of the Holy Spirit Manila",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Concordia College (Manila)",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "DLS–STI College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "De La Salle–College of Saint Benilde",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Don Bosco Technical College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Emilio Aguinaldo College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "FEU Institute of Technology",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Far Eastern University Alabang",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Far Eastern University Diliman",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Far Eastern University – Nicanor Reyes Medical Foundation",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Global City Innovative College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Grace Christian College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Guzman College of Science and Technology",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "IAcademy",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "International Academy of Management and Economics",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Jose Rizal University",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "MINT College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Manila Adventist College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Manila Business College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Manila Christian Computer Institute for the Deaf",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Miriam College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "National College of Business and Arts",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "National University (Philippines)",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Navotas Polytechnic College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Our Lady of Fatima University",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Our Lady of Perpetual Succor College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "PATTS College of Aeronautics",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pasig Catholic College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Perpetual Help College of Manila",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Philippine College of Criminology",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Philippine Cultural College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines Parañaque",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines Quezon City",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines San Juan",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines Taguig",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Quezon City Polytechnic University",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "STI College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Francis of Assisi College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Joseph's College of Quezon City",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Jude College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Pedro Poveda College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Rita College (Manila)",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "San Sebastian College – Recoletos de Manila",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Santa Catalina College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Santa Isabel College Manila",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Siena College of Quezon City",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southville International School and Colleges",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Paul College Pasig",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Paul College of Makati",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Paul University Quezon City",
+    "acronym": "",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Paul University System",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Scholastica's College Manila",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Technological Institute of the Philippines",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Trace College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "UERMMMC College of Medicine",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "UST Angelicum College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Universal College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University Belt",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the East Caloocan",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Valenzuela City Polytechnic College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Wesleyan College of Manila",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Our Lady of Lourdes Technological College",
+    "acronym": "",
+    "region": "NCR",
+    "island": "Luzon"
+  }
+]

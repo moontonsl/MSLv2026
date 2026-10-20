@@ -16,6 +16,12 @@ class CampusTournamentAuthorization
                 ->where('campus_id', $campus->id)
                 ->where('role', 'student_leader')
                 ->where('status', 'active')
+                ->where(function ($query): void {
+                    $query->whereNull('started_at')->orWhere('started_at', '<=', now());
+                })
+                ->where(function ($query): void {
+                    $query->whereNull('ended_at')->orWhere('ended_at', '>', now());
+                })
                 ->exists();
     }
 

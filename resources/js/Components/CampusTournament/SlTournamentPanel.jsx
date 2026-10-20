@@ -1,12 +1,13 @@
 import SlMatchManagement from '@/Components/CampusTournament/SlMatchManagement';
 import SlRosterPanel from '@/Components/CampusTournament/SlRosterPanel';
 import { formatDateRange } from '@/data/campusTournamentData';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { Link } from '@inertiajs/react';
+import { Check, ChevronDown, ChevronRight, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
 
 const INNER_TABS = [
-    { id: 'match', label: 'Match Management' },
-    { id: 'roster', label: 'Roster & Solo Players' },
+    { id: "match", label: "Match Management" },
+    { id: "roster", label: "Roster & Solo Players" },
 ];
 
 /**
@@ -20,28 +21,45 @@ const INNER_TABS = [
  *     endDate: string;
  *     mode?: string;
  *     rosterLockDate?: string;
+ *     resultsSubmitted?: boolean;
+ *     resultsSubmittedOn?: string;
  *     teams?: Array<object>;
  *     rosterTeams?: Array<object>;
  *   };
  *   defaultExpanded?: boolean;
- *   onPlacementChange: (tournamentId: string, teamId: string, placementId: string) => void;
  *   onSubmitResults: (tournament: object) => void;
+ *   onExport?: (tournament: object) => void;
  * }} props
  */
 export default function SlTournamentPanel({
     tournament,
     defaultExpanded = false,
-    onPlacementChange,
     onSubmitResults,
+    onExport,
 }) {
     const [expanded, setExpanded] = useState(defaultExpanded);
-    const [innerTab, setInnerTab] = useState('match');
+    const [innerTab, setInnerTab] = useState("match");
     const [page, setPage] = useState(1);
+
+    const resultsSubmitted = Boolean(tournament.resultsSubmitted);
 
     return (
         <article className="overflow-hidden rounded-xl border border-neutral-800 bg-[#111111]">
             <div className="flex items-start gap-3 p-4 sm:items-center sm:p-5">
                 <div className="min-w-0 flex-1">
+                    {resultsSubmitted ? (
+                        <div className="mb-3 inline-flex flex-col gap-0.5 sm:mb-2">
+                            <span className="inline-flex w-fit items-center gap-1.5 rounded-md bg-emerald-500/15 px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-emerald-400">
+                                <Check className="h-3.5 w-3.5" />
+                                Results Submitted
+                            </span>
+                            {tournament.resultsSubmittedOn ? (
+                                <span className="text-[11px] text-gray-400">
+                                    Submitted on {tournament.resultsSubmittedOn}
+                                </span>
+                            ) : null}
+                        </div>
+                    ) : null}
                     <h3 className="text-base font-bold uppercase text-yellow-500 sm:text-lg md:text-xl">
                         {tournament.title}
                     </h3>
@@ -53,19 +71,43 @@ export default function SlTournamentPanel({
                         )}
                     </p>
                 </div>
-                <button
-                    type="button"
-                    onClick={() => setExpanded((prev) => !prev)}
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-yellow-500 text-black transition-colors hover:bg-yellow-400"
-                    aria-expanded={expanded}
-                    aria-label={expanded ? 'Collapse tournament details' : 'Expand tournament details'}
-                >
-                    {expanded ? (
-                        <ChevronDown className="h-5 w-5" />
-                    ) : (
-                        <ChevronRight className="h-5 w-5" />
-                    )}
-                </button>
+                <div className="flex shrink-0 items-center gap-2">
+                    {tournament.status === "ongoing" ? (
+                        <Link
+                            href={`/campus-tournaments/${tournament.id}/ongoing`}
+                            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-yellow-500 px-3 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"
+                        >
+                            View
+                            <ExternalLink className="h-4 w-4" />
+                        </Link>
+                    ) : null}
+                    {tournament.status === "completed" && tournament.canViewReport ? (
+                        <Link
+                            href={`/campus-tournaments/${tournament.id}/report`}
+                            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-yellow-500 px-3 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"
+                        >
+                            Report
+                            <ExternalLink className="h-4 w-4" />
+                        </Link>
+                    ) : null}
+                    <button
+                        type="button"
+                        onClick={() => setExpanded((prev) => !prev)}
+                        className="flex h-10 w-10 items-center justify-center rounded-md bg-yellow-500 text-black transition-colors hover:bg-yellow-400"
+                        aria-expanded={expanded}
+                        aria-label={
+                            expanded
+                                ? "Collapse tournament details"
+                                : "Expand tournament details"
+                        }
+                    >
+                        {expanded ? (
+                            <ChevronDown className="h-5 w-5" />
+                        ) : (
+                            <ChevronRight className="h-5 w-5" />
+                        )}
+                    </button>
+                </div>
             </div>
 
             {expanded ? (
@@ -80,8 +122,8 @@ export default function SlTournamentPanel({
                                     onClick={() => setInnerTab(tab.id)}
                                     className={`relative pb-3 pt-4 text-sm font-semibold transition-colors ${
                                         isActive
-                                            ? 'text-yellow-500'
-                                            : 'text-gray-400 hover:text-white'
+                                            ? "text-yellow-500"
+                                            : "text-gray-400 hover:text-white"
                                     }`}
                                 >
                                     {tab.label}
@@ -93,16 +135,17 @@ export default function SlTournamentPanel({
                         })}
                     </div>
 
-                    {innerTab === 'match' ? (
+                    {innerTab === "match" ? (
                         <SlMatchManagement
                             teams={tournament.teams ?? []}
                             page={page}
-                            totalPages={10}
+                            totalPages={1}
+                            resultsSubmitted={resultsSubmitted}
+                            canViewReport={tournament.status === 'completed' && tournament.canViewReport}
                             onPageChange={setPage}
-                            onPlacementChange={(teamId, placementId) =>
-                                onPlacementChange(tournament.id, teamId, placementId)
-                            }
                             onSubmitResults={() => onSubmitResults(tournament)}
+                            onEditResults={() => onSubmitResults(tournament)}
+                            onExport={() => onExport?.(tournament)}
                         />
                     ) : (
                         <SlRosterPanel

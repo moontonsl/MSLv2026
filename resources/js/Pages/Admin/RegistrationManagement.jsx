@@ -149,7 +149,7 @@ function SearchInput({ value, onChange, label }) {
                 onChange={(event) => onChange(event.target.value)}
                 placeholder="Search..."
                 aria-label={label}
-                className="h-9 w-full rounded-lg border border-white/[0.04] bg-[#1A1A1A] pl-9 pr-3 text-xs text-white outline-none placeholder:text-gray-600 transition focus:border-[#FBBF24] focus:ring-1 focus:ring-[#FBBF24]"
+                className="min-h-[44px] w-full rounded-md border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-9 pr-3 text-sm text-white outline-none placeholder:text-gray-500 transition focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500"
             />
         </label>
     );
@@ -370,9 +370,14 @@ export default function RegistrationManagement({
             <Head title="Registration Management" />
 
             <div className="min-w-0 max-w-full overflow-x-hidden">
-                <h1 className="mb-6 font-heading text-2xl font-bold tracking-tight text-[#FFFBEB] sm:mb-10 sm:text-4xl">
-                    Registration Management
-                </h1>
+                <header className="mb-6 sm:mb-8">
+                    <h1 className="text-2xl font-bold tracking-tight text-[#FFFBEB] sm:text-3xl">
+                        Registration Management
+                    </h1>
+                    <p className="mt-2 text-sm leading-6 text-gray-400">
+                        Manage attendance registration links and completed records.
+                    </p>
+                </header>
 
                 <SectionCard
                     title="Attendance Registrations"
@@ -387,7 +392,7 @@ export default function RegistrationManagement({
                             <button
                                 type="button"
                                 onClick={openCreateModal}
-                                className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[#FBBF24] px-3 text-xs font-bold text-black transition hover:bg-[#FCD34D] sm:px-4"
+                                className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 text-sm font-bold text-black transition hover:bg-yellow-400"
                             >
                                 <Plus className="h-4 w-4" />
 

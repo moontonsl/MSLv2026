@@ -1,86 +1,81 @@
-import { Link } from '@inertiajs/react';
-import {
-    ArrowRight,
-    Calendar,
-    Clock,
-    Search,
-    Tag,
-} from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { Link } from "@inertiajs/react";
+import { ArrowRight, Calendar, Clock, Search, Tag } from "lucide-react";
+import { useMemo, useState } from "react";
 
-const FILTER_OPTIONS = ['All', 'Esports', 'Community', 'Events', 'Game Updates'];
+const FILTER_OPTIONS = [
+    "All",
+    "Esports",
+    "Community",
+    "Events",
+    "Game Updates",
+];
 
-const CATEGORY_ORDER = ['Esports', 'Community', 'Events', 'Game Updates'];
+const CATEGORY_ORDER = ["Esports", "Community", "Events", "Game Updates"];
 
 const MOCK_ARTICLES = [
     {
-        id: '1',
-        href: '/news/student-leader-summit-2024-recap',
-        category: 'Events',
-        image:
-            'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=80',
-        date: 'Nov 27, 2025',
-        readTime: '3 min read',
-        title: 'Student Leader Summit 2024 Recap',
+        id: "1",
+        href: "/news/student-leader-summit-2024-recap",
+        category: "Events",
+        image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=80",
+        date: "Nov 27, 2025",
+        readTime: "3 min read",
+        title: "Student Leader Summit 2024 Recap",
         excerpt:
-            'Over 200 student leaders gathered in Manila for a weekend of workshops, networking, and showmatches.',
+            "Over 200 student leaders gathered in Manila for a weekend of workshops, networking, and showmatches.",
     },
     {
-        id: '2',
-        href: '/news/collegiate-cup-highlights',
-        category: 'Esports',
-        image:
-            'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80',
-        date: 'Nov 27, 2025',
-        readTime: '3 min read',
-        title: 'Regional Finals: Best Moments from Luzon',
+        id: "2",
+        href: "/news/collegiate-cup-highlights",
+        category: "Esports",
+        image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80",
+        date: "Nov 27, 2025",
+        readTime: "3 min read",
+        title: "Regional Finals: Best Moments from Luzon",
         excerpt:
-            'Relive the clutch plays, upsets, and crowd energy as campuses battled for a spot at nationals.',
+            "Relive the clutch plays, upsets, and crowd energy as campuses battled for a spot at nationals.",
     },
     {
-        id: '3',
-        href: '/news/community-spotlight',
-        category: 'Community',
-        image:
-            'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80',
-        date: 'Nov 27, 2025',
-        readTime: '3 min read',
-        title: 'Campus Spotlight: Building Inclusive Guild Cultures',
+        id: "3",
+        href: "/news/community-spotlight",
+        category: "Community",
+        image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80",
+        date: "Nov 27, 2025",
+        readTime: "3 min read",
+        title: "Campus Spotlight: Building Inclusive Guild Cultures",
         excerpt:
-            'How student leaders are shaping healthier team dynamics and welcoming new players on campus.',
+            "How student leaders are shaping healthier team dynamics and welcoming new players on campus.",
     },
     {
-        id: '4',
-        href: '/news/patch-notes-roundup',
-        category: 'Game Updates',
-        image:
-            'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80',
-        date: 'Nov 27, 2025',
-        readTime: '3 min read',
-        title: 'Patch Notes Roundup: What Changed for Ranked',
+        id: "4",
+        href: "/news/patch-notes-roundup",
+        category: "Game Updates",
+        image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80",
+        date: "Nov 27, 2025",
+        readTime: "3 min read",
+        title: "Patch Notes Roundup: What Changed for Ranked",
         excerpt:
-            'A concise breakdown of hero adjustments, item tweaks, and meta shifts competitive teams should watch.',
+            "A concise breakdown of hero adjustments, item tweaks, and meta shifts competitive teams should watch.",
     },
     {
-        id: '5',
-        href: '/news/msl-outreach-program',
-        category: 'Community',
-        image:
-            'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80',
-        date: 'Nov 27, 2025',
-        readTime: '3 min read',
-        title: 'MSL Outreach: Grassroots Events Across Visayas',
+        id: "5",
+        href: "/news/msl-outreach-program",
+        category: "Community",
+        image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80",
+        date: "Nov 27, 2025",
+        readTime: "3 min read",
+        title: "MSL Outreach: Grassroots Events Across Visayas",
         excerpt:
-            'Partnerships with local orgs brought pop-up tournaments and leadership clinics to new regions.',
+            "Partnerships with local orgs brought pop-up tournaments and leadership clinics to new regions.",
     },
 ];
 
-function ArticleCard({ article, layout = 'grid' }) {
-    const isCarousel = layout === 'carousel';
+function ArticleCard({ article, layout = "grid" }) {
+    const isCarousel = layout === "carousel";
     return (
         <article
             className={`group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-neutral-800 bg-[#111111] transition-colors hover:border-neutral-600 ${
-                isCarousel ? 'w-[85vw] max-w-[400px] shrink-0 snap-center' : ''
+                isCarousel ? "w-[85vw] max-w-[400px] shrink-0 snap-center" : ""
             }`}
         >
             <Link
@@ -132,22 +127,26 @@ function ArticleCard({ article, layout = 'grid' }) {
 
 function MobileCategoryCarousel({ category, articles, isLast }) {
     return (
-        <div className={`w-full ${isLast ? 'mb-0' : 'mb-6'}`}>
+        <div className={`w-full ${isLast ? "mb-0" : "mb-6"}`}>
             <h3 className="mb-3 px-4 font-heading text-lg font-black text-[#FFC107] md:px-8">
                 {category}
             </h3>
             <div
                 className={`hide-scrollbar flex snap-x snap-mandatory flex-row gap-4 overflow-x-auto px-4 md:gap-6 md:px-8 ${
-                    isLast ? 'pb-2 md:pb-6' : 'pb-6'
+                    isLast ? "pb-2 md:pb-6" : "pb-6"
                 }`}
             >
                 {articles.map((article) => (
-                    <ArticleCard key={article.id} article={article} layout="carousel" />
+                    <ArticleCard
+                        key={article.id}
+                        article={article}
+                        layout="carousel"
+                    />
                 ))}
             </div>
             <div
                 className={`flex justify-center items-center gap-1.5 mt-4 md:hidden ${
-                    isLast ? 'mb-0' : 'mb-2'
+                    isLast ? "mb-0" : "mb-2"
                 }`}
             >
                 <div className="w-8 h-1.5 bg-[#FFC107] rounded-full"></div>
@@ -159,12 +158,12 @@ function MobileCategoryCarousel({ category, articles, isLast }) {
 }
 
 export default function NewsGridSection() {
-    const [activeFilter, setActiveFilter] = useState('All');
-    const [searchQuery, setSearchQuery] = useState('');
+    const [activeFilter, setActiveFilter] = useState("All");
+    const [searchQuery, setSearchQuery] = useState("");
 
     const filteredArticles = useMemo(() => {
         let list = MOCK_ARTICLES;
-        if (activeFilter !== 'All') {
+        if (activeFilter !== "All") {
             list = list.filter((a) => a.category === activeFilter);
         }
         const q = searchQuery.trim().toLowerCase();
@@ -173,7 +172,7 @@ export default function NewsGridSection() {
                 (a) =>
                     a.title.toLowerCase().includes(q) ||
                     a.excerpt.toLowerCase().includes(q) ||
-                    a.category.toLowerCase().includes(q)
+                    a.category.toLowerCase().includes(q),
             );
         }
         return list;
@@ -206,8 +205,8 @@ export default function NewsGridSection() {
                                 onClick={() => setActiveFilter(label)}
                                 className={
                                     isActive
-                                        ? 'rounded-lg bg-[#FFC107] px-4 py-2 text-sm font-semibold text-black transition-colors'
-                                        : 'rounded-lg border border-neutral-700 bg-transparent px-4 py-2 text-sm text-gray-400 transition-colors hover:border-neutral-500 hover:text-white'
+                                        ? "rounded-lg bg-[#FFC107] px-4 py-2 text-sm font-semibold text-black transition-colors"
+                                        : "rounded-lg border border-neutral-700 bg-transparent px-4 py-2 text-sm text-gray-400 transition-colors hover:border-neutral-500 hover:text-white"
                                 }
                             >
                                 {label}
@@ -247,7 +246,11 @@ export default function NewsGridSection() {
 
             <div className="hidden gap-6 md:grid md:grid-cols-2 lg:grid-cols-3">
                 {filteredArticles.map((article) => (
-                    <ArticleCard key={article.id} article={article} layout="grid" />
+                    <ArticleCard
+                        key={article.id}
+                        article={article}
+                        layout="grid"
+                    />
                 ))}
             </div>
         </div>

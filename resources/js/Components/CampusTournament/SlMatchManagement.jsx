@@ -1,6 +1,6 @@
 import MatchPlayerCell from '@/Components/CampusTournament/MatchPlayerCell';
 import PlacementStatusDropdown from '@/Components/CampusTournament/PlacementStatusDropdown';
-import { ArrowDownUp, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowDownUp, ChevronLeft, ChevronRight, FileSpreadsheet, Pencil } from 'lucide-react';
 
 /**
  * Match Management table (desktop) + compact list (mobile).
@@ -14,21 +14,57 @@ import { ArrowDownUp, ChevronLeft, ChevronRight } from 'lucide-react';
  *   }>;
  *   page?: number;
  *   totalPages?: number;
+ *   resultsSubmitted?: boolean;
+ *   isEditing?: boolean;
  *   onPageChange?: (page: number) => void;
- *   onPlacementChange: (teamId: string, placementId: string) => void;
+ *   canViewReport?: boolean;
  *   onSubmitResults: () => void;
+ *   onEditResults?: () => void;
+ *   onCancelEdit?: () => void;
+ *   onSaveEdit?: () => void;
+ *   onExport?: () => void;
  * }} props
  */
 export default function SlMatchManagement({
     teams,
     page = 1,
     totalPages = 10,
+    resultsSubmitted = false,
+    canViewReport = false,
+    isEditing = false,
     onPageChange,
-    onPlacementChange,
     onSubmitResults,
+    onEditResults,
+    onCancelEdit,
+    onSaveEdit,
+    onExport,
 }) {
+    const showEditToolbar = resultsSubmitted && canViewReport && !isEditing;
+    const showEditingFooter = resultsSubmitted && isEditing;
+
     return (
         <div className="space-y-4">
+            {showEditToolbar ? (
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+                    <button
+                        type="button"
+                        onClick={onEditResults}
+                        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-neutral-600 bg-[#1a1a1a] px-4 text-sm font-semibold text-white transition-colors hover:border-neutral-400"
+                    >
+                        <Pencil className="h-4 w-4" />
+                        Edit
+                    </button>
+                    <button
+                        type="button"
+                        onClick={onExport}
+                        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                    >
+                        <FileSpreadsheet className="h-4 w-4" />
+                        Export to Excel
+                    </button>
+                </div>
+            ) : null}
+
             {/* Desktop table */}
             <div className="hidden overflow-x-auto lg:block">
                 <table className="w-full min-w-[980px] table-auto border-collapse">
@@ -37,19 +73,23 @@ export default function SlMatchManagement({
                             <th className="px-3 py-3 text-left text-xs font-semibold text-yellow-500">
                                 Team Name
                             </th>
-                            {['Captain', 'Player 2', 'Player 3', 'Player 4', 'Player 5'].map(
-                                (label) => (
-                                    <th
-                                        key={label}
-                                        className="px-3 py-3 text-left text-xs font-semibold text-yellow-500"
-                                    >
-                                        <span className="inline-flex items-center gap-1">
-                                            {label}
-                                            <ArrowDownUp className="h-3 w-3 opacity-60" />
-                                        </span>
-                                    </th>
-                                ),
-                            )}
+                            {[
+                                'Captain',
+                                'Player 2',
+                                'Player 3',
+                                'Player 4',
+                                'Player 5',
+                            ].map((label) => (
+                                <th
+                                    key={label}
+                                    className="px-3 py-3 text-left text-xs font-semibold text-yellow-500"
+                                >
+                                    <span className="inline-flex items-center gap-1">
+                                        {label}
+                                        <ArrowDownUp className="h-3 w-3 opacity-60" />
+                                    </span>
+                                </th>
+                            ))}
                             <th className="px-3 py-3 text-left text-xs font-semibold text-yellow-500">
                                 Status
                             </th>
@@ -57,21 +97,27 @@ export default function SlMatchManagement({
                     </thead>
                     <tbody>
                         {teams.map((team) => (
-                            <tr key={team.id} className="border-b border-neutral-800/80">
+                            <tr
+                                key={team.id}
+                                className="border-b border-neutral-800/80"
+                            >
                                 <td className="px-3 py-3 text-sm font-semibold text-white">
                                     {team.name}
                                 </td>
-                                {(team.players ?? []).slice(0, 5).map((player) => (
-                                    <td key={player.id} className="px-3 py-3">
-                                        <MatchPlayerCell player={player} />
-                                    </td>
-                                ))}
+                                {(team.players ?? [])
+                                    .slice(0, 5)
+                                    .map((player) => (
+                                        <td
+                                            key={player.id}
+                                            className="px-3 py-3"
+                                        >
+                                            <MatchPlayerCell player={player} />
+                                        </td>
+                                    ))}
                                 <td className="px-3 py-3">
                                     <PlacementStatusDropdown
                                         value={team.placement}
-                                        onChange={(placementId) =>
-                                            onPlacementChange(team.id, placementId)
-                                        }
+                                        disabled
                                     />
                                 </td>
                             </tr>
@@ -100,9 +146,7 @@ export default function SlMatchManagement({
                             <MatchPlayerCell player={captain} compact />
                             <PlacementStatusDropdown
                                 value={team.placement}
-                                onChange={(placementId) =>
-                                    onPlacementChange(team.id, placementId)
-                                }
+                                disabled
                             />
                         </div>
                     );
@@ -123,24 +167,29 @@ export default function SlMatchManagement({
                     </button>
 
                     <div className="hidden items-center gap-1 sm:flex">
-                        {Array.from({ length: Math.min(totalPages, 10) }, (_, index) => {
-                            const pageNumber = index + 1;
-                            const isActive = pageNumber === page;
-                            return (
-                                <button
-                                    key={pageNumber}
-                                    type="button"
-                                    onClick={() => onPageChange?.(pageNumber)}
-                                    className={`inline-flex h-9 min-w-9 items-center justify-center rounded-md text-sm font-semibold transition-colors ${
-                                        isActive
-                                            ? 'bg-yellow-500 text-black'
-                                            : 'text-gray-300 hover:text-white'
-                                    }`}
-                                >
-                                    {pageNumber}
-                                </button>
-                            );
-                        })}
+                        {Array.from(
+                            { length: Math.min(totalPages, 10) },
+                            (_, index) => {
+                                const pageNumber = index + 1;
+                                const isActive = pageNumber === page;
+                                return (
+                                    <button
+                                        key={pageNumber}
+                                        type="button"
+                                        onClick={() =>
+                                            onPageChange?.(pageNumber)
+                                        }
+                                        className={`inline-flex h-9 min-w-9 items-center justify-center rounded-md text-sm font-semibold transition-colors ${
+                                            isActive
+                                                ? 'bg-yellow-500 text-black'
+                                                : 'text-gray-300 hover:text-white'
+                                        }`}
+                                    >
+                                        {pageNumber}
+                                    </button>
+                                );
+                            },
+                        )}
                     </div>
 
                     <p className="px-2 text-sm font-medium text-white sm:hidden">
@@ -149,7 +198,9 @@ export default function SlMatchManagement({
 
                     <button
                         type="button"
-                        onClick={() => onPageChange?.(Math.min(totalPages, page + 1))}
+                        onClick={() =>
+                            onPageChange?.(Math.min(totalPages, page + 1))
+                        }
                         disabled={page >= totalPages}
                         className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-yellow-500 text-black transition-colors hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-40 sm:h-auto sm:w-auto sm:rounded-lg sm:bg-yellow-500 sm:px-4 sm:py-2 sm:text-sm sm:font-bold sm:text-black sm:hover:bg-yellow-400"
                         aria-label="Next page"
@@ -159,14 +210,38 @@ export default function SlMatchManagement({
                     </button>
                 </div>
 
-                <button
-                    type="button"
-                    onClick={onSubmitResults}
-                    className="inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-yellow-500 px-6 py-2.5 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:w-auto"
-                >
-                    Submit Results
-                </button>
+                {!resultsSubmitted && canViewReport ? (
+                    <button
+                        type="button"
+                        onClick={onSubmitResults}
+                        className="inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-yellow-500 px-6 py-2.5 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:w-auto"
+                    >
+                        Submit Results
+                    </button>
+                ) : null}
             </div>
+
+            {showEditingFooter ? (
+                <div className="sticky bottom-0 z-10 -mx-4 flex items-center justify-between gap-3 border-t border-neutral-800 bg-[#111111] px-4 py-3 sm:-mx-5 sm:px-5">
+                    <button
+                        type="button"
+                        onClick={onCancelEdit}
+                        className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-neutral-600 px-5 text-sm font-semibold text-white transition-colors hover:border-neutral-400"
+                    >
+                        Cancel
+                    </button>
+                    <p className="hidden text-sm font-medium text-gray-400 sm:block">
+                        Editing Results…
+                    </p>
+                    <button
+                        type="button"
+                        onClick={onSaveEdit}
+                        className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-6 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                    >
+                        Save
+                    </button>
+                </div>
+            ) : null}
         </div>
     );
 }

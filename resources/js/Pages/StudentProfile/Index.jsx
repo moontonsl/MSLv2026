@@ -519,9 +519,10 @@ export default function Index(props) {
                                             ['IGN', profile.playerInformation.ign],
                                             ['UID', profile.playerInformation.uid],
                                             ['SERVER', profile.playerInformation.server],
-                                            ['SQUAD', profile.playerInformation.squad],
+                                            ['RANK', profile.playerInformation.rank],
                                             ['ROLE', profile.playerInformation.role],
-                                        ].map(([label, value]) => (
+                                            ['SQUAD', profile.playerInformation.squad],
+                                        ].filter(([_, val]) => Boolean(val && val !== 'N/A')).map(([label, value]) => (
                                             <div key={label} className="flex items-center gap-2">
                                                 <div className="text-sm font-medium leading-5 text-stone-300">
                                                     {label}
@@ -738,6 +739,17 @@ export default function Index(props) {
                                             {profile.playerInformation.server}
                                         </div>
                                     </div>
+
+                                    {profile.playerInformation.rank && profile.playerInformation.rank !== 'N/A' && (
+                                        <div className="flex items-center gap-3">
+                                            <div className="text-sm font-bold leading-5 text-stone-300">
+                                                RANK
+                                            </div>
+                                            <div className="text-lg font-bold leading-6 text-brand-400">
+                                                {profile.playerInformation.rank}
+                                            </div>
+                                        </div>
+                                    )}
 
                                     <div className="flex items-center gap-3">
                                         <div className="text-sm font-bold leading-5 text-stone-300">

@@ -1,3 +1,4 @@
+import AdminFilterSelect from '@/Components/Admin/AdminFilterSelect';
 import BaseModal from "@/Components/Admin/BaseModal";
 
 import {
@@ -193,7 +194,7 @@ export default function CreateAdminModal({ isOpen, onClose, onSubmit }) {
                     </label>
 
                     <div className="relative">
-                        <select
+                        <AdminFilterSelect
                             id={`${formId}-role`}
                             value={form.role}
                             onChange={(event) =>
@@ -212,7 +213,7 @@ export default function CreateAdminModal({ isOpen, onClose, onSubmit }) {
                                     {role}
                                 </option>
                             ))}
-                        </select>
+                        </AdminFilterSelect>
 
                         <ChevronDown
                             aria-hidden="true"

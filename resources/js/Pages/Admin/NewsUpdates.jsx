@@ -5,7 +5,7 @@ import { Head } from '@inertiajs/react';
 export default function NewsUpdates({ newsItems = [] }) {
     return (
         <AdminLayout activeNavId="news" showGlobalSearch>
-            <Head title="News & Updates Settings" />
+            <Head title="News Articles" />
             <NewsManagement initialNews={newsItems} />
         </AdminLayout>
     );

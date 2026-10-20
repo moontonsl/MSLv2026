@@ -131,6 +131,6 @@ class NewsController extends Controller
 
     public function index()
     {
-        return Inertia::render('News');
+        return Inertia::render('News/Index');
     }
 }

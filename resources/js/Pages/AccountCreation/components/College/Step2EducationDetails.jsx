@@ -1,7 +1,8 @@
 import React from 'react';
+import axios from 'axios';
 import styles from '../../register.module.scss';
 import { ChevronDown, HelpCircle, Search, UploadCloud } from 'lucide-react';
-import { collegePrograms, collegeSchoolOptions } from '../../data/collegeOptions';
+import { collegePrograms } from '../../data/collegeOptions';
 
 const allowedFileTypes = [
     'application/pdf',
@@ -34,6 +35,8 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
     const [strandOpen, setStrandOpen] = React.useState(false);
     const [schoolSearch, setSchoolSearch] = React.useState('');
     const [strandSearch, setStrandSearch] = React.useState('');
+    const [schoolsList, setSchoolsList] = React.useState([]);
+    const [schoolsLoading, setSchoolsLoading] = React.useState(false);
 
     const setFieldError = (name, error) => {
         setErrors((prev) => ({
@@ -135,16 +138,32 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
         return schoolOk && strandOk && yearOk && studentIdOk && fileOk && schoolDependentOk;
     };
 
-    const filteredSchools = collegeSchoolOptions.filter((school) => {
-        const query = schoolSearch.toLowerCase().trim();
-        if (!query) return true;
+    React.useEffect(() => {
+        let isMounted = true;
+        setSchoolsLoading(true);
 
-        return (
-            school.name.toLowerCase().includes(query) ||
-            school.island.toLowerCase().includes(query) ||
-            school.region.toLowerCase().includes(query)
-        );
-    });
+        const debounceTimer = setTimeout(async () => {
+            try {
+                const response = await axios.get(route('schools.search.college'), {
+                    params: { q: schoolSearch.trim() },
+                });
+                if (isMounted) {
+                    setSchoolsList(response.data || []);
+                }
+            } catch (err) {
+                console.error('Failed to search colleges:', err);
+            } finally {
+                if (isMounted) {
+                    setSchoolsLoading(false);
+                }
+            }
+        }, 250);
+
+        return () => {
+            isMounted = false;
+            clearTimeout(debounceTimer);
+        };
+    }, [schoolSearch]);
 
     const filteredStrands = collegePrograms.filter((strand) => {
         const query = strandSearch.toLowerCase().trim();
@@ -255,7 +274,21 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
         validateStep2,
     }));
 
-    const renderSelectBox = (label, value, placeholder, open, setOpen, ref, errorName, searchValue, setSearchValue, items, onSelect, searchPlaceholder) => (
+    const renderSelectBox = (
+        label,
+        value,
+        placeholder,
+        open,
+        setOpen,
+        ref,
+        errorName,
+        searchValue,
+        setSearchValue,
+        items,
+        onSelect,
+        searchPlaceholder,
+        isLoading = false
+    ) => (
         <div className="relative" ref={ref}>
             <label className={`${styles['label-register']} block mb-1`}>
                 {label} <span className={styles.required}>*</span>
@@ -294,19 +327,29 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
                         </div>
                     </div>
                     <div className="max-h-56 overflow-y-auto">
-                        {items.length ? (
-                            items.map((item) => (
+                        {isLoading ? (
+                            <div className="px-4 py-4 text-center text-sm text-yellow-400 flex items-center justify-center gap-2">
+                                <span className="inline-block w-4 h-4 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin"></span>
+                                Searching...
+                            </div>
+                        ) : items.length ? (
+                            items.map((item, index) => (
                                 <button
-                                    key={item.id || item}
+                                    key={item.id || item.name || (typeof item === 'string' ? item : index)}
                                     type="button"
                                     onClick={() => onSelect(item)}
-                                    className="w-full px-4 py-3 text-left text-sm text-white hover:bg-yellow-500/10 hover:text-yellow-300 transition"
+                                    className="w-full px-4 py-3 text-left text-sm text-white hover:bg-yellow-500/10 hover:text-yellow-300 transition border-b border-white/5 last:border-b-0"
                                 >
-                                    {item.name || item}
+                                    <div className="font-medium">{item.name || item}</div>
+                                    {(item.region || item.island) && (
+                                        <div className="text-xs text-yellow-400/80 mt-0.5">
+                                            {item.region} • {item.island} {item.acronym ? `(${item.acronym.split(' ')[0]})` : ''}
+                                        </div>
+                                    )}
                                 </button>
                             ))
                         ) : (
-                            <div className="px-4 py-3 text-sm text-gray-400">No results found.</div>
+                            <div className="px-4 py-4 text-center text-sm text-gray-400">No results found.</div>
                         )}
                     </div>
                 </div>
@@ -360,9 +403,10 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
                     'university',
                     schoolSearch,
                     setSchoolSearch,
-                    filteredSchools,
+                    schoolsList,
                     handleSchoolSelect,
-                    'Search university / college school...'
+                    'Search university / college school...',
+                    schoolsLoading
                 )}
             </div>
 

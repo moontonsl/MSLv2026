@@ -24,6 +24,15 @@ class RegisterPremadeTeamRequest extends FormRequest
                 Rule::in(TournamentRegistrationGuard::LANE_ROLE_CODES),
                 Rule::exists('lane_roles', 'code'),
             ],
+            'members' => ['sometimes', 'array', 'size:4'],
+            'members.*.username' => ['required_with:members', 'string', 'distinct', Rule::exists('users', 'username')],
+            'members.*.intended_lane_role_code' => [
+                'required_with:members',
+                'string',
+                'distinct',
+                Rule::in(TournamentRegistrationGuard::LANE_ROLE_CODES),
+                Rule::exists('lane_roles', 'code'),
+            ],
         ];
     }
 }

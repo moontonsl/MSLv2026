@@ -72,6 +72,46 @@ class AdminFaqTest extends TestCase
         $this->assertDatabaseMissing('faqs', ['id' => $faq->id]);
     }
 
+    public function test_pinning_an_faq_publishes_it_on_the_home_page(): void
+    {
+        $this->signInSuperAdmin();
+        $faq = Faq::create([
+            'category' => 'Account',
+            'question' => 'Where can I update my account?',
+            'answer' => 'Open your account settings.',
+        ]);
+        Faq::create([
+            'category' => 'Account',
+            'question' => 'Inactive pinned FAQ',
+            'answer' => 'This should not appear publicly.',
+            'is_active' => false,
+            'is_pinned' => true,
+        ]);
+
+        $this->patch(route('admin.faq.pin', $faq), ['is_pinned' => true])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('faqs', [
+            'id' => $faq->id,
+            'is_pinned' => true,
+        ]);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Home/Index')
+                ->has('pinnedFaqs', 1)
+                ->where('pinnedFaqs.0.id', $faq->id));
+
+        $this->patch(route('admin.faq.pin', $faq), ['is_pinned' => false])
+            ->assertRedirect();
+
+        $this->get('/')
+            ->assertInertia(fn ($page) => $page
+                ->component('Home/Index')
+                ->has('pinnedFaqs', 0));
+    }
+
     public function test_admin_without_faq_permission_cannot_manage_faqs(): void
     {
         $admin = AdminUser::create([
@@ -83,5 +123,12 @@ class AdminFaqTest extends TestCase
         $this->actingAs($admin, 'admin');
 
         $this->get(route('admin.faq'))->assertForbidden();
+        $faq = Faq::create([
+            'category' => 'Account',
+            'question' => 'Can I pin this FAQ?',
+            'answer' => 'No without permission.',
+        ]);
+        $this->patch(route('admin.faq.pin', $faq), ['is_pinned' => true])
+            ->assertForbidden();
     }
 }
