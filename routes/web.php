@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminManagementController;
 use App\Http\Controllers\Admin\AdminAccountController;
+use App\Http\Controllers\Admin\AdminRoleController;
 use App\Http\Controllers\Admin\AdminPermissionController;
 use App\Http\Controllers\Admin\AdminAuditLogController;
 use App\Http\Controllers\Admin\AdminProfileController;
@@ -502,6 +503,17 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
     Route::put('/admin/users/{id}/role', [AdminManagementController::class, 'updateRole'])
         ->middleware('admin.permission:access_admin_management')
         ->name('admin.users.role.update');
+
+    // Admin Roles Management
+    Route::post('/admin/roles', [AdminRoleController::class, 'store'])
+        ->middleware('admin.permission:access_admin_management')
+        ->name('admin.roles.store');
+    Route::put('/admin/roles/{id}', [AdminRoleController::class, 'update'])
+        ->middleware('admin.permission:access_admin_management')
+        ->name('admin.roles.update');
+    Route::delete('/admin/roles/{id}', [AdminRoleController::class, 'destroy'])
+        ->middleware('admin.permission:access_admin_management')
+        ->name('admin.roles.destroy');
 
     Route::get('/admin/administrator-accounts', [AdminAccountController::class, 'index'])
         ->middleware('admin.permission:manage_admin_accounts')
