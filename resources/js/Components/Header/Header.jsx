@@ -13,7 +13,7 @@ const ABOUT_ITEMS = [
 const PROGRAMS_ITEMS = [
     { label: 'The MSL Network', href: '/MSLNetAdmin' },
     { label: 'MSL Collegiate Cup', href: '/programs/collegiate-cup' },
-    { label: 'Campus Tournaments', href: '/Tournament/Organizer' },
+    { label: 'Campus Tournaments', href: '/campus-tournament' },
     { label: 'Buffs & Support', href: '/Buffs&Support' },
     { label: 'Referral Program', href: '/programs/referral' },
 ];
