@@ -163,6 +163,69 @@ class CampusTournamentFrontendWiringTest extends TestCase
             ->assertRedirect('/Tournament/CampusTournament');
     }
 
+    public function test_generic_legacy_tournament_link_uses_the_role_aware_entry(): void
+    {
+        $this->get('/programs/campus-tournaments')->assertRedirect('/campus-tournament');
+    }
+
+    public function test_management_pages_reject_other_roles_on_direct_navigation(): void
+    {
+        foreach ([$this->regionalAdmin, $this->superAdmin, $this->student] as $user) {
+            $this->actingAs($user)->get(route('campus.tournament.sl'))->assertForbidden();
+            $this->actingAs($user)->get(route('campus.tournament.organizer'))->assertForbidden();
+        }
+
+        foreach ([$this->studentLeader, $this->student] as $user) {
+            $this->actingAs($user)->get(route('campus.tournament.regionaladmin'))->assertForbidden();
+        }
+
+        $this->actingAs($this->studentLeader)->get(route('campus.tournament.sl'))->assertOk();
+        $this->actingAs($this->regionalAdmin)->get(route('campus.tournament.regionaladmin'))->assertOk();
+        $this->actingAs($this->superAdmin)->get(route('campus.tournament.regionaladmin'))->assertOk();
+    }
+
+    public function test_management_page_authority_must_be_current_and_active(): void
+    {
+        CampusAffiliation::query()->create([
+            'campus_id' => $this->campus->id,
+            'user_id' => $this->regionalAdmin->id,
+            'role' => 'student_leader',
+            'status' => 'active',
+            'started_at' => now()->subMonth(),
+        ]);
+        $this->actingAs($this->regionalAdmin)->get(route('campus.tournament.sl'))->assertForbidden();
+
+        $this->studentLeader->campusAffiliations()->update(['ended_at' => now()->subMinute()]);
+        $this->actingAs($this->studentLeader)->get(route('campus.tournament.sl'))->assertForbidden();
+
+        $this->regionalAdmin->update(['status' => 'inactive']);
+        $this->actingAs($this->regionalAdmin)->get(route('campus.tournament.regionaladmin'))->assertForbidden();
+
+        $unassignedAdmin = User::factory()->create(['status' => 'active', 'user_type' => 'Regional Admin']);
+        $this->actingAs($unassignedAdmin)->get(route('campus.tournament.regionaladmin'))->assertForbidden();
+        $this->actingAs($unassignedAdmin)->get(route('campus.captainregistration'))->assertForbidden();
+    }
+
+    public function test_player_pages_reject_student_leaders_and_reviewers(): void
+    {
+        $playerPages = [
+            'campus.captainregistration',
+            'campus.teamregistration',
+            'campus.team',
+            'campus.tournament.solo.player',
+            'campus.member.invite',
+            'campus.member.join',
+        ];
+
+        foreach ([$this->studentLeader, $this->regionalAdmin, $this->superAdmin] as $user) {
+            foreach ($playerPages as $routeName) {
+                $this->actingAs($user)->get(route($routeName))->assertForbidden();
+            }
+        }
+
+        $this->actingAs($this->student)->get(route('campus.captainregistration'))->assertOk();
+    }
+
     public function test_captain_registration_page_uses_real_tournament_and_user_data(): void
     {
         $tournament = $this->createApprovedTournament();

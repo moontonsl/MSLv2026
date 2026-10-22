@@ -198,7 +198,7 @@ function AccountMenuLinks({ user, userRole, onClose, onOpenModification }) {
                 </Link>
             )}
             {showCampusTournaments && (
-                <Link href="/Tournament/SL" className={linkClass} onClick={onClose}>
+                <Link href="/campus-tournament" className={linkClass} onClick={onClose}>
                     Campus Tournaments
                 </Link>
             )}
