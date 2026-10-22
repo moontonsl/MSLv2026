@@ -43,10 +43,26 @@ class AdminManagementController extends Controller
         $superAdminsCount = $users->filter(fn (AdminUser $admin) => $admin->isSuperAdmin())->count();
         $customAdminsCount = $totalAdmins - $superAdminsCount;
 
+        $roles = \App\Models\AdminRole::query()
+            ->orderBy('id')
+            ->get()
+            ->map(fn (\App\Models\AdminRole $role): array => [
+                'id' => $role->id,
+                'name' => $role->name,
+                'slug' => $role->slug,
+                'description' => $role->description,
+                'permissions' => $role->permissions ?? [],
+                'permissions_count' => count($role->permissions ?? []),
+                'is_system' => (bool) $role->is_system,
+                'users_count' => AdminUser::where('role', $role->name)->count(),
+            ])
+            ->values();
+
         $stats = [
             'total_admins' => $totalAdmins,
             'super_admins' => $superAdminsCount,
             'custom_admins' => $customAdminsCount,
+            'total_roles' => $roles->count(),
             'total_permissions' => count($allPermissions),
         ];
 
@@ -58,9 +74,12 @@ class AdminManagementController extends Controller
                 'role' => $admin->role,
                 'permissions' => $admin->permissions ?? [],
                 'permissions_count' => count($admin->permissions ?? []),
+                'effective_permissions' => $admin->effective_permissions,
+                'effective_permissions_count' => count($admin->effective_permissions),
                 'is_super_admin' => $admin->isSuperAdmin(),
                 'created_at' => $admin->created_at?->toIso8601String(),
             ])->values(),
+            'roles' => $roles,
             'allPermissions' => $allPermissions,
             'rolePresets' => $rolePresets,
             'stats' => $stats,
