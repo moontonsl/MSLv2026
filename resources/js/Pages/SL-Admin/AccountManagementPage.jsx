@@ -16,6 +16,7 @@ import {
     RefreshCw,
     Search,
     Sparkles,
+    UserRound,
     Venus,
     X,
 } from 'lucide-react';
@@ -25,6 +26,7 @@ import BlockedStudentProfileModal from './modals/BlockedStudentProfileModal';
 import InactiveStudentProfileModal from './modals/InactiveStudentProfileModal';
 import PendingStudentProfileModal from './modals/PendingStudentProfileModal';
 import VerifiedStudentProfileModal from './modals/VerifiedStudentProfileModal';
+import StudentDirectoryProfileModal from './modals/StudentDirectoryProfileModal';
 import {
     slAdminProfile,
     statusOptions,
@@ -66,7 +68,7 @@ const statusStyles = {
 };
 
 function GenderIcon({ gender, className = 'h-5 w-5' }) {
-    const Icon = gender === 'female' ? Venus : Mars;
+    const Icon = gender === 'female' ? Venus : gender === 'male' ? Mars : UserRound;
 
     return <Icon className={`${className} shrink-0 text-brand-500`} aria-hidden="true" />;
 }
@@ -353,7 +355,7 @@ function CoverPickerModal({ open, selectedCover, onSelect, onClose, onSave, savi
     );
 }
 
-export default function AccountManagementPage({ accountView, allowedRoles, title, students = [], profile = slAdminProfile, backgroundRoute = null }) {
+export default function AccountManagementPage({ accountView, allowedRoles, title, students = [], profile = slAdminProfile, backgroundRoute = null, readOnlyDetails = false }) {
     const [statusFilter, setStatusFilter] = useState('all');
     const [roleFilter, setRoleFilter] = useState('all');
     const [query, setQuery] = useState('');
@@ -828,6 +830,12 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
                 </div>
             </div>
 
+            {readOnlyDetails ? (
+                <StudentDirectoryProfileModal
+                    student={selectedStudent}
+                    onClose={() => setSelectedStudent(null)}
+                />
+            ) : <>
             <NewStudentProfileModal
                 student={selectedStudent?.status === 'New' ? selectedStudent : null}
                 accountView={accountView}
@@ -860,6 +868,7 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
                 accountView={accountView}
                 onClose={() => setSelectedStudent(null)}
             />
+            </>}
             <CoverPickerModal
                 open={coverModalOpen}
                 selectedCover={selectedCover}

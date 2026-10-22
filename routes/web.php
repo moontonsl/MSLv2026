@@ -738,9 +738,9 @@ Route::get('/api/oppo-roadshow/data', [OppoSettingsController::class, 'getRoadsh
 
 require __DIR__.'/auth.php';
 
-Route::get('/StudentLeader', function () {
-    return Inertia::render('VerificationPages/StudentLeader');
-})->name('student.leader');
+Route::get('/StudentLeader', [\App\Http\Controllers\StudentLeaderDirectoryController::class, 'index'])
+    ->middleware('auth')
+    ->name('student.leader');
 
 Route::get('/RegionalAdmin', [\App\Http\Controllers\Admin\RegionalAdminController::class, 'index'])
     ->middleware('auth')
