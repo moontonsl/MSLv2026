@@ -249,7 +249,7 @@ export default function CaptainTeam({ team }) {
                                         <p className="mt-1 text-xs text-gray-500">Searching…</p>
                                     ) : null}
                                     {results.length > 0 ? (
-                                        <div className="absolute z-10 mt-1 w-full overflow-hidden rounded-lg border border-neutral-700 bg-[#181818] shadow-xl">
+                                        <div className="mt-1 max-h-64 w-full overflow-y-auto rounded-lg border border-neutral-700 bg-[#181818] shadow-xl">
                                             {results.map((player) => (
                                                 <button
                                                     key={player.id}
