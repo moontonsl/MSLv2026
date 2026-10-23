@@ -1,4 +1,4 @@
-import { CheckCircle2, Copy, Hourglass, User } from "lucide-react";
+import { CheckCircle2, Hourglass, User } from "lucide-react";
 
 function StatusBadge({ status, solid = false }) {
     const isApproved = status === "approved" || status === "confirmed";
@@ -93,28 +93,22 @@ function PlayerMobileRow({ player, roleLabel, showPendingBadge = false }) {
  * @param {{
  *   team: object;
  *   onEdit?: () => void;
- *   onGenerateCode?: () => void;
- *   onCopyCode?: () => void;
+ *   editLabel?: string;
  *   onLeave?: () => void;
  *   memberView?: boolean;
- *   showInviteCode?: boolean;
  * }} props
  */
 export default function CaptainTeamCard({
     team,
     onEdit,
-    onGenerateCode,
-    onCopyCode,
+    editLabel = "Edit",
     onLeave,
     memberView = false,
-    showInviteCode = true,
 }) {
     const roster = [team.captain, ...team.players].filter(Boolean);
     const isApproved = team.status === "approved";
-    const showCodeActions = !memberView && showInviteCode;
-    // Approved members can only leave the team; pending members can still edit their entry.
     const showLeave = memberView && isApproved && Boolean(onLeave);
-    const showEdit = !showLeave && (!memberView || Boolean(onEdit));
+    const showEdit = !showLeave && Boolean(onEdit);
     const showActions = showEdit || showLeave;
 
     return (
@@ -188,7 +182,7 @@ export default function CaptainTeamCard({
                                 onClick={onEdit}
                                 className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
                             >
-                                Edit
+                                {editLabel}
                             </button>
                         ) : null}
                         {showLeave ? (
@@ -200,46 +194,20 @@ export default function CaptainTeamCard({
                                 Leave
                             </button>
                         ) : null}
-                        {showCodeActions ? (
-                            isApproved && team.inviteCode ? (
-                                <button
-                                    type="button"
-                                    onClick={onCopyCode}
-                                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-yellow-500 px-3 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"
-                                >
-                                    {team.inviteCode}
-                                    <Copy className="h-4 w-4" />
-                                </button>
-                            ) : (
-                                <button
-                                    type="button"
-                                    onClick={onGenerateCode}
-                                    className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-yellow-500 px-4 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"
-                                >
-                                    Generate Code
-                                </button>
-                            )
-                        ) : null}
                     </div>
                 ) : null}
             </div>
 
             {/* Mobile actions */}
             {showActions ? (
-                <div
-                    className={`grid gap-2 border-t border-neutral-800 p-4 md:hidden ${
-                        showCodeActions
-                            ? "grid-cols-1 sm:grid-cols-2"
-                            : "grid-cols-1"
-                    }`}
-                >
+                <div className="grid grid-cols-1 gap-2 border-t border-neutral-800 p-4 md:hidden">
                     {showEdit ? (
                         <button
                             type="button"
                             onClick={onEdit}
                             className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black"
                         >
-                            Edit
+                            {editLabel}
                         </button>
                     ) : null}
                     {showLeave ? (
@@ -250,26 +218,6 @@ export default function CaptainTeamCard({
                         >
                             Leave
                         </button>
-                    ) : null}
-                    {showCodeActions ? (
-                        isApproved && team.inviteCode ? (
-                            <button
-                                type="button"
-                                onClick={onCopyCode}
-                                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-yellow-500 px-3 text-sm font-semibold text-yellow-500"
-                            >
-                                {team.inviteCode}
-                                <Copy className="h-4 w-4" />
-                            </button>
-                        ) : (
-                            <button
-                                type="button"
-                                onClick={onGenerateCode}
-                                className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-yellow-500 px-4 text-sm font-semibold text-yellow-500"
-                            >
-                                Generate Code
-                            </button>
-                        )
                     ) : null}
                 </div>
             ) : null}

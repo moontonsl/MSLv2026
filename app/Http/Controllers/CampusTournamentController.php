@@ -44,19 +44,16 @@ class CampusTournamentController extends Controller
         }
 
         // 1. Super Admin or Regional Admin -> /Tournament/RegionalAdmin
-        if ($user->user_type === 'Super Admin' || RegionAdmin::query()->where('user_id', $user->id)->exists()) {
+        if ($authorization->canAccessReviewerPage($user)) {
             return redirect('/Tournament/RegionalAdmin');
         }
 
         // 2. Active Student Leader -> /Tournament/SL
-        $isLeader = $user->campusAffiliations()
-            ->where('role', 'student_leader')
-            ->where('status', 'active')
-            ->exists();
-
-        if ($isLeader) {
+        if ($authorization->hasActiveStudentLeaderAffiliation($user)) {
             return redirect('/Tournament/SL');
         }
+
+        abort_unless($authorization->canAccessPlayerPages($user), 403);
 
         // 3. Check active student involvement in open/ongoing tournaments
         $activeTournamentIds = CampusTournament::query()
@@ -198,8 +195,7 @@ class CampusTournamentController extends Controller
     public function indexSl(Request $request, CampusTournamentAuthorization $authorization): Response
     {
         $user = $request->user();
-        $isReviewer = $user->user_type === 'Super Admin'
-            || RegionAdmin::query()->where('user_id', $user->id)->exists();
+        $isReviewer = $authorization->canAccessReviewerPage($user);
 
         $pendingQuery = CampusTournament::query()
             ->where('approval_status', CampusTournamentApprovalStatus::Pending);

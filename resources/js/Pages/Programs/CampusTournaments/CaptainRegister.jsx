@@ -1,4 +1,5 @@
 import { ROLE_SLOTS } from "@/data/campusTournamentCaptainData";
+import { isLaneTakenByAnotherPlayer } from "./laneSelection";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { ChevronLeft, CircleHelp } from "lucide-react";
@@ -82,7 +83,7 @@ function MemberSearchField({ index, tournamentId, value, onChange, error, select
                     aria-expanded={focused && !selectedUser && value.trim().length >= 2}
                 />
                 {focused && !selectedUser && value.trim().length >= 2 && (
-                    <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-56 overflow-y-auto rounded-lg border border-neutral-700 bg-[#181818] shadow-xl">
+                    <div className="mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-neutral-700 bg-[#181818] shadow-xl">
                         {searching ? (
                             <p className="px-3 py-2 text-sm text-gray-400">Searching…</p>
                         ) : searchError ? (
@@ -204,7 +205,13 @@ export default function CaptainRegister({ captain, tournament }) {
                                         >
                                             <option value="">Select lane</option>
                                             {ROLE_SLOTS.map((role) => (
-                                                <option key={role.id} value={role.id}>{role.label}</option>
+                                                <option
+                                                    key={role.id}
+                                                    value={role.id}
+                                                    disabled={isLaneTakenByAnotherPlayer(role.id, data.assigned_lane_role_code, data.members)}
+                                                >
+                                                    {role.label}
+                                                </option>
                                             ))}
                                         </select>
                                         {errors.assigned_lane_role_code && <p className="mt-1 text-xs text-red-400">{errors.assigned_lane_role_code}</p>}
@@ -268,7 +275,13 @@ export default function CaptainRegister({ captain, tournament }) {
                                             >
                                                 <option value="">Select lane</option>
                                                 {ROLE_SLOTS.map((role) => (
-                                                    <option key={role.id} value={role.id}>{role.label}</option>
+                                                    <option
+                                                        key={role.id}
+                                                        value={role.id}
+                                                        disabled={isLaneTakenByAnotherPlayer(role.id, data.assigned_lane_role_code, data.members, index)}
+                                                    >
+                                                        {role.label}
+                                                    </option>
                                                 ))}
                                             </select>
                                             {errors[`members.${index}.intended_lane_role_code`] && (
