@@ -1,4 +1,5 @@
 import CampusTournamentPageHeader from '@/Components/CampusTournament/CampusTournamentPageHeader';
+import ConfirmResultsModal from '@/Components/CampusTournament/ConfirmResultsModal';
 import CreateTournamentModal from '@/Components/CampusTournament/CreateTournamentModal';
 import RequestSection from '@/Components/CampusTournament/RequestSection';
 import SlTournamentPanel from '@/Components/CampusTournament/SlTournamentPanel';
@@ -9,6 +10,7 @@ import {
     INITIAL_REJECTED_REQUESTS,
     INITIAL_SL_MANAGED_TOURNAMENTS,
     MONTH_OPTIONS,
+    PLACEMENT_OPTIONS,
     TOURNAMENT_STATUS_TABS,
     YEAR_OPTIONS,
 } from '@/data/campusTournamentData';
@@ -67,6 +69,11 @@ export default function SlView({
     const [successOpen, setSuccessOpen] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [successDescription, setSuccessDescription] = useState('');
+    const [editingResultsId, setEditingResultsId] = useState(null);
+    const [activeResult, setActiveResult] = useState(null);
+    const [resultReason, setResultReason] = useState('');
+    const [resultError, setResultError] = useState('');
+    const [resultProcessing, setResultProcessing] = useState(false);
 
     /** Own submissions awaiting Regional Admin review, plus anything queued locally. */
     const pendingItems = useMemo(
@@ -252,6 +259,87 @@ export default function SlView({
         [editRequest],
     );
 
+    const handlePlacementChange = (tournamentId, teamId, placement) => {
+        setTournaments((current) => current.map((tournament) =>
+            tournament.id === tournamentId
+                ? { ...tournament, teams: tournament.teams.map((team) =>
+                    team.id === teamId ? { ...team, placement } : team) }
+                : tournament
+        ));
+    };
+
+    const cancelResultEdit = (tournament) => {
+        const saved = initialTournaments.find((item) => item.id === tournament.id);
+        if (saved) {
+            setTournaments((current) => current.map((item) =>
+                item.id === tournament.id ? saved : item
+            ));
+        }
+        setEditingResultsId(null);
+    };
+
+    const openResultConfirmation = (tournament) => {
+        const current = tournaments.find((item) => item.id === tournament.id);
+        const registered = current?.teams.filter((team) => team.teamStatus === 'registered') ?? [];
+        setResultReason('');
+        setActiveResult({ tournamentId: tournament.id, correction: tournament.resultsSubmitted });
+        if (!registered.length) {
+            setResultError('There are no registered teams to report.');
+            return;
+        }
+        if (!registered.some((team) => team.placement === '1st')) {
+            setResultError('Assign at least one team to first place.');
+            return;
+        }
+        setResultError('');
+    };
+
+    const confirmResults = () => {
+        if (!activeResult || resultProcessing) return;
+        if (activeResult.correction && !resultReason.trim()) {
+            setResultError('Provide a reason for this correction.');
+            return;
+        }
+        const tournament = tournaments.find((item) => item.id === activeResult.tournamentId);
+        const entries = (tournament?.teams ?? [])
+            .filter((team) => team.teamStatus === 'registered')
+            .map((team) => ({ team_id: team.id, placement_code: team.placement }));
+        const url = activeResult.correction
+            ? `/campus-tournaments/${activeResult.tournamentId}/result-revisions`
+            : `/campus-tournaments/${activeResult.tournamentId}/results`;
+
+        setResultProcessing(true);
+        router.post(url, {
+            entries,
+            ...(activeResult.correction ? { reason: resultReason.trim() } : {}),
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setActiveResult(null);
+                setEditingResultsId(null);
+                setResultError('');
+                setSuccessMessage(activeResult.correction ? 'Results Updated Successfully!' : 'Results Submitted Successfully!');
+                setSuccessDescription('The tournament results were saved.');
+                setSuccessOpen(true);
+            },
+            onError: (errors) => setResultError(
+                errors.reason || errors.entries || Object.values(errors)[0] || 'Unable to save results.'
+            ),
+            onFinish: () => setResultProcessing(false),
+        });
+    };
+
+    const resultTournament = tournaments.find((item) => item.id === activeResult?.tournamentId);
+    const resultPlacements = PLACEMENT_OPTIONS.filter((option) => option.id !== 'participant')
+        .map((option) => ({
+            id: option.id,
+            label: option.label,
+            rankColor: option.rankColor,
+            teamName: resultTournament?.teams
+                .filter((team) => team.teamStatus === 'registered' && team.placement === option.id)
+                .map((team) => team.name).join(', ') || '—',
+        }));
+
     return (
         <MainLayout fullWidth>
             <Head title="Campus Tournament — SL View" />
@@ -429,6 +517,12 @@ export default function SlView({
                                         key={tournament.id}
                                         tournament={tournament}
                                         defaultExpanded={index === 0}
+                                        editingResults={editingResultsId === tournament.id}
+                                        onPlacementChange={handlePlacementChange}
+                                        onSubmitResults={openResultConfirmation}
+                                        onEditResults={(item) => setEditingResultsId(item.id)}
+                                        onCancelEdit={cancelResultEdit}
+                                        onExport={(item) => window.location.assign(`/campus-tournaments/${item.id}/results/export`)}
                                     />
                                 ))
                             )}
@@ -470,6 +564,18 @@ export default function SlView({
                 onClose={() => setSuccessOpen(false)}
                 message={successMessage}
                 description={successDescription}
+            />
+
+            <ConfirmResultsModal
+                isOpen={activeResult != null}
+                mode={activeResult?.correction ? 'update' : 'submit'}
+                placements={resultPlacements}
+                reason={resultReason}
+                onReasonChange={(value) => { setResultReason(value); setResultError(''); }}
+                error={resultError}
+                processing={resultProcessing}
+                onCancel={() => { if (!resultProcessing) setActiveResult(null); }}
+                onConfirm={confirmResults}
             />
 
         </MainLayout>

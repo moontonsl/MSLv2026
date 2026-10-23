@@ -271,6 +271,38 @@ class CampusTournamentPostEventReportTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_sl_page_exposes_registered_teams_and_result_actions_for_same_page_reporting(): void
+    {
+        [$tournament, $teams] = $this->completedTournamentWithTeams(1);
+
+        $this->actingAs($this->leader)
+            ->get(route('campus.tournament.sl'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Programs/CampusTournaments/SlView')
+                ->where('tournaments.0.id', $tournament->id)
+                ->where('tournaments.0.canSubmitResults', true)
+                ->where('tournaments.0.canCorrectResults', false)
+                ->where('tournaments.0.teams.0.teamStatus', 'registered'));
+
+        $this->actingAs($this->leader)->post(route('campus-tournaments.results.store', $tournament), [
+            'entries' => $this->entries($teams, ['1st']),
+        ])->assertRedirect();
+
+        $savedPlayer = $tournament->fresh()->currentResultRevision->entries()->first()->roster_snapshot[0];
+        User::query()->findOrFail($savedPlayer['user_id'])->update(['name' => 'Changed after report']);
+
+        $this->actingAs($this->leader)
+            ->get(route('campus.tournament.sl'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('tournaments.0.canSubmitResults', false)
+                ->where('tournaments.0.canCorrectResults', true)
+                ->where('tournaments.0.resultsVersion', 1)
+                ->where('tournaments.0.teams.0.placement', '1st')
+                ->where('tournaments.0.teams.0.players.0.name', $savedPlayer['name']));
+    }
+
     public function test_admin_guard_super_admin_can_discover_correct_and_export_a_report_with_accurate_attribution(): void
     {
         [$tournament, $teams] = $this->completedTournamentWithTeams(2);

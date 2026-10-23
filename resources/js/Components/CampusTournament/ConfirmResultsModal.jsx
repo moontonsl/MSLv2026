@@ -9,6 +9,10 @@ import { HelpCircle, X } from 'lucide-react';
  *   isOpen: boolean;
  *   mode?: 'submit' | 'update';
  *   placements?: Array<{ id: string; label: string; rankColor: string; teamName: string }>;
+ *   reason?: string;
+ *   onReasonChange?: (reason: string) => void;
+ *   error?: string;
+ *   processing?: boolean;
  *   onCancel: () => void;
  *   onConfirm: () => void;
  * }} props
@@ -17,6 +21,10 @@ export default function ConfirmResultsModal({
     isOpen,
     mode = 'submit',
     placements = [],
+    reason = '',
+    onReasonChange,
+    error = '',
+    processing = false,
     onCancel,
     onConfirm,
 }) {
@@ -25,7 +33,7 @@ export default function ConfirmResultsModal({
     return (
         <BaseModal
             isOpen={isOpen}
-            onClose={onCancel}
+            onClose={() => !processing && onCancel()}
             hideHeader
             showCloseButton={false}
             scrollable={false}
@@ -35,13 +43,15 @@ export default function ConfirmResultsModal({
                     <button
                         type="button"
                         onClick={onConfirm}
-                        className="min-h-[44px] w-full rounded-lg bg-yellow-500 text-base font-bold text-black transition-colors hover:bg-yellow-400 md:text-sm"
+                        disabled={processing}
+                        className="min-h-[44px] w-full rounded-lg bg-yellow-500 text-base font-bold text-black transition-colors hover:bg-yellow-400 disabled:opacity-50 md:text-sm"
                     >
-                        Submit
+                        {processing ? 'Saving…' : 'Submit'}
                     </button>
                     <button
                         type="button"
                         onClick={onCancel}
+                        disabled={processing}
                         className="min-h-[44px] w-full rounded-lg border border-yellow-500 bg-transparent text-base font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10 md:text-sm"
                     >
                         Cancel
@@ -53,6 +63,7 @@ export default function ConfirmResultsModal({
                 <button
                     type="button"
                     onClick={onCancel}
+                    disabled={processing}
                     className={`absolute -right-1 -top-1 ${MODAL_CLOSE_BUTTON_CLASS}`}
                     aria-label="Close"
                 >
@@ -81,11 +92,19 @@ export default function ConfirmResultsModal({
                     ))}
                 </ul>
 
-                {isUpdate ? (
-                    <p className="mt-4 text-sm text-gray-500">
-                        This will update the existing rankings.
-                    </p>
+                {isUpdate && onReasonChange ? (
+                    <label className="mt-4 block text-sm text-gray-300">
+                        Correction reason <span className="text-red-400">*</span>
+                        <textarea
+                            value={reason}
+                            onChange={(event) => onReasonChange?.(event.target.value)}
+                            rows={3}
+                            maxLength={2000}
+                            className="mt-2 w-full rounded-lg border border-neutral-700 bg-[#0a0a0a] p-3 text-white"
+                        />
+                    </label>
                 ) : null}
+                {error ? <p role="alert" className="mt-3 text-sm text-red-400">{error}</p> : null}
             </div>
         </BaseModal>
     );

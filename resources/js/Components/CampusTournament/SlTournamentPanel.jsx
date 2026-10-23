@@ -27,11 +27,23 @@ const INNER_TABS = [
  *     rosterTeams?: Array<object>;
  *   };
  *   defaultExpanded?: boolean;
+ *   editingResults?: boolean;
+ *   onPlacementChange?: (tournamentId: number, teamId: number, placement: string) => void;
+ *   onSubmitResults?: (tournament: object) => void;
+ *   onEditResults?: (tournament: object) => void;
+ *   onCancelEdit?: (tournament: object) => void;
+ *   onExport?: (tournament: object) => void;
  * }} props
  */
 export default function SlTournamentPanel({
     tournament,
     defaultExpanded = false,
+    editingResults = false,
+    onPlacementChange,
+    onSubmitResults,
+    onEditResults,
+    onCancelEdit,
+    onExport,
 }) {
     const [expanded, setExpanded] = useState(defaultExpanded);
     const [innerTab, setInnerTab] = useState("match");
@@ -40,7 +52,7 @@ export default function SlTournamentPanel({
     const resultsSubmitted = Boolean(tournament.resultsSubmitted);
 
     return (
-        <article className="overflow-hidden rounded-xl border border-neutral-800 bg-[#111111]">
+        <article className="rounded-xl border border-neutral-800 bg-[#111111]">
             <div className="flex items-start gap-3 p-4 sm:items-center sm:p-5">
                 <div className="min-w-0 flex-1">
                     {resultsSubmitted ? (
@@ -124,10 +136,21 @@ export default function SlTournamentPanel({
 
                     {innerTab === "match" ? (
                         <SlMatchManagement
-                            teams={tournament.teams ?? []}
+                            teams={(tournament.teams ?? []).filter((team) =>
+                                tournament.status !== 'completed' || team.teamStatus === 'registered'
+                            )}
                             page={page}
                             totalPages={1}
                             onPageChange={setPage}
+                            editable={tournament.canSubmitResults || editingResults}
+                            resultsSubmitted={resultsSubmitted}
+                            canSubmit={tournament.canSubmitResults}
+                            canCorrect={tournament.canCorrectResults}
+                            onPlacementChange={(teamId, placement) => onPlacementChange?.(tournament.id, teamId, placement)}
+                            onSubmitResults={() => onSubmitResults?.(tournament)}
+                            onEditResults={() => onEditResults?.(tournament)}
+                            onCancelEdit={() => onCancelEdit?.(tournament)}
+                            onExport={resultsSubmitted && tournament.canViewReport ? () => onExport?.(tournament) : undefined}
                         />
                     ) : (
                         <SlRosterPanel
