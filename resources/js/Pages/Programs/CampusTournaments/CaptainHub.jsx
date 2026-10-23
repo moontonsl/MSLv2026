@@ -12,19 +12,19 @@ const OPTIONS = [
         highlight: true,
     },
     {
-        id: 'join',
-        title: 'Join an Existing Team',
-        description: 'Enter a team invite code from your captain.',
-        href: '/Tournament/MemberJoin',
-        icon: ChevronRight,
-        highlight: false,
-    },
-    {
         id: 'solo',
         title: 'Solo Matchmaking',
         description: 'Get matched with other solo players.',
         href: '/Tournament/SoloPlayer',
         icon: Zap,
+        highlight: false,
+    },
+    {
+        id: 'join',
+        title: 'Team Invitations',
+        description: 'View and respond to direct team invitations.',
+        href: '/Tournament/MemberInvite',
+        icon: ChevronRight,
         highlight: false,
     },
 ];
