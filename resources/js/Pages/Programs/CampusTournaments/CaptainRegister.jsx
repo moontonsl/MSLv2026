@@ -1,4 +1,5 @@
 import { ROLE_SLOTS } from "@/data/campusTournamentCaptainData";
+import { isLaneTakenByAnotherPlayer } from "./laneSelection";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { ChevronLeft, CircleHelp } from "lucide-react";
@@ -204,7 +205,13 @@ export default function CaptainRegister({ captain, tournament }) {
                                         >
                                             <option value="">Select lane</option>
                                             {ROLE_SLOTS.map((role) => (
-                                                <option key={role.id} value={role.id}>{role.label}</option>
+                                                <option
+                                                    key={role.id}
+                                                    value={role.id}
+                                                    disabled={isLaneTakenByAnotherPlayer(role.id, data.assigned_lane_role_code, data.members)}
+                                                >
+                                                    {role.label}
+                                                </option>
                                             ))}
                                         </select>
                                         {errors.assigned_lane_role_code && <p className="mt-1 text-xs text-red-400">{errors.assigned_lane_role_code}</p>}
@@ -268,7 +275,13 @@ export default function CaptainRegister({ captain, tournament }) {
                                             >
                                                 <option value="">Select lane</option>
                                                 {ROLE_SLOTS.map((role) => (
-                                                    <option key={role.id} value={role.id}>{role.label}</option>
+                                                    <option
+                                                        key={role.id}
+                                                        value={role.id}
+                                                        disabled={isLaneTakenByAnotherPlayer(role.id, data.assigned_lane_role_code, data.members, index)}
+                                                    >
+                                                        {role.label}
+                                                    </option>
                                                 ))}
                                             </select>
                                             {errors[`members.${index}.intended_lane_role_code`] && (
