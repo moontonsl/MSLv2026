@@ -40,6 +40,7 @@ export default function ViewTournamentModal({ isOpen, tournament = null, onClose
             isOpen={isOpen}
             onClose={onClose}
             hideHeader
+            showCloseButton={false}
             scrollable
             maxWidth="max-w-5xl"
             panelClassName="max-h-[90vh]"

@@ -36,6 +36,7 @@ export default function GenerateReportModal({
             isOpen={isOpen}
             onClose={onClose}
             hideHeader
+            showCloseButton={false}
             scrollable={false}
             maxWidth="max-w-md"
             footer={
