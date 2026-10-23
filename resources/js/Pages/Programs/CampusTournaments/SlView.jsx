@@ -252,14 +252,6 @@ export default function SlView({
         [editRequest],
     );
 
-    const openSubmitResults = useCallback((tournament) => {
-        router.visit(`/campus-tournaments/${tournament.id}/report`);
-    }, []);
-
-    const openExportReport = useCallback((tournament) => {
-        window.location.assign(`/campus-tournaments/${tournament.id}/results/export`);
-    }, []);
-
     return (
         <MainLayout fullWidth>
             <Head title="Campus Tournament — SL View" />
@@ -437,8 +429,6 @@ export default function SlView({
                                         key={tournament.id}
                                         tournament={tournament}
                                         defaultExpanded={index === 0}
-                                        onSubmitResults={openSubmitResults}
-                                        onExport={openExportReport}
                                     />
                                 ))
                             )}

@@ -1,6 +1,6 @@
 import MatchPlayerCell from '@/Components/CampusTournament/MatchPlayerCell';
 import PlacementStatusDropdown from '@/Components/CampusTournament/PlacementStatusDropdown';
-import { ArrowDownUp, ChevronLeft, ChevronRight, FileSpreadsheet, Pencil } from 'lucide-react';
+import { ArrowDownUp, ChevronLeft, ChevronRight } from 'lucide-react';
 
 /**
  * Match Management table (desktop) + compact list (mobile).
@@ -14,57 +14,17 @@ import { ArrowDownUp, ChevronLeft, ChevronRight, FileSpreadsheet, Pencil } from 
  *   }>;
  *   page?: number;
  *   totalPages?: number;
- *   resultsSubmitted?: boolean;
- *   isEditing?: boolean;
  *   onPageChange?: (page: number) => void;
- *   canViewReport?: boolean;
- *   onSubmitResults: () => void;
- *   onEditResults?: () => void;
- *   onCancelEdit?: () => void;
- *   onSaveEdit?: () => void;
- *   onExport?: () => void;
  * }} props
  */
 export default function SlMatchManagement({
     teams,
     page = 1,
     totalPages = 10,
-    resultsSubmitted = false,
-    canViewReport = false,
-    isEditing = false,
     onPageChange,
-    onSubmitResults,
-    onEditResults,
-    onCancelEdit,
-    onSaveEdit,
-    onExport,
 }) {
-    const showEditToolbar = resultsSubmitted && canViewReport && !isEditing;
-    const showEditingFooter = resultsSubmitted && isEditing;
-
     return (
         <div className="space-y-4">
-            {showEditToolbar ? (
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-                    <button
-                        type="button"
-                        onClick={onEditResults}
-                        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-neutral-600 bg-[#1a1a1a] px-4 text-sm font-semibold text-white transition-colors hover:border-neutral-400"
-                    >
-                        <Pencil className="h-4 w-4" />
-                        Edit
-                    </button>
-                    <button
-                        type="button"
-                        onClick={onExport}
-                        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
-                    >
-                        <FileSpreadsheet className="h-4 w-4" />
-                        Export to Excel
-                    </button>
-                </div>
-            ) : null}
-
             {/* Desktop table */}
             <div className="hidden overflow-x-auto lg:block">
                 <table className="w-full min-w-[980px] table-auto border-collapse">
@@ -210,38 +170,7 @@ export default function SlMatchManagement({
                     </button>
                 </div>
 
-                {!resultsSubmitted && canViewReport ? (
-                    <button
-                        type="button"
-                        onClick={onSubmitResults}
-                        className="inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-yellow-500 px-6 py-2.5 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:w-auto"
-                    >
-                        Submit Results
-                    </button>
-                ) : null}
             </div>
-
-            {showEditingFooter ? (
-                <div className="sticky bottom-0 z-10 -mx-4 flex items-center justify-between gap-3 border-t border-neutral-800 bg-[#111111] px-4 py-3 sm:-mx-5 sm:px-5">
-                    <button
-                        type="button"
-                        onClick={onCancelEdit}
-                        className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-neutral-600 px-5 text-sm font-semibold text-white transition-colors hover:border-neutral-400"
-                    >
-                        Cancel
-                    </button>
-                    <p className="hidden text-sm font-medium text-gray-400 sm:block">
-                        Editing Results…
-                    </p>
-                    <button
-                        type="button"
-                        onClick={onSaveEdit}
-                        className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-6 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
-                    >
-                        Save
-                    </button>
-                </div>
-            ) : null}
         </div>
     );
 }

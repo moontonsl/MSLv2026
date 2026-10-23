@@ -262,82 +262,13 @@ class CampusTournamentPostEventReportTest extends TestCase
         $this->assertDatabaseCount('tournament_result_revisions', 1);
     }
 
-    public function test_report_access_and_permissions_are_scoped_to_creator_official_ra_and_core(): void
-    {
-        [$tournament, $teams] = $this->completedTournamentWithTeams(1);
-        $this->actingAs($this->leader)->post(route('campus-tournaments.results.store', $tournament), [
-            'entries' => $this->entries($teams, ['1st']),
-        ]);
-
-        $this->actingAs($this->leader)
-            ->get(route('campus-tournaments.report', $tournament))
-            ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('Programs/CampusTournaments/PostEventReport')
-                ->where('viewerRole', 'student_leader')
-                ->where('permissions.canSubmit', false)
-                ->where('permissions.canCorrect', true)
-                ->where('permissions.canExport', true)
-                ->where('tournament.currentResult.version', 1)
-                ->has('tournament.teams', 1)
-                ->has('tournament.teams.0.players', 5));
-
-        $this->actingAs($this->regionalAdmin)
-            ->get(route('campus-tournaments.report', $tournament))
-            ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->where('viewerRole', 'regional_admin')
-                ->where('permissions.canCorrect', false)
-                ->where('permissions.canExport', true));
-
-        $this->actingAs($this->core)
-            ->get(route('campus-tournaments.report', $tournament))
-            ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->where('viewerRole', 'core')
-                ->where('permissions.canCorrect', true));
-
-        $ordinary = User::factory()->create(['status' => 'active']);
-        $this->actingAs($ordinary)->get(route('campus-tournaments.report', $tournament))->assertForbidden();
-
-        $otherRegion = Region::query()->create([
-            'code' => '01',
-            'name' => 'Ilocos Region',
-            'region_number' => 'I',
-            'acronym' => 'R1',
-            'island_code' => 'luzon',
-        ]);
-        $wrongAdmin = User::factory()->create(['status' => 'active']);
-        RegionAdmin::query()->create([
-            'region_code' => $otherRegion->code,
-            'user_id' => $wrongAdmin->id,
-            'assigned_at' => now(),
-        ]);
-        $this->actingAs($wrongAdmin)->get(route('campus-tournaments.report', $tournament))->assertForbidden();
-    }
-
-    public function test_completed_tournament_card_only_links_to_a_report_the_leader_can_view(): void
+    public function test_sl_report_page_is_unavailable_until_replacement_frontend_is_ready(): void
     {
         [$tournament] = $this->completedTournamentWithTeams(1);
-        $otherLeader = User::factory()->create(['status' => 'active']);
-        CampusAffiliation::query()->create([
-            'campus_id' => $this->campus->id,
-            'user_id' => $otherLeader->id,
-            'role' => 'student_leader',
-            'status' => 'active',
-        ]);
-
-        $this->actingAs($otherLeader)
-            ->get(route('campus.tournament.sl'))
-            ->assertInertia(fn (Assert $page) => $page
-                ->where('tournaments.0.id', $tournament->id)
-                ->where('tournaments.0.canViewReport', false));
 
         $this->actingAs($this->leader)
-            ->get(route('campus.tournament.sl'))
-            ->assertInertia(fn (Assert $page) => $page
-                ->where('tournaments.0.id', $tournament->id)
-                ->where('tournaments.0.canViewReport', true));
+            ->get("/campus-tournaments/{$tournament->id}/report")
+            ->assertNotFound();
     }
 
     public function test_admin_guard_super_admin_can_discover_correct_and_export_a_report_with_accurate_attribution(): void
