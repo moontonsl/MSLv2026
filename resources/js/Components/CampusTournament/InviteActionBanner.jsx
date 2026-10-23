@@ -7,9 +7,10 @@ import { Bell } from 'lucide-react';
  *   teamName: string;
  *   onAccept: () => void;
  *   onDecline: () => void;
+ *   acceptDisabled?: boolean;
  * }} props
  */
-export default function InviteActionBanner({ teamName, onAccept, onDecline }) {
+export default function InviteActionBanner({ teamName, onAccept, onDecline, acceptDisabled = false }) {
     return (
         <div className="flex flex-col gap-3 rounded-xl border border-amber-700/50 bg-amber-950/40 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <p className="flex items-start gap-2 text-sm text-amber-100 sm:items-center">
@@ -31,7 +32,8 @@ export default function InviteActionBanner({ teamName, onAccept, onDecline }) {
                 <button
                     type="button"
                     onClick={onAccept}
-                    className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:flex-none"
+                    disabled={acceptDisabled}
+                    className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-50 sm:flex-none"
                 >
                     <span className="sm:hidden">Approve</span>
                     <span className="hidden sm:inline">Accept Invite</span>

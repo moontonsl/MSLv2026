@@ -89,7 +89,22 @@ class CampusTournamentController extends Controller
                 return redirect('/Tournament/SoloPlayer');
             }
 
-            // 3c. Pending Invitation -> /Tournament/MemberInvite
+            // 3c. Active premade member -> team and invitation view
+            $premadeMember = TournamentParticipant::query()
+                ->where('user_id', $user->id)
+                ->where('status', ParticipantStatus::Active)
+                ->where('roster_role', 'member')
+                ->whereHas('team', fn ($teamQuery) => $teamQuery
+                    ->where('formation_method', TeamFormationMethod::Premade)
+                    ->whereIn('status', [TeamStatus::Assembling, TeamStatus::Registered]))
+                ->whereIn('tournament_id', $activeTournamentIds)
+                ->exists();
+
+            if ($premadeMember) {
+                return redirect('/Tournament/MemberInvite');
+            }
+
+            // 3d. Pending Invitation -> /Tournament/MemberInvite
             $pendingInvite = TournamentTeamInvitation::query()
                 ->where('invited_user_id', $user->id)
                 ->where('status', InvitationStatus::Pending)

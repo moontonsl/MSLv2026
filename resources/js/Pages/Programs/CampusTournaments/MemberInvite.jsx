@@ -2,18 +2,20 @@ import SuccessModal from "@/Components/Admin/SuccessModal";
 import CampusTournamentPageHeader from "@/Components/CampusTournament/CampusTournamentPageHeader";
 import CaptainTeamCard from "@/Components/CampusTournament/CaptainTeamCard";
 import InviteActionBanner from "@/Components/CampusTournament/InviteActionBanner";
+import LeaveTeamModal from "@/Components/CampusTournament/LeaveTeamModal";
 import MemberInviteModal from "@/Components/CampusTournament/MemberInviteModal";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import { BellOff } from "lucide-react";
 import { useState } from "react";
 
-export default function MemberInvite({ invitations = [] }) {
+export default function MemberInvite({ invitations = [], currentTeams = [] }) {
     const [selectedInvitation, setSelectedInvitation] = useState(null);
     const [decision, setDecision] = useState(null);
     const [processing, setProcessing] = useState(false);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState("");
+    const [leavingTeam, setLeavingTeam] = useState(null);
 
     const openDecision = (invitation, nextDecision) => {
         setSelectedInvitation(invitation);
@@ -58,13 +60,34 @@ export default function MemberInvite({ invitations = [] }) {
         );
     };
 
+    const confirmLeave = () => {
+        if (!leavingTeam) return;
+
+        router.delete(`/tournament-participants/${leavingTeam.participantId}`, {
+            preserveScroll: true,
+            onStart: () => {
+                setProcessing(true);
+                setError(null);
+            },
+            onSuccess: () => {
+                setLeavingTeam(null);
+                setSuccessMessage("You left the team.");
+            },
+            onError: (errors) =>
+                setError(
+                    Object.values(errors ?? {})[0] ?? "Unable to leave this team.",
+                ),
+            onFinish: () => setProcessing(false),
+        });
+    };
+
     return (
         <MainLayout fullWidth>
-            <Head title="Team Invitations — Campus Tournament" />
+            <Head title="My Teams & Invitations — Campus Tournament" />
 
             <div className="min-h-screen bg-[#0a0a0a] px-4 py-8 text-white sm:px-6 sm:py-10 lg:px-8">
                 <div className="mx-auto max-w-6xl space-y-6">
-                    <CampusTournamentPageHeader subtitle="Team invitations">
+                    <CampusTournamentPageHeader subtitle="My teams and invitations">
                         <Link
                             href="/Tournament/CampusTournament"
                             className="text-sm text-gray-400 transition-colors hover:text-white"
@@ -79,7 +102,38 @@ export default function MemberInvite({ invitations = [] }) {
                         </div>
                     )}
 
-                    {invitations.length === 0 ? (
+                    {currentTeams.length > 0 && (
+                        <section className="space-y-4">
+                            <h2 className="text-2xl font-bold text-yellow-500">
+                                Your Team{currentTeams.length > 1 ? "s" : ""}
+                            </h2>
+                            {currentTeams.map((membership) => (
+                                <div key={membership.participantId} className="space-y-2">
+                                    <p className="text-sm text-gray-400">
+                                        {membership.tournamentName}
+                                    </p>
+                                    <CaptainTeamCard
+                                        team={membership.team}
+                                        memberView
+                                        onLeave={membership.canLeave ? () => setLeavingTeam(membership) : undefined}
+                                    />
+                                    {!membership.canLeave && (
+                                        <p className="text-sm text-gray-400">
+                                            Registration is closed; this roster can no longer be changed.
+                                        </p>
+                                    )}
+                                </div>
+                            ))}
+                        </section>
+                    )}
+
+                    {invitations.length > 0 && (
+                        <h2 className="text-2xl font-bold text-yellow-500">
+                            Pending Invitations
+                        </h2>
+                    )}
+
+                    {invitations.length === 0 && currentTeams.length === 0 ? (
                         <section className="rounded-2xl border border-neutral-800 bg-[#111111] px-6 py-16 text-center">
                             <BellOff className="mx-auto h-10 w-10 text-gray-500" />
                             <h2 className="mt-4 text-xl font-bold">
@@ -93,8 +147,14 @@ export default function MemberInvite({ invitations = [] }) {
                     ) : (
                         invitations.map((invitation) => (
                             <section key={invitation.id} className="space-y-4">
+                                {currentTeams.some((membership) => membership.tournamentId === invitation.tournamentId) && (
+                                    <p className="text-sm text-amber-300">
+                                        Leave your current team before accepting another invitation for this tournament.
+                                    </p>
+                                )}
                                 <InviteActionBanner
                                     teamName={invitation.team.name}
+                                    acceptDisabled={currentTeams.some((membership) => membership.tournamentId === invitation.tournamentId)}
                                     onAccept={() =>
                                         openDecision(invitation, "accept")
                                     }
@@ -119,6 +179,14 @@ export default function MemberInvite({ invitations = [] }) {
                 processing={processing}
                 onCancel={closeModal}
                 onConfirm={confirmInvite}
+            />
+
+            <LeaveTeamModal
+                isOpen={leavingTeam != null}
+                teamName={leavingTeam?.team.name}
+                processing={processing}
+                onCancel={() => !processing && setLeavingTeam(null)}
+                onConfirm={confirmLeave}
             />
 
             <SuccessModal

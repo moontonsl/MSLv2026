@@ -107,7 +107,7 @@ export default function CaptainTeamCard({
 }) {
     const roster = [team.captain, ...team.players].filter(Boolean);
     const isApproved = team.status === "approved";
-    const showLeave = memberView && isApproved && Boolean(onLeave);
+    const showLeave = memberView && Boolean(onLeave);
     const showEdit = !showLeave && Boolean(onEdit);
     const showActions = showEdit || showLeave;
 
@@ -149,7 +149,7 @@ export default function CaptainTeamCard({
             </div>
 
             {/* Desktop: horizontal roster */}
-            <div className="hidden flex-col gap-4 p-4 lg:flex-row lg:items-stretch lg:p-0 md:flex">
+            <div className="hidden flex-col gap-4 p-4 md:flex lg:flex-row lg:items-stretch lg:gap-0 lg:p-0">
                 <div className="min-w-0 flex-1 overflow-x-auto">
                     <div className="flex min-w-[720px] border-b border-neutral-800 bg-[#0a0a0a]">
                         {roster.map((player, index) => (

@@ -196,6 +196,51 @@ class TournamentRegistrationController extends Controller
 
     public function showMemberInvitations(Request $request): Response
     {
+        $now = now();
+        $player = fn (User $user): array => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'ign' => $user->ml_ign ?? $user->name,
+            'uid' => $user->ml_id ? $user->ml_id.'('.$user->ml_server.')' : 'N/A',
+            'status' => 'confirmed',
+        ];
+        $teamCard = fn (TournamentTeam $team): array => [
+            'id' => $team->id,
+            'name' => $team->name,
+            'school' => $team->tournament->campus?->institution?->name
+                ?? $team->tournament->campus?->name,
+            'status' => $team->status === TeamStatus::Registered ? 'approved' : 'assembling',
+            'captain' => $player($team->captain),
+            'players' => $team->activeParticipants
+                ->where('user_id', '!=', $team->captain_user_id)
+                ->map(fn (TournamentParticipant $participant) => $player($participant->user))
+                ->values(),
+        ];
+
+        $currentTeams = TournamentParticipant::query()
+            ->where('user_id', $request->user()->id)
+            ->where('status', ParticipantStatus::Active)
+            ->where('roster_role', 'member')
+            ->whereHas('team', fn ($query) => $query
+                ->where('formation_method', TeamFormationMethod::Premade)
+                ->whereIn('status', [TeamStatus::Assembling, TeamStatus::Registered]))
+            ->whereHas('tournament', fn ($query) => $query
+                ->where('approval_status', CampusTournamentApprovalStatus::Approved)
+                ->whereNull('cancelled_at')
+                ->where('ends_at', '>', $now))
+            ->with(['team.tournament.campus.institution', 'team.captain', 'team.activeParticipants.user'])
+            ->latest('id')
+            ->get()
+            ->map(fn (TournamentParticipant $participant): array => [
+                'participantId' => $participant->id,
+                'tournamentId' => $participant->tournament_id,
+                'tournamentName' => $participant->team->tournament->name,
+                'canLeave' => $participant->team->tournament->roster_locked_at === null
+                    && $now->gte($participant->team->tournament->registration_opens_at)
+                    && $now->lt($participant->team->tournament->registration_closes_at),
+                'team' => $teamCard($participant->team),
+            ]);
+
         $invitations = TournamentTeamInvitation::query()
             ->where('invited_user_id', $request->user()->id)
             ->where('status', InvitationStatus::Pending)
@@ -214,36 +259,20 @@ class TournamentRegistrationController extends Controller
             ])
             ->orderBy('expires_at')
             ->get()
-            ->map(function (TournamentTeamInvitation $invitation): array {
+            ->map(function (TournamentTeamInvitation $invitation) use ($teamCard): array {
                 $team = $invitation->team;
-                $player = fn (User $user, string $status = 'confirmed'): array => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'ign' => $user->ml_ign ?? $user->name,
-                    'uid' => $user->ml_id ? $user->ml_id.'('.$user->ml_server.')' : 'N/A',
-                    'status' => $status,
-                ];
 
                 return [
                     'id' => $invitation->id,
+                    'tournamentId' => $team->tournament_id,
                     'laneRoleCode' => $invitation->intended_lane_role_code,
                     'expiresAt' => $invitation->expires_at->toIso8601String(),
-                    'team' => [
-                        'id' => $team->id,
-                        'name' => $team->name,
-                        'school' => $team->tournament->campus?->institution?->name
-                            ?? $team->tournament->campus?->name,
-                        'status' => $team->status === TeamStatus::Registered ? 'approved' : 'assembling',
-                        'captain' => $player($team->captain),
-                        'players' => $team->activeParticipants
-                            ->where('user_id', '!=', $team->captain_user_id)
-                            ->map(fn (TournamentParticipant $participant) => $player($participant->user))
-                            ->values(),
-                    ],
+                    'team' => $teamCard($team),
                 ];
             });
 
         return Inertia::render('Programs/CampusTournaments/MemberInvite', [
+            'currentTeams' => $currentTeams,
             'invitations' => $invitations,
         ]);
     }
