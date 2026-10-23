@@ -93,6 +93,7 @@ function PlayerMobileRow({ player, roleLabel, showPendingBadge = false }) {
  * @param {{
  *   team: object;
  *   onEdit?: () => void;
+ *   editLabel?: string;
  *   onLeave?: () => void;
  *   memberView?: boolean;
  * }} props
@@ -100,14 +101,14 @@ function PlayerMobileRow({ player, roleLabel, showPendingBadge = false }) {
 export default function CaptainTeamCard({
     team,
     onEdit,
+    editLabel = "Edit",
     onLeave,
     memberView = false,
 }) {
     const roster = [team.captain, ...team.players].filter(Boolean);
     const isApproved = team.status === "approved";
-    // Approved members can only leave the team; pending members can still edit their entry.
     const showLeave = memberView && isApproved && Boolean(onLeave);
-    const showEdit = !showLeave && (!memberView || Boolean(onEdit));
+    const showEdit = !showLeave && Boolean(onEdit);
     const showActions = showEdit || showLeave;
 
     return (
@@ -181,7 +182,7 @@ export default function CaptainTeamCard({
                                 onClick={onEdit}
                                 className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
                             >
-                                Edit
+                                {editLabel}
                             </button>
                         ) : null}
                         {showLeave ? (
@@ -206,7 +207,7 @@ export default function CaptainTeamCard({
                             onClick={onEdit}
                             className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black"
                         >
-                            Edit
+                            {editLabel}
                         </button>
                     ) : null}
                     {showLeave ? (

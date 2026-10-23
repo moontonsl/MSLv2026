@@ -283,8 +283,46 @@ class CampusTournamentFrontendWiringTest extends TestCase
                 ->where('team.captain.id', $this->student->id)
                 ->where('team.players.0.invitationId', $invitation->id)
                 ->where('team.players.0.status', 'pending')
+                ->where('team.canManageRoster', true)
                 ->where('team.availableLaneRoles', ['gold_laner', 'exp_laner', 'mid_laner'])
             );
+    }
+
+    public function test_captain_roster_controls_are_unavailable_after_registration_or_team_completion(): void
+    {
+        $tournament = $this->createApprovedTournament();
+        $team = TournamentTeam::query()->create([
+            'tournament_id' => $tournament->id,
+            'name' => 'Premade Alpha',
+            'active_name' => 'Premade Alpha',
+            'formation_method' => TeamFormationMethod::Premade,
+            'status' => TeamStatus::Assembling,
+            'captain_user_id' => $this->student->id,
+        ]);
+
+        $this->actingAs($this->student)
+            ->get(route('campus.team'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->where('team.canManageRoster', true));
+
+        $team->update(['status' => TeamStatus::Registered]);
+        $this->get(route('campus.team'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->where('team.canManageRoster', false));
+
+        $team->update(['status' => TeamStatus::Assembling]);
+        $tournament->update(['roster_locked_at' => now()]);
+        $this->get(route('campus.team'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->where('team.canManageRoster', false));
+
+        $tournament->update([
+            'roster_locked_at' => null,
+            'registration_closes_at' => now()->subMinute(),
+        ]);
+        $this->get(route('campus.team'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->where('team.canManageRoster', false));
     }
 
     public function test_school_player_search_only_returns_verified_active_campus_players(): void

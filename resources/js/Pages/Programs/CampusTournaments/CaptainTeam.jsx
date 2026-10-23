@@ -5,7 +5,7 @@ import { ROLE_SLOTS } from '@/data/campusTournamentCaptainData';
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { Hourglass, Search, UserRound, X } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 const SEARCH_CLASS =
     'w-full min-h-[44px] rounded-lg border border-neutral-800 bg-[#0a0a0a] py-2.5 pl-10 pr-4 text-base text-white placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-yellow-500 md:text-sm';
@@ -25,6 +25,8 @@ export default function CaptainTeam({ team }) {
     const [error, setError] = useState(null);
     const [invitationToCancel, setInvitationToCancel] = useState(null);
     const [cancelProcessing, setCancelProcessing] = useState(false);
+    const pendingSectionRef = useRef(null);
+    const inviteSectionRef = useRef(null);
 
     // Participants and open invitations can share ids, so the roster keys are namespaced.
     const rosterTeam = useMemo(
@@ -123,7 +125,15 @@ export default function CaptainTeam({ team }) {
         });
     };
 
-    const canInvite = team.status !== 'approved' && (team.availableLaneRoles ?? []).length > 0;
+    const canManageRoster = team.canManageRoster === true;
+    const canInvite = canManageRoster && (team.availableLaneRoles ?? []).length > 0;
+
+    const manageRoster = () => {
+        (pendingSectionRef.current ?? inviteSectionRef.current)?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+        });
+    };
 
     return (
         <MainLayout fullWidth>
@@ -148,11 +158,12 @@ export default function CaptainTeam({ team }) {
 
                     <CaptainTeamCard
                         team={rosterTeam}
-                        onEdit={() => router.visit('/Tournament/CampusTournamentReg')}
+                        onEdit={canManageRoster ? manageRoster : undefined}
+                        editLabel="Manage Roster"
                     />
 
                     {pendingInvites.length > 0 ? (
-                        <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
+                        <section ref={pendingSectionRef} className="scroll-mt-6 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
                             <div className="mb-4 flex items-start justify-between gap-3">
                                 <h2 className="text-lg font-bold text-yellow-500 sm:text-xl">
                                     Pending Invitations
@@ -185,14 +196,16 @@ export default function CaptainTeam({ team }) {
                                                 Pending
                                             </span>
                                         </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => setInvitationToCancel(player)}
-                                            className="inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-lg bg-red-600 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 sm:w-auto"
-                                        >
-                                            <X className="h-4 w-4" />
-                                            Cancel
-                                        </button>
+                                        {canManageRoster ? (
+                                            <button
+                                                type="button"
+                                                onClick={() => setInvitationToCancel(player)}
+                                                className="inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-lg bg-red-600 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 sm:w-auto"
+                                            >
+                                                <X className="h-4 w-4" />
+                                                Cancel
+                                            </button>
+                                        ) : null}
                                     </article>
                                 ))}
                             </div>
@@ -200,7 +213,7 @@ export default function CaptainTeam({ team }) {
                     ) : null}
 
                     {canInvite ? (
-                        <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
+                        <section ref={inviteSectionRef} className="scroll-mt-6 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
                             <h2 className="text-lg font-bold text-yellow-500 sm:text-xl">
                                 Invite a Verified Campus Player
                             </h2>

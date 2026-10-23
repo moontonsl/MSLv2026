@@ -111,6 +111,8 @@ class TournamentRegistrationController extends Controller
                 'name' => $team->name,
                 'school' => $team->tournament->campus?->institution?->name ?? $team->tournament->campus?->name,
                 'status' => $team->status === TeamStatus::Registered ? 'approved' : 'assembling',
+                'canManageRoster' => $team->status === TeamStatus::Assembling
+                    && $this->availableTournamentsFor($request->user())->contains('id', $team->tournament_id),
                 'captain' => $participants->firstWhere('id', $team->captain_user_id),
                 'players' => $participants->where('id', '!=', $team->captain_user_id)->concat($pendingInvitations)->values(),
                 'availableLaneRoles' => array_values(array_diff(TournamentRegistrationGuard::LANE_ROLE_CODES, $occupiedRoles)),
