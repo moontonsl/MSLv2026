@@ -116,7 +116,7 @@ export default function SlMatchManagement({
                         key={team.id}
                         className="rounded-lg border border-neutral-800 bg-[#0a0a0a] p-3 sm:p-4"
                     >
-                        <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
                             <p className="min-w-0 break-words text-sm font-semibold text-white">
                                 {team.name}
                             </p>
