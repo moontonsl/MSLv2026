@@ -1,5 +1,6 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, router, useForm } from '@inertiajs/react';
+import { createPortal } from 'react-dom';
 import { Check, Copy, ExternalLink, Link2, Pencil, Plus, Search, Trash2, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
@@ -20,15 +21,89 @@ function ShareLinkForm({ editingLink, onClose }) {
         }
     };
 
-    return (
-        <section className="mb-8 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
-            <div className="mb-6 flex items-center justify-between gap-4"><div><h2 className="text-lg font-bold text-yellow-500">{editingLink ? 'Edit share link' : 'Create share link'}</h2><p className="mt-1 text-sm text-gray-400">Use a short code to share a long destination URL.</p></div><button type="button" onClick={onClose} className="flex min-h-10 min-w-10 items-center justify-center rounded-md border border-neutral-700 text-gray-400 hover:text-white" aria-label="Close share link form"><X className="h-4 w-4" /></button></div>
-            <form onSubmit={submit} className="grid grid-cols-1 gap-5 md:grid-cols-[1fr_2fr_auto] md:items-end">
-                <div><label htmlFor="short-link-code" className="mb-2 block text-sm font-medium text-gray-300">Short code {editingLink ? '' : <span className="font-normal text-gray-500">(optional)</span>}</label><input id="short-link-code" type="text" value={data.code} onChange={(event) => setData('code', event.target.value)} className={FIELD_CLASS} placeholder={editingLink ? 'my-event' : 'Auto-generate'} />{errors.code && <p className={ERROR_CLASS}>{errors.code}</p>}</div>
-                <div><label htmlFor="short-link-destination" className="mb-2 block text-sm font-medium text-gray-300">Destination URL</label><input id="short-link-destination" type="text" value={data.original_url} onChange={(event) => setData('original_url', event.target.value)} className={FIELD_CLASS} placeholder="https://example.com/page" />{errors.original_url && <p className={ERROR_CLASS}>{errors.original_url}</p>}</div>
-                <div className="flex gap-2"><button type="submit" disabled={processing} className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 text-sm font-bold text-black hover:bg-yellow-400 disabled:opacity-50"><Check className="h-4 w-4" />{processing ? 'Saving...' : editingLink ? 'Update' : 'Create'}</button><button type="button" onClick={onClose} className="min-h-[44px] rounded-md border border-neutral-700 px-4 text-sm text-gray-300 hover:text-white">Cancel</button></div>
-            </form>
-        </section>
+    return typeof document !== 'undefined' && createPortal(
+        <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4 backdrop-blur-md transition-all duration-200"
+            role="dialog"
+            aria-modal="true"
+            onClick={(e) => {
+                if (e.target === e.currentTarget) onClose();
+            }}
+        >
+            <div className="w-full max-w-xl rounded-2xl border border-yellow-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
+                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                            <Link2 className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <h2 className="text-base font-black text-white">{editingLink ? 'Edit Share Link' : 'Create Share Link'}</h2>
+                            <p className="text-xs text-gray-400">Use a short code to share a long destination URL</p>
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="rounded-lg p-1 text-gray-400 hover:text-white"
+                        aria-label="Close share link form"
+                    >
+                        <X className="h-5 w-5" />
+                    </button>
+                </div>
+
+                <form onSubmit={submit} className="mt-5 space-y-4">
+                    <div>
+                        <label htmlFor="short-link-code" className="block text-xs font-semibold text-gray-300 mb-1.5">
+                            Short code {editingLink ? '' : <span className="font-normal text-gray-500">(optional)</span>}
+                        </label>
+                        <input
+                            id="short-link-code"
+                            type="text"
+                            value={data.code}
+                            onChange={(event) => setData('code', event.target.value)}
+                            className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white placeholder:text-gray-500 focus:border-yellow-400 focus:outline-none"
+                            placeholder={editingLink ? 'my-event' : 'Auto-generate'}
+                        />
+                        {errors.code && <p className="mt-1 text-xs text-red-400">{errors.code}</p>}
+                    </div>
+
+                    <div>
+                        <label htmlFor="short-link-destination" className="block text-xs font-semibold text-gray-300 mb-1.5">
+                            Destination URL *
+                        </label>
+                        <input
+                            id="short-link-destination"
+                            type="text"
+                            required
+                            value={data.original_url}
+                            onChange={(event) => setData('original_url', event.target.value)}
+                            className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white placeholder:text-gray-500 focus:border-yellow-400 focus:outline-none"
+                            placeholder="https://example.com/page"
+                        />
+                        {errors.original_url && <p className="mt-1 text-xs text-red-400">{errors.original_url}</p>}
+                    </div>
+
+                    <div className="flex items-center justify-end gap-3 border-t border-white/10 pt-4 mt-6">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="rounded-xl border border-white/10 px-4 py-2.5 text-xs font-bold text-gray-300 hover:bg-white/5"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            className="inline-flex items-center gap-1.5 rounded-xl bg-yellow-400 px-5 py-2.5 text-xs font-bold text-black hover:bg-yellow-300 disabled:opacity-50 transition-all shadow-[0_0_15px_rgba(251,191,36,0.2)]"
+                        >
+                            <Check className="h-4 w-4" />
+                            <span>{processing ? 'Saving...' : editingLink ? 'Update Link' : 'Create Link'}</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>,
+        document.body
     );
 }
 

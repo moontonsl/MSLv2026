@@ -1,8 +1,9 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import AdminFilterSelect from '@/Components/Admin/AdminFilterSelect';
 import { Head, Link, router, useForm } from '@inertiajs/react';
+import { createPortal } from 'react-dom';
 import axios from 'axios';
-import { CalendarDays, Edit3, ImagePlus, Plus, Search, Star, Trash2, Upload } from 'lucide-react';
+import { CalendarDays, Edit3, ImagePlus, Plus, Search, Star, Trash2, Upload, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const FIELD_CLASS = 'min-h-[44px] w-full rounded-md border border-neutral-800 bg-[#1a1a1a] px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500';
@@ -104,7 +105,143 @@ export default function MCCSeasons({ seasons, nextSeasonNumber = 1, filters = {}
     const deleteSeason = (season) => { if (window.confirm(`Delete Season ${season.season_number}?`)) router.delete(route('admin.mcc-seasons.destroy', season.id), { preserveScroll: true }); };
 
     return <AdminLayout activeNavId="mcc-seasons" showGlobalSearch><Head title="MCC Seasons" /><div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between"><div><h1 className="mb-2 text-2xl font-bold text-white sm:text-3xl">MCC Seasons</h1><p className="text-sm leading-6 text-gray-400">Manage Pamantasang Lakas season metadata and content.</p></div><div className="flex w-full flex-col gap-2 xl:flex-row xl:w-auto"><form onSubmit={submitFilters} className="grid w-full grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto] xl:w-[620px]"><label htmlFor="mcc-season-search" className="sr-only">Search MCC seasons</label><div className="relative min-w-0"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" /><input id="mcc-season-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search seasons" className={`${FIELD_CLASS} pl-9`} /></div><AdminFilterSelect value={status} onChange={(event) => setStatus(event.target.value)} aria-label="Filter seasons by status"><option value="all">All status</option><option value="active">Active</option><option value="inactive">Inactive</option></AdminFilterSelect><button type="submit" className="min-h-[44px] rounded-md bg-yellow-500 px-4 text-sm font-bold text-black hover:bg-yellow-400">Filter</button>{(search || status !== 'all') && <button type="button" onClick={clearFilters} className="min-h-[44px] rounded-md border border-neutral-700 px-4 text-sm text-gray-300 hover:border-neutral-500 hover:text-white">Clear</button>}</form><button type="button" onClick={openCreate} className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 py-2.5 text-sm font-bold text-black hover:bg-yellow-400"><Plus className="h-4 w-4" />Create Season</button></div></div>
-        {formOpen && <section className="mb-8 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6"><div className="mb-6 flex items-center justify-between gap-4"><h2 className="text-lg font-bold text-yellow-500">{editingSeason ? `Edit Season ${editingSeason.season_number}` : 'Create MCC Season'}</h2><button type="button" onClick={closeForm} className="text-sm text-gray-400 hover:text-white">Cancel</button></div><form onSubmit={submit} className="grid grid-cols-1 gap-5 md:grid-cols-2"><div><label className="mb-2 block text-sm font-medium text-gray-300">Season number</label><input type="number" min="1" value={data.season_number} onChange={(event) => setData('season_number', Number(event.target.value))} className={FIELD_CLASS} />{errors.season_number && <p className={ERROR_CLASS}>{errors.season_number}</p>}</div><div><label className="mb-2 block text-sm font-medium text-gray-300">Route slug</label><input type="text" value={data.route_slug} onChange={(event) => setData('route_slug', event.target.value)} className={FIELD_CLASS} placeholder="S1" />{errors.route_slug && <p className={ERROR_CLASS}>{errors.route_slug}</p>}</div><div className="md:col-span-2"><label className="mb-2 block text-sm font-medium text-gray-300">Season name</label><input type="text" value={data.season_name} onChange={(event) => setData('season_name', event.target.value)} className={FIELD_CLASS} placeholder="Pamantasang Lakas, Season 1" />{errors.season_name && <p className={ERROR_CLASS}>{errors.season_name}</p>}</div><div><label className="mb-2 block text-sm font-medium text-gray-300">Start date</label><input type="date" value={data.start_date} onChange={(event) => setData('start_date', event.target.value)} className={`${FIELD_CLASS} [color-scheme:dark]`} />{errors.start_date && <p className={ERROR_CLASS}>{errors.start_date}</p>}</div><div><label className="mb-2 block text-sm font-medium text-gray-300">End date</label><input type="date" value={data.end_date} onChange={(event) => setData('end_date', event.target.value)} className={`${FIELD_CLASS} [color-scheme:dark]`} />{errors.end_date && <p className={ERROR_CLASS}>{errors.end_date}</p>}</div><div className="md:col-span-2"><label className="mb-2 block text-sm font-medium text-gray-300">Description</label><textarea rows="4" value={data.description} onChange={(event) => setData('description', event.target.value)} className={FIELD_CLASS} placeholder="Brief season description" />{errors.description && <p className={ERROR_CLASS}>{errors.description}</p>}</div><label className="inline-flex min-h-[44px] items-center gap-3 text-sm text-gray-300"><input type="checkbox" checked={Boolean(data.is_active)} onChange={(event) => setData('is_active', event.target.checked)} className="h-4 w-4 rounded border-neutral-700 bg-[#1a1a1a] text-yellow-500 focus:ring-yellow-500" />Set as active season</label><div className="flex justify-end"><button type="submit" disabled={processing} className="min-h-[44px] rounded-md bg-yellow-500 px-5 py-2.5 text-sm font-bold text-black hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-50">{processing ? 'Saving...' : editingSeason ? 'Update Season' : 'Create Season'}</button></div></form></section>}
+        {formOpen && typeof document !== 'undefined' && createPortal(
+            <div
+                className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4 backdrop-blur-md transition-all duration-200"
+                role="dialog"
+                aria-modal="true"
+                onClick={(e) => {
+                    if (e.target === e.currentTarget) closeForm();
+                }}
+            >
+                <div className="w-full max-w-2xl rounded-2xl border border-yellow-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
+                    <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                                <Star className="h-5 w-5" />
+                            </div>
+                            <div>
+                                <h2 className="text-base font-black text-white">
+                                    {editingSeason ? `Edit Season ${editingSeason.season_number}` : 'Create MCC Season'}
+                                </h2>
+                                <p className="text-xs text-gray-400">
+                                    Configure Pamantasang Lakas season metadata and status
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={closeForm}
+                            className="rounded-lg p-1 text-gray-400 hover:text-white"
+                        >
+                            <X className="h-5 w-5" />
+                        </button>
+                    </div>
+
+                    <form onSubmit={submit} className="mt-5 space-y-4">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Season number *</label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    value={data.season_number}
+                                    onChange={(event) => setData('season_number', Number(event.target.value))}
+                                    className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white placeholder:text-gray-500 focus:border-yellow-400 focus:outline-none"
+                                />
+                                {errors.season_number && <p className="mt-1 text-xs text-red-400">{errors.season_number}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Route slug *</label>
+                                <input
+                                    type="text"
+                                    value={data.route_slug}
+                                    onChange={(event) => setData('route_slug', event.target.value)}
+                                    placeholder="S1"
+                                    className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white placeholder:text-gray-500 focus:border-yellow-400 focus:outline-none"
+                                />
+                                {errors.route_slug && <p className="mt-1 text-xs text-red-400">{errors.route_slug}</p>}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-semibold text-gray-300 mb-1.5">Season name *</label>
+                            <input
+                                type="text"
+                                value={data.season_name}
+                                onChange={(event) => setData('season_name', event.target.value)}
+                                placeholder="Pamantasang Lakas, Season 1"
+                                className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white placeholder:text-gray-500 focus:border-yellow-400 focus:outline-none"
+                            />
+                            {errors.season_name && <p className="mt-1 text-xs text-red-400">{errors.season_name}</p>}
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Start date</label>
+                                <input
+                                    type="date"
+                                    value={data.start_date}
+                                    onChange={(event) => setData('start_date', event.target.value)}
+                                    className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white [color-scheme:dark] focus:border-yellow-400 focus:outline-none"
+                                />
+                                {errors.start_date && <p className="mt-1 text-xs text-red-400">{errors.start_date}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-300 mb-1.5">End date</label>
+                                <input
+                                    type="date"
+                                    value={data.end_date}
+                                    onChange={(event) => setData('end_date', event.target.value)}
+                                    className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white [color-scheme:dark] focus:border-yellow-400 focus:outline-none"
+                                />
+                                {errors.end_date && <p className="mt-1 text-xs text-red-400">{errors.end_date}</p>}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-semibold text-gray-300 mb-1.5">Description</label>
+                            <textarea
+                                rows="3"
+                                value={data.description}
+                                onChange={(event) => setData('description', event.target.value)}
+                                placeholder="Brief season description"
+                                className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white placeholder:text-gray-500 focus:border-yellow-400 focus:outline-none"
+                            />
+                            {errors.description && <p className="mt-1 text-xs text-red-400">{errors.description}</p>}
+                        </div>
+
+                        <label className="inline-flex items-center gap-2.5 text-xs font-semibold text-gray-300 cursor-pointer pt-1">
+                            <input
+                                type="checkbox"
+                                checked={Boolean(data.is_active)}
+                                onChange={(event) => setData('is_active', event.target.checked)}
+                                className="h-4 w-4 rounded border-neutral-700 bg-[#1a1a1a] text-yellow-500 focus:ring-yellow-500"
+                            />
+                            <span>Set as active season</span>
+                        </label>
+
+                        <div className="flex items-center justify-end gap-3 border-t border-white/10 pt-4 mt-6">
+                            <button
+                                type="button"
+                                onClick={closeForm}
+                                className="rounded-xl border border-white/10 px-4 py-2.5 text-xs font-bold text-gray-300 hover:bg-white/5"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={processing}
+                                className="inline-flex items-center gap-1.5 rounded-xl bg-yellow-400 px-5 py-2.5 text-xs font-bold text-black hover:bg-yellow-300 disabled:opacity-50 transition-all shadow-[0_0_15px_rgba(251,191,36,0.2)]"
+                            >
+                                <span>{processing ? 'Saving...' : editingSeason ? 'Update Season' : 'Create Season'}</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>,
+            document.body
+        )}
         <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6 md:p-8"><div className="mb-6"><h2 className="text-lg font-bold text-yellow-500 sm:text-xl">Season list</h2><p className="mt-1 text-sm text-gray-400">{seasons?.total ?? items.length} season{(seasons?.total ?? items.length) === 1 ? '' : 's'}</p></div>{items.length === 0 ? <div className="py-14 text-center"><Star className="mx-auto mb-4 h-10 w-10 text-gray-600" /><p className="text-sm text-gray-400">No MCC seasons found. Create your first season above.</p></div> : <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">{items.map((season) => <SeasonCard key={season.id} season={season} onEdit={openEdit} onDelete={deleteSeason} onToggle={toggleActive} />)}</div>}<Pagination paginator={seasons} /></section>
         {editingSeason && <ContentManager season={editingSeason} contentTypes={contentTypes} />}
     </AdminLayout>;
