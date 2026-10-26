@@ -83,6 +83,22 @@ class TournamentRegistrationTest extends TestCase
         ]);
     }
 
+    public function test_premade_team_name_cannot_exceed_twelve_characters(): void
+    {
+        $this->actingAs($this->student)->post(
+            route('tournament.teams.store', $this->tournament),
+            [
+                'name' => '1234567890123',
+                'assigned_lane_role_code' => 'jungler',
+            ]
+        )->assertSessionHasErrors('name');
+
+        $this->assertDatabaseMissing('tournament_teams', [
+            'tournament_id' => $this->tournament->id,
+            'name' => '1234567890123',
+        ]);
+    }
+
     public function test_captain_can_search_eligible_players_before_creating_a_team(): void
     {
         $eligible = $this->createEligibleUser();
@@ -123,7 +139,7 @@ class TournamentRegistrationTest extends TestCase
         $lanes = ['roam', 'gold_laner', 'exp_laner', 'mid_laner'];
 
         $this->actingAs($this->student)->post(route('tournament.teams.store', $this->tournament), [
-            'name' => 'Complete Invitation Form',
+            'name' => 'Complete 5',
             'assigned_lane_role_code' => 'jungler',
             'members' => $players->values()->map(fn (User $player, int $index): array => [
                 'username' => $player->username,
@@ -131,7 +147,7 @@ class TournamentRegistrationTest extends TestCase
             ])->all(),
         ])->assertRedirect();
 
-        $team = TournamentTeam::query()->where('name', 'Complete Invitation Form')->firstOrFail();
+        $team = TournamentTeam::query()->where('name', 'Complete 5')->firstOrFail();
         $this->assertSame(TeamStatus::Assembling, $team->status);
         $this->assertDatabaseCount('tournament_team_invitations', 4);
         $this->assertDatabaseCount('tournament_participants', 1);
@@ -161,7 +177,7 @@ class TournamentRegistrationTest extends TestCase
         });
 
         $this->actingAs($this->student)->post(route('tournament.teams.store', $this->tournament), [
-            'name' => 'Invalid Lane Form',
+            'name' => 'Lane Form',
             'assigned_lane_role_code' => 'jungler',
             'members' => $players->map(fn (User $player): array => [
                 'username' => $player->username,
@@ -169,7 +185,7 @@ class TournamentRegistrationTest extends TestCase
             ])->all(),
         ])->assertSessionHasErrors();
 
-        $this->assertDatabaseMissing('tournament_teams', ['name' => 'Invalid Lane Form']);
+        $this->assertDatabaseMissing('tournament_teams', ['name' => 'Lane Form']);
         $this->assertDatabaseCount('tournament_team_invitations', 0);
     }
 
@@ -185,7 +201,7 @@ class TournamentRegistrationTest extends TestCase
         $lanes = ['roam', 'gold_laner', 'exp_laner', 'mid_laner'];
 
         $this->actingAs($this->student)->post(route('tournament.teams.store', $this->tournament), [
-            'name' => 'Ineligible Invitation Form',
+            'name' => 'Invite Form',
             'assigned_lane_role_code' => 'jungler',
             'members' => $players->values()->map(fn (User $player, int $index): array => [
                 'username' => $player->username,
@@ -193,7 +209,7 @@ class TournamentRegistrationTest extends TestCase
             ])->all(),
         ])->assertSessionHasErrors('user_id');
 
-        $this->assertDatabaseMissing('tournament_teams', ['name' => 'Ineligible Invitation Form']);
+        $this->assertDatabaseMissing('tournament_teams', ['name' => 'Invite Form']);
         $this->assertDatabaseCount('tournament_team_invitations', 0);
         $this->assertDatabaseCount('tournament_participants', 0);
     }
@@ -336,10 +352,10 @@ class TournamentRegistrationTest extends TestCase
     {
         $this->actingAs($this->student)->post(
             route('tournament.teams.store', $this->tournament),
-            ['name' => 'Premade Alpha', 'assigned_lane_role_code' => 'jungler']
+            ['name' => 'Premade A', 'assigned_lane_role_code' => 'jungler']
         );
 
-        $team = TournamentTeam::query()->where('name', 'Premade Alpha')->firstOrFail();
+        $team = TournamentTeam::query()->where('name', 'Premade A')->firstOrFail();
         $joiner = $this->createEligibleUser();
 
         $this->actingAs($joiner)->post(

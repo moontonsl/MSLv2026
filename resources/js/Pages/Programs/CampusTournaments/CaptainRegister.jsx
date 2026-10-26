@@ -335,9 +335,13 @@ export default function CaptainRegister({ captain, tournament }) {
                                         value={data.name}
                                         onChange={(event) => setData('name', event.target.value)}
                                         placeholder="e.g. MSL PH"
+                                        maxLength={12}
                                         required
                                         className={INPUT_CLASS}
                                     />
+                                    <p className="mt-1 text-right text-xs text-gray-500">
+                                        {data.name.length}/12
+                                    </p>
                                     {errors.name ? (
                                         <span className="mt-1 block text-xs text-red-400">
                                             {errors.name}
