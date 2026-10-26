@@ -12,16 +12,14 @@ use Inertia\Response;
 
 class AuthController extends Controller
 {
-    public function showLogin(): Response
-{
-    $admin = Auth::guard('admin')->user();
+    public function showLogin(): Response|RedirectResponse
+    {
+        if (Auth::guard('admin')->check()) {
+            return redirect()->route('admin.dashboard');
+        }
 
-    return Inertia::render('Auth/AdminLogin', [
-        'authenticatedAdmin' => $admin
-            ? ['name' => $admin->name, 'email' => $admin->email]
-            : null,
-    ]);
-}
+        return Inertia::render('Auth/AdminLogin');
+    }
 
     public function login(Request $request): RedirectResponse
     {
