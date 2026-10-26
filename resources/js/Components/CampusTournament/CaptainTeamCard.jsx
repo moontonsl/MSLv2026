@@ -136,6 +136,7 @@ function PlayerMobileRow({ player, roleLabel, showStatusBadge = false }) {
  * @param {{
  *   team: object;
  *   onEdit?: () => void;
+ *   editLabel?: string;
  *   onLeave?: () => void;
  *   memberView?: boolean;
  *   notice?: import('react').ReactNode;
@@ -144,6 +145,7 @@ function PlayerMobileRow({ player, roleLabel, showStatusBadge = false }) {
 export default function CaptainTeamCard({
     team,
     onEdit,
+    editLabel = "Edit",
     onLeave,
     memberView = false,
     notice = null,
@@ -172,7 +174,7 @@ export default function CaptainTeamCard({
             disabled={editDisabled}
             className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-40"
         >
-            Edit
+            {editLabel}
         </button>
     ) : null;
 

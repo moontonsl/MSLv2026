@@ -1,3 +1,4 @@
+import AdminFilterSelect from '@/Components/Admin/AdminFilterSelect';
 import CarouselModal from '@/Components/Admin/CarouselModal';
 import DeleteConfirmationModal from '@/Components/Admin/DeleteConfirmationModal';
 import SuccessModal from '@/Components/Admin/SuccessModal';
@@ -119,7 +120,7 @@ export default function CarouselSection({ initialItems = [] }) {
                             <AdminFieldLabel htmlFor="carousel-label" required>
                                 Label
                             </AdminFieldLabel>
-                            <select id="carousel-label" className={ADMIN_SELECT_CLASS} defaultValue="">
+                            <AdminFilterSelect id="carousel-label" className={ADMIN_SELECT_CLASS} defaultValue="">
                                 <option value="" disabled>
                                     Select label
                                 </option>
@@ -128,7 +129,7 @@ export default function CarouselSection({ initialItems = [] }) {
                                         {option}
                                     </option>
                                 ))}
-                            </select>
+                            </AdminFilterSelect>
                         </div>
                         <div>
                             <AdminFieldLabel htmlFor="carousel-title" required>

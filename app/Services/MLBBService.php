@@ -7,74 +7,100 @@ use Exception;
 
 class MLBBService
 {
-    protected $baseUrl = 'https://openmlbb.fastapicloud.dev/api';
+    /**
+     * Official Moonton Web API Base URL
+     */
+    protected $baseUrl = 'https://api.mobilelegends.com/base/';
 
     /**
      * Send Verification Code to the player's in-game mailbox.
      */
     public function sendVerificationCode($roleId, $zoneId)
     {
-        $response = Http::post("{$this->baseUrl}/user/auth/send-vc", [
-            'role_id' => $roleId,
-            'zone_id' => $zoneId,
+        $response = Http::asForm()->post("{$this->baseUrl}sendVc", [
+            'roleId' => (string) $roleId,
+            'zoneId' => (string) $zoneId,
         ]);
 
         if ($response->failed()) {
-            throw new Exception('Failed to send verification code: ' . $response->body());
+            throw new Exception('Failed to connect to Mobile Legends server. Please try again.');
         }
 
         $data = $response->json();
-        
-        if (isset($data['code']) && $data['code'] !== 0) {
-            throw new Exception($data['msg'] ?? 'Unknown error sending code');
+        $code = $data['code'] ?? null;
+
+        if ($code === 0) {
+            return true;
         }
 
-        return true;
+        if ($code === -20006) {
+            throw new Exception('Too frequent requests for verification code. Please wait a few moments before trying again.');
+        }
+
+        if ($code === -19999) {
+            throw new Exception('Invalid Server ID (Zone ID). Please check your in-game profile.');
+        }
+
+        if ($code === -20007) {
+            throw new Exception('Verification code sending failed. Please check your User ID and Server ID.');
+        }
+
+        throw new Exception(!empty($data['msg']) ? $data['msg'] : 'Error sending verification code.');
     }
 
     /**
-     * Login with the verification code to obtain a JWT.
+     * Login with the verification code to obtain a JWT / auth token.
      */
     public function verifyAndLogin($roleId, $zoneId, $vc)
     {
-        $response = Http::post("{$this->baseUrl}/user/auth/login", [
-            'role_id' => $roleId,
-            'zone_id' => $zoneId,
-            'vc' => (int) $vc,
+        $response = Http::asForm()->post("{$this->baseUrl}login", [
+            'roleId' => (string) $roleId,
+            'zoneId' => (string) $zoneId,
+            'vc' => (string) $vc,
+            'type' => 'web',
         ]);
 
         if ($response->failed()) {
-            throw new Exception('Login failed. Invalid code or server error.');
+            throw new Exception('Login failed. Unable to connect to Mobile Legends server.');
         }
 
         $data = $response->json();
+        $code = $data['code'] ?? null;
 
-        if (isset($data['code']) && $data['code'] !== 0) {
-            throw new Exception($data['msg'] ?? 'Invalid verification code');
+        if ($code !== 0) {
+            if ($code === -20008) {
+                throw new Exception('Wrong verification code. Please check your in-game mailbox.');
+            }
+            if ($code === -20009) {
+                throw new Exception('Verification code has expired. Please request a new one.');
+            }
+            throw new Exception(!empty($data['msg']) ? $data['msg'] : 'Invalid verification code.');
         }
 
-        if (empty($data['data']['jwt'])) {
-            throw new Exception('JWT not returned from API');
+        $jwt = $data['data']['jwt'] ?? $data['data']['token'] ?? null;
+
+        if (empty($jwt)) {
+            throw new Exception('Authentication token not returned from Mobile Legends.');
         }
 
-        return $data['data']['jwt'];
+        return $jwt;
     }
 
     /**
-     * Fetch player profile information using the JWT.
+     * Fetch player profile information using the JWT/token.
      */
     public function getProfile($jwt)
     {
-        $response = Http::withToken($jwt)->get("{$this->baseUrl}/user/info");
+        $response = Http::withToken($jwt)->post("{$this->baseUrl}getBaseInfo");
 
         if ($response->failed()) {
-            throw new Exception('Failed to fetch player profile.');
+            throw new Exception('Failed to fetch player profile from Mobile Legends.');
         }
 
         $data = $response->json();
 
         if (isset($data['code']) && $data['code'] !== 0) {
-            throw new Exception($data['msg'] ?? 'Error retrieving profile data');
+            throw new Exception(!empty($data['msg']) ? $data['msg'] : 'Error retrieving profile data.');
         }
 
         return $data['data'] ?? null;

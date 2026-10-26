@@ -235,47 +235,45 @@ export default function AccountManagement({ adminUsers }) {
         <AdminLayout activeNavId="account-management">
             <Head title="Account Management" />
 
-            <div className="min-w-0 max-w-full overflow-x-hidden">
-                <h1 className="mb-6 font-heading text-xl font-bold tracking-tight text-[#FFFBEB] sm:mb-10 sm:text-4xl">
-                    Account Management
-                </h1>
+            <div className="min-w-0 w-full overflow-x-hidden">
+                <header className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight text-[#FFFBEB] sm:text-3xl">
+                            Account Management
+                        </h1>
+                        <p className="mt-2 text-sm leading-6 text-gray-400">
+                            Review and manage administrator accounts and access details.
+                        </p>
+                    </div>
+                    <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
+                        <label className="relative block min-w-0 flex-1 sm:w-64 sm:flex-none">
+                            <span className="sr-only">Search admin accounts</span>
+                            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                            <input
+                                type="search"
+                                value={search}
+                                onChange={(event) => setSearch(event.target.value)}
+                                placeholder="Search admin accounts"
+                                aria-label="Search admin accounts"
+                                className="min-h-[44px] w-full rounded-md border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-9 pr-3 text-sm text-white outline-none focus:ring-2 focus:ring-yellow-500"
+                            />
+                        </label>
+                        <button
+                            type="button"
+                            onClick={() => setShowCreateModal(true)}
+                            className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 text-sm font-bold text-black transition hover:bg-yellow-400"
+                        >
+                            <Plus className="h-4 w-4" />
+                            New Admin
+                        </button>
+                    </div>
+                </header>
 
                 <section className="max-w-full overflow-hidden bg-[#0B0B0B] md:rounded-xl md:border md:border-white/[0.08] md:px-11 md:py-11">
-                    <div className="mb-5 flex flex-col gap-4 sm:mb-8 md:flex-row md:items-center md:justify-between">
+                    <div className="mb-6">
                         <h2 className="font-heading text-base font-bold text-[#FBBF24] sm:text-2xl">
-                            Admin Account
+                            Administrator list
                         </h2>
-
-                        <div className="flex w-full min-w-0 items-center gap-2 sm:gap-3 md:w-auto">
-                            <div className="relative min-w-0 flex-1 md:w-[196px] md:flex-none">
-                                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-
-                                <input
-                                    type="search"
-                                    value={search}
-                                    onChange={(event) =>
-                                        setSearch(event.target.value)
-                                    }
-                                    placeholder="Search..."
-                                    aria-label="Search admin accounts"
-                                    className="h-9 w-full rounded-lg bg-[#1A1A1A] pl-9 pr-3 text-xs text-white outline-none placeholder:text-gray-600 focus:ring-1 focus:ring-[#FBBF24]"
-                                />
-                            </div>
-
-                            <button
-                                type="button"
-                                onClick={() => setShowCreateModal(true)}
-                                className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[#FBBF24] px-3 text-xs font-bold text-black transition hover:bg-[#FCD34D] sm:gap-2 sm:px-4"
-                            >
-                                <Plus className="h-4 w-4" />
-
-                                <span className="hidden min-[360px]:inline">
-                                    New Admin
-                                </span>
-
-                                <span className="min-[360px]:hidden">New</span>
-                            </button>
-                        </div>
                     </div>
 
                     <div className="flex min-h-[360px] flex-col md:min-h-[400px]">

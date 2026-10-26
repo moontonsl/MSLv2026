@@ -15,10 +15,11 @@ import { ArrowDownUp, ChevronLeft, ChevronRight, FileSpreadsheet, Pencil } from 
  *   page?: number;
  *   totalPages?: number;
  *   resultsSubmitted?: boolean;
+ *   canViewReport?: boolean;
  *   isEditing?: boolean;
  *   hideToolbar?: boolean;
  *   onPageChange?: (page: number) => void;
- *   onPlacementChange: (teamId: string, placementId: string) => void;
+ *   onPlacementChange?: (teamId: string, placementId: string) => void;
  *   onSubmitResults: () => void;
  *   onEditResults?: () => void;
  *   onCancelEdit?: () => void;
@@ -31,6 +32,7 @@ export default function SlMatchManagement({
     page = 1,
     totalPages = 10,
     resultsSubmitted = false,
+    canViewReport = true,
     isEditing = false,
     hideToolbar = false,
     onPageChange,
@@ -42,7 +44,8 @@ export default function SlMatchManagement({
     onExport,
 }) {
     const placementsLocked = resultsSubmitted && !isEditing;
-    const showEditToolbar = !hideToolbar && resultsSubmitted && !isEditing;
+    const showEditToolbar =
+        !hideToolbar && resultsSubmitted && canViewReport && !isEditing;
     const showEditingFooter = resultsSubmitted && isEditing;
 
     const pageButtons = (() => {
@@ -134,7 +137,7 @@ export default function SlMatchManagement({
                                         value={team.placement}
                                         disabled={placementsLocked}
                                         onChange={(placementId) =>
-                                            onPlacementChange(
+                                            onPlacementChange?.(
                                                 team.id,
                                                 placementId,
                                             )
@@ -172,7 +175,7 @@ export default function SlMatchManagement({
                                 value={team.placement}
                                 disabled={placementsLocked}
                                 onChange={(placementId) =>
-                                    onPlacementChange(team.id, placementId)
+                                    onPlacementChange?.(team.id, placementId)
                                 }
                             />
                         </div>

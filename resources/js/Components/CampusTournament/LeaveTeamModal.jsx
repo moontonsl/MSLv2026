@@ -29,6 +29,7 @@ export default function LeaveTeamModal({
             isOpen={isOpen}
             onClose={onCancel}
             hideHeader
+            showCloseButton={false}
             scrollable={false}
             maxWidth="max-w-md"
             footer={

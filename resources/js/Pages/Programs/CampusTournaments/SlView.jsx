@@ -1,7 +1,6 @@
 import CampusTournamentPageHeader from '@/Components/CampusTournament/CampusTournamentPageHeader';
 import ConfirmResultsModal from '@/Components/CampusTournament/ConfirmResultsModal';
 import CreateTournamentModal from '@/Components/CampusTournament/CreateTournamentModal';
-import GenerateReportModal from '@/Components/CampusTournament/GenerateReportModal';
 import RequestSection from '@/Components/CampusTournament/RequestSection';
 import SlTournamentPanel from '@/Components/CampusTournament/SlTournamentPanel';
 import DeleteConfirmationModal from '@/Components/Admin/DeleteConfirmationModal';
@@ -71,25 +70,10 @@ export default function SlView({
     const [successMessage, setSuccessMessage] = useState('');
     const [successDescription, setSuccessDescription] = useState('');
 
-    const [reportOpen, setReportOpen] = useState(false);
     const [resultsConfirmOpen, setResultsConfirmOpen] = useState(false);
     const [resultsMode, setResultsMode] = useState('submit');
     const [resultsTournamentId, setResultsTournamentId] = useState(null);
     const [resultsPlacements, setResultsPlacements] = useState([]);
-
-    const reportSchools = useMemo(() => {
-        const names = [
-            ...new Set(
-                tournaments
-                    .map((item) => item.schoolName)
-                    .filter(Boolean),
-            ),
-        ];
-        return [
-            { value: 'all', label: 'All School' },
-            ...names.map((name) => ({ value: name, label: name })),
-        ];
-    }, [tournaments]);
 
     /** Own submissions awaiting Regional Admin review, plus anything queued locally. */
     const pendingItems = useMemo(
@@ -299,8 +283,11 @@ export default function SlView({
         setResultsConfirmOpen(true);
     }, []);
 
-    const openExportReport = useCallback(() => {
-        setReportOpen(true);
+    const openExportReport = useCallback((tournament) => {
+        if (!tournament?.id) return;
+        window.location.assign(
+            `/campus-tournaments/${tournament.id}/results/export`,
+        );
     }, []);
 
     const cancelResultsConfirm = useCallback(() => {
@@ -566,19 +553,6 @@ export default function SlView({
                 onClose={() => setSuccessOpen(false)}
                 message={successMessage}
                 description={successDescription}
-            />
-
-            <GenerateReportModal
-                isOpen={reportOpen}
-                schools={reportSchools}
-                onClose={() => setReportOpen(false)}
-                onDownload={() => {
-                    setSuccessMessage('Report downloaded');
-                    setSuccessDescription(
-                        'Tournament results export has been prepared.',
-                    );
-                    setSuccessOpen(true);
-                }}
             />
 
             <ConfirmResultsModal

@@ -48,7 +48,7 @@ class TournamentResultsWorkbook
         TournamentResultRevision $revision,
     ): Spreadsheet {
         $tournament->loadMissing(['campus.institution', 'tournamentType']);
-        $revision->loadMissing(['submitter', 'entries']);
+        $revision->loadMissing(['submitter', 'adminSubmitter', 'entries']);
 
         $spreadsheet = new Spreadsheet;
         $sheet = $spreadsheet->getActiveSheet();
@@ -73,7 +73,7 @@ class TournamentResultsWorkbook
             ['Event Start Date', $this->formatDate($tournament->starts_at)],
             ['Event End Date', $this->formatDate($tournament->ends_at)],
             ['Results Submitted', $revision->submitted_at->timezone('Asia/Manila')->format('F j, Y g:i A')],
-            ['Submitted By', $revision->submitter?->name ?? 'Unknown user'],
+            ['Submitted By', $revision->adminSubmitter?->name ?? $revision->submitter?->name ?? 'Unknown user'],
             ['Tournament Type', $tournament->tournamentType?->name ?? ucfirst($tournament->tournament_type_code)],
             ['Bracket Type', $teamCount.' registered '.Str::plural('team', $teamCount)],
             ['Revision', 'Version '.$revision->version],

@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             TournamentReferenceSeeder::class,
             FilipinoStudentSeeder::class,
             // BasicEducationInstitutionSeeder::class,
+            // CollegeInstitutionSeeder::class,
         ]);
     }
 }

@@ -49,8 +49,13 @@ export default function Form({ module, action, record = {} }) {
     return (
         <AdminLayout activeNavId="management">
             <Head title={module} />
-            <h1 className="mb-6 text-3xl font-bold">{module}</h1>
-            <form onSubmit={submit} className="max-w-2xl space-y-4 rounded-lg border border-neutral-800 bg-neutral-900 p-6">
+            <header className="mb-6 sm:mb-8">
+                <h1 className="text-2xl font-bold text-white sm:text-3xl">{module}</h1>
+                <p className="mt-2 text-sm leading-6 text-gray-400">
+                    Update the details for this {module.toLowerCase()} record.
+                </p>
+            </header>
+            <form onSubmit={submit} className="w-full space-y-4 rounded-lg border border-neutral-800 bg-neutral-900 p-6">
                 {isMcc ? <>
                     <input type="number" className="w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="Season number" value={data.season_number} onChange={(event) => setData('season_number', event.target.value)} />
                     <input className="w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="Season name" value={data.season_name} onChange={(event) => setData('season_name', event.target.value)} />

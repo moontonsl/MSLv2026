@@ -8,6 +8,32 @@ use App\Models\User;
 
 class CampusTournamentAuthorization
 {
+    public function hasActiveStudentLeaderAffiliation(User $user): bool
+    {
+        return $user->status === 'active'
+            && $user->campusAffiliations()
+                ->where('role', 'student_leader')
+                ->where('status', 'active')
+                ->where(fn ($query) => $query->whereNull('started_at')->orWhere('started_at', '<=', now()))
+                ->where(fn ($query) => $query->whereNull('ended_at')->orWhere('ended_at', '>', now()))
+                ->exists();
+    }
+
+    public function canAccessReviewerPage(User $user): bool
+    {
+        return $user->status === 'active'
+            && ($user->user_type === 'Super Admin'
+                || RegionAdmin::query()->where('user_id', $user->id)->exists());
+    }
+
+    public function canAccessPlayerPages(User $user): bool
+    {
+        return $user->status === 'active'
+            && ! in_array($user->user_type, ['Student Leader', 'Regional Admin', 'Super Admin'], true)
+            && ! $this->canAccessReviewerPage($user)
+            && ! $this->hasActiveStudentLeaderAffiliation($user);
+    }
+
     public function isActiveStudentLeader(User $user, Campus $campus): bool
     {
         return $user->status === 'active'

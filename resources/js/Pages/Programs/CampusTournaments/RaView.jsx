@@ -4,6 +4,7 @@ import CreateTournamentModal from '@/Components/CampusTournament/CreateTournamen
 import GenerateReportModal from '@/Components/CampusTournament/GenerateReportModal';
 import ManagedTournamentCard from '@/Components/CampusTournament/ManagedTournamentCard';
 import TournamentRequestTable from '@/Components/CampusTournament/TournamentRequestTable';
+import { REQUESTS_PER_PAGE } from '@/Components/CampusTournament/requestPagination';
 import ViewTournamentModal from '@/Components/CampusTournament/ViewTournamentModal';
 import DeleteConfirmationModal from '@/Components/Admin/DeleteConfirmationModal';
 import SuccessModal from '@/Components/Admin/SuccessModal';
@@ -83,6 +84,11 @@ export default function RaView({
     const [requestPage, setRequestPage] = useState(1);
     const [tournamentPage, setTournamentPage] = useState(1);
     const tournamentTotalPages = 10;
+
+    useEffect(() => {
+        const lastPage = Math.max(1, Math.ceil(requests.length / REQUESTS_PER_PAGE));
+        setRequestPage((currentPage) => Math.min(currentPage, lastPage));
+    }, [requests.length]);
 
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [confirmAction, setConfirmAction] = useState(null);

@@ -10,7 +10,10 @@ const FIELDS = [
 
 export default function HighlightLinkSection() {
     return (
-        <SectionCard title="Highlight Link" description="Simple description here">
+        <SectionCard
+            title="Highlight Link"
+            description="Set the featured homepage article and its destination link."
+        >
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 {FIELDS.map(({ id, label, placeholder }) => (
                     <div key={id}>

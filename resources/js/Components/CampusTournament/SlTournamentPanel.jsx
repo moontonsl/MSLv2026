@@ -45,7 +45,13 @@ export default function SlTournamentPanel({
     const [isEditing, setIsEditing] = useState(false);
 
     const resultsSubmitted = Boolean(tournament.resultsSubmitted);
-    const showEditActions = resultsSubmitted && !isEditing && innerTab === "match";
+    const canViewReport =
+        tournament.status === "completed" && Boolean(tournament.canViewReport);
+    const showEditActions =
+        resultsSubmitted &&
+        canViewReport &&
+        !isEditing &&
+        innerTab === "match";
 
     return (
         <article className="overflow-hidden rounded-xl border border-neutral-800 bg-[#111111]">
@@ -85,7 +91,7 @@ export default function SlTournamentPanel({
                             <ExternalLink className="h-4 w-4" />
                         </Link>
                     ) : null}
-                    {tournament.status === "completed" ? (
+                    {canViewReport ? (
                         <Link
                             href={`/campus-tournaments/${tournament.id}/report`}
                             className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-yellow-500 px-3 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"
@@ -168,11 +174,16 @@ export default function SlTournamentPanel({
                             page={page}
                             totalPages={10}
                             resultsSubmitted={resultsSubmitted}
+                            canViewReport={canViewReport}
                             isEditing={isEditing}
                             hideToolbar
                             onPageChange={setPage}
                             onPlacementChange={(teamId, placementId) =>
-                                onPlacementChange(tournament.id, teamId, placementId)
+                                onPlacementChange?.(
+                                    tournament.id,
+                                    teamId,
+                                    placementId,
+                                )
                             }
                             onSubmitResults={() => onSubmitResults(tournament)}
                             onEditResults={() => setIsEditing(true)}

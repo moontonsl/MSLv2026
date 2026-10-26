@@ -14,7 +14,13 @@ class AuthController extends Controller
 {
     public function showLogin(): Response
     {
-        return Inertia::render('Admin/Auth/Login');
+        $admin = Auth::guard('admin')->user();
+
+        return Inertia::render('Admin/Auth/Login', [
+            'authenticatedAdmin' => $admin
+                ? ['name' => $admin->name, 'email' => $admin->email]
+                : null,
+        ]);
     }
 
     public function login(Request $request): RedirectResponse

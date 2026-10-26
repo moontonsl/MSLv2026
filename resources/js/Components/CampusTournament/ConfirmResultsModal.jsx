@@ -27,6 +27,7 @@ export default function ConfirmResultsModal({
             isOpen={isOpen}
             onClose={onCancel}
             hideHeader
+            showCloseButton={false}
             scrollable={false}
             maxWidth="max-w-md"
             footer={

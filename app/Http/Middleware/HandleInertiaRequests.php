@@ -53,16 +53,16 @@ class HandleInertiaRequests extends Middleware
                 ->count();
             $adminNotifications = AdminNotification::query()
                 ->where('admin_user_id', $admin->id)
-                ->whereNull('read_at')
                 ->latest()
-                ->limit(5)
-                ->get(['id', 'type', 'title', 'message', 'action_url', 'created_at'])
+                ->limit(10)
+                ->get(['id', 'type', 'title', 'message', 'action_url', 'read_at', 'created_at'])
                 ->map(fn (AdminNotification $notification): array => [
                     'id' => $notification->id,
                     'type' => $notification->type,
                     'title' => $notification->title,
                     'message' => $notification->message,
                     'action_url' => $notification->action_url,
+                    'read_at' => $notification->read_at?->toIso8601String(),
                     'created_at' => $notification->created_at?->toIso8601String(),
                 ])
                 ->values()
@@ -80,6 +80,7 @@ class HandleInertiaRequests extends Middleware
             'admin_notifications' => $adminNotifications,
             'admin_notifications_unread_count' => $adminNotificationsUnreadCount,
             'mlbb_bypass' => (bool) session('mlbb_bypass', false),
+            'main_site_url' => config('app.main_site_url') ?: env('MAIN_SITE_URL', env('APP_URL', '/')),
             'footer' => [
                 'description' => Setting::getValue('footer_description', 'The official student leader body of Mobile Legends: Bang Bang in the Philippines.'),
                 'copyright' => Setting::getValue('footer_copyright', '© 2025 Moonton Student Leaders Philippines. All rights reserved.'),

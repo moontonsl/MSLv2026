@@ -1,14 +1,12 @@
-import { MODAL_ACTION_ICON_CLASS } from '@/Components/Admin/adminModalFormStyles';
-import { Pencil, Plus, Search, Trash2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
-
-const ACCENT = '#FBBF24';
+import { MODAL_ACTION_ICON_CLASS } from "@/Components/Admin/adminModalFormStyles";
+import { Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { useMemo, useState } from "react";
 
 const SEARCH_CLASS =
-    'w-full min-h-[44px] rounded-md border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-10 pr-4 text-base text-white placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none md:text-sm';
+    "w-full min-h-[44px] rounded-md border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-10 pr-4 text-base text-white placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none md:text-sm";
 
 const ADD_BUTTON_CLASS =
-    'flex min-h-[44px] w-full shrink-0 items-center justify-center gap-2 rounded-md px-4 py-2.5 text-base font-bold text-black md:w-auto md:text-sm';
+    "flex min-h-[44px] w-full shrink-0 items-center justify-center gap-2 rounded-md px-4 py-2.5 text-base font-bold text-black md:w-auto md:text-sm";
 
 export default function AdminTable({
     title,
@@ -19,14 +17,14 @@ export default function AdminTable({
     onEdit,
     onDelete,
 }) {
-    const [search, setSearch] = useState('');
+    const [search, setSearch] = useState("");
 
     const filteredData = useMemo(() => {
         const q = search.trim().toLowerCase();
         if (!q) return data;
         return data.filter((row) =>
             columns.some(({ key }) =>
-                String(row[key] ?? '')
+                String(row[key] ?? "")
                     .toLowerCase()
                     .includes(q),
             ),
@@ -57,7 +55,7 @@ export default function AdminTable({
     return (
         <div className="mb-8 w-full rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
             <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <h3 className="text-lg font-bold sm:text-xl" style={{ color: ACCENT }}>
+                <h3 className="text-lg font-bold text-yellow-500 sm:text-xl">
                     {title}
                 </h3>
                 <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
@@ -74,8 +72,7 @@ export default function AdminTable({
                     <button
                         type="button"
                         onClick={onAdd}
-                        className={ADD_BUTTON_CLASS}
-                        style={{ backgroundColor: ACCENT }}
+                        className={`${ADD_BUTTON_CLASS} bg-yellow-500 transition-colors hover:bg-yellow-400`}
                     >
                         <Plus className="h-4 w-4" />
                         Add {entityName}
@@ -84,7 +81,9 @@ export default function AdminTable({
             </div>
 
             {filteredData.length === 0 ? (
-                <p className="py-8 text-center text-sm text-gray-500">No results found.</p>
+                <p className="py-8 text-center text-sm text-gray-500">
+                    No results found.
+                </p>
             ) : (
                 <>
                     <div className="hidden overflow-x-auto md:block">
@@ -138,7 +137,9 @@ export default function AdminTable({
                                         <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                                             {label}
                                         </p>
-                                        <p className="mt-1 text-sm text-gray-200">{row[key]}</p>
+                                        <p className="mt-1 text-sm text-gray-200">
+                                            {row[key]}
+                                        </p>
                                     </div>
                                 ))}
                                 <div className="mt-4 flex items-center justify-between border-t border-neutral-800 pt-3">
@@ -158,23 +159,41 @@ export default function AdminTable({
                     className="flex flex-wrap items-center gap-2 text-sm text-gray-400"
                     aria-label={`${title} pagination`}
                 >
-                    <button type="button" className="min-h-[44px] px-2 transition-colors hover:text-white">
+                    <button
+                        type="button"
+                        className="min-h-[44px] px-2 transition-colors hover:text-white"
+                    >
                         &lt; Previous
                     </button>
-                    <button type="button" className="min-h-[44px] px-2 font-medium text-white">
+                    <button
+                        type="button"
+                        className="min-h-[44px] px-2 font-medium text-white"
+                    >
                         1
                     </button>
-                    <button type="button" className="min-h-[44px] px-2 transition-colors hover:text-white">
+                    <button
+                        type="button"
+                        className="min-h-[44px] px-2 transition-colors hover:text-white"
+                    >
                         2
                     </button>
-                    <button type="button" className="min-h-[44px] px-2 transition-colors hover:text-white">
+                    <button
+                        type="button"
+                        className="min-h-[44px] px-2 transition-colors hover:text-white"
+                    >
                         3
                     </button>
                     <span>...</span>
-                    <button type="button" className="min-h-[44px] px-2 transition-colors hover:text-white">
+                    <button
+                        type="button"
+                        className="min-h-[44px] px-2 transition-colors hover:text-white"
+                    >
                         10
                     </button>
-                    <button type="button" className="min-h-[44px] px-2 transition-colors hover:text-white">
+                    <button
+                        type="button"
+                        className="min-h-[44px] px-2 transition-colors hover:text-white"
+                    >
                         Next &gt;
                     </button>
                 </nav>
