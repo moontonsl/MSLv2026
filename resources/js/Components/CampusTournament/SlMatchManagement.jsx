@@ -1,5 +1,6 @@
 import MatchPlayerCell from '@/Components/CampusTournament/MatchPlayerCell';
 import PlacementStatusDropdown from '@/Components/CampusTournament/PlacementStatusDropdown';
+import { visiblePageNumbers } from '@/Components/CampusTournament/requestPagination';
 import { ArrowDownUp, ChevronLeft, ChevronRight, FileSpreadsheet, Pencil } from 'lucide-react';
 
 /**
@@ -41,6 +42,7 @@ export default function SlMatchManagement({
     onCancelEdit,
     onExport,
 }) {
+    const pageNumbers = visiblePageNumbers(page, totalPages);
     return (
         <div className="space-y-4">
             {/* Desktop table */}
@@ -136,89 +138,98 @@ export default function SlMatchManagement({
                 ))}
             </div>
 
-            <div className="flex flex-col gap-4 border-t border-neutral-800 pt-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center justify-center gap-2 sm:justify-start">
-                    <button
-                        type="button"
-                        onClick={() => onPageChange?.(Math.max(1, page - 1))}
-                        disabled={page <= 1}
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-yellow-500 text-black transition-colors hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-40 sm:h-auto sm:w-auto sm:rounded-lg sm:border sm:border-yellow-500 sm:bg-transparent sm:px-4 sm:py-2 sm:text-sm sm:font-semibold sm:text-yellow-500 sm:hover:bg-yellow-500/10"
-                        aria-label="Previous page"
-                    >
-                        <span className="hidden sm:inline">Previous</span>
-                        <ChevronLeft className="h-5 w-5 sm:hidden" />
-                    </button>
+            <div className="hidden items-center justify-between gap-3 border-t border-neutral-800 py-4 md:flex">
+                <button
+                    type="button"
+                    disabled={page <= 1}
+                    onClick={() => onPageChange?.(page - 1)}
+                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 py-2 text-sm font-bold text-black disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    ← Previous
+                </button>
 
-                    <div className="hidden items-center gap-1 sm:flex">
-                        {Array.from(
-                            { length: Math.min(totalPages, 10) },
-                            (_, index) => {
-                                const pageNumber = index + 1;
-                                const isActive = pageNumber === page;
-                                return (
-                                    <button
-                                        key={pageNumber}
-                                        type="button"
-                                        onClick={() =>
-                                            onPageChange?.(pageNumber)
-                                        }
-                                        className={`inline-flex h-9 min-w-9 items-center justify-center rounded-md text-sm font-semibold transition-colors ${
-                                            isActive
-                                                ? 'bg-yellow-500 text-black'
-                                                : 'text-gray-300 hover:text-white'
-                                        }`}
-                                    >
-                                        {pageNumber}
-                                    </button>
-                                );
-                            },
-                        )}
-                    </div>
+                <div className="flex flex-wrap items-center justify-center gap-2 text-sm text-gray-400">
+                    {pageNumbers.map((item, index) =>
+                        item === '...' ? (
+                            <span key={`ellipsis-${index}`}>...</span>
+                        ) : (
+                            <button
+                                key={item}
+                                type="button"
+                                onClick={() => onPageChange?.(item)}
+                                aria-label={`Page ${item}`}
+                                aria-current={page === item ? 'page' : undefined}
+                                className={`inline-flex min-h-9 min-w-9 items-center justify-center rounded-md ${
+                                    page === item
+                                        ? 'bg-yellow-500 font-bold text-black'
+                                        : 'text-gray-300 hover:text-white'
+                                }`}
+                            >
+                                {item}
+                            </button>
+                        ),
+                    )}
+                </div>
+                <button
+                    type="button"
+                    disabled={page >= totalPages}
+                    onClick={() => onPageChange?.(page + 1)}
+                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 py-2 text-sm font-bold text-black disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    Next →
+                </button>
+            </div>
 
-                    <p className="px-2 text-sm font-medium text-white sm:hidden">
-                        Page {page} of {totalPages}
-                    </p>
+            <div className="flex items-center justify-between gap-3 border-t border-neutral-800 py-4 md:hidden">
+                <button
+                    type="button"
+                    disabled={page <= 1}
+                    onClick={() => onPageChange?.(page - 1)}
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-yellow-500 text-black disabled:cursor-not-allowed disabled:opacity-50"
+                    aria-label="Previous page"
+                >
+                    <ChevronLeft className="h-5 w-5" />
+                </button>
+                <p className="text-sm font-medium text-white">
+                    Page {page} of {totalPages}
+                </p>
+                <button
+                    type="button"
+                    disabled={page >= totalPages}
+                    onClick={() => onPageChange?.(page + 1)}
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-yellow-500 text-black disabled:cursor-not-allowed disabled:opacity-50"
+                    aria-label="Next page"
+                >
+                    <ChevronRight className="h-5 w-5" />
+                </button>
+            </div>
 
-                    <button
-                        type="button"
-                        onClick={() =>
-                            onPageChange?.(Math.min(totalPages, page + 1))
-                        }
-                        disabled={page >= totalPages}
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-yellow-500 text-black transition-colors hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-40 sm:h-auto sm:w-auto sm:rounded-lg sm:bg-yellow-500 sm:px-4 sm:py-2 sm:text-sm sm:font-bold sm:text-black sm:hover:bg-yellow-400"
-                        aria-label="Next page"
-                    >
-                        <span className="hidden sm:inline">Next</span>
-                        <ChevronRight className="h-5 w-5 sm:hidden" />
+            {(canSubmit || (editable && resultsSubmitted)) ? (
+                <div className="flex flex-wrap justify-end gap-2">
+                    {resultsSubmitted ? (
+                        <button type="button" onClick={onCancelEdit} className="min-h-[44px] rounded-lg border border-neutral-600 px-4 text-sm font-semibold text-white">
+                            Cancel
+                        </button>
+                    ) : null}
+                    <button type="button" onClick={onSubmitResults} className="min-h-[44px] rounded-lg bg-yellow-500 px-6 py-2.5 text-sm font-bold text-black hover:bg-yellow-400">
+                        {resultsSubmitted ? 'Save correction' : 'Submit Results'}
                     </button>
                 </div>
-                {(canSubmit || (editable && resultsSubmitted)) ? (
-                    <div className="flex flex-wrap gap-2">
-                        {resultsSubmitted ? (
-                            <button type="button" onClick={onCancelEdit} className="min-h-[44px] rounded-lg border border-neutral-600 px-4 text-sm font-semibold text-white">
-                                Cancel
-                            </button>
-                        ) : null}
-                        <button type="button" onClick={onSubmitResults} className="min-h-[44px] rounded-lg bg-yellow-500 px-6 py-2.5 text-sm font-bold text-black hover:bg-yellow-400">
-                            {resultsSubmitted ? 'Save correction' : 'Submit Results'}
+            ) : null}
+            {resultsSubmitted && !editable ? (
+                <div className="flex flex-wrap justify-end gap-2">
+                    {canCorrect ? (
+                        <button type="button" onClick={onEditResults} className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-neutral-600 px-4 text-sm font-semibold text-white hover:border-neutral-400">
+                            <Pencil className="h-4 w-4" /> Edit
                         </button>
-                    </div>
-                ) : null}
-                {resultsSubmitted && !editable ? (
-                    <div className="flex flex-wrap gap-2">
-                        {canCorrect ? (
-                            <button type="button" onClick={onEditResults} className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-neutral-600 px-4 text-sm font-semibold text-white hover:border-neutral-400">
-                                <Pencil className="h-4 w-4" /> Edit
-                            </button>
-                        ) : null}
-                        {onExport ? (
-                            <button type="button" onClick={onExport} className="inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black hover:bg-yellow-400">
-                                <FileSpreadsheet className="h-4 w-4" /> Export to Excel
-                            </button>
-                        ) : null}
-                    </div>
-                ) : null}
-            </div>
+                    ) : null}
+                    {onExport ? (
+                        <button type="button" onClick={onExport} className="inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black hover:bg-yellow-400">
+                            <FileSpreadsheet className="h-4 w-4" /> Export to Excel
+                        </button>
+                    ) : null}
+                </div>
+            ) : null}
         </div>
     );
 }

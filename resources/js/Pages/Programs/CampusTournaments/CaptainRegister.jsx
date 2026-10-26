@@ -83,7 +83,7 @@ function MemberSearchField({ index, tournamentId, value, onChange, error, select
                     aria-expanded={focused && !selectedUser && value.trim().length >= 2}
                 />
                 {focused && !selectedUser && value.trim().length >= 2 && (
-                    <div className="mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-neutral-700 bg-[#181818] shadow-xl">
+                    <div className="absolute inset-x-0 top-full z-50 mt-1 max-h-56 overflow-y-auto rounded-lg border border-neutral-700 bg-[#181818] shadow-xl">
                         {searching ? (
                             <p className="px-3 py-2 text-sm text-gray-400">Searching…</p>
                         ) : searchError ? (
