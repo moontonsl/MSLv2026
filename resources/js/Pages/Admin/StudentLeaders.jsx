@@ -7,7 +7,8 @@ import {
     Users, Award, ChevronDown, ChevronLeft, ChevronRight, Check, LoaderCircle,
     Sparkles, ArrowRight, Filter, RefreshCw
 } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 const ACCENT = '#FBBF24';
 
@@ -81,6 +82,18 @@ export default function StudentLeaders({
     const [assignedDivision, setAssignedDivision] = useState(LEADERSHIP_POSITIONS[0]);
     const [assignedRegion, setAssignedRegion] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    useEffect(() => {
+        const hasOpenModal = isLeadersModalOpen || isCampusesModalOpen || isRegionsModalOpen || promoteTarget || demoteTarget || inspectStudent;
+        if (hasOpenModal) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isLeadersModalOpen, isCampusesModalOpen, isRegionsModalOpen, promoteTarget, demoteTarget, inspectStudent]);
 
     const slItems = slUsers?.data ?? [];
     const studentItems = students?.data ?? [];
@@ -633,9 +646,9 @@ export default function StudentLeaders({
             {/* ========================================================================= */}
             {/* 1. DATA JUSTIFICATION MODAL: ACTIVE STUDENT LEADERS (CENTERED, LIMIT 10)  */}
             {/* ========================================================================= */}
-            {isLeadersModalOpen && (
+            {isLeadersModalOpen && typeof document !== 'undefined' && createPortal(
                 <div
-                    className="fixed inset-0 z-50 overflow-y-auto flex items-start justify-center p-4 pt-14 sm:pt-20 pb-10 backdrop-blur-md bg-black/80"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md transition-all duration-200"
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="active-leaders-modal-title"
@@ -643,7 +656,7 @@ export default function StudentLeaders({
                         if (e.target === e.currentTarget) setIsLeadersModalOpen(false);
                     }}
                 >
-                    <div className="w-full max-w-4xl max-h-[calc(100vh-6rem)] sm:max-h-[calc(100vh-8rem)] flex flex-col rounded-3xl border border-amber-400/30 bg-[#0F0F12] shadow-2xl animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
+                    <div className="w-full max-w-4xl max-h-[90vh] flex flex-col rounded-3xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
                         {/* Header */}
                         <div className="shrink-0 flex items-center justify-between border-b border-white/10 p-5 sm:p-6 bg-gradient-to-r from-amber-400/10 to-transparent">
                             <div className="flex items-center gap-3">
@@ -773,15 +786,16 @@ export default function StudentLeaders({
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* ========================================================================= */}
             {/* 2. DATA JUSTIFICATION MODAL: AFFILIATED CAMPUSES (CENTERED, LIMIT 10)     */}
             {/* ========================================================================= */}
-            {isCampusesModalOpen && (
+            {isCampusesModalOpen && typeof document !== 'undefined' && createPortal(
                 <div
-                    className="fixed inset-0 z-50 overflow-y-auto flex items-start justify-center p-4 pt-14 sm:pt-20 pb-10 backdrop-blur-md bg-black/80"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md transition-all duration-200"
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="campuses-modal-title"
@@ -789,7 +803,7 @@ export default function StudentLeaders({
                         if (e.target === e.currentTarget) setIsCampusesModalOpen(false);
                     }}
                 >
-                    <div className="w-full max-w-3xl max-h-[calc(100vh-6rem)] sm:max-h-[calc(100vh-8rem)] flex flex-col rounded-3xl border border-emerald-500/30 bg-[#0F0F12] shadow-2xl animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
+                    <div className="w-full max-w-3xl max-h-[90vh] flex flex-col rounded-3xl border border-emerald-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
                         {/* Header */}
                         <div className="shrink-0 flex items-center justify-between border-b border-white/10 p-5 sm:p-6 bg-gradient-to-r from-emerald-500/10 to-transparent">
                             <div className="flex items-center gap-3">
@@ -914,15 +928,16 @@ export default function StudentLeaders({
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* ========================================================================= */}
             {/* 3. DATA JUSTIFICATION MODAL: REGIONAL HUBS (CENTERED, LIMIT 10)           */}
             {/* ========================================================================= */}
-            {isRegionsModalOpen && (
+            {isRegionsModalOpen && typeof document !== 'undefined' && createPortal(
                 <div
-                    className="fixed inset-0 z-50 overflow-y-auto flex items-start justify-center p-4 pt-14 sm:pt-20 pb-10 backdrop-blur-md bg-black/80"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md transition-all duration-200"
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="regions-modal-title"
@@ -930,7 +945,7 @@ export default function StudentLeaders({
                         if (e.target === e.currentTarget) setIsRegionsModalOpen(false);
                     }}
                 >
-                    <div className="w-full max-w-2xl max-h-[calc(100vh-6rem)] sm:max-h-[calc(100vh-8rem)] flex flex-col rounded-3xl border border-blue-500/30 bg-[#0F0F12] shadow-2xl animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
+                    <div className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl border border-blue-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
                         {/* Header */}
                         <div className="shrink-0 flex items-center justify-between border-b border-white/10 p-5 sm:p-6 bg-gradient-to-r from-blue-500/10 to-transparent">
                             <div className="flex items-center gap-3">
@@ -1027,15 +1042,16 @@ export default function StudentLeaders({
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* ========================================================================= */}
             {/* PROMOTE TO STUDENT LEADER MODAL (CENTERED WITH SMART AUTOCOMPLETE)        */}
             {/* ========================================================================= */}
-            {promoteTarget && (
+            {promoteTarget && typeof document !== 'undefined' && createPortal(
                 <div
-                    className="fixed inset-0 z-50 overflow-y-auto flex items-start justify-center bg-black/80 p-4 pt-14 sm:pt-20 pb-10 backdrop-blur-md"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md transition-all duration-200"
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="promote-modal-title"
@@ -1043,7 +1059,7 @@ export default function StudentLeaders({
                         if (e.target === e.currentTarget) setPromoteTarget(null);
                     }}
                 >
-                    <div className="w-full max-w-lg max-h-[calc(100vh-6rem)] sm:max-h-[calc(100vh-8rem)] overflow-y-auto rounded-2xl border border-amber-400/30 bg-[#121214] p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+                    <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
                         <div className="flex items-center justify-between border-b border-white/10 pb-4">
                             <div className="flex items-center gap-3">
                                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20">
@@ -1157,15 +1173,16 @@ export default function StudentLeaders({
                             </div>
                         </form>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* ========================================================================= */}
             {/* DEMOTE CONFIRMATION MODAL (CENTERED)                                      */}
             {/* ========================================================================= */}
-            {demoteTarget && (
+            {demoteTarget && typeof document !== 'undefined' && createPortal(
                 <div
-                    className="fixed inset-0 z-50 overflow-y-auto flex items-start justify-center bg-black/80 p-4 pt-14 sm:pt-20 pb-10 backdrop-blur-md"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md transition-all duration-200"
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="demote-modal-title"
@@ -1173,7 +1190,7 @@ export default function StudentLeaders({
                         if (e.target === e.currentTarget) setDemoteTarget(null);
                     }}
                 >
-                    <div className="w-full max-w-md max-h-[calc(100vh-6rem)] sm:max-h-[calc(100vh-8rem)] overflow-y-auto rounded-2xl border border-red-500/30 bg-[#141416] p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+                    <div className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl border border-red-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
                         <div className="flex items-center gap-3 border-b border-white/10 pb-4">
                             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-400 border border-red-500/20">
                                 <AlertTriangle className="h-5 w-5" />
@@ -1216,15 +1233,16 @@ export default function StudentLeaders({
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* ========================================================================= */}
             {/* STUDENT / LEADER DOSSIER MODAL (CENTERED)                                 */}
             {/* ========================================================================= */}
-            {inspectStudent && (
+            {inspectStudent && typeof document !== 'undefined' && createPortal(
                 <div
-                    className="fixed inset-0 z-50 overflow-y-auto flex items-start justify-center bg-black/85 p-4 pt-14 sm:pt-20 pb-10 backdrop-blur-md"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md transition-all duration-200"
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="inspect-dossier-title"
@@ -1232,7 +1250,7 @@ export default function StudentLeaders({
                         if (e.target === e.currentTarget) setInspectStudent(null);
                     }}
                 >
-                    <div className="w-full max-w-2xl max-h-[calc(100vh-6rem)] sm:max-h-[calc(100vh-8rem)] overflow-y-auto rounded-3xl border border-white/15 bg-[#101012] p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+                    <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/15 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
                         <div className="flex items-center justify-between border-b border-white/10 pb-4">
                             <div className="flex items-center gap-3">
                                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-amber-400/30 bg-amber-400/10 text-amber-400">
@@ -1365,7 +1383,8 @@ export default function StudentLeaders({
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </AdminLayout>
     );

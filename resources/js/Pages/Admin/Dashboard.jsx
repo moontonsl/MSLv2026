@@ -1,15 +1,10 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { Head, Link, router } from '@inertiajs/react';
+import React, { useEffect, useState } from 'react';
+import { Head, Link } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import Toast from './components/Toast';
-import ConfirmModal from './components/ConfirmModal';
 import { 
-    Users, Newspaper, CalendarDays, Trophy, Activity, Eye, Clock, 
-    ArrowUpRight, TrendingUp, BarChart3, Globe, MousePointerClick, 
-    Layers, RefreshCw, CheckCircle2, ChevronRight, Search, Filter,
-    ShieldCheck, X, FileText, ExternalLink, Gamepad2, Landmark, 
-    User, Mail, Phone, Calendar, Facebook, MapPin, Award, Swords,
-    Compass, Crown, UserX, Ban, ArrowUpCircle
+    Users, Newspaper, CalendarDays, Trophy, Activity,
+    TrendingUp, BarChart3, MousePointerClick, 
+    RefreshCw, ChevronRight
 } from 'lucide-react';
 
 export default function AdminDashboard({ 
@@ -20,6 +15,7 @@ export default function AdminDashboard({
     upcomingEvents = 0, 
     tournaments = 0, 
     analytics = {}, 
+    totalStudents = 0,
     students = [], 
     filters = {} 
 }) {
@@ -35,18 +31,6 @@ export default function AdminDashboard({
     const [showAllPages, setShowAllPages] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [hoveredBarIndex, setHoveredBarIndex] = useState(null);
-
-    // Student quick queue & drawer modal state
-    const [selectedStudent, setSelectedStudent] = useState(null);
-    const [searchQuery, setSearchQuery] = useState(filters.search || "");
-    const [divisionFilter, setDivisionFilter] = useState(filters.division || "");
-    const [studentQueueTab, setStudentQueueTab] = useState("pending");
-    const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, onConfirm: null, title: "", message: "" });
-    const [toast, setToast] = useState({ show: false, message: "", type: "success" });
-
-    const showToast = (message, type = "success") => {
-        setToast({ show: true, message, type });
-    };
 
     // Polling real-time analytics every 30 seconds (matching MSL-1)
     const fetchRealTimeData = async () => {
@@ -85,7 +69,7 @@ export default function AdminDashboard({
         {
             title: 'Active Students',
             value: (activeUsers ?? 0).toLocaleString(),
-            subtext: `${(students?.length || 0).toLocaleString()} total registered students`,
+            subtext: `${(totalStudents || students?.length || 0).toLocaleString()} total registered students`,
             icon: Users,
             accent: 'from-amber-500/20 to-amber-600/5',
             badgeBg: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
@@ -139,86 +123,9 @@ export default function AdminDashboard({
     const maxViews = Math.max(...pageViewsArray, 1);
     const growth = analytics?.pageViews?.growth ?? 0;
 
-    // Student counts for queue summary
-    const studentQueueCounts = useMemo(() => {
-        return {
-            pending: students.filter(s => s.status === 'pending-review' || s.status === 'pending').length,
-            active: students.filter(s => s.status === 'active').length,
-            renewal: students.filter(s => s.status === 'renewal-required' || s.renewal_requested_at).length,
-            blocked: students.filter(s => s.status === 'blocked').length,
-        };
-    }, [students]);
-
-    // Filtered students for quick review list
-    const filteredStudents = useMemo(() => {
-        return students.filter(student => {
-            let matchesTab = true;
-            if (studentQueueTab === "pending") {
-                matchesTab = student.status === "pending-review" || student.status === "pending";
-            } else if (studentQueueTab === "active") {
-                matchesTab = student.status === "active";
-            } else if (studentQueueTab === "renewal") {
-                matchesTab = student.status === "renewal-required" || Boolean(student.renewal_requested_at);
-            } else if (studentQueueTab === "blocked") {
-                matchesTab = student.status === "blocked";
-            }
-
-            const query = searchQuery.toLowerCase().trim();
-            const matchesSearch = !query || 
-                student.name?.toLowerCase().includes(query) ||
-                student.username?.toLowerCase().includes(query) ||
-                student.ml_ign?.toLowerCase().includes(query) ||
-                String(student.ml_id || "").includes(query) ||
-                student.email?.toLowerCase().includes(query);
-
-            const matchesDivision = !divisionFilter || student.division === divisionFilter;
-
-            return matchesTab && matchesSearch && matchesDivision;
-        });
-    }, [students, studentQueueTab, searchQuery, divisionFilter]);
-
-    // Student action handlers
-    const handleApprove = (studentId) => {
-        setConfirmDialog({
-            isOpen: true,
-            title: "Approve Student Account",
-            message: "Are you sure you want to approve this student's registration? This will mark their profile status as active.",
-            onConfirm: () => {
-                setConfirmDialog(prev => ({ ...prev, isOpen: false }));
-                router.post(route('admin.users.approve', studentId), {}, {
-                    onSuccess: () => {
-                        setSelectedStudent(null);
-                        showToast("Account approved successfully.");
-                    },
-                    onError: () => showToast("Approval failed. Please check permissions.", "error")
-                });
-            }
-        });
-    };
-
     return (
         <AdminLayout activeNavId="dashboard">
             <Head title="Admin Command Center | MSL Philippines" />
-
-            {/* Custom Confirm Modal & Toast */}
-            <ConfirmModal
-                isOpen={confirmDialog.isOpen}
-                title={confirmDialog.title}
-                message={confirmDialog.message}
-                confirmLabel="Confirm Action"
-                cancelLabel="Cancel"
-                isDangerous={false}
-                onConfirm={confirmDialog.onConfirm}
-                onCancel={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
-            />
-
-            {toast.show && (
-                <Toast
-                    message={toast.message}
-                    type={toast.type}
-                    onClose={() => setToast({ show: false, message: "", type: "success" })}
-                />
-            )}
 
             <div className="space-y-8 pb-12">
                 {/* 1. Header & Real-Time Telemetry Bar */}
@@ -237,7 +144,7 @@ export default function AdminDashboard({
                             Command <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-brand-400 to-amber-200">Center</span>
                         </h1>
                         <p className="mt-1 text-xs sm:text-sm text-zinc-400 max-w-xl">
-                            High-frequency website telemetry, student verification queue, and real-time tournament operations.
+                            High-frequency website telemetry, user engagement metrics, and real-time operations.
                         </p>
                     </div>
 
@@ -549,316 +456,8 @@ export default function AdminDashboard({
                     </div>
                 </div>
 
-                {/* 4. Student Registrations Queue & Operational Hub (Taste Skill High-Density Console) */}
-                <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-[#0e0e14]/90 to-[#070709]/90 p-6 backdrop-blur-xl shadow-2xl">
-                    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/20 to-transparent pointer-events-none" />
-
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5 mb-6">
-                        <div>
-                            <div className="flex items-center gap-2.5">
-                                <div className="p-2 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400">
-                                    <ShieldCheck className="h-4 w-4" />
-                                </div>
-                                <h2 className="text-base font-bold text-white tracking-tight uppercase">
-                                    Student Registration Operations
-                                </h2>
-                            </div>
-                            <p className="text-xs text-zinc-400 mt-1">
-                                Real database verification queue and latest campus applicants ({students.length} total registered).
-                            </p>
-                        </div>
-
-                        {/* Link to full pending queue page */}
-                        <Link
-                            href="/admin/users/pending"
-                            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-amber-400 text-black text-xs font-bold hover:bg-amber-300 transition-all shadow-[0_0_15px_rgba(251,191,36,0.2)] active:scale-95"
-                        >
-                            <span>Open Dedicated Queue</span>
-                            <ArrowUpRight className="h-3.5 w-3.5 stroke-[2.5]" />
-                        </Link>
-                    </div>
-
-                    {/* Operational Queue Metric Pills */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-                        <button
-                            onClick={() => setStudentQueueTab("pending")}
-                            className={`p-4 rounded-xl border text-left transition-all cursor-pointer relative overflow-hidden ${
-                                studentQueueTab === "pending"
-                                    ? "bg-amber-500/15 border-amber-400/50 text-amber-400 shadow-[0_0_20px_rgba(242,194,26,0.15)] ring-1 ring-amber-400/30"
-                                    : "bg-black/40 border-white/5 text-zinc-400 hover:border-white/15 hover:bg-white/[0.02]"
-                            }`}
-                        >
-                            <span className="text-[11px] font-mono font-bold uppercase tracking-wider block mb-1">Pending Review</span>
-                            <span className="text-2xl font-black text-white font-display">
-                                {studentQueueCounts.pending}
-                            </span>
-                        </button>
-
-                        <button
-                            onClick={() => setStudentQueueTab("active")}
-                            className={`p-4 rounded-xl border text-left transition-all cursor-pointer relative overflow-hidden ${
-                                studentQueueTab === "active"
-                                    ? "bg-emerald-500/15 border-emerald-400/50 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.15)] ring-1 ring-emerald-400/30"
-                                    : "bg-black/40 border-white/5 text-zinc-400 hover:border-white/15 hover:bg-white/[0.02]"
-                            }`}
-                        >
-                            <span className="text-[11px] font-mono font-bold uppercase tracking-wider block mb-1">Active / Verified</span>
-                            <span className="text-2xl font-black text-white font-display">
-                                {studentQueueCounts.active}
-                            </span>
-                        </button>
-
-                        <button
-                            onClick={() => setStudentQueueTab("renewal")}
-                            className={`p-4 rounded-xl border text-left transition-all cursor-pointer relative overflow-hidden ${
-                                studentQueueTab === "renewal"
-                                    ? "bg-blue-500/15 border-blue-400/50 text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.15)] ring-1 ring-blue-400/30"
-                                    : "bg-black/40 border-white/5 text-zinc-400 hover:border-white/15 hover:bg-white/[0.02]"
-                            }`}
-                        >
-                            <span className="text-[11px] font-mono font-bold uppercase tracking-wider block mb-1">Account Renewal</span>
-                            <span className="text-2xl font-black text-white font-display">
-                                {studentQueueCounts.renewal}
-                            </span>
-                        </button>
-
-                        <button
-                            onClick={() => setStudentQueueTab("blocked")}
-                            className={`p-4 rounded-xl border text-left transition-all cursor-pointer relative overflow-hidden ${
-                                studentQueueTab === "blocked"
-                                    ? "bg-rose-500/15 border-rose-400/50 text-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.15)] ring-1 ring-rose-400/30"
-                                    : "bg-black/40 border-white/5 text-zinc-400 hover:border-white/15 hover:bg-white/[0.02]"
-                            }`}
-                        >
-                            <span className="text-[11px] font-mono font-bold uppercase tracking-wider block mb-1">Blocked Accounts</span>
-                            <span className="text-2xl font-black text-white font-display">
-                                {studentQueueCounts.blocked}
-                            </span>
-                        </button>
-                    </div>
-
-                    {/* Filter and Quick Table */}
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-5">
-                        <div className="relative flex-1">
-                            <Search className="h-4 w-4 text-zinc-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                            <input
-                                type="text"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Search by student name, IGN, MLBB ID..."
-                                className="w-full bg-black/40 border border-white/10 rounded-xl pl-10 pr-9 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/30 transition-all"
-                            />
-                            {searchQuery && (
-                                <button
-                                    onClick={() => setSearchQuery("")}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white"
-                                >
-                                    <X className="h-3.5 w-3.5" />
-                                </button>
-                            )}
-                        </div>
-
-                        <select
-                            value={divisionFilter}
-                            onChange={(e) => setDivisionFilter(e.target.value)}
-                            aria-label="Filter by division"
-                            className="bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-xs font-semibold text-zinc-300 focus:outline-none focus:border-amber-400/50"
-                        >
-                            <option value="">All Divisions</option>
-                            <option value="College">College</option>
-                            <option value="High School">High School</option>
-                        </select>
-                    </div>
-
-                    {/* Registrations Mini Table */}
-                    <div className="overflow-hidden rounded-xl border border-white/10 bg-black/40">
-                        <table className="w-full text-left text-xs border-collapse">
-                            <thead className="bg-white/[0.02] text-zinc-400 uppercase text-[10px] font-mono tracking-wider border-b border-white/10">
-                                <tr>
-                                    <th className="py-3.5 px-4 font-bold">Student & MLBB Identity</th>
-                                    <th className="py-3.5 px-4 font-bold">Campus & Division</th>
-                                    <th className="py-3.5 px-4 font-bold">Region Hub</th>
-                                    <th className="py-3.5 px-4 font-bold">Status</th>
-                                    <th className="py-3.5 px-4 text-right font-bold">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-white/5">
-                                {filteredStudents.length === 0 ? (
-                                    <tr>
-                                        <td colSpan={5} className="py-10 text-center text-zinc-500 text-xs font-mono">
-                                            No student records found matching the active filter.
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    filteredStudents.slice(0, 5).map((student) => (
-                                        <tr key={student.id} className="hover:bg-white/[0.03] transition-colors group">
-                                            <td className="py-3.5 px-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-200 flex items-center justify-center font-black text-black text-xs shrink-0 shadow-[0_0_12px_rgba(251,191,36,0.3)]">
-                                                        {student.name?.charAt(0)?.toUpperCase() || 'S'}
-                                                    </div>
-                                                    <div>
-                                                        <span className="font-bold text-white block group-hover:text-amber-400 transition-colors">
-                                                            {student.name}
-                                                        </span>
-                                                        <div className="flex items-center gap-1.5 text-[11px] text-zinc-400 font-mono mt-0.5">
-                                                            <Gamepad2 className="h-3 w-3 text-amber-400" />
-                                                            <span className="text-amber-300 font-semibold">{student.ml_ign || 'No IGN'}</span>
-                                                            <span className="text-zinc-500">[{student.ml_id || 'ID N/A'}]</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="py-3.5 px-4">
-                                                <span className="font-medium text-zinc-200 block">{student.university || 'N/A'}</span>
-                                                <span className="text-[10px] font-mono text-zinc-500 uppercase">{student.division || 'College'} • {student.year_level || 'N/A'}</span>
-                                            </td>
-                                            <td className="py-3.5 px-4">
-                                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/5 text-[10px] font-mono text-zinc-300 border border-white/5">
-                                                    <MapPin className="h-2.5 w-2.5 text-amber-400" />
-                                                    {student.region || 'NCR'}
-                                                </span>
-                                            </td>
-                                            <td className="py-3.5 px-4">
-                                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                                                    student.status === 'active' 
-                                                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                                                        : student.status === 'blocked'
-                                                        ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                                                        : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                                                }`}>
-                                                    <span className={`h-1.5 w-1.5 rounded-full ${
-                                                        student.status === 'active' ? 'bg-emerald-400' : student.status === 'blocked' ? 'bg-rose-400' : 'bg-amber-400'
-                                                    }`}></span>
-                                                    {student.status || 'Pending'}
-                                                </span>
-                                            </td>
-                                            <td className="py-3.5 px-4 text-right">
-                                                <div className="flex items-center justify-end gap-2">
-                                                    {(student.status === 'pending-review' || student.status === 'pending') && (
-                                                        <button
-                                                            onClick={() => handleApprove(student.id)}
-                                                            className="px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 text-[11px] font-bold transition-colors cursor-pointer border border-emerald-500/30"
-                                                        >
-                                                            Approve
-                                                        </button>
-                                                    )}
-                                                    <button
-                                                        onClick={() => setSelectedStudent(student)}
-                                                        className="px-3 py-1.5 rounded-lg bg-white/5 text-zinc-300 hover:bg-white/10 text-[11px] font-semibold transition-colors cursor-pointer border border-white/10 hover:text-white"
-                                                    >
-                                                        Details
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {filteredStudents.length > 5 && (
-                        <div className="mt-3 flex items-center justify-between text-xs text-zinc-400">
-                            <span>Showing top 5 of {filteredStudents.length} records in this view.</span>
-                            <Link href="/admin/users/pending" className="text-brand-400 hover:underline font-semibold flex items-center gap-1">
-                                <span>View all {filteredStudents.length} records</span>
-                                <ChevronRight className="h-3 w-3" />
-                            </Link>
-                        </div>
-                    )}
-                </div>
             </div>
-
-            {/* Quick Student Detail Modal if clicked */}
-            {selectedStudent && (
-                <div
-                    className="fixed inset-0 z-50 overflow-y-auto flex items-start justify-center p-4 pt-14 sm:pt-20 pb-10 bg-black/80 backdrop-blur-sm animate-fadeIn"
-                    onMouseDown={(e) => {
-                        if (e.target === e.currentTarget) setSelectedStudent(null);
-                    }}
-                >
-                    <div className="relative w-full max-w-lg max-h-[calc(100vh-6rem)] sm:max-h-[calc(100vh-8rem)] overflow-y-auto rounded-2xl border border-white/10 bg-[#0e0e13] p-6 shadow-2xl">
-                        <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
-                            <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold">
-                                    {selectedStudent.name?.charAt(0)}
-                                </div>
-                                <div>
-                                    <h3 className="font-bold text-white text-base">{selectedStudent.name}</h3>
-                                    <span className="text-xs text-zinc-400">{selectedStudent.email}</span>
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => setSelectedStudent(null)}
-                                className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10"
-                            >
-                                <X className="h-5 w-5" />
-                            </button>
-                        </div>
-
-                        <div className="space-y-3 text-xs">
-                            <div className="grid grid-cols-2 gap-2 bg-[#14141c] p-3 rounded-xl border border-white/5">
-                                <div>
-                                    <span className="text-zinc-500 block">MLBB IGN:</span>
-                                    <span className="font-semibold text-white">{selectedStudent.ml_ign || 'N/A'}</span>
-                                </div>
-                                <div>
-                                    <span className="text-zinc-500 block">MLBB ID & Zone:</span>
-                                    <span className="font-semibold text-white font-mono">
-                                        {selectedStudent.ml_id} ({selectedStudent.ml_server || 'Zone'})
-                                    </span>
-                                </div>
-                                <div className="mt-2">
-                                    <span className="text-zinc-500 block">School / University:</span>
-                                    <span className="font-semibold text-white">{selectedStudent.university || 'N/A'}</span>
-                                </div>
-                                <div className="mt-2">
-                                    <span className="text-zinc-500 block">Division & Course:</span>
-                                    <span className="font-semibold text-white">{selectedStudent.division} • {selectedStudent.course || 'N/A'}</span>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center justify-between bg-[#14141c] p-3 rounded-xl border border-white/5">
-                                <span className="text-zinc-400">Current Account Status:</span>
-                                <span className="font-bold uppercase tracking-wider text-amber-400">
-                                    {selectedStudent.status}
-                                </span>
-                            </div>
-
-                            {selectedStudent.proofOfEnrollment && (
-                                <a
-                                    href={`/storage/${selectedStudent.proofOfEnrollment}`}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="flex items-center justify-center gap-2 w-full py-2 rounded-xl bg-white/5 border border-white/10 text-zinc-300 hover:bg-white/10 font-semibold"
-                                >
-                                    <FileText className="h-4 w-4" />
-                                    <span>View Proof of Enrollment</span>
-                                    <ExternalLink className="h-3 w-3" />
-                                </a>
-                            )}
-                        </div>
-
-                        <div className="mt-6 flex items-center justify-end gap-3 border-t border-white/10 pt-4">
-                            <button
-                                onClick={() => setSelectedStudent(null)}
-                                className="px-4 py-2 rounded-xl border border-white/10 text-xs font-semibold text-zinc-400 hover:text-white"
-                            >
-                                Close
-                            </button>
-                            {(selectedStudent.status === 'pending-review' || selectedStudent.status === 'pending') && (
-                                <button
-                                    onClick={() => handleApprove(selectedStudent.id)}
-                                    className="px-4 py-2 rounded-xl bg-emerald-500 text-black text-xs font-bold hover:bg-emerald-400"
-                                >
-                                    Approve Registration
-                                </button>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            )}
         </AdminLayout>
     );
 }
+

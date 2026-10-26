@@ -7,7 +7,7 @@ import {
     X, AlertTriangle, ArrowUpDown, Filter, BookOpen, ArrowRight,
     ExternalLink, Gamepad2, ShieldCheck
 } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 
 const ACCENT = '#FBBF24';
 
@@ -38,11 +38,15 @@ export default function Schools({
 
     // Form data for create / edit
     const [formData, setFormData] = useState({
+        type: 'college',
         name: '',
         acronym: '',
         region: 'NCR',
         island: 'Luzon',
         status: 'active',
+        division: '',
+        municipality: '',
+        sector: 'public',
     });
 
     const schoolItems = schools?.data ?? [];
@@ -80,6 +84,17 @@ export default function Schools({
     const isActiveCampusesActive = currentTab === 'colleges' && selectedStatus === 'active';
     const isShsActive = currentTab === 'shs';
     const isLeadersActive = hasLeadersFilter || isLeadersModalOpen;
+
+    useEffect(() => {
+        if (isCreateModalOpen || editingSchool || isLeadersModalOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isCreateModalOpen, editingSchool, isLeadersModalOpen]);
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
@@ -159,11 +174,15 @@ export default function Schools({
 
     const openCreateModal = () => {
         setFormData({
+            type: currentTab === 'shs' ? 'shs' : 'college',
             name: '',
             acronym: '',
             region: regions[0] || 'NCR',
             island: 'Luzon',
             status: 'active',
+            division: '',
+            municipality: '',
+            sector: 'public',
         });
         setIsCreateModalOpen(true);
     };
@@ -733,22 +752,36 @@ export default function Schools({
             {/* CREATE INSTITUTION MODAL */}
             {isCreateModalOpen && typeof document !== 'undefined' && createPortal(
                 <div
-                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md"
+                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4 backdrop-blur-md transition-all duration-200"
                     role="dialog"
                     aria-modal="true"
                     onClick={(e) => {
                         if (e.target === e.currentTarget) setIsCreateModalOpen(false);
                     }}
                 >
-                    <div className="w-full max-w-lg rounded-2xl border border-emerald-500/30 bg-[#141416] p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+                    <div className={`w-full max-w-lg rounded-2xl border ${formData.type === 'shs' ? 'border-amber-500/30' : 'border-emerald-500/30'} bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150`}>
                         <div className="flex items-center justify-between border-b border-white/10 pb-4">
                             <div className="flex items-center gap-2.5">
-                                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                                    <Plus className="h-5 w-5" />
+                                <div className={`flex h-9 w-9 items-center justify-center rounded-xl border ${
+                                    formData.type === 'shs'
+                                        ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                                        : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                }`}>
+                                    {formData.type === 'shs' ? (
+                                        <BookOpen className="h-5 w-5" />
+                                    ) : (
+                                        <GraduationCap className="h-5 w-5" />
+                                    )}
                                 </div>
                                 <div>
-                                    <h3 className="text-base font-black text-white">Add Higher Ed Institution</h3>
-                                    <p className="text-xs text-gray-400">Register a new CHED accredited college or university</p>
+                                    <h3 className="text-base font-black text-white">
+                                        {formData.type === 'shs' ? 'Add Senior High School' : 'Add Higher Ed Institution'}
+                                    </h3>
+                                    <p className="text-xs text-gray-400">
+                                        {formData.type === 'shs'
+                                            ? 'Register a new DepEd Basic Education senior high school'
+                                            : 'Register a new CHED accredited college or university'}
+                                    </p>
                                 </div>
                             </div>
                             <button
@@ -761,80 +794,185 @@ export default function Schools({
                         </div>
 
                         <form onSubmit={handleCreateSubmit} className="mt-5 space-y-4">
+                            {/* Segmented Category Selection */}
                             <div>
                                 <label className="block text-xs font-semibold text-gray-300 mb-1.5">
-                                    Institution Name *
+                                    Institution Level / Category *
+                                </label>
+                                <div className="grid grid-cols-2 gap-2 rounded-xl bg-black/60 p-1 border border-white/10">
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData(prev => ({ ...prev, type: 'college' }))}
+                                        className={`flex items-center justify-center gap-2 rounded-lg py-2 px-3 text-xs font-bold transition-all ${
+                                            formData.type === 'college'
+                                                ? 'bg-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+                                                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                        }`}
+                                    >
+                                        <GraduationCap className="h-4 w-4" />
+                                        <span>College / University</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData(prev => ({ ...prev, type: 'shs' }))}
+                                        className={`flex items-center justify-center gap-2 rounded-lg py-2 px-3 text-xs font-bold transition-all ${
+                                            formData.type === 'shs'
+                                                ? 'bg-amber-400 text-black shadow-[0_0_15px_rgba(251,191,36,0.3)]'
+                                                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                        }`}
+                                    >
+                                        <BookOpen className="h-4 w-4" />
+                                        <span>Senior High School</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Common Name Field */}
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-300 mb-1.5">
+                                    {formData.type === 'shs' ? 'School Name *' : 'Institution Name *'}
                                 </label>
                                 <input
                                     type="text"
                                     required
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    placeholder="e.g. University of the Philippines Diliman"
-                                    className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white placeholder:text-gray-500 focus:border-emerald-400 focus:outline-none"
+                                    placeholder={
+                                        formData.type === 'shs'
+                                            ? 'e.g. Ramon Magsaysay High School - Manila'
+                                            : 'e.g. University of the Philippines Diliman'
+                                    }
+                                    className={`w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white placeholder:text-gray-500 focus:outline-none ${
+                                        formData.type === 'shs' ? 'focus:border-amber-400' : 'focus:border-emerald-400'
+                                    }`}
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-300 mb-1.5">
-                                        Acronym
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={formData.acronym}
-                                        onChange={(e) => setFormData({ ...formData, acronym: e.target.value })}
-                                        placeholder="e.g. UPD"
-                                        className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white placeholder:text-gray-500 focus:border-emerald-400 focus:outline-none"
-                                    />
-                                </div>
+                            {formData.type === 'college' ? (
+                                <>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-300 mb-1.5">
+                                                Acronym
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={formData.acronym}
+                                                onChange={(e) => setFormData({ ...formData, acronym: e.target.value })}
+                                                placeholder="e.g. UPD"
+                                                className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white placeholder:text-gray-500 focus:border-emerald-400 focus:outline-none"
+                                            />
+                                        </div>
 
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-300 mb-1.5">
-                                        Island Group *
-                                    </label>
-                                    <select
-                                        value={formData.island}
-                                        onChange={(e) => setFormData({ ...formData, island: e.target.value })}
-                                        className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs font-semibold text-white focus:border-emerald-400 focus:outline-none"
-                                    >
-                                        {islands.map((isl) => (
-                                            <option key={isl} value={isl}>{isl}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-300 mb-1.5">
+                                                Island Group *
+                                            </label>
+                                            <select
+                                                value={formData.island}
+                                                onChange={(e) => setFormData({ ...formData, island: e.target.value })}
+                                                className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs font-semibold text-white focus:border-emerald-400 focus:outline-none"
+                                            >
+                                                {islands.map((isl) => (
+                                                    <option key={isl} value={isl}>{isl}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
 
-                            <div className="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-300 mb-1.5">
-                                        Region *
-                                    </label>
-                                    <select
-                                        value={formData.region}
-                                        onChange={(e) => setFormData({ ...formData, region: e.target.value })}
-                                        className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs font-semibold text-white focus:border-emerald-400 focus:outline-none"
-                                    >
-                                        {regions.map((reg) => (
-                                            <option key={reg} value={reg}>{reg}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-300 mb-1.5">
+                                                Region *
+                                            </label>
+                                            <select
+                                                value={formData.region}
+                                                onChange={(e) => setFormData({ ...formData, region: e.target.value })}
+                                                className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs font-semibold text-white focus:border-emerald-400 focus:outline-none"
+                                            >
+                                                {regions.map((reg) => (
+                                                    <option key={reg} value={reg}>{reg}</option>
+                                                ))}
+                                            </select>
+                                        </div>
 
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-300 mb-1.5">
-                                        Status *
-                                    </label>
-                                    <select
-                                        value={formData.status}
-                                        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                                        className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs font-semibold text-white focus:border-emerald-400 focus:outline-none"
-                                    >
-                                        <option value="active">Active Hub</option>
-                                        <option value="inactive">Inactive</option>
-                                    </select>
-                                </div>
-                            </div>
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-300 mb-1.5">
+                                                Status *
+                                            </label>
+                                            <select
+                                                value={formData.status}
+                                                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                                                className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs font-semibold text-white focus:border-emerald-400 focus:outline-none"
+                                            >
+                                                <option value="active">Active Hub</option>
+                                                <option value="inactive">Inactive</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-300 mb-1.5">
+                                                Region *
+                                            </label>
+                                            <select
+                                                value={formData.region}
+                                                onChange={(e) => setFormData({ ...formData, region: e.target.value })}
+                                                className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs font-semibold text-white focus:border-amber-400 focus:outline-none"
+                                            >
+                                                {regions.map((reg) => (
+                                                    <option key={reg} value={reg}>{reg}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-300 mb-1.5">
+                                                Sector *
+                                            </label>
+                                            <select
+                                                value={formData.sector}
+                                                onChange={(e) => setFormData({ ...formData, sector: e.target.value })}
+                                                className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs font-semibold text-white focus:border-amber-400 focus:outline-none"
+                                            >
+                                                <option value="public">Public (DepEd / State)</option>
+                                                <option value="private">Private</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-300 mb-1.5">
+                                                Schools Division (SDO)
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={formData.division}
+                                                onChange={(e) => setFormData({ ...formData, division: e.target.value })}
+                                                placeholder="e.g. SDO Manila"
+                                                className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white placeholder:text-gray-500 focus:border-amber-400 focus:outline-none"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-xs font-semibold text-gray-300 mb-1.5">
+                                                Municipality / City
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={formData.municipality}
+                                                onChange={(e) => setFormData({ ...formData, municipality: e.target.value })}
+                                                placeholder="e.g. Manila City"
+                                                className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white placeholder:text-gray-500 focus:border-amber-400 focus:outline-none"
+                                            />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
 
                             <div className="mt-6 flex items-center justify-end gap-3 border-t border-white/10 pt-4">
                                 <button
@@ -847,7 +985,11 @@ export default function Schools({
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500 px-5 py-2.5 text-xs font-bold text-white hover:bg-emerald-400 disabled:opacity-50 transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+                                    className={`inline-flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-xs font-bold transition-all disabled:opacity-50 ${
+                                        formData.type === 'shs'
+                                            ? 'bg-amber-400 text-black hover:bg-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.3)]'
+                                            : 'bg-emerald-500 text-white hover:bg-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+                                    }`}
                                 >
                                     {isSubmitting ? (
                                         <>
@@ -857,7 +999,9 @@ export default function Schools({
                                     ) : (
                                         <>
                                             <Check className="h-4 w-4" />
-                                            <span>Save Institution</span>
+                                            <span>
+                                                {formData.type === 'shs' ? 'Save Senior High School' : 'Save Institution'}
+                                            </span>
                                         </>
                                     )}
                                 </button>
@@ -871,14 +1015,14 @@ export default function Schools({
             {/* EDIT INSTITUTION MODAL */}
             {editingSchool && typeof document !== 'undefined' && createPortal(
                 <div
-                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md"
+                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4 backdrop-blur-md transition-all duration-200"
                     role="dialog"
                     aria-modal="true"
                     onClick={(e) => {
                         if (e.target === e.currentTarget) setEditingSchool(null);
                     }}
                 >
-                    <div className="w-full max-w-lg rounded-2xl border border-amber-400/30 bg-[#141416] p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+                    <div className="w-full max-w-lg rounded-2xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
                         <div className="flex items-center justify-between border-b border-white/10 pb-4">
                             <div className="flex items-center gap-2.5">
                                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20">
@@ -1007,14 +1151,14 @@ export default function Schools({
             {/* REGISTERED STUDENT LEADERS JUSTIFICATION MODAL */}
             {isLeadersModalOpen && typeof document !== 'undefined' && createPortal(
                 <div
-                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 p-4 sm:p-6 backdrop-blur-md animate-in fade-in duration-200"
+                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4 sm:p-6 backdrop-blur-md transition-all duration-200 animate-in fade-in duration-200"
                     role="dialog"
                     aria-modal="true"
                     onClick={(e) => {
                         if (e.target === e.currentTarget) setIsLeadersModalOpen(false);
                     }}
                 >
-                    <div className="w-full max-w-3xl max-h-[85vh] flex flex-col rounded-3xl border border-purple-500/30 bg-[#0e0e14] shadow-2xl shadow-purple-950/40 overflow-hidden my-auto">
+                    <div className="w-full max-w-3xl max-h-[85vh] flex flex-col rounded-3xl border border-purple-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl shadow-[0_20px_70px_rgba(0,0,0,0.6)] overflow-hidden my-auto">
                         {/* Header */}
                         <div className="p-6 border-b border-white/10 bg-gradient-to-b from-purple-500/[0.08] to-transparent flex items-start justify-between">
                             <div className="flex items-center gap-3">
