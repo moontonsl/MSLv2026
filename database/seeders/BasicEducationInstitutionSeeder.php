@@ -10,7 +10,7 @@ use ZipArchive;
 
 class BasicEducationInstitutionSeeder extends Seeder
 {
-    private const SOURCE = 'docs/files/List of Basic Education Schools.xlsx';
+    private const SOURCE = 'database/data/List of Basic Education Schools.xlsx';
 
     private const COLUMNS = [
         'region',
@@ -32,6 +32,12 @@ class BasicEducationInstitutionSeeder extends Seeder
     public function run(): void
     {
         $path = base_path(self::SOURCE);
+        if (! is_file($path)) {
+            $fallback = base_path('docs/files/List of Basic Education Schools.xlsx');
+            if (is_file($fallback)) {
+                $path = $fallback;
+            }
+        }
         $zip = new ZipArchive;
 
         if (! is_file($path) || $zip->open($path) !== true) {
