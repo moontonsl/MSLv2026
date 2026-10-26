@@ -285,6 +285,62 @@ class CampusTournamentFrontendWiringTest extends TestCase
                 ->where('team.players.0.status', 'pending')
                 ->where('team.canManageRoster', true)
                 ->where('team.availableLaneRoles', ['gold_laner', 'exp_laner', 'mid_laner'])
+                ->where('team.status', 'pending')
+            );
+    }
+
+    public function test_captain_team_page_flags_declined_and_withdrawn_lanes_as_incomplete(): void
+    {
+        $tournament = $this->createApprovedTournament();
+        $team = TournamentTeam::query()->create([
+            'tournament_id' => $tournament->id,
+            'name' => 'Premade Beta',
+            'active_name' => 'Premade Beta',
+            'formation_method' => TeamFormationMethod::Premade,
+            'status' => TeamStatus::Assembling,
+            'captain_user_id' => $this->student->id,
+        ]);
+        TournamentParticipant::query()->create([
+            'tournament_id' => $tournament->id,
+            'team_id' => $team->id,
+            'user_id' => $this->student->id,
+            'entry_method' => TeamFormationMethod::Premade,
+            'roster_role' => 'captain',
+            'assigned_lane_role_code' => 'jungler',
+            'status' => ParticipantStatus::Active,
+            'registered_at' => now(),
+            'accepted_at' => now(),
+        ]);
+        $decliner = User::factory()->create(['status' => 'active']);
+        TournamentTeamInvitation::query()->create([
+            'team_id' => $team->id,
+            'invited_user_id' => $decliner->id,
+            'invited_by_user_id' => $this->student->id,
+            'intended_lane_role_code' => 'roam',
+            'status' => InvitationStatus::Declined,
+            'expires_at' => now()->addDay(),
+        ]);
+        $leaver = User::factory()->create(['status' => 'active']);
+        TournamentParticipant::query()->create([
+            'tournament_id' => $tournament->id,
+            'team_id' => $team->id,
+            'user_id' => $leaver->id,
+            'entry_method' => TeamFormationMethod::Premade,
+            'roster_role' => 'member',
+            'assigned_lane_role_code' => 'mid_laner',
+            'status' => ParticipantStatus::Withdrawn,
+            'registered_at' => now(),
+            'withdrawn_at' => now(),
+        ]);
+
+        $this->actingAs($this->student)
+            ->get(route('campus.team'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('team.status', 'incomplete')
+                ->has('team.players', 2)
+                ->where('team.players', fn ($players) => collect($players)->pluck('status')->sort()->values()->all() === ['declined', 'withdrawn'])
+                ->where('team.availableLaneRoles', ['roam', 'gold_laner', 'exp_laner', 'mid_laner'])
             );
     }
 

@@ -175,6 +175,9 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('campus.tournament.page:player')
         ->name('campus.member.invite');
 
+    Route::get('/Tournament/MemberTeam', [TournamentRegistrationController::class, 'showMemberTeam'])
+        ->name('campus.member.team');
+
     Route::get('/Tournament/MemberJoin', [TournamentRegistrationController::class, 'showMemberJoin'])
         ->middleware('campus.tournament.page:player')
         ->name('campus.member.join');

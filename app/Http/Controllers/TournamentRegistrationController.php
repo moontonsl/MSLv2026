@@ -71,11 +71,16 @@ class TournamentRegistrationController extends Controller
         $team = TournamentTeam::query()
             ->where('captain_user_id', $request->user()->id)
             ->where('formation_method', TeamFormationMethod::Premade)
-            ->whereIn('status', [TeamStatus::Assembling, TeamStatus::Registered])
+            ->where(fn ($query) => $query
+                ->whereIn('status', [TeamStatus::Assembling, TeamStatus::Registered])
+                ->orWhere(fn ($query) => $query
+                    ->where('status', TeamStatus::NotQualified)
+                    ->whereHas('tournament', fn ($query) => $query
+                        ->where(fn ($query) => $query->whereNull('ends_at')->orWhere('ends_at', '>', now())))))
             ->whereHas('tournament', fn ($query) => $query
                 ->where('approval_status', CampusTournamentApprovalStatus::Approved)
                 ->whereNull('cancelled_at'))
-            ->with(['tournament.campus.institution', 'captain', 'activeParticipants.user', 'invitations.invitedUser'])
+            ->with(['tournament.campus.institution', 'captain', 'participants.user', 'invitations.invitedUser'])
             ->latest('id')
             ->first();
 
@@ -94,7 +99,8 @@ class TournamentRegistrationController extends Controller
                 'expiresAt' => $invitation->expires_at?->toIso8601String(),
             ])->values();
 
-        $participants = $team->activeParticipants
+        $participants = $team->participants
+            ->where('status', ParticipantStatus::Active)
             ->sortByDesc(fn (TournamentParticipant $participant) => $participant->user_id === $team->captain_user_id)
             ->map(fn (TournamentParticipant $participant) => [
                 ...$this->player($participant->user),
@@ -104,17 +110,52 @@ class TournamentRegistrationController extends Controller
 
         $occupiedRoles = $participants->pluck('role')->merge($pendingInvitations->pluck('role'))->filter()->all();
 
+        // Lanes vacated by a decline or a withdrawal stay visible until the captain refills them.
+        $declined = $team->invitations
+            ->where('status', InvitationStatus::Declined)
+            ->map(fn (TournamentTeamInvitation $invitation) => [
+                ...$this->player($invitation->invitedUser),
+                'role' => $invitation->intended_lane_role_code,
+                'status' => 'declined',
+                'at' => $invitation->updated_at,
+            ]);
+        $withdrawn = $team->participants
+            ->where('status', ParticipantStatus::Withdrawn)
+            ->where('user_id', '!=', $team->captain_user_id)
+            ->map(fn (TournamentParticipant $participant) => [
+                ...$this->player($participant->user),
+                'role' => $participant->assigned_lane_role_code,
+                'status' => 'withdrawn',
+                'at' => $participant->withdrawn_at ?? $participant->updated_at,
+            ]);
+        $vacated = $declined->concat($withdrawn)
+            ->filter(fn (array $entry) => $entry['role'] && ! in_array($entry['role'], $occupiedRoles, true))
+            ->sortByDesc('at')
+            ->unique('role')
+            ->map(fn (array $entry) => collect($entry)->except('at')->all())
+            ->values();
+
+        $status = match (true) {
+            $team->status === TeamStatus::Registered => 'registered',
+            in_array($team->status, [TeamStatus::NotQualified, TeamStatus::Withdrawn], true) => 'disqualified',
+            $vacated->isNotEmpty() => 'incomplete',
+            default => 'pending',
+        };
+
         return Inertia::render('Programs/CampusTournaments/CaptainTeam', [
             'team' => [
                 'id' => $team->id,
                 'tournamentId' => $team->tournament_id,
                 'name' => $team->name,
                 'school' => $team->tournament->campus?->institution?->name ?? $team->tournament->campus?->name,
-                'status' => $team->status === TeamStatus::Registered ? 'approved' : 'assembling',
+                'status' => $status,
                 'canManageRoster' => $team->status === TeamStatus::Assembling
                     && $this->availableTournamentsFor($request->user())->contains('id', $team->tournament_id),
                 'captain' => $participants->firstWhere('id', $team->captain_user_id),
-                'players' => $participants->where('id', '!=', $team->captain_user_id)->concat($pendingInvitations)->values(),
+                'players' => $participants->where('id', '!=', $team->captain_user_id)
+                    ->concat($pendingInvitations)
+                    ->concat($vacated)
+                    ->values(),
                 'availableLaneRoles' => array_values(array_diff(TournamentRegistrationGuard::LANE_ROLE_CODES, $occupiedRoles)),
             ],
         ]);
@@ -211,18 +252,37 @@ class TournamentRegistrationController extends Controller
                 'team.tournament.campus.institution',
                 'team.captain',
                 'team.activeParticipants.user',
+                'team.invitations.invitedUser',
             ])
             ->orderBy('expires_at')
             ->get()
             ->map(function (TournamentTeamInvitation $invitation): array {
                 $team = $invitation->team;
-                $player = fn (User $user, string $status = 'confirmed'): array => [
+                $player = fn (User $user, string $status = 'confirmed', ?string $role = null): array => [
                     'id' => $user->id,
                     'name' => $user->name,
                     'ign' => $user->ml_ign ?? $user->name,
                     'uid' => $user->ml_id ? $user->ml_id.'('.$user->ml_server.')' : 'N/A',
+                    'role' => $role,
                     'status' => $status,
                 ];
+
+                $confirmed = $team->activeParticipants
+                    ->where('user_id', '!=', $team->captain_user_id)
+                    ->map(fn (TournamentParticipant $participant) => $player(
+                        $participant->user,
+                        'confirmed',
+                        $participant->assigned_lane_role_code,
+                    ));
+
+                $pending = $team->invitations
+                    ->where('status', InvitationStatus::Pending)
+                    ->filter(fn (TournamentTeamInvitation $item) => $item->expires_at?->isFuture())
+                    ->map(fn (TournamentTeamInvitation $item) => $player(
+                        $item->invitedUser,
+                        'pending',
+                        $item->intended_lane_role_code,
+                    ));
 
                 return [
                     'id' => $invitation->id,
@@ -233,18 +293,86 @@ class TournamentRegistrationController extends Controller
                         'name' => $team->name,
                         'school' => $team->tournament->campus?->institution?->name
                             ?? $team->tournament->campus?->name,
-                        'status' => $team->status === TeamStatus::Registered ? 'approved' : 'assembling',
-                        'captain' => $player($team->captain),
-                        'players' => $team->activeParticipants
-                            ->where('user_id', '!=', $team->captain_user_id)
-                            ->map(fn (TournamentParticipant $participant) => $player($participant->user))
-                            ->values(),
+                        'status' => $team->status === TeamStatus::Registered ? 'registered' : 'pending',
+                        'captain' => $player($team->captain, 'confirmed'),
+                        'players' => $confirmed->concat($pending)->values(),
                     ],
                 ];
             });
 
         return Inertia::render('Programs/CampusTournaments/MemberInvite', [
             'invitations' => $invitations,
+        ]);
+    }
+
+    public function showMemberTeam(Request $request): Response|RedirectResponse
+    {
+        $participant = TournamentParticipant::query()
+            ->where('user_id', $request->user()->id)
+            ->where('status', ParticipantStatus::Active)
+            ->where('roster_role', 'member')
+            ->whereHas('team', fn ($query) => $query
+                ->where('formation_method', TeamFormationMethod::Premade)
+                ->where(fn ($query) => $query
+                    ->whereIn('status', [TeamStatus::Assembling, TeamStatus::Registered])
+                    ->orWhere(fn ($query) => $query
+                        ->where('status', TeamStatus::NotQualified)
+                        ->whereHas('tournament', fn ($query) => $query
+                            ->where(fn ($query) => $query->whereNull('ends_at')->orWhere('ends_at', '>', now()))))))
+            ->whereHas('team.tournament', fn ($query) => $query
+                ->where('approval_status', CampusTournamentApprovalStatus::Approved)
+                ->whereNull('cancelled_at'))
+            ->with([
+                'team.tournament.campus.institution',
+                'team.captain',
+                'team.participants.user',
+                'team.invitations.invitedUser',
+            ])
+            ->latest('id')
+            ->first();
+
+        if (! $participant) {
+            return redirect()->route('campus.captainregistration');
+        }
+
+        $team = $participant->team;
+
+        $pendingInvitations = $team->invitations
+            ->where('status', InvitationStatus::Pending)
+            ->filter(fn (TournamentTeamInvitation $invitation) => $invitation->expires_at?->isFuture())
+            ->map(fn (TournamentTeamInvitation $invitation) => [
+                ...$this->player($invitation->invitedUser),
+                'role' => $invitation->intended_lane_role_code,
+                'status' => 'pending',
+            ])->values();
+
+        $participants = $team->participants
+            ->where('status', ParticipantStatus::Active)
+            ->map(fn (TournamentParticipant $member) => [
+                ...$this->player($member->user),
+                'role' => $member->assigned_lane_role_code,
+                'status' => 'confirmed',
+            ])->values();
+
+        $status = match (true) {
+            $team->status === TeamStatus::Registered => 'registered',
+            in_array($team->status, [TeamStatus::NotQualified, TeamStatus::Withdrawn], true) => 'disqualified',
+            default => 'pending',
+        };
+
+        return Inertia::render('Programs/CampusTournaments/MemberTeam', [
+            'participantId' => $participant->id,
+            'team' => [
+                'id' => $team->id,
+                'tournamentId' => $team->tournament_id,
+                'name' => $team->name,
+                'school' => $team->tournament->campus?->institution?->name ?? $team->tournament->campus?->name,
+                'status' => $status,
+                'captain' => $participants->firstWhere('id', $team->captain_user_id),
+                'players' => $participants->where('id', '!=', $team->captain_user_id)
+                    ->concat($pendingInvitations)
+                    ->values(),
+            ],
         ]);
     }
 
@@ -409,11 +537,12 @@ class TournamentRegistrationController extends Controller
 
         $action->handle($invitation, $request->user(), $request->validated('decision'));
 
-        $message = $request->validated('decision') === 'accepted'
-            ? 'You have joined the team.'
-            : 'Invitation declined.';
+        if ($request->validated('decision') === 'accepted') {
+            return redirect()->route('campus.member.team')
+                ->with('status', 'You have joined the team.');
+        }
 
-        return back()->with('status', $message);
+        return back()->with('status', 'Invitation declined.');
     }
 
     public function destroyInvitation(

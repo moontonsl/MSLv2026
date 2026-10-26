@@ -25,7 +25,8 @@ export default function ManagedTournamentCard({
 }) {
     const canChangeSchedule = tournament.status === "upcoming";
     const canView =
-        ["ongoing", "completed"].includes(tournament.status) && onView;
+        ["upcoming", "ongoing", "completed"].includes(tournament.status) &&
+        onView;
     const hasActions = canView || canChangeSchedule;
 
     return (
@@ -75,18 +76,24 @@ export default function ManagedTournamentCard({
                 {hasActions ? (
                     <div
                         className={`grid gap-2 lg:flex lg:w-auto lg:flex-row lg:gap-2 lg:pl-6 ${
-                            canChangeSchedule ? "grid-cols-2" : "grid-cols-1"
+                            canChangeSchedule && canView
+                                ? "grid-cols-3"
+                                : canChangeSchedule
+                                  ? "grid-cols-2"
+                                  : "grid-cols-1"
                         }`}
                     >
                         {canView ? (
                             <button
                                 type="button"
                                 onClick={() => onView(tournament)}
-                                className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-neutral-600 bg-[#1a1a1a] px-2 text-sm font-semibold text-white transition-colors hover:border-neutral-400 sm:px-4"
+                                className={`inline-flex min-h-[44px] items-center justify-center rounded-lg px-2 text-sm font-bold transition-colors sm:px-4 ${
+                                    canChangeSchedule
+                                        ? "border border-neutral-500 bg-transparent text-white hover:border-neutral-300"
+                                        : "bg-yellow-500 text-black hover:bg-yellow-400"
+                                }`}
                             >
-                                {tournament.status === "completed"
-                                    ? "Report"
-                                    : "View"}
+                                View
                             </button>
                         ) : null}
                         {canChangeSchedule ? (

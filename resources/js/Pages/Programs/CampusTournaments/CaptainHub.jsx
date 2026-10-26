@@ -1,8 +1,36 @@
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, Link } from '@inertiajs/react';
-import { ChevronRight, Play, Users, Zap } from 'lucide-react';
+import { AlertCircle, ChevronRight, MessageCircle, Play, UserPlus, Users, Zap } from 'lucide-react';
 
-const OPTIONS = [
+const DESKTOP_OPTIONS = [
+    {
+        id: 'create',
+        title: 'Create a New Team',
+        description: 'Start fresh and build your roster.',
+        href: '/Tournament/CampusTournamentReg',
+        icon: UserPlus,
+        highlight: true,
+    },
+    {
+        id: 'solo',
+        title: 'Solo Matchmaking',
+        description: 'Get matched with other solo players.',
+        href: '/Tournament/SoloPlayer',
+        icon: Zap,
+        highlight: false,
+    },
+    {
+        id: 'invites',
+        title: 'Team Invitations',
+        description: 'View pending invites from team captains.',
+        href: '/Tournament/MemberInvite',
+        icon: MessageCircle,
+        highlight: false,
+        requiresTournament: true,
+    },
+];
+
+const MOBILE_OPTIONS = [
     {
         id: 'create',
         title: 'Create a New Team',
@@ -14,20 +42,53 @@ const OPTIONS = [
     {
         id: 'join',
         title: 'Join an Existing Team',
-        description: 'Enter a team invite code from your captain.',
+        description: 'Join a team that already has a slot.',
         href: '/Tournament/MemberJoin',
         icon: ChevronRight,
         highlight: false,
     },
     {
-        id: 'solo',
-        title: 'Solo Matchmaking',
-        description: 'Get matched with other solo players.',
-        href: '/Tournament/SoloPlayer',
-        icon: Zap,
+        id: 'invites',
+        title: 'Team Invitations',
+        description: 'View pending invites from team captains.',
+        href: '/Tournament/MemberInvite',
+        icon: MessageCircle,
         highlight: false,
+        requiresTournament: true,
     },
 ];
+
+function OptionLink({ option }) {
+    const Icon = option.icon;
+
+    return (
+        <Link
+            href={option.href}
+            className={`group flex min-h-[72px] items-center gap-3 rounded-xl border px-3 py-3 transition-colors sm:gap-4 sm:px-4 ${
+                option.highlight
+                    ? 'border-yellow-500/40 bg-yellow-500/10 hover:bg-yellow-500/15'
+                    : 'border-neutral-800 bg-[#0a0a0a] hover:border-neutral-600'
+            }`}
+        >
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-yellow-500 text-black">
+                <Icon className="h-5 w-5" />
+            </span>
+            <span className="min-w-0 flex-1">
+                <span className="block text-sm font-bold text-white sm:text-base">
+                    {option.title}
+                </span>
+                <span className="block text-xs text-gray-400 sm:text-sm">
+                    {option.description}
+                </span>
+            </span>
+            <ChevronRight
+                className={`h-5 w-5 shrink-0 ${
+                    option.highlight ? 'text-yellow-500' : 'text-gray-400'
+                }`}
+            />
+        </Link>
+    );
+}
 
 function MediaPanel({ className = '' }) {
     return (
@@ -49,13 +110,30 @@ function MediaPanel({ className = '' }) {
     );
 }
 
-export default function CaptainHub() {
+function NoTournamentAlert() {
+    return (
+        <div className="mt-4 flex items-start gap-2 rounded-xl border border-red-500/50 bg-red-950/40 px-4 py-3 text-sm text-red-400">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            <span>There&apos;s no available tournament in your campus.</span>
+        </div>
+    );
+}
+
+export default function CaptainHub({ tournament = null }) {
+    const hasTournament = Boolean(tournament);
+    const desktopOptions = DESKTOP_OPTIONS.filter(
+        (option) => !option.requiresTournament || hasTournament,
+    );
+    const mobileOptions = MOBILE_OPTIONS.filter(
+        (option) => !option.requiresTournament || hasTournament,
+    );
+
     return (
         <MainLayout fullWidth>
             <Head title="Campus Tournament Registration" />
 
             <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center bg-[#0a0a0a] px-4 py-8 sm:px-6 sm:py-10">
-                {/* Mobile: stacked cards matching mobile registration screen */}
+                {/* Mobile: stacked cards */}
                 <div className="w-full max-w-md space-y-4 md:hidden">
                     <div className="rounded-3xl border border-neutral-800 bg-[#111111] p-6">
                         <div className="mb-5 flex items-center gap-2">
@@ -68,34 +146,12 @@ export default function CaptainHub() {
                         </h1>
 
                         <div className="mt-6 space-y-3">
-                            {OPTIONS.map((option) => {
-                                const Icon = option.icon;
-                                return (
-                                    <Link
-                                        key={option.id}
-                                        href={option.href}
-                                        className={`group flex min-h-[72px] items-center gap-3 rounded-xl border px-3 py-3 transition-colors ${
-                                            option.highlight
-                                                ? 'border-yellow-500/40 bg-yellow-500/10'
-                                                : 'border-neutral-800 bg-[#0a0a0a]'
-                                        }`}
-                                    >
-                                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-yellow-500 text-black">
-                                            <Icon className="h-5 w-5" />
-                                        </span>
-                                        <span className="min-w-0 flex-1">
-                                            <span className="block text-sm font-bold text-white">
-                                                {option.title}
-                                            </span>
-                                            <span className="block text-xs text-gray-400">
-                                                {option.description}
-                                            </span>
-                                        </span>
-                                        <ChevronRight className="h-5 w-5 shrink-0 text-gray-400" />
-                                    </Link>
-                                );
-                            })}
+                            {mobileOptions.map((option) => (
+                                <OptionLink key={option.id} option={option} />
+                            ))}
                         </div>
+
+                        {!hasTournament ? <NoTournamentAlert /> : null}
                     </div>
 
                     <MediaPanel className="aspect-[16/10] min-h-[180px] border border-neutral-800" />
@@ -117,34 +173,12 @@ export default function CaptainHub() {
                         </p>
 
                         <div className="mt-8 space-y-3">
-                            {OPTIONS.map((option) => {
-                                const Icon = option.icon;
-                                return (
-                                    <Link
-                                        key={option.id}
-                                        href={option.href}
-                                        className={`group flex min-h-[72px] items-center gap-4 rounded-xl border px-4 py-3 transition-colors ${
-                                            option.highlight
-                                                ? 'border-yellow-500/40 bg-yellow-500/10 hover:bg-yellow-500/15'
-                                                : 'border-neutral-800 bg-[#0a0a0a] hover:border-neutral-600'
-                                        }`}
-                                    >
-                                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-yellow-500 text-black">
-                                            <Icon className="h-5 w-5" />
-                                        </span>
-                                        <span className="min-w-0 flex-1">
-                                            <span className="block text-sm font-bold text-white sm:text-base">
-                                                {option.title}
-                                            </span>
-                                            <span className="block text-xs text-gray-400 sm:text-sm">
-                                                {option.description}
-                                            </span>
-                                        </span>
-                                        <ChevronRight className="h-5 w-5 shrink-0 text-gray-400 transition-transform group-hover:translate-x-0.5 group-hover:text-white" />
-                                    </Link>
-                                );
-                            })}
+                            {desktopOptions.map((option) => (
+                                <OptionLink key={option.id} option={option} />
+                            ))}
                         </div>
+
+                        {!hasTournament ? <NoTournamentAlert /> : null}
                     </div>
 
                     <MediaPanel className="min-h-[420px] rounded-none" />

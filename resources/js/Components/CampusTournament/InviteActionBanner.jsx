@@ -15,7 +15,10 @@ export default function InviteActionBanner({ teamName, onAccept, onDecline }) {
             <p className="flex items-start gap-2 text-sm text-amber-100 sm:items-center">
                 <Bell className="mt-0.5 h-4 w-4 shrink-0 text-amber-400 sm:mt-0" />
                 <span>
-                    Action Required: You have been invited to join Team{' '}
+                    <span className="font-semibold text-yellow-500 sm:font-normal sm:text-inherit">
+                        Action Required:
+                    </span>{' '}
+                    You have been invited to join Team{' '}
                     <span className="font-semibold text-white">{teamName}</span>.
                 </span>
             </p>
@@ -31,7 +34,7 @@ export default function InviteActionBanner({ teamName, onAccept, onDecline }) {
                 <button
                     type="button"
                     onClick={onAccept}
-                    className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:flex-none"
+                    className="order-first inline-flex min-h-[44px] flex-1 items-center sm:order-none justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:flex-none"
                 >
                     <span className="sm:hidden">Approve</span>
                     <span className="hidden sm:inline">Accept Invite</span>

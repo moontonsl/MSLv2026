@@ -13,8 +13,10 @@ export default function RosterLockCard({ lockDate = 'May 14, 2026', className = 
         >
             <Lock className="mt-0.5 h-5 w-5 shrink-0 text-yellow-500" />
             <div>
-                <p className="text-sm font-bold text-white">Roster Lock: {lockDate}</p>
-                <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                <p className="text-sm font-bold text-yellow-500">
+                    Roster Lock: {lockDate}
+                </p>
+                <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-white">
                     Editing your roster will be disabled after this date.
                 </p>
             </div>

@@ -1,15 +1,17 @@
 import CampusTournamentPageHeader from '@/Components/CampusTournament/CampusTournamentPageHeader';
+import ConfirmResultsModal from '@/Components/CampusTournament/ConfirmResultsModal';
 import CreateTournamentModal from '@/Components/CampusTournament/CreateTournamentModal';
 import RequestSection from '@/Components/CampusTournament/RequestSection';
 import SlTournamentPanel from '@/Components/CampusTournament/SlTournamentPanel';
 import DeleteConfirmationModal from '@/Components/Admin/DeleteConfirmationModal';
 import SuccessModal from '@/Components/Admin/SuccessModal';
 import {
+    getPlacementSummary,
     INITIAL_PENDING_REQUESTS,
     INITIAL_REJECTED_REQUESTS,
     INITIAL_SL_MANAGED_TOURNAMENTS,
     MONTH_OPTIONS,
-    TOURNAMENT_STATUS_TABS,
+    SL_MANAGEMENT_TABS,
     YEAR_OPTIONS,
 } from '@/data/campusTournamentData';
 import MainLayout from '@/Layouts/MainLayout';
@@ -68,6 +70,11 @@ export default function SlView({
     const [successMessage, setSuccessMessage] = useState('');
     const [successDescription, setSuccessDescription] = useState('');
 
+    const [resultsConfirmOpen, setResultsConfirmOpen] = useState(false);
+    const [resultsMode, setResultsMode] = useState('submit');
+    const [resultsTournamentId, setResultsTournamentId] = useState(null);
+    const [resultsPlacements, setResultsPlacements] = useState([]);
+
     /** Own submissions awaiting Regional Admin review, plus anything queued locally. */
     const pendingItems = useMemo(
         () => [
@@ -87,6 +94,7 @@ export default function SlView({
 
     const tabCounts = useMemo(
         () => ({
+            requests: pendingItems.length + rejectedRequests.length,
             upcoming: tournaments.filter((item) => item.status === 'upcoming')
                 .length,
             ongoing: tournaments.filter((item) => item.status === 'ongoing')
@@ -94,10 +102,12 @@ export default function SlView({
             completed: tournaments.filter((item) => item.status === 'completed')
                 .length,
         }),
-        [tournaments],
+        [tournaments, pendingItems.length, rejectedRequests.length],
     );
 
     const filteredTournaments = useMemo(() => {
+        if (statusTab === 'requests') return [];
+
         const query = search.trim().toLowerCase();
 
         return tournaments.filter((item) => {
@@ -252,13 +262,71 @@ export default function SlView({
         [editRequest],
     );
 
+    const handlePlacementChange = useCallback((tournamentId, teamId, placementId) => {
+        setTournaments((prev) =>
+            prev.map((tournament) => {
+                if (tournament.id !== tournamentId) return tournament;
+                return {
+                    ...tournament,
+                    teams: (tournament.teams ?? []).map((team) =>
+                        team.id === teamId ? { ...team, placement: placementId } : team,
+                    ),
+                };
+            }),
+        );
+    }, []);
+
     const openSubmitResults = useCallback((tournament) => {
-        router.visit(`/campus-tournaments/${tournament.id}/report`);
+        setResultsTournamentId(tournament.id);
+        setResultsMode(tournament.resultsSubmitted ? 'update' : 'submit');
+        setResultsPlacements(getPlacementSummary(tournament.teams ?? []));
+        setResultsConfirmOpen(true);
     }, []);
 
     const openExportReport = useCallback((tournament) => {
-        window.location.assign(`/campus-tournaments/${tournament.id}/results/export`);
+        if (!tournament?.id) return;
+        window.location.assign(
+            `/campus-tournaments/${tournament.id}/results/export`,
+        );
     }, []);
+
+    const cancelResultsConfirm = useCallback(() => {
+        setResultsConfirmOpen(false);
+        setResultsTournamentId(null);
+        setResultsPlacements([]);
+    }, []);
+
+    const confirmResults = useCallback(() => {
+        const isUpdate = resultsMode === 'update';
+        const submittedOn = new Date().toLocaleDateString('en-US', {
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric',
+        });
+        setTournaments((prev) =>
+            prev.map((tournament) =>
+                tournament.id === resultsTournamentId
+                    ? {
+                          ...tournament,
+                          resultsSubmitted: true,
+                          resultsSubmittedOn: submittedOn,
+                      }
+                    : tournament,
+            ),
+        );
+        setResultsConfirmOpen(false);
+        setResultsTournamentId(null);
+        setResultsPlacements([]);
+        setSuccessMessage(
+            isUpdate ? 'Results Updated Successfully!' : 'Results Submitted Successfully!',
+        );
+        setSuccessDescription(
+            isUpdate
+                ? 'Tournament results have been updated.'
+                : 'Tournament results have been submitted.',
+        );
+        setSuccessOpen(true);
+    }, [resultsMode, resultsTournamentId]);
 
     return (
         <MainLayout fullWidth>
@@ -307,8 +375,8 @@ export default function SlView({
 
                     <div className="space-y-4 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-5">
                         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-                            <div className="inline-flex w-full flex-wrap gap-2 rounded-xl bg-[#0a0a0a] p-1 sm:w-auto">
-                                {TOURNAMENT_STATUS_TABS.map((tab) => {
+                            <div className="inline-flex w-full flex-wrap gap-1 rounded-xl bg-[#0a0a0a] p-1 sm:w-auto">
+                                {SL_MANAGEMENT_TABS.map((tab) => {
                                     const isActive = statusTab === tab.id;
                                     const count = tabCounts[tab.id] ?? 0;
 
@@ -317,7 +385,7 @@ export default function SlView({
                                             key={tab.id}
                                             type="button"
                                             onClick={() => setStatusTab(tab.id)}
-                                            className={`inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors sm:flex-none ${
+                                            className={`inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition-colors sm:flex-none sm:px-4 ${
                                                 isActive
                                                     ? 'bg-yellow-500 text-black'
                                                     : 'text-gray-300 hover:text-white'
@@ -338,111 +406,116 @@ export default function SlView({
                                 })}
                             </div>
 
-                            <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center xl:w-auto xl:justify-end">
-                                <div className="relative w-full sm:min-w-[200px] sm:flex-1 xl:w-56 xl:flex-none">
-                                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-                                    <input
-                                        type="search"
-                                        value={search}
+                            {statusTab !== 'requests' ? (
+                                <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center xl:w-auto xl:justify-end">
+                                    <div className="relative w-full sm:min-w-[200px] sm:flex-1 xl:w-56 xl:flex-none">
+                                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                                        <input
+                                            type="search"
+                                            value={search}
+                                            onChange={(event) =>
+                                                setSearch(event.target.value)
+                                            }
+                                            placeholder="Search School"
+                                            className={SEARCH_CLASS}
+                                        />
+                                    </div>
+
+                                    <select
+                                        value={month}
                                         onChange={(event) =>
-                                            setSearch(event.target.value)
+                                            setMonth(event.target.value)
                                         }
-                                        placeholder="Search School"
-                                        className={SEARCH_CLASS}
-                                    />
+                                        className={SELECT_CLASS}
+                                        aria-label="Filter by month"
+                                    >
+                                        {MONTH_OPTIONS.map((option) => (
+                                            <option
+                                                key={option.label}
+                                                value={option.value}
+                                            >
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </select>
+
+                                    <select
+                                        value={year}
+                                        onChange={(event) =>
+                                            setYear(event.target.value)
+                                        }
+                                        className={SELECT_CLASS}
+                                        aria-label="Filter by year"
+                                    >
+                                        {YEAR_OPTIONS.map((option) => (
+                                            <option
+                                                key={option.label}
+                                                value={option.value}
+                                            >
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </select>
+
+                                    <div className="flex items-center gap-4 px-1">
+                                        {[
+                                            {
+                                                id: 'sl-filter-online',
+                                                label: 'Online',
+                                                checked: showOnline,
+                                                onChange: setShowOnline,
+                                            },
+                                            {
+                                                id: 'sl-filter-onsite',
+                                                label: 'Onsite',
+                                                checked: showOnsite,
+                                                onChange: setShowOnsite,
+                                            },
+                                        ].map((filter) => (
+                                            <label
+                                                key={filter.id}
+                                                htmlFor={filter.id}
+                                                className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 text-sm text-white"
+                                            >
+                                                <input
+                                                    id={filter.id}
+                                                    type="checkbox"
+                                                    checked={filter.checked}
+                                                    onChange={(event) =>
+                                                        filter.onChange(
+                                                            event.target.checked,
+                                                        )
+                                                    }
+                                                    className="h-4 w-4 rounded border-neutral-600 bg-[#1a1a1a] text-yellow-500 focus:ring-yellow-500"
+                                                />
+                                                {filter.label}
+                                            </label>
+                                        ))}
+                                    </div>
                                 </div>
+                            ) : null}
+                        </div>
 
-                                <select
-                                    value={month}
-                                    onChange={(event) =>
-                                        setMonth(event.target.value)
-                                    }
-                                    className={SELECT_CLASS}
-                                    aria-label="Filter by month"
-                                >
-                                    {MONTH_OPTIONS.map((option) => (
-                                        <option
-                                            key={option.label}
-                                            value={option.value}
-                                        >
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </select>
-
-                                <select
-                                    value={year}
-                                    onChange={(event) =>
-                                        setYear(event.target.value)
-                                    }
-                                    className={SELECT_CLASS}
-                                    aria-label="Filter by year"
-                                >
-                                    {YEAR_OPTIONS.map((option) => (
-                                        <option
-                                            key={option.label}
-                                            value={option.value}
-                                        >
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </select>
-
-                                <div className="flex items-center gap-4 px-1">
-                                    {[
-                                        {
-                                            id: 'sl-filter-online',
-                                            label: 'Online',
-                                            checked: showOnline,
-                                            onChange: setShowOnline,
-                                        },
-                                        {
-                                            id: 'sl-filter-onsite',
-                                            label: 'Onsite',
-                                            checked: showOnsite,
-                                            onChange: setShowOnsite,
-                                        },
-                                    ].map((filter) => (
-                                        <label
-                                            key={filter.id}
-                                            htmlFor={filter.id}
-                                            className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 text-sm text-white"
-                                        >
-                                            <input
-                                                id={filter.id}
-                                                type="checkbox"
-                                                checked={filter.checked}
-                                                onChange={(event) =>
-                                                    filter.onChange(
-                                                        event.target.checked,
-                                                    )
-                                                }
-                                                className="h-4 w-4 rounded border-neutral-600 bg-[#1a1a1a] text-yellow-500 focus:ring-yellow-500"
-                                            />
-                                            {filter.label}
-                                        </label>
-                                    ))}
-                                </div>
+                        {statusTab !== 'requests' ? (
+                            <div className="space-y-3">
+                                {filteredTournaments.length === 0 ? (
+                                    <p className="rounded-xl border border-dashed border-neutral-800 py-12 text-center text-sm text-gray-500">
+                                        No tournaments found for this filter.
+                                    </p>
+                                ) : (
+                                    filteredTournaments.map((tournament) => (
+                                        <SlTournamentPanel
+                                            key={tournament.id}
+                                            tournament={tournament}
+                                            defaultExpanded={false}
+                                            onPlacementChange={handlePlacementChange}
+                                            onSubmitResults={openSubmitResults}
+                                            onExport={openExportReport}
+                                        />
+                                    ))
+                                )}
                             </div>
-                        </div>
-
-                        <div className="space-y-3">
-                            {filteredTournaments.length === 0 ? (
-                                <p className="rounded-xl border border-dashed border-neutral-800 py-12 text-center text-sm text-gray-500">
-                                    No tournaments found for this filter.
-                                </p>
-                            ) : (
-                                filteredTournaments.map((tournament, index) => (
-                                    <SlTournamentPanel
-                                        key={tournament.id}
-                                        tournament={tournament}
-                                        defaultExpanded={index === 0}
-                                        onSubmitResults={openSubmitResults}
-                                        onExport={openExportReport}
-                                    />
-                                ))
-                            )}
-                        </div>
+                        ) : null}
                     </div>
                 </div>
             </div>
@@ -482,6 +555,13 @@ export default function SlView({
                 description={successDescription}
             />
 
+            <ConfirmResultsModal
+                isOpen={resultsConfirmOpen}
+                mode={resultsMode}
+                placements={resultsPlacements}
+                onCancel={cancelResultsConfirm}
+                onConfirm={confirmResults}
+            />
         </MainLayout>
     );
 }

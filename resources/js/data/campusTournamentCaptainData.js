@@ -9,7 +9,6 @@ export const INITIAL_CAPTAIN_TEAM = {
     name: "BINIGNIT",
     school: "ILOILO DOCTORS COLLEGE",
     status: "pending", // pending | approved
-    inviteCode: null,
     captain: {
         id: "p1",
         name: "Olivia Rhye",
@@ -51,14 +50,6 @@ export const INITIAL_CAPTAIN_TEAM = {
             role: "Player 5",
             status: "pending",
         },
-        {
-            id: "p6",
-            name: "Olivia Rhye",
-            ign: "DAKI",
-            uid: "71244743(1234)",
-            role: "Player 6",
-            status: "pending",
-        },
     ],
 };
 
@@ -66,7 +57,6 @@ export const INITIAL_CAPTAIN_TEAM = {
 export const INITIAL_MEMBER_INVITE_TEAM = {
     ...INITIAL_CAPTAIN_TEAM,
     status: "pending",
-    inviteCode: null,
 };
 
 export const ROLE_SLOTS = [
