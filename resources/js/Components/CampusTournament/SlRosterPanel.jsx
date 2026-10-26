@@ -1,4 +1,5 @@
 import MatchPlayerCell from '@/Components/CampusTournament/MatchPlayerCell';
+import PlacementStatusDropdown from '@/Components/CampusTournament/PlacementStatusDropdown';
 import RosterLockCard from '@/Components/CampusTournament/RosterLockCard';
 import { SL_ROSTER_FILTER_TABS } from '@/data/campusTournamentData';
 import { ArrowDownUp, Check, User } from 'lucide-react';
@@ -6,6 +7,7 @@ import { useMemo, useState } from 'react';
 
 /**
  * Roster & Solo Players tab for SL tournament panel.
+ * Figma: Roster Lock + All/Solo/Team filters + full roster table with Participant status.
  *
  * @param {{
  *   rosterLockDate?: string;
@@ -14,6 +16,7 @@ import { useMemo, useState } from 'react';
  *     name: string;
  *     type?: string;
  *     status?: string;
+ *     placement?: string;
  *     captain?: { name: string; ign: string; uid: string; role?: string };
  *     players?: Array<{ id: string; name: string; ign: string; uid: string; role?: string }>;
  *     matchReady?: boolean;
@@ -23,6 +26,11 @@ import { useMemo, useState } from 'react';
 export default function SlRosterPanel({ rosterLockDate = 'May 14, 2026', teams = [] }) {
     const [filter, setFilter] = useState('all');
     const [statusFilter, setStatusFilter] = useState('all');
+    const [placements, setPlacements] = useState(() =>
+        Object.fromEntries(
+            teams.map((team) => [team.id, team.placement ?? 'participant']),
+        ),
+    );
 
     const counts = useMemo(
         () => ({
@@ -99,7 +107,7 @@ export default function SlRosterPanel({ rosterLockDate = 'May 14, 2026', teams =
                     <div className="hidden overflow-x-auto lg:block">
                         <table className="w-full min-w-[980px] table-auto border-collapse">
                             <thead>
-                                <tr className="border-b border-neutral-800">
+                                <tr className="border-b border-neutral-800 bg-[#0a0a0a]">
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-yellow-500">
                                         Team Name
                                     </th>
@@ -132,8 +140,16 @@ export default function SlRosterPanel({ rosterLockDate = 'May 14, 2026', teams =
                                             key={team.id}
                                             className="border-b border-neutral-800/80"
                                         >
-                                            <td className="px-3 py-3 text-sm font-semibold text-white">
-                                                {team.name}
+                                            <td className="px-3 py-3">
+                                                <p className="text-sm font-semibold text-white">
+                                                    {team.name}
+                                                </p>
+                                                {team.status === 'confirmed' || team.matchReady ? (
+                                                    <span className="mt-1 inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-400">
+                                                        <Check className="h-3 w-3" />
+                                                        Confirmed
+                                                    </span>
+                                                ) : null}
                                             </td>
                                             {Array.from({ length: 5 }, (_, index) => {
                                                 const player = players[index];
@@ -147,9 +163,15 @@ export default function SlRosterPanel({ rosterLockDate = 'May 14, 2026', teams =
                                                 );
                                             })}
                                             <td className="px-3 py-3">
-                                                <span className="inline-flex min-h-[36px] items-center justify-center rounded-lg border border-emerald-600/60 bg-emerald-950/50 px-3 text-xs font-semibold text-emerald-400">
-                                                    Ready for Match
-                                                </span>
+                                                <PlacementStatusDropdown
+                                                    value={placements[team.id] ?? 'participant'}
+                                                    onChange={(placementId) =>
+                                                        setPlacements((prev) => ({
+                                                            ...prev,
+                                                            [team.id]: placementId,
+                                                        }))
+                                                    }
+                                                />
                                             </td>
                                         </tr>
                                     );
@@ -166,13 +188,26 @@ export default function SlRosterPanel({ rosterLockDate = 'May 14, 2026', teams =
                                 className="overflow-hidden rounded-xl border border-neutral-800 bg-[#0a0a0a]"
                             >
                                 <div className="flex items-center justify-between gap-3 border-b border-neutral-800 px-4 py-3">
-                                    <h4 className="text-sm font-bold uppercase text-white">
-                                        {team.name}
-                                    </h4>
-                                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/50 bg-emerald-950/40 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-emerald-400">
-                                        <Check className="h-3 w-3" />
-                                        Confirmed
-                                    </span>
+                                    <div>
+                                        <h4 className="text-sm font-bold uppercase text-white">
+                                            {team.name}
+                                        </h4>
+                                        {team.status === 'confirmed' || team.matchReady ? (
+                                            <span className="mt-1 inline-flex items-center gap-1 rounded-md bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-400">
+                                                <Check className="h-3 w-3" />
+                                                Confirmed
+                                            </span>
+                                        ) : null}
+                                    </div>
+                                    <PlacementStatusDropdown
+                                        value={placements[team.id] ?? 'participant'}
+                                        onChange={(placementId) =>
+                                            setPlacements((prev) => ({
+                                                ...prev,
+                                                [team.id]: placementId,
+                                            }))
+                                        }
+                                    />
                                 </div>
 
                                 <div className="border-b border-neutral-800 bg-[#111111] px-4 py-2">
@@ -202,17 +237,6 @@ export default function SlRosterPanel({ rosterLockDate = 'May 14, 2026', teams =
                                         </p>
                                     </div>
                                 </div>
-
-                                {team.matchReady ? (
-                                    <div className="px-4 pb-4">
-                                        <button
-                                            type="button"
-                                            className="inline-flex min-h-[40px] w-full items-center justify-center rounded-lg border border-emerald-600/60 bg-emerald-950/50 text-sm font-semibold text-emerald-400"
-                                        >
-                                            Ready for Match
-                                        </button>
-                                    </div>
-                                ) : null}
                             </article>
                         ))}
                     </div>

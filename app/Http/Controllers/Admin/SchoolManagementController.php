@@ -25,11 +25,21 @@ class SchoolManagementController extends Controller
         $selectedRegion = $request->input('region', '');
         $selectedIsland = $request->input('island', '');
         $selectedStatus = $request->input('status', '');
+        $withLeaders = $request->boolean('with_leaders');
+
+        // SHS-offering classification filter
+        $shsClassifications = [
+            'purely_shs',
+            'jhs_with_shs',
+            'all_offering',
+        ];
 
         // Real-time KPI Stats
         $totalColleges = Institution::count();
         $activeColleges = Institution::where('status', 'active')->count();
-        $totalShs = DB::table('basic_education_institutions')->count();
+        $totalShs = DB::table('basic_education_institutions')
+            ->whereIn('modified_cultural_offering_classification', $shsClassifications)
+            ->count();
         $totalEnrolled = User::whereNotNull('university')->where('university', '!=', '')->count();
 
         $stats = [
@@ -40,12 +50,16 @@ class SchoolManagementController extends Controller
         ];
 
         // Fetch distinct regions for filter dropdowns
-        $regions = Institution::query()
-            ->whereNotNull('region')
-            ->where('region', '!=', '')
-            ->distinct()
-            ->orderBy('region')
-            ->pluck('region');
+        $regions = ($activeTab === 'shs'
+            ? DB::table('basic_education_institutions')
+                ->whereIn('modified_cultural_offering_classification', $shsClassifications)
+                ->whereNotNull('region')
+                ->where('region', '!=', '')
+                ->distinct()
+                ->orderBy('region')
+                ->pluck('region')
+            : Institution::query()->whereNotNull('region')->where('region', '!=', '')->distinct()->orderBy('region')->pluck('region')
+        );
 
         $islands = ['Luzon', 'Visayas', 'Mindanao'];
 
@@ -58,7 +72,8 @@ class SchoolManagementController extends Controller
                     'division',
                     'municipality',
                     'modified_cultural_offering_classification as classification',
-                ]);
+                ])
+                ->whereIn('modified_cultural_offering_classification', $shsClassifications);
 
             if (!empty($search)) {
                 $shsQuery->where(function ($sub) use ($search) {
@@ -72,12 +87,32 @@ class SchoolManagementController extends Controller
                 $shsQuery->where('region', $selectedRegion);
             }
 
+            if (!empty($selectedIsland)) {
+                $luzonRegions = ['NCR', 'CAR', 'Region I', 'Region II', 'Region III', 'Region IV-A', 'Region IV-B', 'Region V'];
+                $visayasRegions = ['Region VI', 'Region VII', 'Region VIII'];
+                $mindanaoRegions = ['Region IX', 'Region X', 'Region XI', 'Region XII', 'CARAGA', 'BARMM'];
+
+                if ($selectedIsland === 'Luzon') {
+                    $shsQuery->whereIn('region', $luzonRegions);
+                } elseif ($selectedIsland === 'Visayas') {
+                    $shsQuery->whereIn('region', $visayasRegions);
+                } elseif ($selectedIsland === 'Mindanao') {
+                    $shsQuery->whereIn('region', $mindanaoRegions);
+                }
+            }
+
             $schools = $shsQuery->orderBy('school_name')
                 ->paginate(10)
                 ->withQueryString();
 
             // Transform SHS items
-            $schools->getCollection()->transform(function ($item) {
+            $classificationLabels = [
+                'purely_shs' => 'Purely Senior High',
+                'jhs_with_shs' => 'JHS with Senior High',
+                'all_offering' => 'Integrated (Complete K-12)',
+            ];
+
+            $schools->getCollection()->transform(function ($item) use ($classificationLabels) {
                 return [
                     'id' => $item->id,
                     'name' => $item->name,
@@ -85,7 +120,7 @@ class SchoolManagementController extends Controller
                     'division' => $item->division,
                     'municipality' => $item->municipality,
                     'island' => $this->resolveIsland($item->region),
-                    'classification' => $item->classification ?? 'Senior High School',
+                    'classification' => $classificationLabels[$item->classification] ?? ($item->classification ?: 'Senior High School'),
                     'type' => 'shs',
                 ];
             });
@@ -119,8 +154,6 @@ class SchoolManagementController extends Controller
             if (!empty($selectedStatus)) {
                 $collegesQuery->where('status', $selectedStatus);
             }
-
-            $withLeaders = $request->boolean('with_leaders');
 
             if ($withLeaders) {
                 $collegesWithStudents = array_keys(array_filter($studentCounts, fn($c) => $c > 0));
@@ -173,10 +206,69 @@ class SchoolManagementController extends Controller
     }
 
     /**
-     * Create a new institution / college.
+     * Create a new institution (College/University or Senior High School).
      */
     public function store(Request $request): RedirectResponse
     {
+        $type = $request->input('type', 'college');
+
+        if ($type === 'shs') {
+            $validated = $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'region' => ['required', 'string', 'max:100'],
+                'division' => ['nullable', 'string', 'max:150'],
+                'municipality' => ['nullable', 'string', 'max:100'],
+                'sector' => ['nullable', 'string', 'in:public,private'],
+            ]);
+
+            // Auto-generate unique BEIS ID if not present
+            $maxBeis = DB::table('basic_education_institutions')
+                ->where('beis_school_id', 'REGEXP', '^[0-9]+$')
+                ->max(DB::raw('CAST(beis_school_id AS UNSIGNED)')) ?? 900000;
+            $newBeisId = (string) ($maxBeis + 1);
+
+            $id = DB::table('basic_education_institutions')->insertGetId([
+                'school_name' => $validated['name'],
+                'region' => $validated['region'],
+                'division' => $validated['division'] ?: 'Division Office',
+                'district' => 'District I',
+                'street_address' => $validated['municipality'] ?: $validated['region'],
+                'municipality' => $validated['municipality'] ?: 'Unspecified',
+                'legislative_district' => '1st District',
+                'sector' => $validated['sector'] ?: 'public',
+                'settlement_type' => 'urban',
+                'school_subclassification' => 'deped_managed',
+                'modified_cultural_offering_classification' => 'purely_shs',
+                'masterlist_page' => 'admin_added',
+                'beis_school_id' => $newBeisId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // Security Audit Log
+            AdminAuditLog::create([
+                'admin_user_id' => Auth::guard('admin')->id(),
+                'route_name' => 'admin.schools.store',
+                'module' => 'School Management',
+                'action' => 'Create Basic Education Institution (SHS)',
+                'method' => 'POST',
+                'status_code' => 200,
+                'target_type' => 'basic_education_institutions',
+                'target_id' => (string) $id,
+                'metadata' => [
+                    'name' => $validated['name'],
+                    'region' => $validated['region'],
+                    'type' => 'shs',
+                    'beis_school_id' => $newBeisId,
+                ],
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+
+            return redirect()->route('admin.school-management', ['tab' => 'shs'])
+                ->with('success', "Senior High School \"{$validated['name']}\" added successfully.");
+        }
+
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:institutions,name'],
             'acronym' => ['nullable', 'string', 'max:50'],
@@ -192,7 +284,7 @@ class SchoolManagementController extends Controller
             'admin_user_id' => Auth::guard('admin')->id(),
             'route_name' => 'admin.schools.store',
             'module' => 'School Management',
-            'action' => 'Create Institution',
+            'action' => 'Create Higher Education Institution (College)',
             'method' => 'POST',
             'status_code' => 200,
             'target_type' => 'Institution',
@@ -201,12 +293,14 @@ class SchoolManagementController extends Controller
                 'name' => $institution->name,
                 'region' => $institution->region,
                 'island' => $institution->island,
+                'type' => 'college',
             ],
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
 
-        return back()->with('success', "Institution \"{$institution->name}\" added successfully.");
+        return redirect()->route('admin.school-management', ['tab' => 'colleges'])
+            ->with('success', "College / University \"{$institution->name}\" added successfully.");
     }
 
     /**

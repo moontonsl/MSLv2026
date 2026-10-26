@@ -48,27 +48,6 @@ class AdminDashboardController extends Controller
     {
         $this->checkAdminPrivilege();
 
-        $query = $this->accessibleUsers();
-
-        // Apply filters if present
-        if ($request->filled('region')) {
-            $query->where('region', 'like', '%' . $request->region . '%');
-        }
-        if ($request->filled('division')) {
-            $query->where('division', $request->division);
-        }
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('username', 'like', '%' . $search . '%')
-                  ->orWhere('email', 'like', '%' . $search . '%')
-                  ->orWhere('ml_ign', 'like', '%' . $search . '%');
-            });
-        }
-
-        $users = $query->orderBy('created_at', 'desc')->get();
-
         // Gather MSL-1 detailed analytics & operational counters
         $analytics = $this->analyticsService->getKeyMetrics();
         $pageViewsData = $this->analyticsService->getPageViewsLast7Days();
@@ -80,6 +59,7 @@ class AdminDashboardController extends Controller
         $totalNews = News::count();
         $upcomingEvents = Event::where('start_date', '>=', now())->count();
         $tournaments = CampusTournament::count() + MCCSeason::count();
+        $totalStudents = User::whereIn('user_type', ['Student', 'Student Leader'])->count();
 
         return Inertia::render('Admin/Dashboard', [
             'pendingUsers' => $pendingUsers,
@@ -93,7 +73,8 @@ class AdminDashboardController extends Controller
                 'topPages' => $topPages,
                 'realTime' => $realTimeData,
             ],
-            'students' => $users,
+            'totalStudents' => $totalStudents,
+            'students' => [],
             'filters' => $request->only(['status', 'region', 'division', 'search']),
         ]);
     }

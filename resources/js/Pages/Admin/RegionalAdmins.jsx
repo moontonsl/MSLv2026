@@ -6,7 +6,8 @@ import {
     ExternalLink, X, Shield, Gamepad2, CheckCircle2, AlertTriangle,
     Users, Award, ChevronDown, Check, LoaderCircle, Globe, Crown
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 const ACCENT = '#FBBF24';
 
@@ -85,6 +86,17 @@ export default function RegionalAdmins({
     const [assignedCampus, setAssignedCampus] = useState('');
     const [demoteTargetRole, setDemoteTargetRole] = useState('Student');
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    useEffect(() => {
+        if (inspectAdmin || promoteTarget || demoteTarget) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [inspectAdmin, promoteTarget, demoteTarget]);
 
     const adminItems = regionalAdmins?.data ?? [];
     const eligibleItems = eligibleUsers?.data ?? [];
@@ -526,14 +538,15 @@ export default function RegionalAdmins({
             </div>
 
             {/* APPOINT REGIONAL ADMIN MODAL */}
-            {promoteTarget && (
+            {promoteTarget && typeof document !== 'undefined' && createPortal(
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md transition-all duration-200"
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="appoint-ra-modal-title"
+                    onClick={(e) => { if (e.target === e.currentTarget) setPromoteTarget(null); }}
                 >
-                    <div className="w-full max-w-lg rounded-2xl border border-amber-400/30 bg-[#141416] p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+                    <div className="w-full max-w-lg rounded-2xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
                         <div className="flex items-center justify-between border-b border-white/10 pb-4">
                             <div className="flex items-center gap-2.5">
                                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20">
@@ -638,18 +651,20 @@ export default function RegionalAdmins({
                             </div>
                         </form>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* DEMOTE CONFIRMATION MODAL */}
-            {demoteTarget && (
+            {demoteTarget && typeof document !== 'undefined' && createPortal(
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md transition-all duration-200"
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="demote-ra-modal-title"
+                    onClick={(e) => { if (e.target === e.currentTarget) setDemoteTarget(null); }}
                 >
-                    <div className="w-full max-w-md rounded-2xl border border-red-500/30 bg-[#141416] p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+                    <div className="w-full max-w-md rounded-2xl border border-red-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
                         <div className="flex items-center gap-3 text-red-400 mb-4">
                             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 border border-red-500/20">
                                 <AlertTriangle className="h-5 w-5" />
@@ -723,18 +738,20 @@ export default function RegionalAdmins({
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* DOSSIER INSPECTOR MODAL */}
-            {inspectAdmin && (
+            {inspectAdmin && typeof document !== 'undefined' && createPortal(
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md transition-all duration-200"
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="ra-dossier-modal-title"
+                    onClick={(e) => { if (e.target === e.currentTarget) setInspectAdmin(null); }}
                 >
-                    <div className="w-full max-w-2xl rounded-2xl border border-white/15 bg-[#141416] p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+                    <div className="w-full max-w-2xl rounded-2xl border border-white/15 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
                         {/* Header */}
                         <div className="flex items-center justify-between border-b border-white/10 pb-4">
                             <div className="flex items-center gap-3">
@@ -865,7 +882,8 @@ export default function RegionalAdmins({
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </AdminLayout>
     );

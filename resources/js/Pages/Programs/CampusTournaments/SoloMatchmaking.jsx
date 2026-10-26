@@ -25,7 +25,6 @@ export default function SoloMatchmaking({
     const [joinTarget, setJoinTarget] = useState(null);
     const [leaveTarget, setLeaveTarget] = useState(null);
     const [successOpen, setSuccessOpen] = useState(false);
-    const [successMessage, setSuccessMessage] = useState("");
     const [processing, setProcessing] = useState(false);
     const [actionError, setActionError] = useState(null);
 
@@ -71,9 +70,6 @@ export default function SoloMatchmaking({
                 },
                 onSuccess: () => {
                     setCreateOpen(false);
-                    setSuccessMessage(
-                        "Your solo team is now open for matchmaking.",
-                    );
                     setSuccessOpen(true);
                 },
                 onError: (errors) => setActionError(firstError(errors)),
@@ -96,9 +92,6 @@ export default function SoloMatchmaking({
                 },
                 onSuccess: () => {
                     setJoinTarget(null);
-                    setSuccessMessage(
-                        "You joined the solo team and locked your lane.",
-                    );
                     setSuccessOpen(true);
                 },
                 onError: (errors) => setActionError(firstError(errors)),
@@ -187,15 +180,19 @@ export default function SoloMatchmaking({
                             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                                 <div className="min-w-0 flex-1">
                                     <h2 className="text-xl font-black uppercase tracking-wide text-white sm:text-2xl">
-                                        {tournament.title}:{" "}
+                                        Solo Matchmaking:{" "}
                                         <span className="text-yellow-500">
                                             {tournament.school}
                                         </span>
                                     </h2>
                                     <p className="mt-2 max-w-2xl text-sm text-gray-400">
-                                        Teams register when all five lanes are
-                                        locked. Incomplete teams remain
-                                        assembling until registration closes.
+                                        Teams will be formally registered once
+                                        all 5 roles are locked. Until then, the
+                                        status remains{" "}
+                                        <span className="text-yellow-500">
+                                            Assembling
+                                        </span>
+                                        .
                                     </p>
                                 </div>
                                 <RosterLockCard
@@ -210,8 +207,8 @@ export default function SoloMatchmaking({
                                         Join an Active Team
                                     </h3>
                                     <p className="mt-1 text-sm text-gray-400">
-                                        Select an assembling team with your
-                                        preferred lane open.
+                                        Look for teams needing your specific
+                                        role.
                                     </p>
                                 </div>
                                 {canCreateTeam && (
@@ -232,17 +229,16 @@ export default function SoloMatchmaking({
                                 )}
                             </div>
 
-                            <div className="mt-5">
+                            <div className="mt-5 rounded-xl border border-neutral-800 bg-[#0a0a0a] p-3 sm:p-4">
                                 {teams.length === 0 ? (
-                                    <div className="flex min-h-[220px] flex-col items-center justify-center rounded-xl border border-neutral-800 bg-[#0a0a0a] px-6 py-12 text-center">
+                                    <div className="flex min-h-[220px] flex-col items-center justify-center px-6 py-12 text-center">
                                         <Users className="h-7 w-7 text-gray-500" />
                                         <p className="mt-4 text-base font-bold text-white">
                                             No teams assembling yet
                                         </p>
                                         <p className="mt-1 text-sm text-gray-400">
-                                            {canCreateTeam
-                                                ? "Be the first to start a solo team for your campus."
-                                                : "You already have a registration in this tournament."}
+                                            Be the first to start a team for
+                                            your school!
                                         </p>
                                     </div>
                                 ) : (
@@ -294,8 +290,8 @@ export default function SoloMatchmaking({
             <SuccessModal
                 isOpen={successOpen}
                 onClose={() => setSuccessOpen(false)}
-                message="Registration Successful"
-                description={successMessage}
+                message="Tournament Application Successful!"
+                description="You are now successfully added to the team roster and ready for the tournament."
             />
         </MainLayout>
     );

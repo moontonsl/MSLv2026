@@ -4,8 +4,13 @@ export const TOURNAMENT_STATUS_TABS = [
     { id: 'completed', label: 'Completed' },
 ];
 
-/** @deprecated Prefer TOURNAMENT_STATUS_TABS — SL shell now matches organizer filters */
-export const SL_MANAGEMENT_TABS = TOURNAMENT_STATUS_TABS;
+/** SL View filter tabs (Figma: Tournament Req. | Upcoming | Ongoing | Completed) */
+export const SL_MANAGEMENT_TABS = [
+    { id: 'requests', label: 'Tournament Req.' },
+    { id: 'upcoming', label: 'Upcoming' },
+    { id: 'ongoing', label: 'Ongoing' },
+    { id: 'completed', label: 'Completed' },
+];
 
 export const MONTH_OPTIONS = [
     { value: '', label: 'Month' },
@@ -43,8 +48,8 @@ export const INITIAL_PENDING_REQUESTS = [
     {
         id: 'pending-2',
         title: 'WEST VISAYAS STATE UNIVERSITY',
-        startDate: '2026-05-20',
-        endDate: '2026-05-21',
+        startDate: '2026-05-29',
+        endDate: '2026-06-01',
         mode: 'Onsite',
         status: 'pending',
     },
@@ -53,10 +58,10 @@ export const INITIAL_PENDING_REQUESTS = [
 export const INITIAL_REJECTED_REQUESTS = [
     {
         id: 'rejected-1',
-        title: 'UNIVERSITY OF SAN AGUSTIN TOURNAMENT',
-        startDate: '2026-04-10',
-        endDate: '2026-04-11',
-        mode: 'Online',
+        title: 'WEST VISAYAS STATE UNIVERSITY',
+        startDate: '2026-05-29',
+        endDate: '2026-06-01',
+        mode: 'Onsite',
         status: 'rejected',
     },
 ];
@@ -147,41 +152,41 @@ export const INITIAL_SL_TOURNAMENT_REQUESTS = [
     },
 ];
 
-/** Placement options for Match Management status dropdown */
+/** Placement options for Match Management status dropdown (Figma Item_Dropdown) */
 export const PLACEMENT_OPTIONS = [
     {
         id: 'participant',
         label: 'Participant',
-        buttonClass: 'border-emerald-600/60 bg-emerald-950 text-emerald-400',
-        menuClass: 'text-emerald-400',
+        buttonClass: 'border-emerald-700 bg-[#0f2e22] text-emerald-400',
+        menuClass: 'border-emerald-700 bg-[#0f2e22] text-emerald-400',
         rankColor: 'text-emerald-400',
     },
     {
         id: '1st',
         label: '1st Place',
-        buttonClass: 'border-yellow-500/60 bg-yellow-500/15 text-yellow-500',
-        menuClass: 'text-yellow-500',
+        buttonClass: 'border-yellow-600 bg-[#3d3208] text-yellow-500',
+        menuClass: 'border-yellow-600 bg-[#3d3208] text-yellow-500',
         rankColor: 'text-yellow-500',
     },
     {
         id: '2nd',
         label: '2nd Place',
-        buttonClass: 'border-neutral-400/50 bg-neutral-700/40 text-neutral-200',
-        menuClass: 'text-neutral-300',
+        buttonClass: 'border-neutral-500 bg-[#2a2a2a] text-neutral-200',
+        menuClass: 'border-neutral-500 bg-[#2a2a2a] text-neutral-200',
         rankColor: 'text-neutral-300',
     },
     {
         id: '3rd',
         label: '3rd Place',
-        buttonClass: 'border-orange-500/50 bg-orange-950/60 text-orange-400',
-        menuClass: 'text-orange-400',
-        rankColor: 'text-orange-400',
+        buttonClass: 'border-amber-700 bg-[#3a2410] text-amber-500',
+        menuClass: 'border-amber-700 bg-[#3a2410] text-amber-500',
+        rankColor: 'text-amber-500',
     },
     {
         id: '4th',
         label: '4th Place',
-        buttonClass: 'border-red-700/60 bg-red-950/70 text-red-400',
-        menuClass: 'text-red-400',
+        buttonClass: 'border-red-800 bg-[#3b1212] text-red-400',
+        menuClass: 'border-red-800 bg-[#3b1212] text-red-400',
         rankColor: 'text-red-400',
     },
 ];
@@ -214,7 +219,8 @@ export function buildMatchTeam(id, placement) {
     };
 }
 
-export function buildRosterTeam(id) {
+export function buildRosterTeam(id, options = {}) {
+    const type = options.type === 'solo' ? 'solo' : 'team';
     const players = ROSTER_ROLES.map((role, index) => ({
         ...SL_DEMO_PLAYER,
         id: `${id}-p${index + 1}`,
@@ -222,13 +228,16 @@ export function buildRosterTeam(id) {
         slotLabel: index === 0 ? 'Captain' : `Player ${index + 1}`,
     }));
 
+    const rosterPlayers = type === 'solo' ? [players[0]] : players;
+
     return {
         id,
-        name: 'MSL TEAM 1',
-        type: 'team',
+        name: type === 'solo' ? 'SOLO PLAYER' : 'MSL TEAM 1',
+        type,
         status: 'confirmed',
+        placement: 'participant',
         captain: players[0],
-        players,
+        players: rosterPlayers,
         matchReady: true,
     };
 }
@@ -253,7 +262,12 @@ export const INITIAL_SL_MANAGED_TOURNAMENTS = [
             buildMatchTeam('sl-up-1-t5', 'participant'),
             buildMatchTeam('sl-up-1-t6', 'participant'),
         ],
-        rosterTeams: [buildRosterTeam('sl-up-1-r1'), buildRosterTeam('sl-up-1-r2')],
+        rosterTeams: [
+            buildRosterTeam('sl-up-1-r1'),
+            buildRosterTeam('sl-up-1-r2'),
+            buildRosterTeam('sl-up-1-s1', { type: 'solo' }),
+            buildRosterTeam('sl-up-1-s2', { type: 'solo' }),
+        ],
     },
     {
         id: 'sl-up-2',
@@ -288,7 +302,12 @@ export const INITIAL_SL_MANAGED_TOURNAMENTS = [
             buildMatchTeam('sl-ong-1-t4', '4th'),
             buildMatchTeam('sl-ong-1-t5', 'participant'),
         ],
-        rosterTeams: [buildRosterTeam('sl-ong-1-r1'), buildRosterTeam('sl-ong-1-r2')],
+        rosterTeams: [
+            buildRosterTeam('sl-ong-1-r1'),
+            buildRosterTeam('sl-ong-1-r2'),
+            buildRosterTeam('sl-ong-1-s1', { type: 'solo' }),
+            buildRosterTeam('sl-ong-1-s2', { type: 'solo' }),
+        ],
     },
     {
         id: 'sl-ong-2',
@@ -408,15 +427,18 @@ export const INITIAL_RA_MANAGED_TOURNAMENTS = [
     },
     {
         id: 'ra-comp-1',
-        title: 'COLLEGIATE OPEN SERIES',
-        schoolName: 'Ateneo de Manila University',
-        startDate: '2026-01-10',
-        endDate: '2026-01-25',
+        title: "ILOILO DOCTOR'S COLLEGE TOURNAMENT",
+        schoolName: "Iloilo Doctor's College",
+        startDate: '2026-04-24',
+        endDate: '2026-05-10',
         mode: 'Online',
         status: 'completed',
-        rosterLockDate: 'January 20, 2026',
+        rosterLockDate: 'May 14, 2026',
         resultsSubmitted: true,
-        resultsSubmittedOn: '01/26/2026',
+        resultsSubmittedOn: '05/11/2026',
+        reviewed: false,
+        createdBy: 'SL Jenard',
+        reportedBy: 'SL Jenard',
         verifiedTeams: 16,
         pendingTeams: 0,
         totalRegistration: 16,
@@ -425,6 +447,7 @@ export const INITIAL_RA_MANAGED_TOURNAMENTS = [
             buildMatchTeam('ra-comp-1-t2', '2nd'),
             buildMatchTeam('ra-comp-1-t3', '3rd'),
             buildMatchTeam('ra-comp-1-t4', '4th'),
+            buildMatchTeam('ra-comp-1-t5', 'participant'),
         ],
         rosterTeams: [buildRosterTeam('ra-comp-1-r1')],
     },
@@ -439,6 +462,10 @@ export const INITIAL_RA_MANAGED_TOURNAMENTS = [
         rosterLockDate: 'December 10, 2025',
         resultsSubmitted: true,
         resultsSubmittedOn: '12/16/2025',
+        reviewed: true,
+        createdBy: 'SL Jenard',
+        reportedBy: 'SL Jenard',
+        reviewedBy: 'RA Jenard',
         verifiedTeams: 10,
         pendingTeams: 0,
         totalRegistration: 10,

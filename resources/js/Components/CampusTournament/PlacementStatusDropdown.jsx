@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 
 /**
  * Colored placement status dropdown for Match Management.
+ * Figma: solid tinted pills + matching option list (Participant → 4th Place).
  *
  * @param {{
  *   value: string;
@@ -52,14 +53,14 @@ export default function PlacementStatusDropdown({ value, onChange, disabled = fa
                 className={`inline-flex min-h-[36px] w-full items-center justify-between gap-2 rounded-lg border px-3 py-1.5 text-xs font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${selected.buttonClass}`}
             >
                 <span className="truncate">{selected.label}</span>
-                <ChevronDown className="h-3.5 w-3.5 shrink-0 opacity-80" />
+                <ChevronDown className="h-3.5 w-3.5 shrink-0 opacity-90" />
             </button>
 
             {open ? (
                 <ul
                     id={listId}
                     role="listbox"
-                    className="absolute right-0 z-30 mt-1 min-w-full overflow-hidden rounded-lg border border-neutral-700 bg-[#0a0a0a] py-1 shadow-xl"
+                    className="absolute right-0 z-30 mt-1 min-w-full space-y-1 rounded-lg border border-neutral-700 bg-[#0a0a0a] p-1.5 shadow-xl"
                 >
                     {PLACEMENT_OPTIONS.map((option) => {
                         const isActive = option.id === selected.id;
@@ -71,11 +72,10 @@ export default function PlacementStatusDropdown({ value, onChange, disabled = fa
                                         onChange(option.id);
                                         setOpen(false);
                                     }}
-                                    className={`flex w-full items-center px-3 py-2.5 text-left text-xs font-semibold transition-colors hover:bg-[#1a1a1a] ${option.menuClass} ${
-                                        isActive ? 'bg-[#1a1a1a]' : ''
-                                    }`}
+                                    className={`flex w-full items-center justify-between gap-2 rounded-md border px-3 py-2 text-left text-xs font-bold transition-opacity hover:opacity-90 ${option.menuClass}`}
                                 >
-                                    {option.label}
+                                    <span>{option.label}</span>
+                                    <ChevronDown className="h-3 w-3 shrink-0 opacity-80" />
                                 </button>
                             </li>
                         );

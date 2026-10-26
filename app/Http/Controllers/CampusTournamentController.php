@@ -74,7 +74,23 @@ class CampusTournamentController extends Controller
                 return redirect('/Tournament/CampusTournamentTeam');
             }
 
-            // 3b. Active Solo Participant in assembling team -> /Tournament/SoloPlayer
+            // 3b. Active Premade Team Member -> /Tournament/MemberTeam
+            $memberTeam = TournamentParticipant::query()
+                ->where('user_id', $user->id)
+                ->where('status', ParticipantStatus::Active)
+                ->where('roster_role', 'member')
+                ->whereHas('team', function ($teamQuery) {
+                    $teamQuery->where('formation_method', TeamFormationMethod::Premade)
+                        ->whereIn('status', [TeamStatus::Assembling, TeamStatus::Registered]);
+                })
+                ->whereIn('tournament_id', $activeTournamentIds)
+                ->exists();
+
+            if ($memberTeam) {
+                return redirect('/Tournament/MemberTeam');
+            }
+
+            // 3c. Active Solo Participant in assembling team -> /Tournament/SoloPlayer
             $soloParticipant = TournamentParticipant::query()
                 ->where('user_id', $user->id)
                 ->where('status', ParticipantStatus::Active)
@@ -87,21 +103,6 @@ class CampusTournamentController extends Controller
 
             if ($soloParticipant) {
                 return redirect('/Tournament/SoloPlayer');
-            }
-
-            // 3c. Active premade member -> team and invitation view
-            $premadeMember = TournamentParticipant::query()
-                ->where('user_id', $user->id)
-                ->where('status', ParticipantStatus::Active)
-                ->where('roster_role', 'member')
-                ->whereHas('team', fn ($teamQuery) => $teamQuery
-                    ->where('formation_method', TeamFormationMethod::Premade)
-                    ->whereIn('status', [TeamStatus::Assembling, TeamStatus::Registered]))
-                ->whereIn('tournament_id', $activeTournamentIds)
-                ->exists();
-
-            if ($premadeMember) {
-                return redirect('/Tournament/MemberInvite');
             }
 
             // 3d. Pending Invitation -> /Tournament/MemberInvite
@@ -320,12 +321,12 @@ class CampusTournamentController extends Controller
                         ])
                         : $team->activeParticipants
                             ->sortBy(fn (TournamentParticipant $participant) => $participant->roster_role === 'captain' ? 0 : 1)
-                            ->map(fn (TournamentParticipant $p) => [
-                                'id' => $p->id,
-                                'name' => $p->user?->name ?? 'Player',
-                                'ign' => $p->user?->ml_ign ?? $p->user?->name ?? 'Player',
-                                'uid' => $p->user?->ml_id ? "{$p->user->ml_id}({$p->user->ml_server})" : 'N/A',
-                                'role' => strtoupper($p->assigned_lane_role_code ?? 'FLEX'),
+                            ->map(fn (TournamentParticipant $participant) => [
+                                'id' => $participant->id,
+                                'name' => $participant->user?->name ?? 'Player',
+                                'ign' => $participant->user?->ml_ign ?? $participant->user?->name ?? 'Player',
+                                'uid' => $participant->user?->ml_id ? "{$participant->user->ml_id}({$participant->user->ml_server})" : 'N/A',
+                                'role' => strtoupper($participant->assigned_lane_role_code ?? 'FLEX'),
                                 'status' => 'confirmed',
                             ])->values();
 
@@ -333,7 +334,7 @@ class CampusTournamentController extends Controller
                         'id' => $team->id,
                         'name' => $entry?->team_name_snapshot ?? $team->name,
                         'teamStatus' => $team->status->value,
-                        'placement' => $resultEntries->get($team->id)?->placement_code ?? 'participant',
+                        'placement' => $entry?->placement_code ?? 'participant',
                         'players' => $players,
                     ];
                 });

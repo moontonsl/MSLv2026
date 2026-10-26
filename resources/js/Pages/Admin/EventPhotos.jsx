@@ -1,7 +1,8 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import FeaturedImageUpload from '@/Components/Admin/FeaturedImageUpload';
 import { Head, router, useForm } from '@inertiajs/react';
-import { CalendarDays, ImagePlus, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { CalendarDays, ImagePlus, Pencil, Plus, Search, Trash2, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 const EMPTY_FORM = { event_name: '', school_name: '', picture: null, _method: null };
@@ -104,33 +105,65 @@ export default function EventPhotos({ eventPhotos: initialEventPhotos = [] }) {
                 </div>
             </div>
 
-            {formOpen && (
-                <section className="mb-8 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
-                    <div className="mb-6 flex items-center justify-between gap-4">
-                        <h2 className="text-lg font-bold text-yellow-500">{editingPhoto ? 'Edit Event Photo' : 'Add Event Photo'}</h2>
-                        <button type="button" onClick={closeForm} className="text-sm text-gray-400 hover:text-white">Cancel</button>
+            {formOpen && typeof document !== 'undefined' && createPortal(
+                <div
+                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4 backdrop-blur-md transition-all duration-200"
+                    role="dialog"
+                    aria-modal="true"
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) closeForm();
+                    }}
+                >
+                    <div className="w-full max-w-xl rounded-2xl border border-yellow-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
+                        <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                                    <ImagePlus className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <h2 className="text-base font-black text-white">{editingPhoto ? 'Edit Event Photo' : 'Add Event Photo'}</h2>
+                                    <p className="text-xs text-gray-400">Upload school event highlights and gallery photos</p>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={closeForm}
+                                className="rounded-lg p-1 text-gray-400 hover:text-white"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={submit} className="mt-5 space-y-4">
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <div>
+                                    <label htmlFor="event-photo-event" className="block text-xs font-semibold text-gray-300 mb-1.5">Event name *</label>
+                                    <input id="event-photo-event" type="text" value={data.event_name} onChange={(event) => setData('event_name', event.target.value)} className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white placeholder:text-gray-500 focus:border-yellow-400 focus:outline-none" placeholder="e.g. NDMU CEAC Week" />
+                                    {errors.event_name && <p className="mt-1 text-xs text-red-400">{errors.event_name}</p>}
+                                </div>
+                                <div>
+                                    <label htmlFor="event-photo-school" className="block text-xs font-semibold text-gray-300 mb-1.5">School name *</label>
+                                    <input id="event-photo-school" type="text" value={data.school_name} onChange={(event) => setData('school_name', event.target.value)} className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white placeholder:text-gray-500 focus:border-yellow-400 focus:outline-none" placeholder="e.g. Notre Dame of Marbel University" />
+                                    {errors.school_name && <p className="mt-1 text-xs text-red-400">{errors.school_name}</p>}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Event photo {editingPhoto ? '(optional when keeping current image)' : '*'}</label>
+                                <FeaturedImageUpload value={data.picture || (editingPhoto?.image_url ?? null)} onChange={(file) => setData('picture', file)} accept="image/png,image/jpeg,image/jpg,image/gif" hint="PNG, JPG, JPEG, GIF (MAX. 5MB)" />
+                                {errors.picture && <p className="mt-1 text-xs text-red-400">{errors.picture}</p>}
+                            </div>
+
+                            <div className="flex items-center justify-end gap-3 border-t border-white/10 pt-4 mt-6">
+                                <button type="button" onClick={closeForm} className="rounded-xl border border-white/10 px-4 py-2.5 text-xs font-bold text-gray-300 hover:bg-white/5">Cancel</button>
+                                <button type="submit" disabled={processing} className="inline-flex items-center gap-1.5 rounded-xl bg-yellow-400 px-5 py-2.5 text-xs font-bold text-black hover:bg-yellow-300 disabled:opacity-50 transition-all shadow-[0_0_15px_rgba(251,191,36,0.2)]">
+                                    <span>{processing ? 'Saving...' : editingPhoto ? 'Update Photo' : 'Add Photo'}</span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                    <form onSubmit={submit} className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                        <div>
-                            <label htmlFor="event-photo-event" className="mb-2 block text-sm font-medium text-gray-300">Event name</label>
-                            <input id="event-photo-event" type="text" value={data.event_name} onChange={(event) => setData('event_name', event.target.value)} className="min-h-[44px] w-full rounded-md border border-neutral-800 bg-[#1a1a1a] px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="e.g. NDMU CEAC Week" />
-                            {errors.event_name && <p className="mt-1 text-sm text-red-400">{errors.event_name}</p>}
-                        </div>
-                        <div>
-                            <label htmlFor="event-photo-school" className="mb-2 block text-sm font-medium text-gray-300">School name</label>
-                            <input id="event-photo-school" type="text" value={data.school_name} onChange={(event) => setData('school_name', event.target.value)} className="min-h-[44px] w-full rounded-md border border-neutral-800 bg-[#1a1a1a] px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" placeholder="e.g. Notre Dame of Marbel University" />
-                            {errors.school_name && <p className="mt-1 text-sm text-red-400">{errors.school_name}</p>}
-                        </div>
-                        <div className="md:col-span-2">
-                            <label className="mb-2 block text-sm font-medium text-gray-300">Event photo {editingPhoto ? '(optional when keeping current image)' : ''}</label>
-                            <FeaturedImageUpload value={data.picture || (editingPhoto?.image_url ?? null)} onChange={(file) => setData('picture', file)} accept="image/png,image/jpeg,image/jpg,image/gif" hint="PNG, JPG, JPEG, GIF (MAX. 5MB)" />
-                            {errors.picture && <p className="mt-1 text-sm text-red-400">{errors.picture}</p>}
-                        </div>
-                        <div className="flex justify-end md:col-span-2">
-                            <button type="submit" disabled={processing} className="min-h-[44px] rounded-md bg-yellow-500 px-5 py-2.5 text-sm font-bold text-black hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-50">{processing ? 'Saving...' : editingPhoto ? 'Update Photo' : 'Add Photo'}</button>
-                        </div>
-                    </form>
-                </section>
+                </div>,
+                document.body
             )}
 
             <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6 md:p-8">

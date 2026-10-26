@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import styles from '../../register.module.scss';
-import { ChevronDown, HelpCircle, Search, UploadCloud } from 'lucide-react';
+import { ChevronDown, HelpCircle, Search, UploadCloud, X } from 'lucide-react';
 import { collegePrograms } from '../../data/collegeOptions';
 
 const allowedFileTypes = [
@@ -10,6 +10,26 @@ const allowedFileTypes = [
     'image/jpg',
     'image/png',
     'image/gif',
+];
+
+export const PH_REGIONS = [
+    { code: 'NCR', name: 'National Capital Region (NCR)', island: 'Luzon' },
+    { code: 'CAR', name: 'Cordillera Administrative Region (CAR)', island: 'Luzon' },
+    { code: 'Region I', name: 'Region I (Ilocos Region)', island: 'Luzon' },
+    { code: 'Region II', name: 'Region II (Cagayan Valley)', island: 'Luzon' },
+    { code: 'Region III', name: 'Region III (Central Luzon)', island: 'Luzon' },
+    { code: 'Region IV-A', name: 'Region IV-A (CALABARZON)', island: 'Luzon' },
+    { code: 'Region IV-B', name: 'Region IV-B (MIMAROPA)', island: 'Luzon' },
+    { code: 'Region V', name: 'Region V (Bicol Region)', island: 'Luzon' },
+    { code: 'Region VI', name: 'Region VI (Western Visayas)', island: 'Visayas' },
+    { code: 'Region VII', name: 'Region VII (Central Visayas)', island: 'Visayas' },
+    { code: 'Region VIII', name: 'Region VIII (Eastern Visayas)', island: 'Visayas' },
+    { code: 'Region IX', name: 'Region IX (Zamboanga Peninsula)', island: 'Mindanao' },
+    { code: 'Region X', name: 'Region X (Northern Mindanao)', island: 'Mindanao' },
+    { code: 'Region XI', name: 'Region XI (Davao Region)', island: 'Mindanao' },
+    { code: 'Region XII', name: 'Region XII (SOCCSKSARGEN)', island: 'Mindanao' },
+    { code: 'Region XIII', name: 'Region XIII (Caraga)', island: 'Mindanao' },
+    { code: 'BARMM', name: 'BARMM (Bangsamoro)', island: 'Mindanao' },
 ];
 
 const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
@@ -37,6 +57,7 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
     const [strandSearch, setStrandSearch] = React.useState('');
     const [schoolsList, setSchoolsList] = React.useState([]);
     const [schoolsLoading, setSchoolsLoading] = React.useState(false);
+    const [isManualSchool, setIsManualSchool] = React.useState(false);
 
     const setFieldError = (name, error) => {
         setErrors((prev) => ({
@@ -87,16 +108,21 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
     };
 
     const validateSchoolDependentFields = () => {
-        if (!data.university) {
-            const message = 'Please select your school name first.';
-            setFieldError('island', message);
-            setFieldError('region', message);
-            return false;
+        let valid = true;
+        if (!data.university || !data.university.trim()) {
+            setFieldError('university', 'Name of University / College is required.');
+            valid = false;
+        }
+        if (!data.island || !data.island.trim()) {
+            setFieldError('island', 'Island is required.');
+            valid = false;
+        }
+        if (!data.region || !data.region.trim()) {
+            setFieldError('region', 'Region is required.');
+            valid = false;
         }
 
-        clearFieldError('island');
-        clearFieldError('region');
-        return true;
+        return valid;
     };
 
     const validateStudentId = (value) => {
@@ -157,7 +183,7 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
                     setSchoolsLoading(false);
                 }
             }
-        }, 250);
+        }, 200);
 
         return () => {
             isMounted = false;
@@ -287,12 +313,24 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
         items,
         onSelect,
         searchPlaceholder,
-        isLoading = false
+        isLoading = false,
+        onManualEntry = null
     ) => (
         <div className="relative" ref={ref}>
-            <label className={`${styles['label-register']} block mb-1`}>
-                {label} <span className={styles.required}>*</span>
-            </label>
+            <div className="flex items-center justify-between mb-1">
+                <label className={`${styles['label-register']}`}>
+                    {label} <span className={styles.required}>*</span>
+                </label>
+                {onManualEntry && (
+                    <button
+                        type="button"
+                        onClick={onManualEntry}
+                        className="text-xs text-yellow-400 hover:text-yellow-300 transition"
+                    >
+                        Can't find your school? Enter manually
+                    </button>
+                )}
+            </div>
 
             <button
                 type="button"
@@ -313,8 +351,8 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
             )}
 
             {open && (
-                <div className="absolute z-30 mt-2 w-full rounded-xl border border-white/10 bg-[#111111] shadow-2xl overflow-hidden">
-                    <div className="p-3 border-b border-white/10">
+                <div className="absolute z-40 mt-2 w-full rounded-xl border border-yellow-500/20 bg-[#111111] shadow-2xl overflow-hidden backdrop-blur-xl animate-in fade-in zoom-in-95 duration-100">
+                    <div className="p-3 border-b border-white/10 bg-[#161616]">
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                             <input
@@ -322,36 +360,74 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
                                 value={searchValue}
                                 onChange={(e) => setSearchValue(e.target.value)}
                                 placeholder={searchPlaceholder}
-                                className={getFieldClassName(errorName, 'pl-10')}
+                                className={getFieldClassName(errorName, 'pl-10 pr-8 bg-[#0a0a0a] text-sm')}
+                                autoFocus
                             />
+                            {searchValue && (
+                                <button
+                                    type="button"
+                                    onClick={() => setSearchValue('')}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                                >
+                                    <X className="h-4 w-4" />
+                                </button>
+                            )}
                         </div>
+                        {items && items.length > 0 && !isLoading && (
+                            <div className="flex items-center justify-between text-[11px] text-gray-400 mt-2 px-1">
+                                <span>Showing {items.length} colleges & universities</span>
+                                <span>Scroll or search name, city, or acronym</span>
+                            </div>
+                        )}
                     </div>
-                    <div className="max-h-56 overflow-y-auto">
+                    <div className="max-h-72 md:max-h-80 overflow-y-auto divide-y divide-white/5">
                         {isLoading ? (
-                            <div className="px-4 py-4 text-center text-sm text-yellow-400 flex items-center justify-center gap-2">
+                            <div className="px-4 py-8 text-center text-sm text-yellow-400 flex items-center justify-center gap-2">
                                 <span className="inline-block w-4 h-4 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin"></span>
-                                Searching...
+                                Searching CHED masterlist & universities...
                             </div>
                         ) : items.length ? (
                             items.map((item, index) => (
                                 <button
-                                    key={item.id || item.name || (typeof item === 'string' ? item : index)}
+                                    key={item.id || item.name || index}
                                     type="button"
                                     onClick={() => onSelect(item)}
-                                    className="w-full px-4 py-3 text-left text-sm text-white hover:bg-yellow-500/10 hover:text-yellow-300 transition border-b border-white/5 last:border-b-0"
+                                    className="w-full px-4 py-3 text-left text-sm text-white hover:bg-yellow-500/15 hover:text-yellow-300 transition"
                                 >
-                                    <div className="font-medium">{item.name || item}</div>
+                                    <div className="font-medium text-white flex items-center justify-between gap-2">
+                                        <span className="truncate">{item.name || item}</span>
+                                        {item.acronym && (
+                                            <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-300 shrink-0">
+                                                {item.acronym.split(' ')[0]}
+                                            </span>
+                                        )}
+                                    </div>
                                     {(item.region || item.island) && (
                                         <div className="text-xs text-yellow-400/80 mt-0.5">
-                                            {item.region} • {item.island} {item.acronym ? `(${item.acronym.split(' ')[0]})` : ''}
+                                            {item.region} • {item.island}
                                         </div>
                                     )}
                                 </button>
                             ))
                         ) : (
-                            <div className="px-4 py-4 text-center text-sm text-gray-400">No results found.</div>
+                            <div className="px-4 py-8 text-center text-sm text-gray-400">
+                                <p className="text-gray-300 font-medium">No schools matched "{searchValue}"</p>
+                                <p className="text-xs text-gray-500 mt-1">Try searching by acronym or complete university name.</p>
+                            </div>
                         )}
                     </div>
+
+                    {onManualEntry && (
+                        <div className="p-2.5 border-t border-white/10 bg-[#161618]">
+                            <button
+                                type="button"
+                                onClick={onManualEntry}
+                                className="w-full py-2 px-3 text-center text-xs font-semibold text-yellow-400 hover:text-yellow-300 hover:bg-yellow-500/10 rounded-lg transition flex items-center justify-center gap-1.5"
+                            >
+                                <span>➕</span> Can't find your school? Click here to enter manually
+                            </button>
+                        </div>
+                    )}
                 </div>
             )}
 
@@ -393,20 +469,51 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
             })()}
 
             <div className="flex flex-col gap-4 mb-4">
-                {renderSelectBox(
-                    'University / College School',
-                    data.university,
-                    'Select your school',
-                    schoolOpen,
-                    setSchoolOpen,
-                    schoolDropdownRef,
-                    'university',
-                    schoolSearch,
-                    setSchoolSearch,
-                    schoolsList,
-                    handleSchoolSelect,
-                    'Search university / college school...',
-                    schoolsLoading
+                {isManualSchool ? (
+                    <div>
+                        <div className="flex items-center justify-between mb-1">
+                            <label className={`${styles['label-register']}`}>
+                                University / College Name <span className={styles.required}>*</span>
+                            </label>
+                            <button
+                                type="button"
+                                onClick={() => setIsManualSchool(false)}
+                                className="text-xs text-yellow-400 hover:text-yellow-300 underline transition"
+                            >
+                                ← Search from school list
+                            </button>
+                        </div>
+                        <input
+                            type="text"
+                            name="university"
+                            value={data.university}
+                            onChange={(e) => {
+                                handleInputChange(e);
+                                clearFieldError('university');
+                            }}
+                            placeholder="Type your complete college / university name"
+                            className={getFieldClassName('university')}
+                            style={getFieldStyle('university')}
+                        />
+                        {renderFieldError('university')}
+                    </div>
+                ) : (
+                    renderSelectBox(
+                        'University / College School',
+                        data.university,
+                        'Select your school',
+                        schoolOpen,
+                        setSchoolOpen,
+                        schoolDropdownRef,
+                        'university',
+                        schoolSearch,
+                        setSchoolSearch,
+                        schoolsList,
+                        handleSchoolSelect,
+                        'Search university / college school by name or acronym...',
+                        schoolsLoading,
+                        () => setIsManualSchool(true)
+                    )
                 )}
             </div>
 
@@ -416,17 +523,38 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
                         Island <span className={styles.required}>*</span>
                     </label>
                     <div className="relative">
-                        <input
-                            type="text"
-                            name="island"
-                            value={data.island}
-                            readOnly
-                            placeholder="Auto-filled"
-                            className={getFieldClassName('island', 'bg-gray-800 cursor-not-allowed pr-10')}
-                            style={getFieldStyle('island')}
-                        />
+                        {isManualSchool ? (
+                            <select
+                                name="island"
+                                value={data.island}
+                                onChange={(e) => {
+                                    handleInputChange(e);
+                                    clearFieldError('island');
+                                }}
+                                className={getFieldClassName('island', 'appearance-none pr-10')}
+                                style={getFieldStyle('island')}
+                            >
+                                <option value="" disabled>Select Island</option>
+                                <option value="Luzon">Luzon</option>
+                                <option value="Visayas">Visayas</option>
+                                <option value="Mindanao">Mindanao</option>
+                            </select>
+                        ) : (
+                            <input
+                                type="text"
+                                name="island"
+                                value={data.island}
+                                readOnly
+                                placeholder="Auto-filled"
+                                className={getFieldClassName('island', 'bg-gray-800 cursor-not-allowed pr-10')}
+                                style={getFieldStyle('island')}
+                            />
+                        )}
+                        {isManualSchool && (
+                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none text-gray-400" />
+                        )}
                         {errors.island && (
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full border border-red-500 text-xs font-bold text-red-500 pointer-events-none">
+                            <div className="absolute right-10 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full border border-red-500 text-xs font-bold text-red-500 pointer-events-none">
                                 !
                             </div>
                         )}
@@ -439,17 +567,46 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
                         Region <span className={styles.required}>*</span>
                     </label>
                     <div className="relative">
-                        <input
-                            type="text"
-                            name="region"
-                            value={data.region}
-                            readOnly
-                            placeholder="Auto-filled"
-                            className={getFieldClassName('region', 'bg-gray-800 cursor-not-allowed pr-10')}
-                            style={getFieldStyle('region')}
-                        />
+                        {isManualSchool ? (
+                            <select
+                                name="region"
+                                value={data.region}
+                                onChange={(e) => {
+                                    const selectedRegion = e.target.value;
+                                    handleInputChange({ target: { name: 'region', value: selectedRegion } });
+                                    const found = PH_REGIONS.find((r) => r.code === selectedRegion);
+                                    if (found) {
+                                        handleInputChange({ target: { name: 'island', value: found.island } });
+                                        clearFieldError('island');
+                                    }
+                                    clearFieldError('region');
+                                }}
+                                className={getFieldClassName('region', 'appearance-none pr-10')}
+                                style={getFieldStyle('region')}
+                            >
+                                <option value="" disabled>Select Region</option>
+                                {PH_REGIONS.map((r) => (
+                                    <option key={r.code} value={r.code}>
+                                        {r.name}
+                                    </option>
+                                ))}
+                            </select>
+                        ) : (
+                            <input
+                                type="text"
+                                name="region"
+                                value={data.region}
+                                readOnly
+                                placeholder="Auto-filled"
+                                className={getFieldClassName('region', 'bg-gray-800 cursor-not-allowed pr-10')}
+                                style={getFieldStyle('region')}
+                            />
+                        )}
+                        {isManualSchool && (
+                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none text-gray-400" />
+                        )}
                         {errors.region && (
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full border border-red-500 text-xs font-bold text-red-500 pointer-events-none">
+                            <div className="absolute right-10 top-1/2 -translate-y-1/2 flex h-5 w-5 items-center justify-center rounded-full border border-red-500 text-xs font-bold text-red-500 pointer-events-none">
                                 !
                             </div>
                         )}
@@ -462,7 +619,7 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
                 {renderSelectBox(
                     'Course or Programs',
                     data.course,
-                    'Select strand',
+                    'Select program',
                     strandOpen,
                     setStrandOpen,
                     strandDropdownRef,

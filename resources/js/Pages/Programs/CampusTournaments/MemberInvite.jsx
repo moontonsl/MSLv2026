@@ -1,40 +1,44 @@
 import SuccessModal from "@/Components/Admin/SuccessModal";
-import CampusTournamentPageHeader from "@/Components/CampusTournament/CampusTournamentPageHeader";
-import CaptainTeamCard from "@/Components/CampusTournament/CaptainTeamCard";
-import InviteActionBanner from "@/Components/CampusTournament/InviteActionBanner";
-import LeaveTeamModal from "@/Components/CampusTournament/LeaveTeamModal";
 import MemberInviteModal from "@/Components/CampusTournament/MemberInviteModal";
+import TeamInvitationRow from "@/Components/CampusTournament/TeamInvitationRow";
+import ViewTeamInvitationModal from "@/Components/CampusTournament/ViewTeamInvitationModal";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head, Link, router } from "@inertiajs/react";
-import { BellOff } from "lucide-react";
+import { BellOff, X } from "lucide-react";
 import { useState } from "react";
 
-export default function MemberInvite({ invitations = [], currentTeams = [] }) {
+export default function MemberInvite({ invitations = [] }) {
+    const [viewInvitation, setViewInvitation] = useState(null);
     const [selectedInvitation, setSelectedInvitation] = useState(null);
     const [decision, setDecision] = useState(null);
     const [processing, setProcessing] = useState(false);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState("");
-    const [leavingTeam, setLeavingTeam] = useState(null);
 
     const openDecision = (invitation, nextDecision) => {
+        setViewInvitation(null);
         setSelectedInvitation(invitation);
         setDecision(nextDecision);
         setError(null);
     };
 
-    const closeModal = () => {
+    const openDeclineAll = () => {
+        setViewInvitation(null);
+        setSelectedInvitation(null);
+        setDecision("decline-all");
+        setError(null);
+    };
+
+    const closeConfirm = () => {
         if (processing) return;
         setSelectedInvitation(null);
         setDecision(null);
     };
 
-    const confirmInvite = () => {
-        if (!selectedInvitation || !decision) return;
-
+    const respond = (invitation, nextDecision, { onDone } = {}) => {
         router.post(
-            `/tournament-invitations/${selectedInvitation.id}/respond`,
-            { decision: decision === "accept" ? "accepted" : "declined" },
+            `/tournament-invitations/${invitation.id}/respond`,
+            { decision: nextDecision === "accept" ? "accepted" : "declined" },
             {
                 preserveScroll: true,
                 onStart: () => {
@@ -42,13 +46,7 @@ export default function MemberInvite({ invitations = [], currentTeams = [] }) {
                     setError(null);
                 },
                 onSuccess: () => {
-                    setSuccessMessage(
-                        decision === "accept"
-                            ? "You joined the team."
-                            : "Invitation declined.",
-                    );
-                    setSelectedInvitation(null);
-                    setDecision(null);
+                    onDone?.();
                 },
                 onError: (errors) =>
                     setError(
@@ -60,84 +58,91 @@ export default function MemberInvite({ invitations = [], currentTeams = [] }) {
         );
     };
 
-    const confirmLeave = () => {
-        if (!leavingTeam) return;
+    const confirmInvite = () => {
+        if (decision === "decline-all") {
+            const targets = [...invitations];
+            if (targets.length === 0) return;
 
-        router.delete(`/tournament-participants/${leavingTeam.participantId}`, {
-            preserveScroll: true,
-            onStart: () => {
-                setProcessing(true);
-                setError(null);
+            setProcessing(true);
+            setError(null);
+
+            const declineNext = (index) => {
+                if (index >= targets.length) {
+                    setProcessing(false);
+                    setDecision(null);
+                    setSelectedInvitation(null);
+                    setSuccessMessage("All invitations declined.");
+                    router.reload({ preserveScroll: true });
+                    return;
+                }
+
+                router.post(
+                    `/tournament-invitations/${targets[index].id}/respond`,
+                    { decision: "declined" },
+                    {
+                        preserveScroll: true,
+                        preserveState: true,
+                        onError: (errors) => {
+                            setProcessing(false);
+                            setError(
+                                Object.values(errors ?? {})[0] ??
+                                    "Unable to decline all invitations.",
+                            );
+                        },
+                        onSuccess: () => declineNext(index + 1),
+                    },
+                );
+            };
+
+            declineNext(0);
+            return;
+        }
+
+        if (!selectedInvitation || !decision) return;
+
+        respond(selectedInvitation, decision, {
+            onDone: () => {
+                setSuccessMessage(
+                    decision === "accept"
+                        ? "You joined the team."
+                        : "Invitation declined.",
+                );
+                setSelectedInvitation(null);
+                setDecision(null);
+                setViewInvitation(null);
             },
-            onSuccess: () => {
-                setLeavingTeam(null);
-                setSuccessMessage("You left the team.");
-            },
-            onError: (errors) =>
-                setError(
-                    Object.values(errors ?? {})[0] ?? "Unable to leave this team.",
-                ),
-            onFinish: () => setProcessing(false),
         });
     };
 
     return (
         <MainLayout fullWidth>
-            <Head title="My Teams & Invitations — Campus Tournament" />
+            <Head title="Team Invitations — Campus Tournament" />
 
-            <div className="min-h-screen bg-[#0a0a0a] px-4 py-8 text-white sm:px-6 sm:py-10 lg:px-8">
-                <div className="mx-auto max-w-6xl space-y-6">
-                    <CampusTournamentPageHeader subtitle="My teams and invitations">
-                        <Link
-                            href="/Tournament/CampusTournament"
-                            className="text-sm text-gray-400 transition-colors hover:text-white"
-                        >
-                            ← Back to registration hub
-                        </Link>
-                    </CampusTournamentPageHeader>
+            <div className="flex min-h-[calc(100vh-8rem)] items-start justify-center bg-[#0a0a0a] px-4 py-8 text-white sm:px-6 sm:py-10">
+                <div className="relative w-full max-w-5xl rounded-2xl border border-neutral-800 bg-[#111111] p-5 sm:p-8">
+                    <Link
+                        href="/Tournament/CampusTournament"
+                        className="absolute right-4 top-4 inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
+                        aria-label="Close"
+                    >
+                        <X className="h-5 w-5" />
+                    </Link>
 
-                    {error && (
-                        <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                    <h1 className="mb-6 text-center text-xl font-bold text-yellow-500 sm:text-2xl">
+                        Team Invitations
+                    </h1>
+
+                    {error ? (
+                        <div className="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
                             {error}
                         </div>
-                    )}
+                    ) : null}
 
-                    {currentTeams.length > 0 && (
-                        <section className="space-y-4">
-                            <h2 className="text-2xl font-bold text-yellow-500">
-                                Your Team{currentTeams.length > 1 ? "s" : ""}
-                            </h2>
-                            {currentTeams.map((membership) => (
-                                <div key={membership.participantId} className="space-y-2">
-                                    <p className="text-sm text-gray-400">
-                                        {membership.tournamentName}
-                                    </p>
-                                    <CaptainTeamCard
-                                        team={membership.team}
-                                        memberView
-                                        onLeave={membership.canLeave ? () => setLeavingTeam(membership) : undefined}
-                                    />
-                                    {!membership.canLeave && (
-                                        <p className="text-sm text-gray-400">
-                                            Registration is closed; this roster can no longer be changed.
-                                        </p>
-                                    )}
-                                </div>
-                            ))}
-                        </section>
-                    )}
-
-                    {invitations.length > 0 && (
-                        <h2 className="text-2xl font-bold text-yellow-500">
-                            Pending Invitations
-                        </h2>
-                    )}
-
-                    {invitations.length === 0 && currentTeams.length === 0 ? (
-                        <section className="rounded-2xl border border-neutral-800 bg-[#111111] px-6 py-16 text-center">
+                    {invitations.length === 0 ? (
+                        <section className="rounded-xl border border-neutral-800 bg-[#0a0a0a] px-6 py-16 text-center">
                             <BellOff className="mx-auto h-10 w-10 text-gray-500" />
                             <h2 className="mt-4 text-xl font-bold">
-                                No pending invitations
+                                No team invitations
                             </h2>
                             <p className="mt-2 text-sm text-gray-400">
                                 Active team invitations will appear here until
@@ -145,16 +150,12 @@ export default function MemberInvite({ invitations = [], currentTeams = [] }) {
                             </p>
                         </section>
                     ) : (
-                        invitations.map((invitation) => (
-                            <section key={invitation.id} className="space-y-4">
-                                {currentTeams.some((membership) => membership.tournamentId === invitation.tournamentId) && (
-                                    <p className="text-sm text-amber-300">
-                                        Leave your current team before accepting another invitation for this tournament.
-                                    </p>
-                                )}
-                                <InviteActionBanner
-                                    teamName={invitation.team.name}
-                                    acceptDisabled={currentTeams.some((membership) => membership.tournamentId === invitation.tournamentId)}
+                        <div className="space-y-3">
+                            {invitations.map((invitation) => (
+                                <TeamInvitationRow
+                                    key={invitation.id}
+                                    invitation={invitation}
+                                    onView={() => setViewInvitation(invitation)}
                                     onAccept={() =>
                                         openDecision(invitation, "accept")
                                     }
@@ -162,31 +163,37 @@ export default function MemberInvite({ invitations = [], currentTeams = [] }) {
                                         openDecision(invitation, "decline")
                                     }
                                 />
-                                <CaptainTeamCard
-                                    team={invitation.team}
-                                    memberView
-                                />
-                            </section>
-                        ))
+                            ))}
+
+                            <div className="flex justify-end pt-2">
+                                <button
+                                    type="button"
+                                    onClick={openDeclineAll}
+                                    className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-red-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-red-700"
+                                >
+                                    Decline All
+                                </button>
+                            </div>
+                        </div>
                     )}
                 </div>
             </div>
 
+            <ViewTeamInvitationModal
+                isOpen={viewInvitation != null}
+                team={viewInvitation?.team}
+                onClose={() => setViewInvitation(null)}
+                onAccept={() => openDecision(viewInvitation, "accept")}
+                onDecline={() => openDecision(viewInvitation, "decline")}
+            />
+
             <MemberInviteModal
-                isOpen={selectedInvitation != null}
+                isOpen={decision != null}
                 variant={decision ?? "accept"}
                 teamName={selectedInvitation?.team.name}
                 processing={processing}
-                onCancel={closeModal}
+                onCancel={closeConfirm}
                 onConfirm={confirmInvite}
-            />
-
-            <LeaveTeamModal
-                isOpen={leavingTeam != null}
-                teamName={leavingTeam?.team.name}
-                processing={processing}
-                onCancel={() => !processing && setLeavingTeam(null)}
-                onConfirm={confirmLeave}
             />
 
             <SuccessModal
