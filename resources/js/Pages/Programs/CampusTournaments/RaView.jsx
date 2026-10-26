@@ -11,12 +11,12 @@ import {
     INITIAL_RA_MANAGED_TOURNAMENTS,
     INITIAL_SL_TOURNAMENT_REQUESTS,
     MONTH_OPTIONS,
-    TOURNAMENT_STATUS_TABS,
+    SL_MANAGEMENT_TABS,
     YEAR_OPTIONS,
 } from '@/data/campusTournamentData';
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, router } from '@inertiajs/react';
-import { FileSpreadsheet, Search } from 'lucide-react';
+import { ChevronLeft, ChevronRight, FileSpreadsheet, Hourglass, Search } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 /** The controller sends roster teams, so registration stats are derived here. */
@@ -27,22 +27,35 @@ function withRegistrationStats(tournament) {
         ...tournament,
         verifiedTeams:
             tournament.verifiedTeams ??
-            rosterTeams.filter((team) => team.status === "confirmed").length,
+            rosterTeams.filter((team) => team.status === 'confirmed').length,
         pendingTeams:
             tournament.pendingTeams ??
-            rosterTeams.filter((team) => team.status !== "confirmed").length,
+            rosterTeams.filter((team) => team.status !== 'confirmed').length,
         totalRegistration: tournament.totalRegistration ?? rosterTeams.length,
     };
 }
 
 const SEARCH_CLASS =
-    "w-full min-h-[44px] rounded-lg border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-10 pr-4 text-base text-white placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none md:text-sm";
+    'w-full min-h-[44px] rounded-lg border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-10 pr-4 text-base text-white placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none md:text-sm';
 
 const SELECT_CLASS =
-    "min-h-[44px] w-full rounded-lg border border-neutral-800 bg-[#1a1a1a] px-3 py-2.5 text-base text-white outline-none focus:ring-2 focus:ring-yellow-500 md:w-auto md:min-w-[120px] md:text-sm";
+    'min-h-[44px] w-full rounded-lg border border-neutral-800 bg-[#1a1a1a] px-3 py-2.5 text-base text-white outline-none focus:ring-2 focus:ring-yellow-500 md:w-auto md:min-w-[120px] md:text-sm';
+
+const MODE_OPTIONS = [
+    { value: '', label: 'Online' },
+    { value: 'Online', label: 'Online' },
+    { value: 'Onsite', label: 'Onsite' },
+];
+
+const SECTION_TITLES = {
+    requests: 'Tournament Requests',
+    upcoming: 'Upcoming Tournaments',
+    ongoing: 'Ongoing Tournaments',
+    completed: 'Completed Tournaments',
+};
 
 /**
- * Regional Admin view — approves incoming SL tournament requests and manages
+ * Regional Admin / CA view — approves incoming SL tournament requests and manages
  * the approved tournaments (view, reschedule, delete).
  */
 export default function RaView({
@@ -62,13 +75,14 @@ export default function RaView({
         setTournaments(initialTournaments.map(withRegistrationStats));
     }, [initialTournaments]);
 
-    const [statusTab, setStatusTab] = useState("ongoing");
-    const [search, setSearch] = useState("");
-    const [month, setMonth] = useState("");
-    const [year, setYear] = useState("");
-    const [showOnline, setShowOnline] = useState(true);
-    const [showOnsite, setShowOnsite] = useState(true);
+    const [statusTab, setStatusTab] = useState('requests');
+    const [search, setSearch] = useState('');
+    const [month, setMonth] = useState('');
+    const [year, setYear] = useState('');
+    const [modeFilter, setModeFilter] = useState('');
     const [requestPage, setRequestPage] = useState(1);
+    const [tournamentPage, setTournamentPage] = useState(1);
+    const tournamentTotalPages = 10;
 
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [confirmAction, setConfirmAction] = useState(null);
@@ -79,19 +93,15 @@ export default function RaView({
     const [deleteTarget, setDeleteTarget] = useState(null);
 
     const [successOpen, setSuccessOpen] = useState(false);
-    const [successMessage, setSuccessMessage] = useState("");
-    const [successDescription, setSuccessDescription] = useState("");
+    const [successMessage, setSuccessMessage] = useState('');
+    const [successDescription, setSuccessDescription] = useState('');
 
     const [reportOpen, setReportOpen] = useState(false);
     const [viewTournament, setViewTournament] = useState(null);
 
     const reportSchools = useMemo(() => {
         const names = [
-            ...new Set(
-                tournaments
-                    .map((item) => item.schoolName)
-                    .filter(Boolean),
-            ),
+            ...new Set(tournaments.map((item) => item.schoolName).filter(Boolean)),
         ];
         return [
             { value: 'all', label: 'All School' },
@@ -101,27 +111,23 @@ export default function RaView({
 
     const tabCounts = useMemo(
         () => ({
-            upcoming: tournaments.filter((item) => item.status === "upcoming")
-                .length,
-            ongoing: tournaments.filter((item) => item.status === "ongoing")
-                .length,
-            completed: tournaments.filter((item) => item.status === "completed")
-                .length,
+            requests: requests.length,
+            upcoming: tournaments.filter((item) => item.status === 'upcoming').length,
+            ongoing: tournaments.filter((item) => item.status === 'ongoing').length,
+            completed: tournaments.filter((item) => item.status === 'completed').length,
         }),
-        [tournaments],
+        [requests, tournaments],
     );
 
-    const filteredTournaments = useMemo(() => {
+    const filteredRequests = useMemo(() => {
         const query = search.trim().toLowerCase();
 
-        return tournaments.filter((item) => {
-            if (item.status !== statusTab) return false;
-            if (item.mode === "Online" && !showOnline) return false;
-            if (item.mode === "Onsite" && !showOnsite) return false;
+        return requests.filter((item) => {
+            if (modeFilter && item.type !== modeFilter) return false;
 
             if (query) {
                 const haystack =
-                    `${item.title} ${item.schoolName ?? ""}`.toLowerCase();
+                    `${item.schoolName} ${item.slName ?? ''}`.toLowerCase();
                 if (!haystack.includes(query)) return false;
             }
 
@@ -130,9 +136,29 @@ export default function RaView({
 
             return true;
         });
-    }, [tournaments, statusTab, search, showOnline, showOnsite, month, year]);
+    }, [requests, search, modeFilter, month, year]);
 
-    const showSuccess = useCallback((message, description = "") => {
+    const filteredTournaments = useMemo(() => {
+        const query = search.trim().toLowerCase();
+
+        return tournaments.filter((item) => {
+            if (item.status !== statusTab) return false;
+            if (modeFilter && item.mode !== modeFilter) return false;
+
+            if (query) {
+                const haystack =
+                    `${item.title} ${item.schoolName ?? ''}`.toLowerCase();
+                if (!haystack.includes(query)) return false;
+            }
+
+            if (month && !item.startDate.includes(`-${month}-`)) return false;
+            if (year && !item.startDate.startsWith(year)) return false;
+
+            return true;
+        });
+    }, [tournaments, statusTab, search, modeFilter, month, year]);
+
+    const showSuccess = useCallback((message, description = '') => {
         setSuccessMessage(message);
         setSuccessDescription(description);
         setSuccessOpen(true);
@@ -140,13 +166,13 @@ export default function RaView({
 
     const openApprove = useCallback((request) => {
         setActiveRequest(request);
-        setConfirmAction("approve");
+        setConfirmAction('approve');
         setConfirmOpen(true);
     }, []);
 
     const openReject = useCallback((request) => {
         setActiveRequest(request);
-        setConfirmAction("reject");
+        setConfirmAction('reject');
         setConfirmOpen(true);
     }, []);
 
@@ -159,19 +185,19 @@ export default function RaView({
     const handleConfirmAction = useCallback(() => {
         if (!activeRequest || !confirmAction) return;
 
-        const isApprove = confirmAction === "approve";
+        const isApprove = confirmAction === 'approve';
         const requestId = activeRequest.id;
         const isPersisted =
-            typeof requestId === "number" ||
-            !String(requestId).startsWith("sl-req-");
+            typeof requestId === 'number' ||
+            !String(requestId).startsWith('sl-req-');
 
         if (isPersisted) {
             router.post(
-                `/campus-tournaments/${requestId}/${isApprove ? "approve" : "reject"}`,
+                `/campus-tournaments/${requestId}/${isApprove ? 'approve' : 'reject'}`,
                 {
                     reason: isApprove
-                        ? "Approved by Regional Admin"
-                        : "Rejected by Regional Admin",
+                        ? 'Approved by Regional Admin'
+                        : 'Rejected by Regional Admin',
                 },
                 {
                     preserveScroll: true,
@@ -181,11 +207,11 @@ export default function RaView({
                         setConfirmAction(null);
                         showSuccess(
                             isApprove
-                                ? "Tournament Approved Successfully!"
-                                : "Tournament Rejected",
+                                ? 'Tournament Approved Successfully!'
+                                : 'Tournament Rejected',
                             isApprove
-                                ? "The tournament request has been approved and is now available for student registration"
-                                : "The tournament request has been rejected.",
+                                ? 'The tournament request has been approved and is now available for student registration'
+                                : 'The tournament request has been rejected.',
                         );
                     },
                     onError: (errors) => console.error(errors),
@@ -198,7 +224,7 @@ export default function RaView({
             prev.filter((item) => item.id !== activeRequest.id),
         );
 
-        if (confirmAction === "approve") {
+        if (confirmAction === 'approve') {
             setTournaments((prev) => [
                 {
                     id: `ra-up-${Date.now()}`,
@@ -207,7 +233,7 @@ export default function RaView({
                     startDate: activeRequest.startDate,
                     endDate: activeRequest.endDate,
                     mode: activeRequest.type,
-                    status: "upcoming",
+                    status: 'upcoming',
                     verifiedTeams: 0,
                     pendingTeams: 0,
                     totalRegistration: 0,
@@ -215,13 +241,13 @@ export default function RaView({
                 ...prev,
             ]);
             showSuccess(
-                "Tournament Approved Successfully!",
-                "The tournament request has been approved and is now available for student registration",
+                'Tournament Approved Successfully!',
+                'The tournament request has been approved and is now available for student registration',
             );
         } else {
             showSuccess(
-                "Tournament Rejected",
-                "The tournament request has been rejected.",
+                'Tournament Rejected',
+                'The tournament request has been rejected.',
             );
         }
 
@@ -250,14 +276,14 @@ export default function RaView({
                 );
                 setRescheduleTarget(null);
                 showSuccess(
-                    "Tournament Updated Successfully!",
-                    "The new schedule has been saved.",
+                    'Tournament Updated Successfully!',
+                    'The new schedule has been saved.',
                 );
             };
 
             if (
-                typeof rescheduleTarget.id === "string" &&
-                rescheduleTarget.id.startsWith("ra-")
+                typeof rescheduleTarget.id === 'string' &&
+                rescheduleTarget.id.startsWith('ra-')
             ) {
                 applyLocally();
                 return;
@@ -267,7 +293,7 @@ export default function RaView({
                 `/campus-tournaments/${rescheduleTarget.id}/resubmit`,
                 {
                     ...values,
-                    resubmission_reason: "Rescheduled by Regional Admin.",
+                    resubmission_reason: 'Rescheduled by Regional Admin.',
                 },
                 {
                     preserveScroll: true,
@@ -275,15 +301,15 @@ export default function RaView({
                         setRescheduleTarget(null);
                         setRescheduleError(null);
                         showSuccess(
-                            "Tournament Updated Successfully!",
-                            "The new schedule has been saved.",
+                            'Tournament Updated Successfully!',
+                            'The new schedule has been saved.',
                         );
                     },
                     onError: (errors) => {
                         console.error(errors);
                         setRescheduleError(
                             Object.values(errors || {})[0] ||
-                                "Failed to reschedule this tournament.",
+                                'Failed to reschedule this tournament.',
                         );
                     },
                 },
@@ -300,27 +326,50 @@ export default function RaView({
                 prev.filter((item) => item.id !== deleteTarget.id),
             );
             setDeleteTarget(null);
-            showSuccess("Data has been deleted!");
+            showSuccess('Data has been deleted!');
         };
 
         if (
-            typeof deleteTarget.id === "string" &&
-            deleteTarget.id.startsWith("ra-")
+            typeof deleteTarget.id === 'string' &&
+            deleteTarget.id.startsWith('ra-')
         ) {
             removeLocally();
             return;
         }
 
         router.delete(`/campus-tournaments/${deleteTarget.id}`, {
-            data: { reason: "Cancelled by Regional Admin" },
+            data: { reason: 'Cancelled by Regional Admin' },
             preserveScroll: true,
             onSuccess: () => {
                 setDeleteTarget(null);
-                showSuccess("Data has been deleted!");
+                showSuccess('Data has been deleted!');
             },
             onError: removeLocally,
         });
     }, [deleteTarget, showSuccess]);
+
+    const handleMarkReviewed = useCallback((tournamentId) => {
+        setTournaments((prev) =>
+            prev.map((item) =>
+                item.id === tournamentId
+                    ? {
+                          ...item,
+                          reviewed: true,
+                          reviewedBy: item.reviewedBy ?? 'RA Jenard',
+                      }
+                    : item,
+            ),
+        );
+        setViewTournament((prev) =>
+            prev && prev.id === tournamentId
+                ? {
+                      ...prev,
+                      reviewed: true,
+                      reviewedBy: prev.reviewedBy ?? 'RA Jenard',
+                  }
+                : prev,
+        );
+    }, []);
 
     return (
         <MainLayout fullWidth>
@@ -330,52 +379,10 @@ export default function RaView({
                 <div className="mx-auto max-w-6xl space-y-6 sm:space-y-8">
                     <CampusTournamentPageHeader />
 
-                    <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
-                        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                            <div className="min-w-0 flex-1">
-                                <div className="flex flex-wrap items-center gap-2">
-                                    <h2 className="text-lg font-bold text-yellow-500 sm:text-xl">
-                                        Tournament Requests
-                                    </h2>
-                                    <span className="inline-flex items-center rounded-full border border-yellow-500/40 bg-yellow-500/10 px-2.5 py-0.5 text-xs font-semibold text-yellow-500">
-                                        {requests.length}{' '}
-                                        {requests.length === 1 ? 'Request' : 'Requests'}
-                                    </span>
-                                </div>
-                                <p className="mt-1 text-sm text-gray-400">
-                                    Approve or reject each request. Approved tournaments will
-                                    appear on the Campus Tournament Page.
-                                </p>
-                            </div>
-                            <button
-                                type="button"
-                                onClick={() => setReportOpen(true)}
-                                className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
-                            >
-                                <FileSpreadsheet className="h-4 w-4" />
-                                Export to Excel
-                            </button>
-                        </div>
-
-                        {requests.length > 0 ? (
-                            <TournamentRequestTable
-                                requests={requests}
-                                onApprove={openApprove}
-                                onReject={openReject}
-                                page={requestPage}
-                                onPageChange={setRequestPage}
-                            />
-                        ) : (
-                            <p className="rounded-lg border border-dashed border-neutral-800 py-8 text-center text-sm text-gray-500">
-                                No pending tournament requests.
-                            </p>
-                        )}
-                    </section>
-
                     <div className="space-y-4 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-5">
                         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-                            <div className="inline-flex w-full flex-wrap gap-2 rounded-xl bg-[#0a0a0a] p-1 sm:w-auto">
-                                {TOURNAMENT_STATUS_TABS.map((tab) => {
+                            <div className="inline-flex w-full flex-wrap gap-1 rounded-xl bg-[#0a0a0a] p-1 sm:w-auto">
+                                {SL_MANAGEMENT_TABS.map((tab) => {
                                     const isActive = statusTab === tab.id;
                                     const count = tabCounts[tab.id] ?? 0;
 
@@ -383,19 +390,23 @@ export default function RaView({
                                         <button
                                             key={tab.id}
                                             type="button"
-                                            onClick={() => setStatusTab(tab.id)}
-                                            className={`inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors sm:flex-none ${
+                                            onClick={() => {
+                                                setStatusTab(tab.id);
+                                                setTournamentPage(1);
+                                                setRequestPage(1);
+                                            }}
+                                            className={`inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition-colors sm:flex-none sm:px-4 ${
                                                 isActive
-                                                    ? "bg-yellow-500 text-black"
-                                                    : "text-gray-300 hover:text-white"
+                                                    ? 'bg-yellow-500 text-black'
+                                                    : 'text-gray-300 hover:text-white'
                                             }`}
                                         >
                                             {tab.label}
                                             <span
                                                 className={`inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-bold ${
                                                     isActive
-                                                        ? "bg-black text-yellow-500"
-                                                        : "bg-yellow-500 text-black"
+                                                        ? 'bg-black text-yellow-500'
+                                                        : 'bg-yellow-500 text-black'
                                                 }`}
                                             >
                                                 {count}
@@ -455,61 +466,143 @@ export default function RaView({
                                     ))}
                                 </select>
 
-                                <div className="flex items-center gap-4 px-1">
-                                    {[
-                                        {
-                                            id: "ra-filter-online",
-                                            label: "Online",
-                                            checked: showOnline,
-                                            onChange: setShowOnline,
-                                        },
-                                        {
-                                            id: "ra-filter-onsite",
-                                            label: "Onsite",
-                                            checked: showOnsite,
-                                            onChange: setShowOnsite,
-                                        },
-                                    ].map((filter) => (
-                                        <label
-                                            key={filter.id}
-                                            htmlFor={filter.id}
-                                            className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 text-sm text-white"
+                                <select
+                                    value={modeFilter}
+                                    onChange={(event) =>
+                                        setModeFilter(event.target.value)
+                                    }
+                                    className={SELECT_CLASS}
+                                    aria-label="Filter by type"
+                                >
+                                    {MODE_OPTIONS.map((option) => (
+                                        <option
+                                            key={option.value || 'all'}
+                                            value={option.value}
                                         >
-                                            <input
-                                                id={filter.id}
-                                                type="checkbox"
-                                                checked={filter.checked}
-                                                onChange={(event) =>
-                                                    filter.onChange(
-                                                        event.target.checked,
-                                                    )
-                                                }
-                                                className="h-4 w-4 rounded border-neutral-600 bg-[#1a1a1a] text-yellow-500 focus:ring-yellow-500"
-                                            />
-                                            {filter.label}
-                                        </label>
+                                            {option.label}
+                                        </option>
                                     ))}
-                                </div>
+                                </select>
                             </div>
                         </div>
 
-                        <div className="space-y-3">
-                            {filteredTournaments.length === 0 ? (
-                                <p className="rounded-xl border border-dashed border-neutral-800 py-12 text-center text-sm text-gray-500">
-                                    No tournaments found for this filter.
-                                </p>
-                            ) : (
-                                filteredTournaments.map((tournament) => (
-                                    <ManagedTournamentCard
-                                        key={tournament.id}
-                                        tournament={tournament}
-                                        onView={setViewTournament}
-                                        onReschedule={setRescheduleTarget}
-                                        onDelete={setDeleteTarget}
+                        {statusTab === 'requests' ? (
+                            <section className="space-y-4">
+                                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                    <div className="min-w-0 flex-1">
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <h2 className="text-lg font-bold text-yellow-500 sm:text-xl">
+                                                Tournament Requests
+                                            </h2>
+                                            <span className="inline-flex items-center gap-1.5 rounded-full border border-yellow-500/40 bg-yellow-500/10 px-2.5 py-0.5 text-xs font-semibold text-yellow-500">
+                                                <Hourglass className="h-3.5 w-3.5" />
+                                                {filteredRequests.length}{' '}
+                                                {filteredRequests.length === 1
+                                                    ? 'Request'
+                                                    : 'Requests'}
+                                            </span>
+                                        </div>
+                                        <p className="mt-1 text-sm text-gray-400">
+                                            Approve or reject each request.
+                                            Approved tournaments will appear on
+                                            the Campus Tournament Page.
+                                        </p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setReportOpen(true)}
+                                        className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                                    >
+                                        <FileSpreadsheet className="h-4 w-4" />
+                                        Export to Excel
+                                    </button>
+                                </div>
+
+                                {filteredRequests.length > 0 ? (
+                                    <TournamentRequestTable
+                                        requests={filteredRequests}
+                                        onApprove={openApprove}
+                                        onReject={openReject}
+                                        page={requestPage}
+                                        onPageChange={setRequestPage}
                                     />
-                                ))
-                            )}
-                        </div>
+                                ) : (
+                                    <p className="rounded-lg border border-dashed border-neutral-800 py-8 text-center text-sm text-gray-500">
+                                        No pending tournament requests.
+                                    </p>
+                                )}
+                            </section>
+                        ) : (
+                            <section className="space-y-4">
+                                <h2 className="text-lg font-bold text-yellow-500 sm:text-xl">
+                                    {SECTION_TITLES[statusTab]}
+                                </h2>
+
+                                <div className="space-y-3">
+                                    {filteredTournaments.length === 0 ? (
+                                        <p className="rounded-xl border border-dashed border-neutral-800 py-12 text-center text-sm text-gray-500">
+                                            No tournaments found for this
+                                            filter.
+                                        </p>
+                                    ) : (
+                                        filteredTournaments.map(
+                                            (tournament) => (
+                                                <ManagedTournamentCard
+                                                    key={tournament.id}
+                                                    tournament={tournament}
+                                                    onView={setViewTournament}
+                                                    onReschedule={
+                                                        setRescheduleTarget
+                                                    }
+                                                    onDelete={setDeleteTarget}
+                                                />
+                                            ),
+                                        )
+                                    )}
+                                </div>
+
+                                {filteredTournaments.length > 0 ? (
+                                    <div className="flex items-center justify-between gap-3 pt-2">
+                                        <button
+                                            type="button"
+                                            disabled={tournamentPage <= 1}
+                                            onClick={() =>
+                                                setTournamentPage((prev) =>
+                                                    Math.max(1, prev - 1),
+                                                )
+                                            }
+                                            className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-yellow-500 text-black disabled:cursor-not-allowed disabled:opacity-50"
+                                            aria-label="Previous page"
+                                        >
+                                            <ChevronLeft className="h-5 w-5" />
+                                        </button>
+                                        <p className="text-sm font-medium text-white">
+                                            Page {tournamentPage} of{' '}
+                                            {tournamentTotalPages}
+                                        </p>
+                                        <button
+                                            type="button"
+                                            disabled={
+                                                tournamentPage >=
+                                                tournamentTotalPages
+                                            }
+                                            onClick={() =>
+                                                setTournamentPage((prev) =>
+                                                    Math.min(
+                                                        tournamentTotalPages,
+                                                        prev + 1,
+                                                    ),
+                                                )
+                                            }
+                                            className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-yellow-500 text-black disabled:cursor-not-allowed disabled:opacity-50"
+                                            aria-label="Next page"
+                                        >
+                                            <ChevronRight className="h-5 w-5" />
+                                        </button>
+                                    </div>
+                                ) : null}
+                            </section>
+                        )}
                     </div>
                 </div>
             </div>
@@ -518,8 +611,8 @@ export default function RaView({
                 isOpen={confirmOpen}
                 onCancel={cancelConfirm}
                 onConfirm={handleConfirmAction}
-                actionLabel={confirmAction ?? "approve"}
-                subjectName={activeRequest?.schoolName ?? "this school"}
+                actionLabel={confirmAction ?? 'approve'}
+                subjectName={activeRequest?.schoolName ?? 'this school'}
                 stackedButtons={false}
             />
 
@@ -564,6 +657,7 @@ export default function RaView({
                 isOpen={viewTournament != null}
                 tournament={viewTournament}
                 onClose={() => setViewTournament(null)}
+                onMarkReviewed={handleMarkReviewed}
             />
         </MainLayout>
     );

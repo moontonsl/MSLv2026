@@ -1,7 +1,8 @@
 import SlMatchManagement from '@/Components/CampusTournament/SlMatchManagement';
 import SlRosterPanel from '@/Components/CampusTournament/SlRosterPanel';
 import { formatDateRange } from '@/data/campusTournamentData';
-import { Check, ChevronDown, ChevronRight } from 'lucide-react';
+import { Link } from '@inertiajs/react';
+import { Check, ChevronDown, ChevronRight, ExternalLink, FileSpreadsheet, Pencil } from 'lucide-react';
 import { useState } from 'react';
 
 const INNER_TABS = [
@@ -44,13 +45,14 @@ export default function SlTournamentPanel({
     const [isEditing, setIsEditing] = useState(false);
 
     const resultsSubmitted = Boolean(tournament.resultsSubmitted);
+    const showEditActions = resultsSubmitted && !isEditing && innerTab === "match";
 
     return (
         <article className="overflow-hidden rounded-xl border border-neutral-800 bg-[#111111]">
-            <div className="flex items-start gap-3 p-4 sm:items-center sm:p-5">
-                <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-3 p-4 sm:p-5">
+                <div className="min-w-0 flex-1 text-center sm:text-left">
                     {resultsSubmitted ? (
-                        <div className="mb-3 inline-flex flex-col gap-0.5 sm:mb-2">
+                        <div className="mb-3 inline-flex flex-col items-center gap-0.5 sm:mb-2 sm:items-start">
                             <span className="inline-flex w-fit items-center gap-1.5 rounded-md bg-emerald-500/15 px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-emerald-400">
                                 <Check className="h-3.5 w-3.5" />
                                 Results Submitted
@@ -114,27 +116,50 @@ export default function SlTournamentPanel({
 
             {expanded ? (
                 <div className="border-t border-neutral-800 px-4 pb-4 sm:px-5 sm:pb-5">
-                    <div className="mb-4 flex gap-6 border-b border-neutral-800">
-                        {INNER_TABS.map((tab) => {
-                            const isActive = innerTab === tab.id;
-                            return (
+                    <div className="mb-4 flex flex-col gap-3 border-b border-neutral-800 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex gap-6">
+                            {INNER_TABS.map((tab) => {
+                                const isActive = innerTab === tab.id;
+                                return (
+                                    <button
+                                        key={tab.id}
+                                        type="button"
+                                        onClick={() => setInnerTab(tab.id)}
+                                        className={`relative pb-3 pt-4 text-sm font-semibold transition-colors ${
+                                            isActive
+                                                ? "text-yellow-500"
+                                                : "text-gray-400 hover:text-white"
+                                        }`}
+                                    >
+                                        {tab.label}
+                                        {isActive ? (
+                                            <span className="absolute inset-x-0 bottom-0 h-0.5 bg-yellow-500" />
+                                        ) : null}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        {showEditActions ? (
+                            <div className="flex flex-col gap-2 pb-3 sm:flex-row sm:items-center">
                                 <button
-                                    key={tab.id}
                                     type="button"
-                                    onClick={() => setInnerTab(tab.id)}
-                                    className={`relative pb-3 pt-4 text-sm font-semibold transition-colors ${
-                                        isActive
-                                            ? "text-yellow-500"
-                                            : "text-gray-400 hover:text-white"
-                                    }`}
+                                    onClick={() => setIsEditing(true)}
+                                    className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg border border-yellow-500 bg-transparent px-4 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"
                                 >
-                                    {tab.label}
-                                    {isActive ? (
-                                        <span className="absolute inset-x-0 bottom-0 h-0.5 bg-yellow-500" />
-                                    ) : null}
+                                    <Pencil className="h-4 w-4" />
+                                    Edit
                                 </button>
-                            );
-                        })}
+                                <button
+                                    type="button"
+                                    onClick={() => onExport?.(tournament)}
+                                    className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                                >
+                                    <FileSpreadsheet className="h-4 w-4" />
+                                    Export to Excel
+                                </button>
+                            </div>
+                        ) : null}
                     </div>
 
                     {innerTab === "match" ? (
@@ -144,6 +169,7 @@ export default function SlTournamentPanel({
                             totalPages={10}
                             resultsSubmitted={resultsSubmitted}
                             isEditing={isEditing}
+                            hideToolbar
                             onPageChange={setPage}
                             onPlacementChange={(teamId, placementId) =>
                                 onPlacementChange(tournament.id, teamId, placementId)

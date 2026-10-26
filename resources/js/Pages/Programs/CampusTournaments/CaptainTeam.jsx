@@ -1,6 +1,5 @@
 import CampusTournamentPageHeader from '@/Components/CampusTournament/CampusTournamentPageHeader';
 import CaptainTeamCard from '@/Components/CampusTournament/CaptainTeamCard';
-import TeamInviteCodeModal from '@/Components/CampusTournament/TeamInviteCodeModal';
 import TeamNoticeBanner from '@/Components/CampusTournament/TeamNoticeBanner';
 import { ROLE_SLOTS } from '@/data/campusTournamentCaptainData';
 import MainLayout from '@/Layouts/MainLayout';
@@ -16,11 +15,6 @@ const SELECT_CLASS =
 
 const roleLabel = (code) => ROLE_SLOTS.find((role) => role.id === code)?.label ?? code;
 
-function createInviteCode() {
-    const suffix = String(Math.floor(10000 + Math.random() * 90000));
-    return `INV-${suffix}`;
-}
-
 export default function CaptainTeam({ team }) {
     const [search, setSearch] = useState('');
     const [results, setResults] = useState([]);
@@ -29,20 +23,17 @@ export default function CaptainTeam({ team }) {
     const [searching, setSearching] = useState(false);
     const [processing, setProcessing] = useState(false);
     const [error, setError] = useState(null);
-    const [inviteCode, setInviteCode] = useState(team.inviteCode ?? '');
-    const [inviteModalOpen, setInviteModalOpen] = useState(false);
 
     // Participants and open invitations can share ids, so the roster keys are namespaced.
     const rosterTeam = useMemo(
         () => ({
             ...team,
-            inviteCode: inviteCode || undefined,
             players: (team.players ?? []).map((player) => ({
                 ...player,
                 id: `${player.status}-${player.id}-${player.role}`,
             })),
         }),
-        [team, inviteCode],
+        [team],
     );
 
     const pendingInvites = useMemo(
@@ -140,20 +131,29 @@ export default function CaptainTeam({ team }) {
             ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
-    const handleGenerateCode = () => {
-        const nextCode = inviteCode || createInviteCode();
-        setInviteCode(nextCode);
-        setInviteModalOpen(true);
-    };
-
-    const handleCopyCode = async () => {
-        if (!inviteCode) return;
-        try {
-            await navigator.clipboard.writeText(inviteCode);
-        } catch {
-            // Clipboard may be unavailable; ignore quietly for UI demo flow.
-        }
-    };
+    const rosterNotice =
+        team.status === 'disqualified' ? (
+            <TeamNoticeBanner label="Notice">
+                Your team was disqualified due to incomplete members.
+            </TeamNoticeBanner>
+        ) : vacatedPlayers.length > 0 ? (
+            <div className="space-y-2">
+                {vacatedPlayers.map((player) => (
+                    <TeamNoticeBanner
+                        key={`${player.status}-${player.id}-${player.role}`}
+                        label="Action Required"
+                    >
+                        <span className="font-semibold text-red-100">
+                            {player.name}
+                        </span>{' '}
+                        {player.status === 'declined'
+                            ? 'declined the invitation.'
+                            : 'left your team.'}{' '}
+                        Please edit your roster to replace them.
+                    </TeamNoticeBanner>
+                ))}
+            </div>
+        ) : null;
 
     return (
         <MainLayout fullWidth>
@@ -176,33 +176,10 @@ export default function CaptainTeam({ team }) {
                         </div>
                     ) : null}
 
-                    {team.status === 'disqualified' ? (
-                        <TeamNoticeBanner label="Notice">
-                            Your team was disqualified due to incomplete members.
-                        </TeamNoticeBanner>
-                    ) : (
-                        vacatedPlayers.map((player) => (
-                            <TeamNoticeBanner
-                                key={`${player.status}-${player.id}-${player.role}`}
-                                label="Action Required"
-                            >
-                                <span className="font-semibold text-white">
-                                    {player.name}
-                                </span>{' '}
-                                {player.status === 'declined'
-                                    ? 'declined the invitation.'
-                                    : 'left your team.'}{' '}
-                                Please edit your roster to replace them.
-                            </TeamNoticeBanner>
-                        ))
-                    )}
-
                     <CaptainTeamCard
                         team={rosterTeam}
-                        showInviteCode
                         onEdit={handleEdit}
-                        onGenerateCode={handleGenerateCode}
-                        onCopyCode={handleCopyCode}
+                        notice={rosterNotice}
                     />
 
                     {pendingInvites.length > 0 ? (
@@ -351,12 +328,6 @@ export default function CaptainTeam({ team }) {
                     ) : null}
                 </div>
             </div>
-
-            <TeamInviteCodeModal
-                isOpen={inviteModalOpen}
-                onClose={() => setInviteModalOpen(false)}
-                inviteCode={inviteCode || 'INV-00000'}
-            />
         </MainLayout>
     );
 }

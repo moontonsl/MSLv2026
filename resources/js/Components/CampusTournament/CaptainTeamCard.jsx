@@ -1,4 +1,4 @@
-import { CheckCircle2, ChevronsUpDown, Copy, Hourglass, User, XCircle } from "lucide-react";
+import { CheckCircle2, ChevronsUpDown, Hourglass, User, UserMinus, XCircle } from "lucide-react";
 
 const TONES = {
     green: {
@@ -22,7 +22,7 @@ const TONES = {
 };
 
 const TEAM_STATUS = {
-    approved: { label: "Approved", tone: "green" },
+    approved: { label: "Registered", tone: "green" },
     registered: { label: "Registered", tone: "green" },
     incomplete: { label: "Incomplete", tone: "red" },
     disqualified: { label: "Disqualified", tone: "red" },
@@ -30,18 +30,19 @@ const TEAM_STATUS = {
 };
 
 const PLAYER_STATUS = {
-    confirmed: { label: "Accepted", tone: "green" },
-    accepted: { label: "Accepted", tone: "green" },
-    declined: { label: "Declined", tone: "red" },
-    withdrawn: { label: "Withdrawn", tone: "red" },
-    pending: { label: "Pending", tone: "yellow" },
+    confirmed: { label: "Accepted", tone: "green", Icon: CheckCircle2 },
+    accepted: { label: "Accepted", tone: "green", Icon: CheckCircle2 },
+    declined: { label: "Declined", tone: "red", Icon: XCircle },
+    withdrawn: { label: "Withdrawn", tone: "red", Icon: UserMinus },
+    pending: { label: "Pending", tone: "yellow", Icon: Hourglass },
 };
 
 const teamStatusMeta = (status) => TEAM_STATUS[status] ?? TEAM_STATUS.pending;
 const playerStatusMeta = (status) => PLAYER_STATUS[status] ?? PLAYER_STATUS.confirmed;
 
-function StatusBadge({ label, tone, solid = false }) {
-    const { solid: solidClass, outline: outlineClass, Icon } = TONES[tone];
+function StatusBadge({ label, tone, solid = false, Icon: IconOverride }) {
+    const { solid: solidClass, outline: outlineClass, Icon: ToneIcon } = TONES[tone];
+    const Icon = IconOverride ?? ToneIcon;
 
     if (solid) {
         return (
@@ -81,7 +82,7 @@ function Avatar({ status }) {
 
 function PlayerBadge({ status }) {
     const meta = playerStatusMeta(status);
-    return <StatusBadge label={meta.label} tone={meta.tone} />;
+    return <StatusBadge label={meta.label} tone={meta.tone} Icon={meta.Icon} />;
 }
 
 function PlayerCell({ player, showStatusBadge = false }) {
@@ -109,9 +110,12 @@ function PlayerMobileRow({ player, roleLabel, showStatusBadge = false }) {
         <div className="flex items-center gap-3 border-b border-neutral-800 px-4 py-3 last:border-b-0">
             <Avatar status={player.status} />
             <div className="min-w-0 flex-1">
-                <p className="text-xs font-semibold text-yellow-500">
-                    {roleLabel}
-                </p>
+                <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-xs font-semibold text-yellow-500">
+                        {roleLabel}
+                    </p>
+                    {showStatusBadge ? <PlayerBadge status={player.status} /> : null}
+                </div>
                 <p className="truncate text-sm font-semibold text-white">
                     {player.name}
                 </p>
@@ -119,7 +123,6 @@ function PlayerMobileRow({ player, roleLabel, showStatusBadge = false }) {
                     {player.ign} · {player.uid}
                 </p>
             </div>
-            {showStatusBadge ? <PlayerBadge status={player.status} /> : null}
         </div>
     );
 }
@@ -133,66 +136,41 @@ function PlayerMobileRow({ player, roleLabel, showStatusBadge = false }) {
  * @param {{
  *   team: object;
  *   onEdit?: () => void;
- *   onGenerateCode?: () => void;
- *   onCopyCode?: () => void;
  *   onLeave?: () => void;
  *   memberView?: boolean;
- *   showInviteCode?: boolean;
+ *   notice?: import('react').ReactNode;
  * }} props
  */
 export default function CaptainTeamCard({
     team,
     onEdit,
-    onGenerateCode,
-    onCopyCode,
     onLeave,
     memberView = false,
-    showInviteCode = true,
+    notice = null,
 }) {
     const roster = [team.captain, ...team.players].filter(Boolean);
     const teamMeta = teamStatusMeta(team.status);
-    const isComplete = team.status === "approved" || team.status === "registered";
-    const isDisqualified = team.status === "disqualified";
-    const showCodeActions = !memberView && showInviteCode && !isDisqualified;
-    // Approved members can only leave the team; everyone else sees the team status above Edit.
-    const showLeave = memberView && isComplete && Boolean(onLeave);
-    const showEdit = !showLeave && (!memberView || Boolean(onEdit));
-    const showStatusInActions = !showLeave;
-    const showActions = showEdit || showLeave || showStatusInActions;
-    const showPlayerBadges = !isComplete;
+    const isComplete =
+        team.status === "approved" || team.status === "registered";
+    const editDisabled = team.status === "disqualified";
+    // Members: Leave enabled while pending/incomplete; disabled once Registered.
+    const showLeave = memberView && Boolean(onLeave);
+    const leaveDisabled = isComplete;
+    const showEdit = !memberView && Boolean(onEdit);
+    const showActions = showEdit || showLeave;
 
-    const actionStatusBadge = showStatusInActions ? (
+    const actionStatusBadge = showLeave ? (
         <div className="flex justify-center">
             <StatusBadge label={teamMeta.label} tone={teamMeta.tone} solid />
         </div>
-    ) : null;
-
-    const codeButton = showCodeActions ? (
-        isComplete && team.inviteCode ? (
-            <button
-                type="button"
-                onClick={onCopyCode}
-                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-yellow-500 px-3 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"
-            >
-                {team.inviteCode}
-                <Copy className="h-4 w-4" />
-            </button>
-        ) : (
-            <button
-                type="button"
-                onClick={onGenerateCode}
-                className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-yellow-500 px-4 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"
-            >
-                Generate Code
-            </button>
-        )
     ) : null;
 
     const editButton = showEdit ? (
         <button
             type="button"
             onClick={onEdit}
-            className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+            disabled={editDisabled}
+            className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-40"
         >
             Edit
         </button>
@@ -202,7 +180,8 @@ export default function CaptainTeamCard({
         <button
             type="button"
             onClick={onLeave}
-            className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-red-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-red-700"
+            disabled={leaveDisabled}
+            className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-red-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-40"
         >
             Leave
         </button>
@@ -210,7 +189,7 @@ export default function CaptainTeamCard({
 
     return (
         <article className="overflow-hidden rounded-xl border border-neutral-800 bg-[#111111]">
-            <div className="flex flex-col gap-3 border-b border-neutral-800 p-4 sm:flex-row sm:items-start sm:justify-between sm:p-5">
+            <div className="flex items-start justify-between gap-3 border-b border-neutral-800 p-4 sm:p-5">
                 <div className="min-w-0 flex-1">
                     <h2 className="text-lg font-bold text-white sm:text-xl">
                         TEAM NAME:{" "}
@@ -220,10 +199,10 @@ export default function CaptainTeamCard({
                         {team.school}
                     </p>
                 </div>
-                <div className="hidden sm:block">
-                    <StatusBadge label={teamMeta.label} tone={teamMeta.tone} solid />
-                </div>
+                <StatusBadge label={teamMeta.label} tone={teamMeta.tone} solid />
             </div>
+
+            {notice ? <div className="border-b border-neutral-800 px-4 py-3 sm:px-5">{notice}</div> : null}
 
             {/* Mobile: stacked player rows */}
             <div className="md:hidden">
@@ -234,7 +213,7 @@ export default function CaptainTeamCard({
                         roleLabel={
                             index === 0 ? "Captain" : `Player ${index + 1}`
                         }
-                        showStatusBadge={index > 0 && showPlayerBadges}
+                        showStatusBadge={index > 0}
                     />
                 ))}
             </div>
@@ -260,7 +239,7 @@ export default function CaptainTeamCard({
                             <PlayerCell
                                 key={player.id}
                                 player={player}
-                                showStatusBadge={index > 0 && showPlayerBadges}
+                                showStatusBadge={index > 0}
                             />
                         ))}
                     </div>
@@ -271,7 +250,6 @@ export default function CaptainTeamCard({
                         {actionStatusBadge}
                         {editButton}
                         {leaveButton}
-                        {codeButton}
                     </div>
                 ) : null}
             </div>
@@ -279,13 +257,7 @@ export default function CaptainTeamCard({
             {/* Mobile actions */}
             {showActions ? (
                 <div className="grid grid-cols-1 gap-2 border-t border-neutral-800 p-4 md:hidden">
-                    {actionStatusBadge}
-                    {editButton || codeButton ? (
-                        <div className={`grid gap-2 ${editButton && codeButton ? "grid-cols-2" : "grid-cols-1"}`}>
-                            {editButton}
-                            {codeButton}
-                        </div>
-                    ) : null}
+                    {editButton}
                     {leaveButton}
                 </div>
             ) : null}

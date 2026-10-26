@@ -16,10 +16,10 @@ function OccupiedSlot({ slot }) {
                 <p className="truncate text-sm font-semibold text-white">
                     {player?.name ?? "—"}
                 </p>
-                <p className="truncate text-[11px] text-gray-300">
-                    <span className="text-white">{player?.ign ?? "—"}</span>
+                <p className="truncate text-[11px] text-yellow-500">
+                    <span>{player?.ign ?? "—"}</span>
                     <span className="text-gray-500"> | </span>
-                    <span className="text-yellow-500">{slot.role}</span>
+                    <span className="uppercase">{slot.role}</span>
                 </p>
                 <p className="truncate text-[11px] text-gray-500">
                     {player?.uid ?? ""}
@@ -70,13 +70,13 @@ function VacantSlot({ role }) {
  */
 export default function SoloTeamRow({ team, onLeave, onJoin, canJoin = true }) {
     return (
-        <article className="rounded-xl border border-neutral-800 bg-[#0a0a0a] p-4">
+        <article className="rounded-xl border border-neutral-800 bg-[#111111] p-4">
             <div className="flex flex-col gap-4 xl:flex-row xl:items-center">
                 <div className="flex w-full items-start justify-between gap-3 xl:w-40 xl:shrink-0 xl:flex-col xl:items-start">
                     <h3 className="text-base font-bold text-white sm:text-lg">
                         {team.name}
                     </h3>
-                    <span className="inline-flex items-center gap-1 rounded-full border border-yellow-500 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-500">
+                    <span className="inline-flex items-center gap-1 rounded-md border border-yellow-500 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-500">
                         <Hourglass className="h-3 w-3" />
                         {team.status === "registered"
                             ? "Registered"
