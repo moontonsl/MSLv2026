@@ -1,11 +1,11 @@
 import CampusTournamentPageHeader from '@/Components/CampusTournament/CampusTournamentPageHeader';
+import CancelInvitationModal from '@/Components/CampusTournament/CancelInvitationModal';
 import CaptainTeamCard from '@/Components/CampusTournament/CaptainTeamCard';
-import TeamInviteCodeModal from '@/Components/CampusTournament/TeamInviteCodeModal';
 import { ROLE_SLOTS } from '@/data/campusTournamentCaptainData';
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { Hourglass, Search, UserRound, X } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 const SEARCH_CLASS =
     'w-full min-h-[44px] rounded-lg border border-neutral-800 bg-[#0a0a0a] py-2.5 pl-10 pr-4 text-base text-white placeholder:text-gray-500 outline-none focus:ring-2 focus:ring-yellow-500 md:text-sm';
@@ -15,11 +15,6 @@ const SELECT_CLASS =
 
 const roleLabel = (code) => ROLE_SLOTS.find((role) => role.id === code)?.label ?? code;
 
-function createInviteCode() {
-    const suffix = String(Math.floor(10000 + Math.random() * 90000));
-    return `INV-${suffix}`;
-}
-
 export default function CaptainTeam({ team }) {
     const [search, setSearch] = useState('');
     const [results, setResults] = useState([]);
@@ -28,20 +23,21 @@ export default function CaptainTeam({ team }) {
     const [searching, setSearching] = useState(false);
     const [processing, setProcessing] = useState(false);
     const [error, setError] = useState(null);
-    const [inviteCode, setInviteCode] = useState(team.inviteCode ?? '');
-    const [inviteModalOpen, setInviteModalOpen] = useState(false);
+    const [invitationToCancel, setInvitationToCancel] = useState(null);
+    const [cancelProcessing, setCancelProcessing] = useState(false);
+    const pendingSectionRef = useRef(null);
+    const inviteSectionRef = useRef(null);
 
     // Participants and open invitations can share ids, so the roster keys are namespaced.
     const rosterTeam = useMemo(
         () => ({
             ...team,
-            inviteCode: inviteCode || undefined,
             players: (team.players ?? []).map((player) => ({
                 ...player,
                 id: `${player.status}-${player.id}`,
             })),
         }),
-        [team, inviteCode],
+        [team],
     );
 
     const pendingInvites = useMemo(
@@ -111,31 +107,32 @@ export default function CaptainTeam({ team }) {
         );
     };
 
-    const cancelInvitation = (invitationId) => {
-        router.delete(`/tournament-invitations/${invitationId}`, {
+    const cancelInvitation = () => {
+        if (!invitationToCancel?.invitationId || cancelProcessing) return;
+
+        router.delete(`/tournament-invitations/${invitationToCancel.invitationId}`, {
             preserveScroll: true,
+            onStart: () => {
+                setCancelProcessing(true);
+                setError(null);
+            },
+            onSuccess: () => setInvitationToCancel(null),
             onError: (errors) =>
                 setError(
                     Object.values(errors ?? {})[0] ?? 'Unable to cancel invitation.',
                 ),
+            onFinish: () => setCancelProcessing(false),
         });
     };
 
-    const canInvite = team.status !== 'approved' && (team.availableLaneRoles ?? []).length > 0;
+    const canManageRoster = team.canManageRoster === true;
+    const canInvite = canManageRoster && (team.availableLaneRoles ?? []).length > 0;
 
-    const handleGenerateCode = () => {
-        const nextCode = inviteCode || createInviteCode();
-        setInviteCode(nextCode);
-        setInviteModalOpen(true);
-    };
-
-    const handleCopyCode = async () => {
-        if (!inviteCode) return;
-        try {
-            await navigator.clipboard.writeText(inviteCode);
-        } catch {
-            // Clipboard may be unavailable; ignore quietly for UI demo flow.
-        }
+    const manageRoster = () => {
+        (pendingSectionRef.current ?? inviteSectionRef.current)?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+        });
     };
 
     return (
@@ -161,14 +158,12 @@ export default function CaptainTeam({ team }) {
 
                     <CaptainTeamCard
                         team={rosterTeam}
-                        showInviteCode
-                        onEdit={() => router.visit('/Tournament/CampusTournamentReg')}
-                        onGenerateCode={handleGenerateCode}
-                        onCopyCode={handleCopyCode}
+                        onEdit={canManageRoster ? manageRoster : undefined}
+                        editLabel="Manage Roster"
                     />
 
                     {pendingInvites.length > 0 ? (
-                        <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
+                        <section ref={pendingSectionRef} className="scroll-mt-6 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
                             <div className="mb-4 flex items-start justify-between gap-3">
                                 <h2 className="text-lg font-bold text-yellow-500 sm:text-xl">
                                     Pending Invitations
@@ -201,14 +196,16 @@ export default function CaptainTeam({ team }) {
                                                 Pending
                                             </span>
                                         </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => cancelInvitation(player.invitationId)}
-                                            className="inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-lg bg-red-600 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 sm:w-auto"
-                                        >
-                                            <X className="h-4 w-4" />
-                                            Cancel
-                                        </button>
+                                        {canManageRoster ? (
+                                            <button
+                                                type="button"
+                                                onClick={() => setInvitationToCancel(player)}
+                                                className="inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-lg bg-red-600 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 sm:w-auto"
+                                            >
+                                                <X className="h-4 w-4" />
+                                                Cancel
+                                            </button>
+                                        ) : null}
                                     </article>
                                 ))}
                             </div>
@@ -216,7 +213,7 @@ export default function CaptainTeam({ team }) {
                     ) : null}
 
                     {canInvite ? (
-                        <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
+                        <section ref={inviteSectionRef} className="scroll-mt-6 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
                             <h2 className="text-lg font-bold text-yellow-500 sm:text-xl">
                                 Invite a Verified Campus Player
                             </h2>
@@ -252,7 +249,7 @@ export default function CaptainTeam({ team }) {
                                         <p className="mt-1 text-xs text-gray-500">Searching…</p>
                                     ) : null}
                                     {results.length > 0 ? (
-                                        <div className="absolute z-10 mt-1 w-full overflow-hidden rounded-lg border border-neutral-700 bg-[#181818] shadow-xl">
+                                        <div className="mt-1 max-h-64 w-full overflow-y-auto rounded-lg border border-neutral-700 bg-[#181818] shadow-xl">
                                             {results.map((player) => (
                                                 <button
                                                     key={player.id}
@@ -314,10 +311,14 @@ export default function CaptainTeam({ team }) {
                 </div>
             </div>
 
-            <TeamInviteCodeModal
-                isOpen={inviteModalOpen}
-                onClose={() => setInviteModalOpen(false)}
-                inviteCode={inviteCode || 'INV-00000'}
+            <CancelInvitationModal
+                isOpen={Boolean(invitationToCancel)}
+                playerName={invitationToCancel?.ign || invitationToCancel?.name}
+                processing={cancelProcessing}
+                onCancel={() => {
+                    if (!cancelProcessing) setInvitationToCancel(null);
+                }}
+                onConfirm={cancelInvitation}
             />
         </MainLayout>
     );

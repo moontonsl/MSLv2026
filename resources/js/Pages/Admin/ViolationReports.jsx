@@ -2,7 +2,8 @@ import AdminLayout from '@/Layouts/AdminLayout';
 import AdminFilterSelect from '@/Components/Admin/AdminFilterSelect';
 import { Head, Link, router } from '@inertiajs/react';
 import { ExternalLink, FileText, Search, ShieldAlert, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 const STATUS_STYLES = {
     Pending: 'bg-yellow-500/10 text-yellow-400',
@@ -26,8 +27,91 @@ function StatusBadge({ status }) {
 }
 
 function ReportDetails({ report, onClose }) {
-    if (!report) return null;
-    return <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-4" role="dialog" aria-modal="true" aria-labelledby="report-details-title"><div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-neutral-700 bg-[#151515] p-5 shadow-2xl sm:p-7"><div className="mb-6 flex items-start justify-between gap-4"><div><p className="text-xs uppercase tracking-wide text-yellow-500">Report #{report.id}</p><h2 id="report-details-title" className="mt-1 text-xl font-bold text-white">Report details</h2></div><button type="button" onClick={onClose} className="flex min-h-10 min-w-10 items-center justify-center rounded-md border border-neutral-700 text-gray-400 hover:text-white" aria-label="Close report details"><X className="h-5 w-5" /></button></div><dl className="grid grid-cols-1 gap-5 text-sm sm:grid-cols-2"><div><dt className="text-gray-500">Reporter</dt><dd className="mt-1 text-white">{report.is_anonymous ? 'Anonymous' : report.name || 'Unnamed reporter'}</dd></div><div><dt className="text-gray-500">School / organization</dt><dd className="mt-1 text-white">{report.is_anonymous ? 'Hidden' : report.school || '—'}</dd></div><div><dt className="text-gray-500">Incident type</dt><dd className="mt-1 text-white">{report.incident_type}</dd></div><div><dt className="text-gray-500">Submitted</dt><dd className="mt-1 text-white">{formatDate(report.created_at)}</dd></div><div className="sm:col-span-2"><dt className="text-gray-500">Current status</dt><dd className="mt-2"><StatusBadge status={report.status} /></dd></div><div className="sm:col-span-2"><dt className="text-gray-500">Description</dt><dd className="mt-2 whitespace-pre-wrap rounded-md border border-neutral-800 bg-[#1a1a1a] p-4 leading-relaxed text-gray-300">{report.description}</dd></div><div className="sm:col-span-2"><dt className="text-gray-500">Evidence</dt><dd className="mt-2">{report.evidence_url ? <a href={report.evidence_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 break-all text-blue-400 hover:underline">{report.evidence_url}<ExternalLink className="h-4 w-4 shrink-0" /></a> : report.evidence ? <span className="break-all text-gray-300">{report.evidence}</span> : <span className="text-gray-500">No evidence provided.</span>}</dd></div></dl></div></div>;
+    useEffect(() => {
+        if (report) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [report]);
+
+    if (!report || typeof document === 'undefined') return null;
+
+    return createPortal(
+        <div
+            className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-md p-4 transition-all duration-200"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="report-details-title"
+            onClick={(e) => {
+                if (e.target === e.currentTarget) onClose();
+            }}
+        >
+            <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-white/15 bg-[#0f0f11]/95 backdrop-blur-2xl p-5 shadow-[0_20px_70px_rgba(0,0,0,0.6)] sm:p-7 animate-in fade-in zoom-in-95 duration-150">
+                <div className="mb-6 flex items-start justify-between gap-4">
+                    <div>
+                        <p className="text-xs uppercase tracking-wide text-yellow-500">Report #{report.id}</p>
+                        <h2 id="report-details-title" className="mt-1 text-xl font-bold text-white">Report details</h2>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="flex min-h-10 min-w-10 items-center justify-center rounded-xl border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+                        aria-label="Close report details"
+                    >
+                        <X className="h-5 w-5" />
+                    </button>
+                </div>
+                <dl className="grid grid-cols-1 gap-5 text-sm sm:grid-cols-2">
+                    <div>
+                        <dt className="text-gray-500">Reporter</dt>
+                        <dd className="mt-1 text-white">{report.is_anonymous ? 'Anonymous' : report.name || 'Unnamed reporter'}</dd>
+                    </div>
+                    <div>
+                        <dt className="text-gray-500">School / organization</dt>
+                        <dd className="mt-1 text-white">{report.is_anonymous ? 'Hidden' : report.school || '—'}</dd>
+                    </div>
+                    <div>
+                        <dt className="text-gray-500">Incident type</dt>
+                        <dd className="mt-1 text-white">{report.incident_type}</dd>
+                    </div>
+                    <div>
+                        <dt className="text-gray-500">Submitted</dt>
+                        <dd className="mt-1 text-white">{formatDate(report.created_at)}</dd>
+                    </div>
+                    <div className="sm:col-span-2">
+                        <dt className="text-gray-500">Current status</dt>
+                        <dd className="mt-2"><StatusBadge status={report.status} /></dd>
+                    </div>
+                    <div className="sm:col-span-2">
+                        <dt className="text-gray-500">Description</dt>
+                        <dd className="mt-2 whitespace-pre-wrap rounded-xl border border-white/10 bg-black/40 p-4 leading-relaxed text-gray-300">
+                            {report.description}
+                        </dd>
+                    </div>
+                    <div className="sm:col-span-2">
+                        <dt className="text-gray-500">Evidence</dt>
+                        <dd className="mt-2">
+                            {report.evidence_url ? (
+                                <a href={report.evidence_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 break-all text-blue-400 hover:underline">
+                                    {report.evidence_url}
+                                    <ExternalLink className="h-4 w-4 shrink-0" />
+                                </a>
+                            ) : report.evidence ? (
+                                <span className="break-all text-gray-300">{report.evidence}</span>
+                            ) : (
+                                <span className="text-gray-500">No evidence provided.</span>
+                            )}
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>,
+        document.body
+    );
 }
 
 export default function ViolationReports({ reports, filters = {}, statuses = [] }) {

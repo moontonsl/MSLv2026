@@ -3,11 +3,11 @@
  *
  * | View            | Who                         | Route                              | Page file            |
  * |-----------------|-----------------------------|------------------------------------|----------------------|
- * | Entry           | Role redirect               | /campus-tournament                 | → /Tournament/SL     |
+ * | Entry           | Role redirect               | /campus-tournament                 | → role-specific page |
  * | SL Manage       | Student Leaders             | /Tournament/SL                     | SlView.jsx           |
  * | Regional Admin  | Regional / Super Admin      | /Tournament/RegionalAdmin          | RaView.jsx           |
  * | Public          | Public / testing            | /campus-tournament/public          | SlView.jsx           |
- * | Organizer       | School organizers (new)     | /Tournament/Organizer              | OrganizerView.jsx    |
+ * | Organizer       | Student Leaders             | /Tournament/Organizer              | OrganizerView.jsx    |
  * | Captain Hub     | Team captains / players     | /Tournament/CampusTournament       | CaptainHub.jsx       |
  * | Team Register   | Captains creating a team    | /Tournament/CampusTournamentReg    | CaptainRegister.jsx  |
  * | Team Mgmt       | Captains managing roster    | /Tournament/CampusTournamentTeam   | CaptainTeam.jsx      |
@@ -16,7 +16,7 @@
  * | Join Code       | Members entering team code  | /Tournament/MemberJoin             | MemberJoinCode.jsx   |
  *
  * Compatibility redirects (old rebuild paths → legacy URLs):
- *   /programs/campus-tournaments → /Tournament/Organizer
+ *   /programs/campus-tournaments → /campus-tournament
  *   /programs/campus-tournaments/sl → /Tournament/SL
  *   /programs/campus-tournaments/captain → /Tournament/CampusTournament
  *   /programs/campus-tournaments/captain/register → /Tournament/CampusTournamentReg

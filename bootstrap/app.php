@@ -30,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'active.student' => \App\Http\Middleware\EnsureActiveStudent::class,
+            'campus.tournament.page' => \App\Http\Middleware\EnsureCampusTournamentPageAccess::class,
             'redirect.status' => \App\Http\Middleware\RedirectIfAuthenticatedByStatus::class,
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'admin.permission' => \App\Http\Middleware\CheckAdminPermission::class,

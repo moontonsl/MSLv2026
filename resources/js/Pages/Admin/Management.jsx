@@ -24,6 +24,7 @@ import {
     X,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 const GROUP_CONFIG = {
     'Community & Student Operations': {
@@ -136,6 +137,17 @@ export default function Management({
     const [createRoleError, setCreateRoleError] = useState('');
     const [saving, setSaving] = useState(false);
     const [saveMessage, setSaveMessage] = useState(null);
+
+    useEffect(() => {
+        if (isCreateRoleModalOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isCreateRoleModalOpen]);
 
     // Active Role computed
     const filteredRoles = useMemo(() => {
@@ -1255,9 +1267,16 @@ export default function Management({
             </div>
 
             {/* CREATE NEW ROLE MODAL */}
-            {isCreateRoleModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-                    <div className="w-full max-w-2xl rounded-2xl border border-white/10 bg-[#121214] p-6 shadow-2xl">
+            {isCreateRoleModalOpen && typeof document !== 'undefined' && createPortal(
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md transition-all duration-200"
+                    role="dialog"
+                    aria-modal="true"
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) setIsCreateRoleModalOpen(false);
+                    }}
+                >
+                    <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-white/15 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
                         <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-5">
                             <div className="flex items-center gap-2.5">
                                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20">
@@ -1389,7 +1408,8 @@ export default function Management({
                             </div>
                         </form>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </AdminLayout>
     );

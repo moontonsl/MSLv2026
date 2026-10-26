@@ -8,6 +8,7 @@ import {
     CheckSquare, Square
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 const ACCENT = '#FBBF24';
 
@@ -58,6 +59,7 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
 
     // Modal state
     const [selectedStudent, setSelectedStudent] = useState(null);
+    const [mobileTab, setMobileTab] = useState('dossier');
     const [docZoom, setDocZoom] = useState(100);
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [rejectionReason, setRejectionReason] = useState('');
@@ -98,6 +100,7 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
 
     const openReview = (student) => {
         setSelectedStudent(student);
+        setMobileTab('dossier');
         setDocZoom(100);
         setShowRejectModal(false);
         setRejectionReason('');
@@ -157,15 +160,23 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
         });
     };
 
-    // Close on Escape
+    // Lock body scroll and close on Escape
     useEffect(() => {
         function handleKeyDown(e) {
             if (e.key === 'Escape' && selectedStudent) {
                 closeReview();
             }
         }
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
+        if (selectedStudent) {
+            document.body.style.overflow = 'hidden';
+            window.addEventListener('keydown', handleKeyDown);
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+            window.removeEventListener('keydown', handleKeyDown);
+        };
     }, [selectedStudent]);
 
     return (
@@ -440,14 +451,17 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
             </section>
 
             {/* FULL STUDENT VERIFICATION DOSSIER & DOCUMENT INSPECTOR MODAL */}
-            {selectedStudent && (
+            {selectedStudent && typeof document !== 'undefined' && createPortal(
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-3 backdrop-blur-md sm:p-6"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-2 sm:p-4 lg:p-6 backdrop-blur-md transition-all duration-200"
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="student-dossier-title"
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) closeReview();
+                    }}
                 >
-                    <div className="relative flex flex-col h-full max-h-[92vh] w-full max-w-6xl overflow-hidden rounded-3xl border border-white/15 bg-[#0f0f11] shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+                    <div className="relative flex flex-col h-[90vh] max-h-[94vh] min-h-[580px] w-full max-w-7xl overflow-hidden rounded-3xl border border-white/15 bg-[#0f0f11]/95 backdrop-blur-2xl shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
                         {/* Modal Header */}
                         <header className="flex shrink-0 items-center justify-between border-b border-white/10 bg-white/[0.02] px-6 py-4">
                             <div className="flex items-center gap-3">
@@ -482,10 +496,38 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                             </button>
                         </header>
 
+                        {/* Mobile Segmented Toggle (visible on screens < lg) */}
+                        <div className="flex lg:hidden border-b border-white/10 bg-white/[0.02] p-1.5 gap-1 shrink-0">
+                            <button
+                                type="button"
+                                onClick={() => setMobileTab('dossier')}
+                                className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+                                    mobileTab === 'dossier'
+                                        ? 'bg-amber-400 text-black shadow'
+                                        : 'text-gray-400 hover:text-white'
+                                }`}
+                            >
+                                Student Information
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setMobileTab('document')}
+                                className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+                                    mobileTab === 'document'
+                                        ? 'bg-amber-400 text-black shadow'
+                                        : 'text-gray-400 hover:text-white'
+                                }`}
+                            >
+                                Proof Document
+                            </button>
+                        </div>
+
                         {/* Modal Body: Split Dossier (Left) + Document Inspector (Right) */}
-                        <div className="grid flex-1 min-h-0 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-white/10 overflow-hidden">
+                        <div className="grid flex-1 min-h-0 h-full lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-white/10 overflow-hidden">
                             {/* Left Pane: Student Information Dossier (5 cols) */}
-                            <div className="lg:col-span-5 flex flex-col h-full overflow-y-auto p-5 sm:p-6 space-y-5 scrollbar-thin">
+                            <div className={`lg:col-span-5 flex-col h-full min-h-0 overflow-y-auto p-5 sm:p-6 space-y-4 scrollbar-thin ${
+                                mobileTab === 'dossier' ? 'flex' : 'hidden lg:flex'
+                            }`}>
                                 {/* Academic Information */}
                                 <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
                                     <div className="mb-3 flex items-center justify-between">
@@ -641,7 +683,9 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                             </div>
 
                             {/* Right Pane: Document Inspector (7 cols) */}
-                            <div className="lg:col-span-7 flex flex-col h-full bg-black/60 overflow-hidden">
+                            <div className={`lg:col-span-7 flex-col h-full min-h-0 bg-black/60 overflow-hidden ${
+                                mobileTab === 'document' ? 'flex' : 'hidden lg:flex'
+                            }`}>
                                 {/* Document Toolbar */}
                                 <div className="flex shrink-0 items-center justify-between border-b border-white/10 bg-black/40 px-5 py-3">
                                     <div className="flex items-center gap-2">
@@ -700,7 +744,7 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                                 </div>
 
                                 {/* Document Canvas */}
-                                <div className="flex-1 min-h-0 overflow-auto p-4 flex items-center justify-center">
+                                <div className="flex-1 min-h-0 overflow-auto p-4 flex items-center justify-center bg-neutral-950/70">
                                     {!selectedStudent.proofOfEnrollment ? (
                                         <div className="flex flex-col items-center justify-center text-center p-8 max-w-sm">
                                             <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-amber-500/20 bg-amber-500/10">
@@ -720,11 +764,16 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                                             />
                                         </div>
                                     ) : (
-                                        <div className="relative max-w-full max-h-full transition-transform duration-200" style={{ transform: `scale(${docZoom / 100})`, transformOrigin: 'center center' }}>
+                                        <div className="flex items-center justify-center w-full h-full min-h-0 overflow-auto p-2">
                                             <img
                                                 src={selectedStudent.proofOfEnrollment}
                                                 alt="Proof of Enrollment"
-                                                className="rounded-xl border border-white/10 max-h-[60vh] max-w-full object-contain shadow-2xl"
+                                                style={{
+                                                    transform: `scale(${docZoom / 100})`,
+                                                    transformOrigin: 'center center',
+                                                    transition: 'transform 0.15s ease-out',
+                                                }}
+                                                className="rounded-xl border border-white/10 max-h-[calc(90vh-190px)] max-w-full object-contain shadow-2xl select-none"
                                             />
                                         </div>
                                     )}
@@ -773,7 +822,7 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
 
                         {/* REJECTION REASON PROMPT OVERLAY */}
                         {showRejectModal && (
-                            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/90 p-4 backdrop-blur-md animate-in fade-in duration-100">
+                            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 p-4 backdrop-blur-md animate-in fade-in duration-100">
                                 <div className="w-full max-w-lg rounded-2xl border border-red-500/30 bg-[#141416] p-6 shadow-2xl">
                                     <div className="flex items-center justify-between border-b border-white/10 pb-4">
                                         <div className="flex items-center gap-2.5">
@@ -869,7 +918,8 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                             </div>
                         )}
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </AdminLayout>
     );

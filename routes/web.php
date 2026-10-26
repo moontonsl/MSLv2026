@@ -129,12 +129,15 @@ Route::middleware(['auth'])->group(function () {
         ->name('campus.tournament');
 
     Route::get('/Tournament/SL', [CampusTournamentController::class, 'indexSl'])
+        ->middleware('campus.tournament.page:student-leader')
         ->name('campus.tournament.sl');
 
     Route::get('/Tournament/RegionalAdmin', [CampusTournamentController::class, 'indexSl'])
+        ->middleware('campus.tournament.page:regional-admin')
         ->name('campus.tournament.regionaladmin');
 
     Route::get('/Tournament/Organizer', [CampusTournamentController::class, 'indexOrganizer'])
+        ->middleware('campus.tournament.page:student-leader')
         ->name('campus.tournament.organizer');
 
     Route::get('/campus-tournaments/{tournament}/ongoing', [CampusTournamentController::class, 'showOngoing'])
@@ -150,29 +153,35 @@ Route::middleware(['auth'])->group(function () {
         ->name('campus-tournaments.results.export');
 
     Route::get('/Tournament/CampusTournament', [TournamentRegistrationController::class, 'showCaptainHub'])
+        ->middleware('campus.tournament.page:player')
         ->name('campus.captainregistration');
 
     Route::get('/Tournament/CampusTournamentReg', [TournamentRegistrationController::class, 'showCaptainRegistration'])
+        ->middleware('campus.tournament.page:player')
         ->name('campus.teamregistration');
 
     Route::get('/Tournament/CampusTournamentTeam', [TournamentRegistrationController::class, 'showCaptainTeam'])
+        ->middleware('campus.tournament.page:player')
         ->name('campus.team');
 
     Route::get('/school-players', [TournamentRegistrationController::class, 'searchSchoolPlayers'])
         ->name('campus.school-players');
 
     Route::get('/Tournament/SoloPlayer', [TournamentRegistrationController::class, 'showSoloMatchmaking'])
+        ->middleware('campus.tournament.page:player')
         ->name('campus.tournament.solo.player');
 
     Route::get('/Tournament/MemberInvite', [TournamentRegistrationController::class, 'showMemberInvitations'])
+        ->middleware('campus.tournament.page:player')
         ->name('campus.member.invite');
 
     Route::get('/Tournament/MemberJoin', [TournamentRegistrationController::class, 'showMemberJoin'])
+        ->middleware('campus.tournament.page:player')
         ->name('campus.member.join');
 });
 
 /** Compatibility redirects from earlier /programs/... CT paths */
-Route::redirect('/programs/campus-tournaments', '/Tournament/Organizer');
+Route::redirect('/programs/campus-tournaments', '/campus-tournament');
 Route::redirect('/programs/campus-tournaments/sl', '/Tournament/SL');
 Route::redirect('/programs/campus-tournaments/captain', '/Tournament/CampusTournament');
 Route::redirect('/programs/campus-tournaments/captain/register', '/Tournament/CampusTournamentReg');
@@ -738,9 +747,9 @@ Route::get('/api/oppo-roadshow/data', [OppoSettingsController::class, 'getRoadsh
 
 require __DIR__.'/auth.php';
 
-Route::get('/StudentLeader', function () {
-    return Inertia::render('VerificationPages/StudentLeader');
-})->name('student.leader');
+Route::get('/StudentLeader', [\App\Http\Controllers\StudentLeaderDirectoryController::class, 'index'])
+    ->middleware('auth')
+    ->name('student.leader');
 
 Route::get('/RegionalAdmin', [\App\Http\Controllers\Admin\RegionalAdminController::class, 'index'])
     ->middleware('auth')

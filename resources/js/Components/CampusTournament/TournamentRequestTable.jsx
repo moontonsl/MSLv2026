@@ -1,4 +1,5 @@
 import { formatTournamentDate } from '@/data/campusTournamentData';
+import { paginateRequests, visiblePageNumbers } from './requestPagination';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const COLUMNS = [
@@ -22,7 +23,6 @@ const COLUMNS = [
  *   onApprove: (request: object) => void;
  *   onReject: (request: object) => void;
  *   page?: number;
- *   totalPages?: number;
  *   onPageChange?: (page: number) => void;
  * }} props
  */
@@ -31,10 +31,10 @@ export default function TournamentRequestTable({
     onApprove,
     onReject,
     page = 1,
-    totalPages = 10,
     onPageChange,
 }) {
-    const pageNumbers = [1, 2, 3, '...', 8, 9, 10];
+    const { currentPage, totalPages, items } = paginateRequests(requests, page);
+    const pageNumbers = visiblePageNumbers(currentPage, totalPages);
 
     return (
         <div className="overflow-hidden rounded-xl border border-neutral-800 bg-[#111111]">
@@ -57,7 +57,7 @@ export default function TournamentRequestTable({
                         </tr>
                     </thead>
                     <tbody>
-                        {requests.map((request) => (
+                        {items.map((request) => (
                             <tr key={request.id} className="border-t border-neutral-800">
                                 <td className="px-4 py-4 text-sm font-semibold text-white">
                                     {request.schoolName}
@@ -96,7 +96,7 @@ export default function TournamentRequestTable({
 
             {/* Mobile cards — matches Mobile SL View request cards */}
             <div className="space-y-3 p-3 md:hidden">
-                {requests.map((request) => (
+                {items.map((request) => (
                     <article
                         key={request.id}
                         className="rounded-2xl border border-neutral-800 bg-[#0a0a0a] p-4"
@@ -152,8 +152,8 @@ export default function TournamentRequestTable({
             <div className="hidden items-center justify-between gap-3 border-t border-neutral-800 px-4 py-4 md:flex">
                 <button
                     type="button"
-                    disabled={page <= 1}
-                    onClick={() => onPageChange?.(page - 1)}
+                    disabled={currentPage <= 1}
+                    onClick={() => onPageChange?.(currentPage - 1)}
                     className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 py-2 text-sm font-bold text-black disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     ← Previous
@@ -168,8 +168,10 @@ export default function TournamentRequestTable({
                                 key={item}
                                 type="button"
                                 onClick={() => onPageChange?.(item)}
+                                aria-label={`Page ${item}`}
+                                aria-current={currentPage === item ? 'page' : undefined}
                                 className={`inline-flex min-h-9 min-w-9 items-center justify-center rounded-md ${
-                                    page === item
+                                    currentPage === item
                                         ? 'bg-yellow-500 font-bold text-black'
                                         : 'text-gray-300 hover:text-white'
                                 }`}
@@ -182,8 +184,8 @@ export default function TournamentRequestTable({
 
                 <button
                     type="button"
-                    disabled={page >= totalPages}
-                    onClick={() => onPageChange?.(page + 1)}
+                    disabled={currentPage >= totalPages}
+                    onClick={() => onPageChange?.(currentPage + 1)}
                     className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 py-2 text-sm font-bold text-black disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     Next →
@@ -194,20 +196,20 @@ export default function TournamentRequestTable({
             <div className="flex items-center justify-between gap-3 border-t border-neutral-800 px-4 py-4 md:hidden">
                 <button
                     type="button"
-                    disabled={page <= 1}
-                    onClick={() => onPageChange?.(page - 1)}
+                    disabled={currentPage <= 1}
+                    onClick={() => onPageChange?.(currentPage - 1)}
                     className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-yellow-500 text-black disabled:cursor-not-allowed disabled:opacity-50"
                     aria-label="Previous page"
                 >
                     <ChevronLeft className="h-5 w-5" />
                 </button>
                 <p className="text-sm font-medium text-white">
-                    Page {page} of {totalPages}
+                    Page {currentPage} of {totalPages}
                 </p>
                 <button
                     type="button"
-                    disabled={page >= totalPages}
-                    onClick={() => onPageChange?.(page + 1)}
+                    disabled={currentPage >= totalPages}
+                    onClick={() => onPageChange?.(currentPage + 1)}
                     className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-yellow-500 text-black disabled:cursor-not-allowed disabled:opacity-50"
                     aria-label="Next page"
                 >
