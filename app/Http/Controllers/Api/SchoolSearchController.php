@@ -59,7 +59,7 @@ class SchoolSearchController extends Controller
 
         $expanded = $q;
         foreach ($acronyms as $abbr => $full) {
-            $expanded = preg_replace('/\b' . preg_quote($abbr, '/') . '\b/i', $full, $expanded);
+            $expanded = preg_replace('/\b'.preg_quote($abbr, '/').'\b/i', $full, $expanded);
         }
 
         // Clean punctuation and get unique words
@@ -87,7 +87,7 @@ class SchoolSearchController extends Controller
             ->select(['id', 'name', 'acronym', 'region', 'island'])
             ->where('status', 'active');
 
-        if (!empty($q)) {
+        if (! empty($q)) {
             $query->where(function ($sub) use ($q, $searchData) {
                 // Exact or substring match on name or acronym
                 $sub->where('name', 'LIKE', "%{$q}%")
@@ -99,7 +99,7 @@ class SchoolSearchController extends Controller
                 }
 
                 // Match each keyword
-                if (!empty($searchData['words'])) {
+                if (! empty($searchData['words'])) {
                     $sub->orWhere(function ($wordSub) use ($searchData) {
                         foreach ($searchData['words'] as $w) {
                             $wordSub->where(function ($wSub) use ($w) {
@@ -111,15 +111,15 @@ class SchoolSearchController extends Controller
                     });
                 }
             })
-            ->orderByRaw("
-                CASE 
+                ->orderByRaw('
+                CASE
                     WHEN acronym = ? THEN 1
                     WHEN name LIKE ? THEN 2
                     WHEN acronym LIKE ? THEN 3
                     WHEN name LIKE ? THEN 4
                     ELSE 5
                 END
-            ", [$q, "{$q}%", "{$q}%", "%{$q}%"]);
+            ', [$q, "{$q}%", "{$q}%", "%{$q}%"]);
         }
 
         $schools = $query->orderBy('name')
@@ -127,7 +127,7 @@ class SchoolSearchController extends Controller
             ->get()
             ->map(function ($inst) {
                 return [
-                    'id' => 'he-' . $inst->id,
+                    'id' => 'he-'.$inst->id,
                     'name' => $inst->name,
                     'acronym' => $inst->acronym,
                     'region' => $inst->region ?: 'NCR',
@@ -152,7 +152,7 @@ class SchoolSearchController extends Controller
                 'school_name as name',
                 'region',
                 'division',
-                'municipality'
+                'municipality',
             ])
             ->whereIn('modified_cultural_offering_classification', [
                 'purely_shs',
@@ -160,7 +160,7 @@ class SchoolSearchController extends Controller
                 'all_offering',
             ]);
 
-        if (!empty($q)) {
+        if (! empty($q)) {
             $query->where(function ($sub) use ($q, $searchData) {
                 // Match original full string across name, municipality, division
                 $sub->where('school_name', 'LIKE', "%{$q}%")
@@ -173,7 +173,7 @@ class SchoolSearchController extends Controller
                 }
 
                 // If multiple words, match all words across name + municipality + division
-                if (!empty($searchData['words']) && count($searchData['words']) > 1) {
+                if (! empty($searchData['words']) && count($searchData['words']) > 1) {
                     $sub->orWhere(function ($wordSub) use ($searchData) {
                         foreach ($searchData['words'] as $w) {
                             $wordSub->where(function ($wSub) use ($w) {
@@ -185,14 +185,14 @@ class SchoolSearchController extends Controller
                     });
                 }
             })
-            ->orderByRaw("
-                CASE 
+                ->orderByRaw('
+                CASE
                     WHEN school_name LIKE ? THEN 1
                     WHEN school_name LIKE ? THEN 2
                     WHEN municipality LIKE ? THEN 3
                     ELSE 4
                 END
-            ", ["{$q}%", "%{$q}%", "{$q}%"]);
+            ', ["{$q}%", "%{$q}%", "{$q}%"]);
         }
 
         $basicSchools = $query->orderBy('school_name')
@@ -200,7 +200,7 @@ class SchoolSearchController extends Controller
             ->get()
             ->map(function ($row) {
                 return [
-                    'id' => 'deped-' . ($row->id ?: md5($row->name)),
+                    'id' => 'deped-'.($row->id ?: md5($row->name)),
                     'name' => $row->name,
                     'region' => $row->region,
                     'island' => $this->resolveIsland($row->region),
@@ -212,7 +212,7 @@ class SchoolSearchController extends Controller
 
         // Also check if higher education institutions match (for universities/colleges with SHS programs)
         $heiSchools = collect();
-        if (!empty($q) && $basicSchools->count() < 40) {
+        if (! empty($q) && $basicSchools->count() < 40) {
             $heiQuery = Institution::query()
                 ->select(['id', 'name', 'acronym', 'region', 'island'])
                 ->where('status', 'active')
@@ -228,8 +228,8 @@ class SchoolSearchController extends Controller
                 ->get()
                 ->map(function ($inst) {
                     return [
-                        'id' => 'he-shs-' . $inst->id,
-                        'name' => $inst->name . ' (Senior High School)',
+                        'id' => 'he-shs-'.$inst->id,
+                        'name' => $inst->name.' (Senior High School)',
                         'region' => $inst->region ?: 'NCR',
                         'island' => $inst->island ?: 'Luzon',
                         'division' => null,

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { 
+import {
     Users, Newspaper, CalendarDays, Trophy, Activity,
-    TrendingUp, BarChart3, MousePointerClick, 
+    TrendingUp, BarChart3, MousePointerClick,
     RefreshCw, ChevronRight
 } from 'lucide-react';
 
@@ -460,4 +460,3 @@ export default function AdminDashboard({
         </AdminLayout>
     );
 }
-

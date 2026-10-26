@@ -1,5 +1,6 @@
 import MatchPlayerCell from '@/Components/CampusTournament/MatchPlayerCell';
 import PlacementStatusDropdown from '@/Components/CampusTournament/PlacementStatusDropdown';
+import { visiblePageNumbers } from '@/Components/CampusTournament/requestPagination';
 import { ArrowDownUp, ChevronLeft, ChevronRight, FileSpreadsheet, Pencil } from 'lucide-react';
 
 /**
@@ -14,16 +15,15 @@ import { ArrowDownUp, ChevronLeft, ChevronRight, FileSpreadsheet, Pencil } from 
  *   }>;
  *   page?: number;
  *   totalPages?: number;
- *   resultsSubmitted?: boolean;
- *   canViewReport?: boolean;
- *   isEditing?: boolean;
- *   hideToolbar?: boolean;
  *   onPageChange?: (page: number) => void;
- *   onPlacementChange?: (teamId: string, placementId: string) => void;
- *   onSubmitResults: () => void;
+ *   editable?: boolean;
+ *   resultsSubmitted?: boolean;
+ *   canSubmit?: boolean;
+ *   canCorrect?: boolean;
+ *   onPlacementChange?: (teamId: number, placement: string) => void;
+ *   onSubmitResults?: () => void;
  *   onEditResults?: () => void;
  *   onCancelEdit?: () => void;
- *   onSaveEdit?: () => void;
  *   onExport?: () => void;
  * }} props
  */
@@ -31,61 +31,30 @@ export default function SlMatchManagement({
     teams,
     page = 1,
     totalPages = 10,
-    resultsSubmitted = false,
-    canViewReport = true,
-    isEditing = false,
-    hideToolbar = false,
     onPageChange,
+    editable = false,
+    resultsSubmitted = false,
+    canSubmit = false,
+    canCorrect = false,
     onPlacementChange,
     onSubmitResults,
     onEditResults,
     onCancelEdit,
-    onSaveEdit,
     onExport,
 }) {
-    const placementsLocked = resultsSubmitted && !isEditing;
-    const showEditToolbar =
-        !hideToolbar && resultsSubmitted && canViewReport && !isEditing;
-    const showEditingFooter = resultsSubmitted && isEditing;
-
-    const pageButtons = (() => {
-        if (totalPages <= 7) {
-            return Array.from({ length: totalPages }, (_, index) => index + 1);
-        }
-        const pages = [1, 2, 3];
-        if (page > 4) pages.push('…');
-        if (page > 3 && page < totalPages - 2) pages.push(page);
-        if (page < totalPages - 3) pages.push('…');
-        pages.push(totalPages - 2, totalPages - 1, totalPages);
-        return [...new Set(pages)];
-    })();
-
+    const pageNumbers = visiblePageNumbers(page, totalPages);
     return (
         <div className="space-y-4">
-            {showEditToolbar ? (
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-                    <button
-                        type="button"
-                        onClick={onEditResults}
-                        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-yellow-500 bg-transparent px-4 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"
-                    >
-                        <Pencil className="h-4 w-4" />
-                        Edit
-                    </button>
-                    <button
-                        type="button"
-                        onClick={onExport}
-                        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
-                    >
-                        <FileSpreadsheet className="h-4 w-4" />
-                        Export to Excel
-                    </button>
-                </div>
-            ) : null}
-
             {/* Desktop table */}
-            <div className="hidden overflow-x-auto lg:block">
-                <table className="w-full min-w-[980px] table-auto border-collapse">
+            <div className="hidden 2xl:block">
+                <table className="w-full table-fixed border-collapse">
+                    <colgroup>
+                        <col className="w-[11%]" />
+                        {Array.from({ length: 5 }, (_, index) => (
+                            <col key={index} className="w-[15%]" />
+                        ))}
+                        <col className="w-[14%]" />
+                    </colgroup>
                     <thead>
                         <tr className="border-b border-neutral-800">
                             <th className="px-3 py-3 text-left text-xs font-semibold text-yellow-500">
@@ -122,26 +91,16 @@ export default function SlMatchManagement({
                                 <td className="px-3 py-3 text-sm font-semibold text-white">
                                     {team.name}
                                 </td>
-                                {(team.players ?? [])
-                                    .slice(0, 5)
-                                    .map((player) => (
-                                        <td
-                                            key={player.id}
-                                            className="px-3 py-3"
-                                        >
-                                            <MatchPlayerCell player={player} />
-                                        </td>
-                                    ))}
+                                {Array.from({ length: 5 }, (_, index) => (
+                                    <td key={index} className="px-3 py-3">
+                                        <MatchPlayerCell player={team.players?.[index]} />
+                                    </td>
+                                ))}
                                 <td className="px-3 py-3">
                                     <PlacementStatusDropdown
                                         value={team.placement}
-                                        disabled={placementsLocked}
-                                        onChange={(placementId) =>
-                                            onPlacementChange?.(
-                                                team.id,
-                                                placementId,
-                                            )
-                                        }
+                                        disabled={!editable || team.teamStatus !== 'registered'}
+                                        onChange={(placement) => onPlacementChange?.(team.id, placement)}
                                     />
                                 </td>
                             </tr>
@@ -150,132 +109,125 @@ export default function SlMatchManagement({
                 </table>
             </div>
 
-            {/* Mobile / tablet list */}
-            <div className="space-y-0 lg:hidden">
-                <div className="grid grid-cols-[1fr_auto_auto] gap-2 border-b border-neutral-800 px-1 pb-2 text-xs font-semibold text-yellow-500">
-                    <span>Team Name</span>
-                    <span className="inline-flex items-center gap-1">
-                        Captain
-                        <ArrowDownUp className="h-3 w-3 opacity-60" />
-                    </span>
-                    <span>Status</span>
-                </div>
-                {teams.map((team) => {
-                    const captain = team.players?.[0];
-                    return (
-                        <div
-                            key={team.id}
-                            className="grid grid-cols-[1fr_auto_auto] items-center gap-2 border-b border-neutral-800 px-1 py-3"
-                        >
-                            <p className="min-w-0 truncate text-sm font-semibold text-white">
+            {/* Cards retain the full roster without horizontal scrolling. */}
+            <div className="space-y-3 2xl:hidden">
+                {teams.map((team) => (
+                    <div
+                        key={team.id}
+                        className="rounded-lg border border-neutral-800 bg-[#0a0a0a] p-3 sm:p-4"
+                    >
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                            <p className="min-w-0 break-words text-sm font-semibold text-white">
                                 {team.name}
                             </p>
-                            <MatchPlayerCell player={captain} compact />
                             <PlacementStatusDropdown
                                 value={team.placement}
-                                disabled={placementsLocked}
-                                onChange={(placementId) =>
-                                    onPlacementChange?.(team.id, placementId)
-                                }
+                                disabled={!editable || team.teamStatus !== 'registered'}
+                                onChange={(placement) => onPlacementChange?.(team.id, placement)}
                             />
                         </div>
-                    );
-                })}
+                        <div className="mt-3 grid gap-3 border-t border-neutral-800 pt-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+                            {['Captain', 'Player 2', 'Player 3', 'Player 4', 'Player 5'].map((label, index) => (
+                                <div key={label} className="min-w-0">
+                                    <p className="mb-2 text-xs font-semibold text-yellow-500">{label}</p>
+                                    <MatchPlayerCell player={team.players?.[index]} />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
             </div>
 
-            <div className="flex flex-col gap-4 border-t border-neutral-800 pt-4">
-                <div className="flex items-center justify-between gap-2">
-                    <button
-                        type="button"
-                        onClick={() => onPageChange?.(Math.max(1, page - 1))}
-                        disabled={page <= 1}
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-yellow-500 text-black transition-colors hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-40 sm:h-auto sm:w-auto sm:rounded-lg sm:border sm:border-yellow-500 sm:bg-transparent sm:px-4 sm:py-2 sm:text-sm sm:font-semibold sm:text-yellow-500 sm:hover:bg-yellow-500/10"
-                        aria-label="Previous page"
-                    >
-                        <span className="hidden sm:inline">Previous</span>
-                        <ChevronLeft className="h-5 w-5 sm:hidden" />
-                    </button>
+            <div className="hidden items-center justify-between gap-3 border-t border-neutral-800 py-4 md:flex">
+                <button
+                    type="button"
+                    disabled={page <= 1}
+                    onClick={() => onPageChange?.(page - 1)}
+                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 py-2 text-sm font-bold text-black disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    ← Previous
+                </button>
 
-                    <div className="hidden items-center gap-1 sm:flex">
-                        {pageButtons.map((pageNumber, index) => {
-                            if (pageNumber === '…') {
-                                return (
-                                    <span
-                                        key={`ellipsis-${index}`}
-                                        className="px-1 text-sm text-gray-400"
-                                    >
-                                        …
-                                    </span>
-                                );
-                            }
-                            const isActive = pageNumber === page;
-                            return (
-                                <button
-                                    key={pageNumber}
-                                    type="button"
-                                    onClick={() => onPageChange?.(pageNumber)}
-                                    className={`inline-flex h-9 min-w-9 items-center justify-center rounded-full text-sm font-semibold transition-colors ${
-                                        isActive
-                                            ? 'bg-yellow-500 text-black'
-                                            : 'text-gray-300 hover:text-white'
-                                    }`}
-                                >
-                                    {pageNumber}
-                                </button>
-                            );
-                        })}
-                    </div>
+                <div className="flex flex-wrap items-center justify-center gap-2 text-sm text-gray-400">
+                    {pageNumbers.map((item, index) =>
+                        item === '...' ? (
+                            <span key={`ellipsis-${index}`}>...</span>
+                        ) : (
+                            <button
+                                key={item}
+                                type="button"
+                                onClick={() => onPageChange?.(item)}
+                                aria-label={`Page ${item}`}
+                                aria-current={page === item ? 'page' : undefined}
+                                className={`inline-flex min-h-9 min-w-9 items-center justify-center rounded-md ${
+                                    page === item
+                                        ? 'bg-yellow-500 font-bold text-black'
+                                        : 'text-gray-300 hover:text-white'
+                                }`}
+                            >
+                                {item}
+                            </button>
+                        ),
+                    )}
+                </div>
+                <button
+                    type="button"
+                    disabled={page >= totalPages}
+                    onClick={() => onPageChange?.(page + 1)}
+                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 py-2 text-sm font-bold text-black disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    Next →
+                </button>
+            </div>
 
-                    <p className="px-2 text-sm font-semibold text-yellow-500 sm:hidden">
-                        Page {page} of {totalPages}
-                    </p>
+            <div className="flex items-center justify-between gap-3 border-t border-neutral-800 py-4 md:hidden">
+                <button
+                    type="button"
+                    disabled={page <= 1}
+                    onClick={() => onPageChange?.(page - 1)}
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-yellow-500 text-black disabled:cursor-not-allowed disabled:opacity-50"
+                    aria-label="Previous page"
+                >
+                    <ChevronLeft className="h-5 w-5" />
+                </button>
+                <p className="text-sm font-medium text-white">
+                    Page {page} of {totalPages}
+                </p>
+                <button
+                    type="button"
+                    disabled={page >= totalPages}
+                    onClick={() => onPageChange?.(page + 1)}
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-yellow-500 text-black disabled:cursor-not-allowed disabled:opacity-50"
+                    aria-label="Next page"
+                >
+                    <ChevronRight className="h-5 w-5" />
+                </button>
+            </div>
 
-                    <button
-                        type="button"
-                        onClick={() =>
-                            onPageChange?.(Math.min(totalPages, page + 1))
-                        }
-                        disabled={page >= totalPages}
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-yellow-500 text-black transition-colors hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-40 sm:h-auto sm:w-auto sm:rounded-lg sm:bg-yellow-500 sm:px-4 sm:py-2 sm:text-sm sm:font-bold sm:text-black sm:hover:bg-yellow-400"
-                        aria-label="Next page"
-                    >
-                        <span className="hidden sm:inline">Next</span>
-                        <ChevronRight className="h-5 w-5 sm:hidden" />
+            {(canSubmit || (editable && resultsSubmitted)) ? (
+                <div className="flex flex-wrap justify-end gap-2">
+                    {resultsSubmitted ? (
+                        <button type="button" onClick={onCancelEdit} className="min-h-[44px] rounded-lg border border-neutral-600 px-4 text-sm font-semibold text-white">
+                            Cancel
+                        </button>
+                    ) : null}
+                    <button type="button" onClick={onSubmitResults} className="min-h-[44px] rounded-lg bg-yellow-500 px-6 py-2.5 text-sm font-bold text-black hover:bg-yellow-400">
+                        {resultsSubmitted ? 'Save correction' : 'Submit Results'}
                     </button>
                 </div>
-
-                {!resultsSubmitted ? (
-                    <div className="flex justify-end">
-                        <button
-                            type="button"
-                            onClick={onSubmitResults}
-                            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-yellow-500 px-6 py-2.5 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:w-auto"
-                        >
-                            Submit Results
+            ) : null}
+            {resultsSubmitted && !editable ? (
+                <div className="flex flex-wrap justify-end gap-2">
+                    {canCorrect ? (
+                        <button type="button" onClick={onEditResults} className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-neutral-600 px-4 text-sm font-semibold text-white hover:border-neutral-400">
+                            <Pencil className="h-4 w-4" /> Edit
                         </button>
-                    </div>
-                ) : null}
-            </div>
-
-            {showEditingFooter ? (
-                <div className="sticky bottom-0 z-10 -mx-4 flex items-center justify-between gap-3 border-t border-neutral-800 bg-[#111111] px-4 py-3 sm:-mx-5 sm:px-5">
-                    <button
-                        type="button"
-                        onClick={onCancelEdit}
-                        className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-yellow-500 px-5 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"
-                    >
-                        Cancel
-                    </button>
-                    <p className="hidden text-sm font-medium text-gray-400 sm:block">
-                        Editing Results…
-                    </p>
-                    <button
-                        type="button"
-                        onClick={onSaveEdit}
-                        className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-6 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
-                    >
-                        Save
-                    </button>
+                    ) : null}
+                    {onExport ? (
+                        <button type="button" onClick={onExport} className="inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black hover:bg-yellow-400">
+                            <FileSpreadsheet className="h-4 w-4" /> Export to Excel
+                        </button>
+                    ) : null}
                 </div>
             ) : null}
         </div>

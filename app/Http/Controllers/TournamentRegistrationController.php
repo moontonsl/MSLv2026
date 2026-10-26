@@ -359,6 +359,11 @@ class TournamentRegistrationController extends Controller
             in_array($team->status, [TeamStatus::NotQualified, TeamStatus::Withdrawn], true) => 'disqualified',
             default => 'pending',
         };
+        $captain = [
+            ...$this->player($team->captain),
+            'role' => 'captain',
+            'status' => 'confirmed',
+        ];
 
         return Inertia::render('Programs/CampusTournaments/MemberTeam', [
             'participantId' => $participant->id,
@@ -368,7 +373,7 @@ class TournamentRegistrationController extends Controller
                 'name' => $team->name,
                 'school' => $team->tournament->campus?->institution?->name ?? $team->tournament->campus?->name,
                 'status' => $status,
-                'captain' => $participants->firstWhere('id', $team->captain_user_id),
+                'captain' => $captain,
                 'players' => $participants->where('id', '!=', $team->captain_user_id)
                     ->concat($pendingInvitations)
                     ->values(),
