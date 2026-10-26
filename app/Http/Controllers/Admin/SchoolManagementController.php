@@ -27,10 +27,19 @@ class SchoolManagementController extends Controller
         $selectedStatus = $request->input('status', '');
         $withLeaders = $request->boolean('with_leaders');
 
+        // SHS-offering classification filter
+        $shsClassifications = [
+            'purely_shs',
+            'jhs_with_shs',
+            'all_offering',
+        ];
+
         // Real-time KPI Stats
         $totalColleges = Institution::count();
         $activeColleges = Institution::where('status', 'active')->count();
-        $totalShs = DB::table('basic_education_institutions')->count();
+        $totalShs = DB::table('basic_education_institutions')
+            ->whereIn('modified_cultural_offering_classification', $shsClassifications)
+            ->count();
         $totalEnrolled = User::whereNotNull('university')->where('university', '!=', '')->count();
 
         $stats = [
@@ -42,7 +51,13 @@ class SchoolManagementController extends Controller
 
         // Fetch distinct regions for filter dropdowns
         $regions = ($activeTab === 'shs'
-            ? DB::table('basic_education_institutions')->whereNotNull('region')->where('region', '!=', '')->distinct()->orderBy('region')->pluck('region')
+            ? DB::table('basic_education_institutions')
+                ->whereIn('modified_cultural_offering_classification', $shsClassifications)
+                ->whereNotNull('region')
+                ->where('region', '!=', '')
+                ->distinct()
+                ->orderBy('region')
+                ->pluck('region')
             : Institution::query()->whereNotNull('region')->where('region', '!=', '')->distinct()->orderBy('region')->pluck('region')
         );
 
@@ -57,7 +72,8 @@ class SchoolManagementController extends Controller
                     'division',
                     'municipality',
                     'modified_cultural_offering_classification as classification',
-                ]);
+                ])
+                ->whereIn('modified_cultural_offering_classification', $shsClassifications);
 
             if (!empty($search)) {
                 $shsQuery->where(function ($sub) use ($search) {
@@ -90,7 +106,13 @@ class SchoolManagementController extends Controller
                 ->withQueryString();
 
             // Transform SHS items
-            $schools->getCollection()->transform(function ($item) {
+            $classificationLabels = [
+                'purely_shs' => 'Purely Senior High',
+                'jhs_with_shs' => 'JHS with Senior High',
+                'all_offering' => 'Integrated (Complete K-12)',
+            ];
+
+            $schools->getCollection()->transform(function ($item) use ($classificationLabels) {
                 return [
                     'id' => $item->id,
                     'name' => $item->name,
@@ -98,7 +120,7 @@ class SchoolManagementController extends Controller
                     'division' => $item->division,
                     'municipality' => $item->municipality,
                     'island' => $this->resolveIsland($item->region),
-                    'classification' => $item->classification ?? 'Senior High School',
+                    'classification' => $classificationLabels[$item->classification] ?? ($item->classification ?: 'Senior High School'),
                     'type' => 'shs',
                 ];
             });
