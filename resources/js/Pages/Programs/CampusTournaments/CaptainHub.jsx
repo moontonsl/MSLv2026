@@ -83,7 +83,17 @@ function OptionCard({ option, onOpenInvites }) {
             </span>
             <span className="min-w-0 flex-1">
                 <span className="block text-sm font-bold text-white sm:text-base">
-                    {option.title}
+                    <span className="inline-flex items-center gap-2">
+                        {option.title}
+                        {option.badgeCount > 0 ? (
+                            <span
+                                className="inline-flex min-w-5 items-center justify-center rounded-full bg-yellow-500 px-1.5 py-0.5 text-xs font-bold text-black"
+                                aria-label={`${option.badgeCount} pending invitations`}
+                            >
+                                {option.badgeCount}
+                            </span>
+                        ) : null}
+                    </span>
                 </span>
                 <span className="block text-xs text-gray-400 sm:text-sm">
                     {option.description}
@@ -158,31 +168,41 @@ export default function CaptainHub({
     invitations = [],
     openInvites = false,
     hasCaptainTeam = false,
+    hasMemberTeam = false,
+    hasSoloTeam = false,
+    pendingInvitationCount = 0,
 }) {
     const [invitesOpen, setInvitesOpen] = useState(Boolean(openInvites));
     const hasTournament = Boolean(tournament);
-    const captainOption = {
+    const hasCurrentTeam = hasCaptainTeam || hasMemberTeam || hasSoloTeam;
+    const currentTeamOption = {
         title: 'View Team',
-        description: 'View and manage your current roster.',
-        href: '/Tournament/CampusTournamentTeam',
+        description: hasCaptainTeam
+            ? 'View and manage your current roster.'
+            : 'View your current team and roster.',
+        href: hasCaptainTeam
+            ? '/Tournament/CampusTournamentTeam'
+            : hasMemberTeam
+              ? '/Tournament/MemberTeam'
+              : '/Tournament/SoloPlayer',
         icon: Users,
     };
     const prepareOptions = (options) =>
         options
             .filter(
                 (option) =>
-                    !option.requiresTournament || hasTournament || hasCaptainTeam,
+                    !option.requiresTournament || hasTournament || hasCurrentTeam,
             )
             .map((option) => {
-                if (option.id === 'create' && hasCaptainTeam) {
-                    return { ...option, ...captainOption };
+                if (option.id === 'create' && hasCurrentTeam) {
+                    return { ...option, ...currentTeamOption };
                 }
 
-                if (hasCaptainTeam && option.id === 'solo') {
+                if (hasCurrentTeam && option.id === 'solo') {
                     return {
                         ...option,
                         disabled: true,
-                        description: 'Unavailable while you are captaining a team.',
+                        description: 'Leave your current team first.',
                     };
                 }
 
@@ -191,7 +211,12 @@ export default function CaptainHub({
                         ...option,
                         disabled: true,
                         description: 'You cannot accept invitations while captaining a team.',
+                        badgeCount: pendingInvitationCount,
                     };
+                }
+
+                if (option.id === 'invites') {
+                    return { ...option, badgeCount: pendingInvitationCount };
                 }
 
                 return option;
@@ -230,7 +255,7 @@ export default function CaptainHub({
                             ))}
                         </div>
 
-                        {!hasTournament ? <NoTournamentAlert /> : null}
+                        {!hasTournament && !hasCurrentTeam ? <NoTournamentAlert /> : null}
                     </div>
 
                     <MediaPanel className="aspect-[16/10] min-h-[180px] border border-neutral-800" />
@@ -261,7 +286,7 @@ export default function CaptainHub({
                             ))}
                         </div>
 
-                        {!hasTournament ? <NoTournamentAlert /> : null}
+                        {!hasTournament && !hasCurrentTeam ? <NoTournamentAlert /> : null}
                     </div>
 
                     <MediaPanel className="min-h-[420px] rounded-none" />

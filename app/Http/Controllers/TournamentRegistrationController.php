@@ -37,38 +37,36 @@ class TournamentRegistrationController extends Controller
 {
     public function showCaptainHub(Request $request): Response
     {
-        $user = $request->user();
-        $tournament = $this->availableTournamentsFor($user)->first();
-        $hasCaptainTeam = TournamentTeam::query()
-            ->where('captain_user_id', $user->id)
-            ->where('formation_method', TeamFormationMethod::Premade)
-            ->whereIn('status', [TeamStatus::Assembling, TeamStatus::Registered])
-            ->whereHas('tournament', fn ($query) => $query
-                ->where('approval_status', CampusTournamentApprovalStatus::Approved)
-                ->whereNull('cancelled_at'))
-            ->exists();
-
-        return Inertia::render('Programs/CampusTournaments/CaptainHub', [
-            'tournament' => $tournament ? $this->tournamentSummary($tournament) : null,
-            'invitations' => $this->pendingInvitationsPayload($request->user()),
-            'openInvites' => false,
-            'hasCaptainTeam' => $hasCaptainTeam,
-        ]);
+        return Inertia::render(
+            'Programs/CampusTournaments/CaptainHub',
+            $this->captainHubProps($request->user()),
+        );
     }
 
     public function showCaptainRegistration(Request $request): Response|RedirectResponse
     {
         $user = $request->user();
         $tournaments = $this->availableTournamentsFor($user);
-        $existingTeam = TournamentTeam::query()
-            ->whereIn('tournament_id', $tournaments->pluck('id'))
-            ->where('captain_user_id', $user->id)
-            ->where('formation_method', TeamFormationMethod::Premade)
-            ->whereIn('status', [TeamStatus::Assembling, TeamStatus::Registered])
-            ->exists();
+        $existingParticipation = TournamentParticipant::query()
+            ->where('user_id', $user->id)
+            ->where('status', ParticipantStatus::Active)
+            ->whereHas('team', fn ($query) => $query
+                ->whereIn('status', [TeamStatus::Assembling, TeamStatus::Registered]))
+            ->whereHas('tournament', fn ($query) => $query
+                ->where('approval_status', CampusTournamentApprovalStatus::Approved)
+                ->whereNull('cancelled_at'))
+            ->with('team')
+            ->latest('id')
+            ->first();
 
-        if ($existingTeam) {
-            return redirect()->route('campus.team');
+        if ($existingParticipation) {
+            if ($existingParticipation->team->formation_method === TeamFormationMethod::Solo) {
+                return redirect()->route('campus.tournament.solo.player');
+            }
+
+            return $existingParticipation->roster_role === 'captain'
+                ? redirect()->route('campus.team')
+                : redirect()->route('campus.member.team');
         }
 
         return Inertia::render('Programs/CampusTournaments/CaptainRegister', [
@@ -253,13 +251,10 @@ class TournamentRegistrationController extends Controller
     public function showMemberInvitations(Request $request): Response
     {
         // Figma / product decision: Team Invitations is a modal on the hub, not a separate page.
-        $tournament = $this->availableTournamentsFor($request->user())->first();
-
-        return Inertia::render('Programs/CampusTournaments/CaptainHub', [
-            'tournament' => $tournament ? $this->tournamentSummary($tournament) : null,
-            'invitations' => $this->pendingInvitationsPayload($request->user()),
-            'openInvites' => true,
-        ]);
+        return Inertia::render(
+            'Programs/CampusTournaments/CaptainHub',
+            $this->captainHubProps($request->user(), true),
+        );
     }
 
     public function showMemberTeam(Request $request): Response|RedirectResponse
@@ -569,6 +564,48 @@ class TournamentRegistrationController extends Controller
             'title' => $tournament->name,
             'school' => $tournament->campus?->institution?->name ?? $tournament->campus?->name,
             'registrationClosesAt' => $tournament->registration_closes_at->toIso8601String(),
+        ];
+    }
+
+    private function captainHubProps(User $user, bool $openInvites = false): array
+    {
+        $tournament = $this->availableTournamentsFor($user)->first();
+        $invitations = $this->pendingInvitationsPayload($user);
+
+        return [
+            'tournament' => $tournament ? $this->tournamentSummary($tournament) : null,
+            'invitations' => $invitations,
+            'openInvites' => $openInvites,
+            'hasCaptainTeam' => TournamentTeam::query()
+                ->where('captain_user_id', $user->id)
+                ->where('formation_method', TeamFormationMethod::Premade)
+                ->whereIn('status', [TeamStatus::Assembling, TeamStatus::Registered])
+                ->whereHas('tournament', fn ($query) => $query
+                    ->where('approval_status', CampusTournamentApprovalStatus::Approved)
+                    ->whereNull('cancelled_at'))
+                ->exists(),
+            'hasMemberTeam' => TournamentParticipant::query()
+                ->where('user_id', $user->id)
+                ->where('status', ParticipantStatus::Active)
+                ->where('roster_role', 'member')
+                ->whereHas('team', fn ($query) => $query
+                    ->where('formation_method', TeamFormationMethod::Premade)
+                    ->whereIn('status', [TeamStatus::Assembling, TeamStatus::Registered]))
+                ->whereHas('tournament', fn ($query) => $query
+                    ->where('approval_status', CampusTournamentApprovalStatus::Approved)
+                    ->whereNull('cancelled_at'))
+                ->exists(),
+            'hasSoloTeam' => TournamentParticipant::query()
+                ->where('user_id', $user->id)
+                ->where('status', ParticipantStatus::Active)
+                ->whereHas('team', fn ($query) => $query
+                    ->where('formation_method', TeamFormationMethod::Solo)
+                    ->whereIn('status', [TeamStatus::Assembling, TeamStatus::Registered]))
+                ->whereHas('tournament', fn ($query) => $query
+                    ->where('approval_status', CampusTournamentApprovalStatus::Approved)
+                    ->whereNull('cancelled_at'))
+                ->exists(),
+            'pendingInvitationCount' => $invitations->count(),
         ];
     }
 
