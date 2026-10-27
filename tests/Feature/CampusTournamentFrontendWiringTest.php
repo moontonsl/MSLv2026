@@ -163,6 +163,39 @@ class CampusTournamentFrontendWiringTest extends TestCase
             ->assertRedirect('/Tournament/CampusTournament');
     }
 
+    public function test_captain_hub_identifies_an_existing_premade_team(): void
+    {
+        $tournament = $this->createApprovedTournament();
+
+        TournamentTeam::query()->create([
+            'tournament_id' => $tournament->id,
+            'name' => 'Team Alpha',
+            'active_name' => 'Team Alpha',
+            'formation_method' => TeamFormationMethod::Premade,
+            'status' => TeamStatus::Assembling,
+            'captain_user_id' => $this->student->id,
+        ]);
+
+        $this->actingAs($this->student)
+            ->get(route('campus.captainregistration'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Programs/CampusTournaments/CaptainHub')
+                ->where('hasCaptainTeam', true)
+            );
+    }
+
+    public function test_captain_hub_identifies_when_the_player_has_no_premade_team(): void
+    {
+        $this->actingAs($this->student)
+            ->get(route('campus.captainregistration'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Programs/CampusTournaments/CaptainHub')
+                ->where('hasCaptainTeam', false)
+            );
+    }
+
     public function test_generic_legacy_tournament_link_uses_the_role_aware_entry(): void
     {
         $this->get('/programs/campus-tournaments')->assertRedirect('/campus-tournament');

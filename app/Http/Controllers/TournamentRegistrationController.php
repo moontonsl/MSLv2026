@@ -37,12 +37,22 @@ class TournamentRegistrationController extends Controller
 {
     public function showCaptainHub(Request $request): Response
     {
-        $tournament = $this->availableTournamentsFor($request->user())->first();
+        $user = $request->user();
+        $tournament = $this->availableTournamentsFor($user)->first();
+        $hasCaptainTeam = TournamentTeam::query()
+            ->where('captain_user_id', $user->id)
+            ->where('formation_method', TeamFormationMethod::Premade)
+            ->whereIn('status', [TeamStatus::Assembling, TeamStatus::Registered])
+            ->whereHas('tournament', fn ($query) => $query
+                ->where('approval_status', CampusTournamentApprovalStatus::Approved)
+                ->whereNull('cancelled_at'))
+            ->exists();
 
         return Inertia::render('Programs/CampusTournaments/CaptainHub', [
             'tournament' => $tournament ? $this->tournamentSummary($tournament) : null,
             'invitations' => $this->pendingInvitationsPayload($request->user()),
             'openInvites' => false,
+            'hasCaptainTeam' => $hasCaptainTeam,
         ]);
     }
 

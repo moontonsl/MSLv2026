@@ -138,15 +138,26 @@ export default function CaptainHub({
     tournament = null,
     invitations = [],
     openInvites = false,
+    hasCaptainTeam = false,
 }) {
     const [invitesOpen, setInvitesOpen] = useState(Boolean(openInvites));
     const hasTournament = Boolean(tournament);
-    const desktopOptions = DESKTOP_OPTIONS.filter(
-        (option) => !option.requiresTournament || hasTournament,
-    );
-    const mobileOptions = MOBILE_OPTIONS.filter(
-        (option) => !option.requiresTournament || hasTournament,
-    );
+    const captainOption = {
+        title: 'View Team',
+        description: 'View and manage your current roster.',
+        href: '/Tournament/CampusTournamentTeam',
+        icon: Users,
+    };
+    const prepareOptions = (options) =>
+        options
+            .filter((option) => !option.requiresTournament || hasTournament)
+            .map((option) =>
+                option.id === 'create' && hasCaptainTeam
+                    ? { ...option, ...captainOption }
+                    : option,
+            );
+    const desktopOptions = prepareOptions(DESKTOP_OPTIONS);
+    const mobileOptions = prepareOptions(MOBILE_OPTIONS);
 
     useEffect(() => {
         setInvitesOpen(Boolean(openInvites));
