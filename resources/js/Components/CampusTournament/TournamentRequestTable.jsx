@@ -148,15 +148,15 @@ export default function TournamentRequestTable({
                 ))}
             </div>
 
-            {/* Desktop pagination */}
+            {/* Desktop pagination — Figma: Previous | page numbers | Next */}
             <div className="hidden items-center justify-between gap-3 border-t border-neutral-800 px-4 py-4 md:flex">
                 <button
                     type="button"
                     disabled={currentPage <= 1}
                     onClick={() => onPageChange?.(currentPage - 1)}
-                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 py-2 text-sm font-bold text-black disabled:cursor-not-allowed disabled:opacity-50"
+                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-yellow-500 bg-transparent px-4 py-2 text-sm font-semibold text-yellow-500 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    ← Previous
+                    Previous
                 </button>
 
                 <div className="flex flex-wrap items-center justify-center gap-2 text-sm text-gray-400">
@@ -170,7 +170,7 @@ export default function TournamentRequestTable({
                                 onClick={() => onPageChange?.(item)}
                                 aria-label={`Page ${item}`}
                                 aria-current={currentPage === item ? 'page' : undefined}
-                                className={`inline-flex min-h-9 min-w-9 items-center justify-center rounded-md ${
+                                className={`inline-flex min-h-9 min-w-9 items-center justify-center rounded-full ${
                                     currentPage === item
                                         ? 'bg-yellow-500 font-bold text-black'
                                         : 'text-gray-300 hover:text-white'
@@ -188,7 +188,7 @@ export default function TournamentRequestTable({
                     onClick={() => onPageChange?.(currentPage + 1)}
                     className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 py-2 text-sm font-bold text-black disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    Next →
+                    Next
                 </button>
             </div>
 

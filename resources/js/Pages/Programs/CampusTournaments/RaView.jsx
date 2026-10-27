@@ -43,7 +43,7 @@ const SELECT_CLASS =
     'min-h-[44px] w-full rounded-lg border border-neutral-800 bg-[#1a1a1a] px-3 py-2.5 text-base text-white outline-none focus:ring-2 focus:ring-yellow-500 md:w-auto md:min-w-[120px] md:text-sm';
 
 const MODE_OPTIONS = [
-    { value: '', label: 'Online' },
+    { value: '', label: 'Type' },
     { value: 'Online', label: 'Online' },
     { value: 'Onsite', label: 'Onsite' },
 ];
@@ -494,6 +494,7 @@ export default function RaView({
 
                         {statusTab === 'requests' ? (
                             <section className="space-y-4">
+                                {/* Figma: Export sits with the Requests header — not in the filter bar */}
                                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                                     <div className="min-w-0 flex-1">
                                         <div className="flex flex-wrap items-center gap-2">
@@ -517,7 +518,7 @@ export default function RaView({
                                     <button
                                         type="button"
                                         onClick={() => setReportOpen(true)}
-                                        className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                                        className="inline-flex min-h-[44px] w-full shrink-0 items-center justify-center gap-2 self-start rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:w-auto"
                                     >
                                         <FileSpreadsheet className="h-4 w-4" />
                                         Export to Excel

@@ -704,7 +704,8 @@ class CampusTournamentFrontendWiringTest extends TestCase
             ->get(route('campus.member.invite'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('Programs/CampusTournaments/MemberInvite')
+                ->component('Programs/CampusTournaments/CaptainHub')
+                ->where('openInvites', true)
                 ->has('invitations', 1)
                 ->where('invitations.0.id', $invitation->id)
                 ->where('invitations.0.laneRoleCode', 'roam')

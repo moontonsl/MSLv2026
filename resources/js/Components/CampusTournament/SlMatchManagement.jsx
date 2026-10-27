@@ -63,11 +63,12 @@ export default function SlMatchManagement({
     return (
         <div className="space-y-4">
             {showEditToolbar ? (
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+                <div className="flex items-center justify-end gap-2">
                     <button
                         type="button"
                         onClick={onEditResults}
-                        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-yellow-500 bg-transparent px-4 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"
+                        disabled={isEditing}
+                        className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg border border-neutral-600 bg-[#1a1a1a] px-4 text-sm font-semibold text-white transition-colors hover:border-neutral-400 disabled:cursor-not-allowed disabled:opacity-40"
                     >
                         <Pencil className="h-4 w-4" />
                         Edit
@@ -75,7 +76,7 @@ export default function SlMatchManagement({
                     <button
                         type="button"
                         onClick={onExport}
-                        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                        className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
                     >
                         <FileSpreadsheet className="h-4 w-4" />
                         Export to Excel

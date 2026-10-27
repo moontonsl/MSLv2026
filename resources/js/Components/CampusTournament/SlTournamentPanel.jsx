@@ -47,11 +47,9 @@ export default function SlTournamentPanel({
     const resultsSubmitted = Boolean(tournament.resultsSubmitted);
     const canViewReport =
         tournament.status === "completed" && Boolean(tournament.canViewReport);
-    const showEditActions =
-        resultsSubmitted &&
-        canViewReport &&
-        !isEditing &&
-        innerTab === "match";
+    // Figma: Edit + Export sit on the right of Match Management / Roster tabs
+    // inside the tournament card — not in the page filter bar.
+    const showTabActions = resultsSubmitted && innerTab === "match";
 
     return (
         <article className="overflow-hidden rounded-xl border border-neutral-800 bg-[#111111]">
@@ -122,7 +120,7 @@ export default function SlTournamentPanel({
 
             {expanded ? (
                 <div className="border-t border-neutral-800 px-4 pb-4 sm:px-5 sm:pb-5">
-                    <div className="mb-4 flex flex-col gap-3 border-b border-neutral-800 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="mb-4 flex flex-col gap-3 border-b border-neutral-800 sm:flex-row sm:items-end sm:justify-between">
                         <div className="flex gap-6">
                             {INNER_TABS.map((tab) => {
                                 const isActive = innerTab === tab.id;
@@ -146,12 +144,13 @@ export default function SlTournamentPanel({
                             })}
                         </div>
 
-                        {showEditActions ? (
-                            <div className="flex flex-col gap-2 pb-3 sm:flex-row sm:items-center">
+                        {showTabActions ? (
+                            <div className="flex items-center justify-end gap-2 pb-3">
                                 <button
                                     type="button"
                                     onClick={() => setIsEditing(true)}
-                                    className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg border border-yellow-500 bg-transparent px-4 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"
+                                    disabled={isEditing}
+                                    className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg border border-neutral-600 bg-[#1a1a1a] px-4 text-sm font-semibold text-white transition-colors hover:border-neutral-400 disabled:cursor-not-allowed disabled:opacity-40"
                                 >
                                     <Pencil className="h-4 w-4" />
                                     Edit
