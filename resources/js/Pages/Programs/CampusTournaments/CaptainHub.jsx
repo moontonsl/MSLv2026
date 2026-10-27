@@ -64,14 +64,21 @@ const MOBILE_OPTIONS = [
 function OptionCard({ option, onOpenInvites }) {
     const Icon = option.icon;
     const className = `group flex min-h-[72px] w-full items-center gap-3 rounded-xl border px-3 py-3 text-left transition-colors sm:gap-4 sm:px-4 ${
-        option.highlight
-            ? 'border-yellow-500/40 bg-yellow-500/10 hover:bg-yellow-500/15'
-            : 'border-neutral-800 bg-[#0a0a0a] hover:border-neutral-600'
+        option.disabled
+            ? 'cursor-not-allowed border-neutral-800 bg-[#0a0a0a] opacity-50'
+            : option.highlight
+              ? 'border-yellow-500/40 bg-yellow-500/10 hover:bg-yellow-500/15'
+              : 'border-neutral-800 bg-[#0a0a0a] hover:border-neutral-600'
     }`;
-
     const content = (
         <>
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-yellow-500 text-black">
+            <span
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
+                    option.disabled
+                        ? 'bg-neutral-700 text-neutral-400'
+                        : 'bg-yellow-500 text-black'
+                }`}
+            >
                 <Icon className="h-5 w-5" />
             </span>
             <span className="min-w-0 flex-1">
@@ -84,11 +91,23 @@ function OptionCard({ option, onOpenInvites }) {
             </span>
             <ChevronRight
                 className={`h-5 w-5 shrink-0 ${
-                    option.highlight ? 'text-yellow-500' : 'text-gray-400'
+                    option.disabled
+                        ? 'text-neutral-600'
+                        : option.highlight
+                          ? 'text-yellow-500'
+                          : 'text-gray-400'
                 }`}
             />
         </>
     );
+
+    if (option.disabled) {
+        return (
+            <div className={className} aria-disabled="true" title={option.description}>
+                {content}
+            </div>
+        );
+    }
 
     if (option.opensInvitesModal) {
         return (
@@ -150,12 +169,33 @@ export default function CaptainHub({
     };
     const prepareOptions = (options) =>
         options
-            .filter((option) => !option.requiresTournament || hasTournament)
-            .map((option) =>
-                option.id === 'create' && hasCaptainTeam
-                    ? { ...option, ...captainOption }
-                    : option,
-            );
+            .filter(
+                (option) =>
+                    !option.requiresTournament || hasTournament || hasCaptainTeam,
+            )
+            .map((option) => {
+                if (option.id === 'create' && hasCaptainTeam) {
+                    return { ...option, ...captainOption };
+                }
+
+                if (hasCaptainTeam && option.id === 'solo') {
+                    return {
+                        ...option,
+                        disabled: true,
+                        description: 'Unavailable while you are captaining a team.',
+                    };
+                }
+
+                if (hasCaptainTeam && option.id === 'invites') {
+                    return {
+                        ...option,
+                        disabled: true,
+                        description: 'You cannot accept invitations while captaining a team.',
+                    };
+                }
+
+                return option;
+            });
     const desktopOptions = prepareOptions(DESKTOP_OPTIONS);
     const mobileOptions = prepareOptions(MOBILE_OPTIONS);
 

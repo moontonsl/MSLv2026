@@ -223,7 +223,10 @@ class TournamentRegistrationController extends Controller
                 ->where('expires_at', '>', now()))
                 ->whereDoesntHave('tournamentParticipations', fn ($query) => $query
                     ->where('team_id', $team->id)
-                    ->where('status', ParticipantStatus::Active));
+                    ->where('status', ParticipantStatus::Active))
+                ->whereDoesntHave('captainedTeams', fn ($query) => $query
+                    ->where('tournament_id', $tournament->id)
+                    ->whereIn('status', [TeamStatus::Assembling, TeamStatus::Registered]));
         } else {
             $users->whereNotNull('username')
                 ->whereDoesntHave('tournamentParticipations', fn ($query) => $query

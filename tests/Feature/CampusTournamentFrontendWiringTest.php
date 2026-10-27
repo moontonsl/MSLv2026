@@ -550,10 +550,10 @@ class CampusTournamentFrontendWiringTest extends TestCase
                 'team' => $team->id,
             ]))
             ->assertOk()
-            ->assertJsonCount(3, 'data')
+            ->assertJsonCount(2, 'data')
             ->assertJsonFragment(['id' => $eligible->id])
             ->assertJsonFragment(['id' => $expiredInvitee->id])
-            ->assertJsonFragment(['id' => $participatingPlayer->id])
+            ->assertJsonMissing(['id' => $participatingPlayer->id])
             ->assertJsonMissing(['id' => $alreadyInvited->id])
             ->assertJsonMissing(['id' => $currentTeammate->id]);
     }
