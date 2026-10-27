@@ -1,4 +1,5 @@
 import { ROLE_SLOTS } from '@/data/campusTournamentCaptainData';
+import { isLaneTakenByAnotherPlayer } from './laneSelection';
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { CircleHelp, Search, User, X } from 'lucide-react';
@@ -152,11 +153,46 @@ function PlayerSlotField({
     );
 }
 
+function LaneSelect({ id, value, onChange, disabledLanes, error }) {
+    return (
+        <div className="min-w-0">
+            <label htmlFor={id} className="mb-2 block text-sm text-white">
+                Lane <span className="text-red-500">*</span>
+            </label>
+            <select
+                id={id}
+                value={value}
+                onChange={(event) => onChange(event.target.value)}
+                required
+                className={INPUT_CLASS}
+            >
+                <option value="">Select lane</option>
+                {ROLE_SLOTS.map((role) => (
+                    <option
+                        key={role.id}
+                        value={role.id}
+                        disabled={disabledLanes(role.id)}
+                    >
+                        {role.label}
+                    </option>
+                ))}
+            </select>
+            {error ? (
+                <p className="mt-1 text-xs text-red-400">{error}</p>
+            ) : null}
+        </div>
+    );
+}
+
 export default function CaptainRegister({ captain, tournament }) {
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         discord_id: '',
-        assigned_lane_role_code: ROLE_SLOTS[0]?.id ?? 'jungler',
+        assigned_lane_role_code: '',
+        members: PLAYER_SLOTS.map(() => ({
+            username: '',
+            intended_lane_role_code: '',
+        })),
     });
     const [players, setPlayers] = useState({ 2: null, 3: null, 4: null, 5: null });
 
@@ -168,6 +204,16 @@ export default function CaptainRegister({ captain, tournament }) {
                 .join(','),
         [players],
     );
+
+    const setMember = (slot, field, value) => {
+        const memberIndex = slot - 2;
+        setData(
+            'members',
+            data.members.map((member, index) =>
+                index === memberIndex ? { ...member, [field]: value } : member,
+            ),
+        );
+    };
 
     const submit = (event) => {
         event.preventDefault();
@@ -214,27 +260,44 @@ export default function CaptainRegister({ captain, tournament }) {
                                     </ul>
                                 </div>
 
-                                <div>
-                                    <label
-                                        htmlFor="captain-ign"
-                                        className="mb-2 block text-sm text-white"
-                                    >
-                                        Captain (Player 1) <span className="text-red-500">*</span>
-                                    </label>
-                                    <div className="relative">
-                                        <input
-                                            id="captain-ign"
-                                            value={captain?.ign ?? ''}
-                                            readOnly
-                                            className={`${INPUT_CLASS} pr-11 text-gray-400`}
-                                        />
-                                        <span
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-                                            title={`${captain?.name ?? ''} — ${captain?.ign ?? ''}`}
+                                <div className="grid grid-cols-[minmax(0,1fr)_minmax(7rem,0.65fr)] gap-3">
+                                    <div className="min-w-0">
+                                        <label
+                                            htmlFor="captain-ign"
+                                            className="mb-2 block text-sm text-white"
                                         >
-                                            <CircleHelp className="h-5 w-5" />
-                                        </span>
+                                            Captain (Player 1) <span className="text-red-500">*</span>
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                                id="captain-ign"
+                                                value={captain?.ign ?? ''}
+                                                readOnly
+                                                className={`${INPUT_CLASS} pr-11 text-gray-400`}
+                                            />
+                                            <span
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                                                title={`${captain?.name ?? ''} — ${captain?.ign ?? ''}`}
+                                            >
+                                                <CircleHelp className="h-5 w-5" />
+                                            </span>
+                                        </div>
                                     </div>
+                                    <LaneSelect
+                                        id="captain-lane"
+                                        value={data.assigned_lane_role_code}
+                                        onChange={(value) =>
+                                            setData('assigned_lane_role_code', value)
+                                        }
+                                        disabledLanes={(lane) =>
+                                            isLaneTakenByAnotherPlayer(
+                                                lane,
+                                                data.assigned_lane_role_code,
+                                                data.members,
+                                            )
+                                        }
+                                        error={errors.assigned_lane_role_code}
+                                    />
                                 </div>
 
                                 <div>
@@ -290,21 +353,71 @@ export default function CaptainRegister({ captain, tournament }) {
                                     </p>
                                 </div>
 
-                                {PLAYER_SLOTS.map((slot) => (
-                                    <PlayerSlotField
-                                        key={slot}
-                                        slot={slot}
-                                        tournamentId={tournament.id}
-                                        selected={players[slot]}
-                                        excludedKey={excludedKey}
-                                        onSelect={(player) =>
-                                            setPlayers((prev) => ({ ...prev, [slot]: player }))
-                                        }
-                                        onClear={() =>
-                                            setPlayers((prev) => ({ ...prev, [slot]: null }))
-                                        }
-                                    />
-                                ))}
+                                {PLAYER_SLOTS.map((slot) => {
+                                    const memberIndex = slot - 2;
+                                    const member = data.members[memberIndex];
+
+                                    return (
+                                        <div
+                                            key={slot}
+                                            className="grid grid-cols-[minmax(0,1fr)_minmax(7rem,0.65fr)] gap-3"
+                                        >
+                                            <PlayerSlotField
+                                                slot={slot}
+                                                tournamentId={tournament.id}
+                                                selected={players[slot]}
+                                                excludedKey={excludedKey}
+                                                onSelect={(player) => {
+                                                    setPlayers((current) => ({
+                                                        ...current,
+                                                        [slot]: player,
+                                                    }));
+                                                    setMember(slot, 'username', player.username);
+                                                }}
+                                                onClear={() => {
+                                                    setPlayers((current) => ({
+                                                        ...current,
+                                                        [slot]: null,
+                                                    }));
+                                                    setMember(slot, 'username', '');
+                                                }}
+                                            />
+                                            <LaneSelect
+                                                id={`player-${slot}-lane`}
+                                                value={member.intended_lane_role_code}
+                                                onChange={(value) =>
+                                                    setMember(
+                                                        slot,
+                                                        'intended_lane_role_code',
+                                                        value,
+                                                    )
+                                                }
+                                                disabledLanes={(lane) =>
+                                                    isLaneTakenByAnotherPlayer(
+                                                        lane,
+                                                        data.assigned_lane_role_code,
+                                                        data.members,
+                                                        memberIndex,
+                                                    )
+                                                }
+                                                error={
+                                                    errors[
+                                                        `members.${memberIndex}.intended_lane_role_code`
+                                                    ]
+                                                }
+                                            />
+                                            {errors[`members.${memberIndex}.username`] ? (
+                                                <p className="col-span-2 text-xs text-red-400">
+                                                    {errors[`members.${memberIndex}.username`]}
+                                                </p>
+                                            ) : null}
+                                        </div>
+                                    );
+                                })}
+
+                                {errors.members ? (
+                                    <p className="text-sm text-red-400">{errors.members}</p>
+                                ) : null}
 
                                 <button
                                     type="submit"

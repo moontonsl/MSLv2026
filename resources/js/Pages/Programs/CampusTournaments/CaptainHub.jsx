@@ -42,12 +42,13 @@ const MOBILE_OPTIONS = [
         highlight: true,
     },
     {
-        id: 'join',
-        title: 'Join an Existing Team',
-        description: 'Join a team that already has a slot.',
-        href: '/Tournament/MemberJoin',
-        icon: ChevronRight,
+        id: 'solo',
+        title: 'Solo Matchmaking',
+        description: 'Get matched with other solo players.',
+        href: '/Tournament/SoloPlayer',
+        icon: Zap,
         highlight: false,
+        requiresTournament: true,
     },
     {
         id: 'invites',

@@ -12,6 +12,7 @@ const INNER_TABS = [
 
 /**
  * Expandable SL tournament card with Match Management / Roster tabs.
+ * Figma: Edit + Export sit on the right of the inner tabs.
  *
  * @param {{
  *   tournament: {
@@ -23,40 +24,51 @@ const INNER_TABS = [
  *     rosterLockDate?: string;
  *     resultsSubmitted?: boolean;
  *     resultsSubmittedOn?: string;
+ *     canSubmitResults?: boolean;
+ *     canCorrectResults?: boolean;
+ *     canViewReport?: boolean;
  *     teams?: Array<object>;
  *     rosterTeams?: Array<object>;
  *   };
  *   defaultExpanded?: boolean;
- *   onPlacementChange: (tournamentId: string, teamId: string, placementId: string) => void;
- *   onSubmitResults: (tournament: object) => void;
+ *   editingResults?: boolean;
+ *   onPlacementChange?: (tournamentId: number|string, teamId: number|string, placement: string) => void;
+ *   onSubmitResults?: (tournament: object) => void;
+ *   onEditResults?: (tournament: object) => void;
+ *   onCancelEdit?: (tournament: object) => void;
  *   onExport?: (tournament: object) => void;
  * }} props
  */
 export default function SlTournamentPanel({
     tournament,
     defaultExpanded = false,
+    editingResults = false,
     onPlacementChange,
     onSubmitResults,
+    onEditResults,
+    onCancelEdit,
     onExport,
 }) {
     const [expanded, setExpanded] = useState(defaultExpanded);
     const [innerTab, setInnerTab] = useState("match");
     const [page, setPage] = useState(1);
-    const [isEditing, setIsEditing] = useState(false);
 
     const resultsSubmitted = Boolean(tournament.resultsSubmitted);
-    const canViewReport =
-        tournament.status === "completed" && Boolean(tournament.canViewReport);
-    // Figma: Edit + Export sit on the right of Match Management / Roster tabs
-    // inside the tournament card — not in the page filter bar.
-    const showTabActions = resultsSubmitted && innerTab === "match";
+    const canExport = resultsSubmitted && Boolean(tournament.canViewReport);
+    const canCorrect = Boolean(tournament.canCorrectResults);
+    // Figma: Edit + Export on the Match Management tab row
+    const showTabActions =
+        resultsSubmitted &&
+        innerTab === "match" &&
+        !editingResults &&
+        (canCorrect || canExport);
 
     return (
         <article className="overflow-hidden rounded-xl border border-neutral-800 bg-[#111111]">
-            <div className="flex items-center gap-3 p-4 sm:p-5">
-                <div className="min-w-0 flex-1 text-center sm:text-left">
+            <div className="flex items-start gap-3 p-4 sm:items-center sm:p-5">
+                <div className="min-w-0 flex-1">
                     {resultsSubmitted ? (
-                        <div className="mb-3 inline-flex flex-col items-center gap-0.5 sm:mb-2 sm:items-start">
+                        <div className="mb-3 inline-flex flex-col gap-0.5 sm:mb-2">
                             <span className="inline-flex w-fit items-center gap-1.5 rounded-md bg-emerald-500/15 px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-emerald-400">
                                 <Check className="h-3.5 w-3.5" />
                                 Results Submitted
@@ -86,15 +98,6 @@ export default function SlTournamentPanel({
                             className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-yellow-500 px-3 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"
                         >
                             View
-                            <ExternalLink className="h-4 w-4" />
-                        </Link>
-                    ) : null}
-                    {canViewReport ? (
-                        <Link
-                            href={`/campus-tournaments/${tournament.id}/report`}
-                            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-yellow-500 px-3 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10"
-                        >
-                            Report
                             <ExternalLink className="h-4 w-4" />
                         </Link>
                     ) : null}
@@ -146,52 +149,78 @@ export default function SlTournamentPanel({
 
                         {showTabActions ? (
                             <div className="flex items-center justify-end gap-2 pb-3">
+                                {canCorrect ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => onEditResults?.(tournament)}
+                                        className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg border border-neutral-600 bg-[#1a1a1a] px-4 text-sm font-semibold text-white transition-colors hover:border-neutral-400"
+                                    >
+                                        <Pencil className="h-4 w-4" />
+                                        Edit
+                                    </button>
+                                ) : null}
+                                {canExport ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => onExport?.(tournament)}
+                                        className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                                    >
+                                        <FileSpreadsheet className="h-4 w-4" />
+                                        Export to Excel
+                                    </button>
+                                ) : null}
+                            </div>
+                        ) : null}
+
+                        {editingResults && innerTab === "match" ? (
+                            <div className="flex items-center justify-end gap-2 pb-3">
                                 <button
                                     type="button"
-                                    onClick={() => setIsEditing(true)}
-                                    disabled={isEditing}
-                                    className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg border border-neutral-600 bg-[#1a1a1a] px-4 text-sm font-semibold text-white transition-colors hover:border-neutral-400 disabled:cursor-not-allowed disabled:opacity-40"
+                                    disabled
+                                    className="inline-flex min-h-[40px] cursor-not-allowed items-center justify-center gap-2 rounded-lg border border-neutral-600 bg-[#1a1a1a] px-4 text-sm font-semibold text-white opacity-40"
                                 >
                                     <Pencil className="h-4 w-4" />
                                     Edit
                                 </button>
-                                <button
-                                    type="button"
-                                    onClick={() => onExport?.(tournament)}
-                                    className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
-                                >
-                                    <FileSpreadsheet className="h-4 w-4" />
-                                    Export to Excel
-                                </button>
+                                {canExport ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => onExport?.(tournament)}
+                                        className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                                    >
+                                        <FileSpreadsheet className="h-4 w-4" />
+                                        Export to Excel
+                                    </button>
+                                ) : null}
                             </div>
                         ) : null}
                     </div>
 
                     {innerTab === "match" ? (
                         <SlMatchManagement
-                            teams={tournament.teams ?? []}
+                            teams={(tournament.teams ?? []).filter(
+                                (team) =>
+                                    tournament.status !== "completed" ||
+                                    team.teamStatus === "registered",
+                            )}
                             page={page}
-                            totalPages={10}
-                            resultsSubmitted={resultsSubmitted}
-                            canViewReport={canViewReport}
-                            isEditing={isEditing}
-                            hideToolbar
+                            totalPages={1}
                             onPageChange={setPage}
-                            onPlacementChange={(teamId, placementId) =>
+                            editable={
+                                Boolean(tournament.canSubmitResults) ||
+                                editingResults
+                            }
+                            resultsSubmitted={resultsSubmitted}
+                            canSubmit={Boolean(tournament.canSubmitResults)}
+                            onPlacementChange={(teamId, placement) =>
                                 onPlacementChange?.(
                                     tournament.id,
                                     teamId,
-                                    placementId,
+                                    placement,
                                 )
                             }
-                            onSubmitResults={() => onSubmitResults(tournament)}
-                            onEditResults={() => setIsEditing(true)}
-                            onCancelEdit={() => setIsEditing(false)}
-                            onSaveEdit={() => {
-                                setIsEditing(false);
-                                onSubmitResults(tournament);
-                            }}
-                            onExport={() => onExport?.(tournament)}
+                            onSubmitResults={() => onSubmitResults?.(tournament)}
+                            onCancelEdit={() => onCancelEdit?.(tournament)}
                         />
                     ) : (
                         <SlRosterPanel

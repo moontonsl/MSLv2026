@@ -3,6 +3,7 @@ import { Head, router } from '@inertiajs/react';
 import {
     ArrowDown,
     ArrowUp,
+    ArrowDownUp,
     Ban,
     Camera,
     Check,
@@ -84,26 +85,21 @@ function ProfileMeta({ label, value }) {
     );
 }
 
-function SortControls({ column, sort, onSort }) {
+function SortControls({ column, label, sort, onSort }) {
+    const direction = sort?.column === column ? sort.direction : null;
+    const Icon = direction === 'asc' ? ArrowUp : direction === 'desc' ? ArrowDown : ArrowDownUp;
+    const nextDirection = direction === 'asc' ? 'descending' : direction === 'desc' ? 'original order' : 'ascending';
+
     return (
-        <span className="ml-1 inline-flex flex-col">
-            <button
-                type="button"
-                className={`h-2.5 ${sort.column === column && sort.direction === 'asc' ? 'text-brand-400' : 'text-gray-500'}`}
-                onClick={() => onSort(column, 'asc')}
-                aria-label={`Sort ${column} ascending`}
-            >
-                <ArrowUp className="h-3 w-3" />
-            </button>
-            <button
-                type="button"
-                className={`h-2.5 ${sort.column === column && sort.direction === 'desc' ? 'text-brand-400' : 'text-gray-500'}`}
-                onClick={() => onSort(column, 'desc')}
-                aria-label={`Sort ${column} descending`}
-            >
-                <ArrowDown className="h-3 w-3" />
-            </button>
-        </span>
+        <button
+            type="button"
+            className={`ml-1 inline-flex h-6 w-6 items-center justify-center rounded hover:bg-white/10 ${direction ? 'text-brand-400' : 'text-gray-500'}`}
+            onClick={() => onSort(column)}
+            aria-label={`Sort ${label} ${nextDirection}`}
+            title={`Sort ${label} ${nextDirection}`}
+        >
+            <Icon className="h-4 w-4" />
+        </button>
     );
 }
 
@@ -360,7 +356,7 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
     const [roleFilter, setRoleFilter] = useState('all');
     const [query, setQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [sort, setSort] = useState({ column: 'account', direction: 'asc' });
+    const [sort, setSort] = useState(null);
     const [selectedStudent, setSelectedStudent] = useState(null);
     const searchRef = useRef(null);
     const [backgroundUrl, setBackgroundUrl] = useState(profile.cover);
@@ -452,6 +448,8 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
             return matchesStatus && matchesRole && matchesSearch;
         });
 
+        if (!sort) return filtered;
+
         return [...filtered].sort((first, second) => {
             const comparison = first[sort.column].localeCompare(second[sort.column], undefined, {
                 numeric: true,
@@ -460,6 +458,14 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
             return sort.direction === 'asc' ? comparison : -comparison;
         });
     }, [statusFilter, roleFilter, query, sort, visibleStudents]);
+
+    const cycleSort = (column) => {
+        setSort((current) => {
+            if (current?.column !== column) return { column, direction: 'asc' };
+            if (current.direction === 'asc') return { column, direction: 'desc' };
+            return null;
+        });
+    };
 
     const pageCount = Math.max(1, Math.ceil(filteredStudents.length / PAGE_SIZE));
     const pageStudents = filteredStudents.slice(
@@ -473,14 +479,17 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
 
     useEffect(() => {
         const focusSearch = (event) => {
-            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
-                event.preventDefault();
-                searchRef.current?.focus();
-            }
+            if (!(event.ctrlKey || event.metaKey) || event.altKey || event.shiftKey || event.key.toLowerCase() !== 'k') return;
+            if (document.querySelector('[aria-modal="true"]')) return;
+
+            event.preventDefault();
+            event.stopPropagation();
+            searchRef.current?.focus();
+            searchRef.current?.select();
         };
 
-        window.addEventListener('keydown', focusSearch);
-        return () => window.removeEventListener('keydown', focusSearch);
+        document.addEventListener('keydown', focusSearch, true);
+        return () => document.removeEventListener('keydown', focusSearch, true);
     }, []);
 
     const handleViewProfile = (student) => {
@@ -638,13 +647,15 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
                             <input
                                 ref={searchRef}
                                 type="search"
+                                aria-label="Search students"
+                                aria-keyshortcuts="Control+K Meta+K"
                                 value={query}
                                 onChange={(event) => setQuery(event.target.value)}
                                 placeholder="Search students..."
                                 className="min-w-0 flex-1 border-0 bg-transparent p-0 text-base text-gray-300 outline-none placeholder:text-gray-300 focus:border-0 focus:ring-0"
                             />
                             <kbd className="hidden rounded border border-gray-300 px-1 text-xs font-medium leading-[18px] text-gray-300 sm:block">
-                                Ctrl K
+                                Ctrl / ⌘ K
                             </kbd>
                         </label>
 
@@ -694,7 +705,7 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
                                         <th className="w-[68%] px-4">
                                             <span className="inline-flex items-center">
                                                 MSL Account
-                                                <SortControls column="account" sort={sort} onSort={(column, direction) => setSort({ column, direction })} />
+                                                <SortControls column="account" label="MSL Account" sort={sort} onSort={cycleSort} />
                                             </span>
                                         </th>
                                         <th className="w-[32%] px-3 text-center">Details</th>
@@ -751,19 +762,19 @@ export default function AccountManagementPage({ accountView, allowedRoles, title
                                         <th className="w-[29%] px-6">
                                             <span className="inline-flex items-center">
                                                 MSL Account
-                                                <SortControls column="account" sort={sort} onSort={(column, direction) => setSort({ column, direction })} />
+                                                <SortControls column="account" label="MSL Account" sort={sort} onSort={cycleSort} />
                                             </span>
                                         </th>
                                         <th className="w-[25%] px-6">
                                             <span className="inline-flex items-center">
                                                 Campus
-                                                <SortControls column="campus" sort={sort} onSort={(column, direction) => setSort({ column, direction })} />
+                                                <SortControls column="campus" label="Campus" sort={sort} onSort={cycleSort} />
                                             </span>
                                         </th>
                                         <th className="w-[18%] px-6">
                                             <span className="inline-flex items-center">
                                                 Year Level
-                                                <SortControls column="yearLevel" sort={sort} onSort={(column, direction) => setSort({ column, direction })} />
+                                                <SortControls column="yearLevel" label="Year Level" sort={sort} onSort={cycleSort} />
                                             </span>
                                         </th>
                                         <th className="w-[14%] px-6">Status</th>

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { createPortal } from "react-dom";
 import { HelpCircle, X } from "lucide-react";
 
 export default function ConfirmModal({ 
@@ -10,14 +11,25 @@ export default function ConfirmModal({
     confirmText = "Confirm", 
     cancelText = "Cancel" 
 }) {
-    if (!isOpen) return null;
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isOpen]);
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+    if (!isOpen || typeof document === 'undefined') return null;
+
+    return createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-md p-4 transition-all duration-200">
             {/* Backdrop click handler */}
             <div className="absolute inset-0" onClick={onCancel} />
             
-            <div className="w-full max-w-md bg-zinc-950 border border-white/10 rounded-2xl p-6 relative shadow-2xl z-10">
+            <div className="w-full max-w-md bg-[#0f0f11]/95 backdrop-blur-2xl border border-white/15 rounded-2xl p-6 relative shadow-[0_20px_70px_rgba(0,0,0,0.6)] z-10 animate-in fade-in zoom-in-95 duration-150">
                 {/* Visual identity left accent border */}
                 <div className="absolute top-0 left-0 w-[4px] h-full bg-brand-500 rounded-l-2xl" />
                 
@@ -59,6 +71,7 @@ export default function ConfirmModal({
                     </button>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }

@@ -1,7 +1,8 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import FeaturedImageUpload from '@/Components/Admin/FeaturedImageUpload';
 import { Head, router, useForm } from '@inertiajs/react';
-import { ArrowDown, ArrowUp, Eye, EyeOff, ImagePlus, Pencil, Plus, Trash2 } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { ArrowDown, ArrowUp, Eye, EyeOff, ImagePlus, Pencil, Plus, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const EMPTY_FORM = { title: '', order: 0, is_active: true, image: null };
@@ -108,35 +109,70 @@ export default function Carousel({ carousels: initialCarousels = [] }) {
                 <button type="button" onClick={openCreate} className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 py-2.5 text-sm font-bold text-black hover:bg-yellow-400"><Plus className="h-4 w-4" />Add Carousel Image</button>
             </div>
 
-            {formOpen && (
-                <section className="mb-8 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
-                    <div className="mb-6 flex items-center justify-between gap-4">
-                        <h2 className="text-lg font-bold text-yellow-500">{editingItem ? 'Edit Carousel Image' : 'Add Carousel Image'}</h2>
-                        <button type="button" onClick={closeForm} className="text-sm text-gray-400 hover:text-white">Cancel</button>
+            {formOpen && typeof document !== 'undefined' && createPortal(
+                <div
+                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4 backdrop-blur-md transition-all duration-200"
+                    role="dialog"
+                    aria-modal="true"
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) closeForm();
+                    }}
+                >
+                    <div className="w-full max-w-xl rounded-2xl border border-yellow-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
+                        <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                                    <ImagePlus className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <h2 className="text-base font-black text-white">{editingItem ? 'Edit Carousel Image' : 'Add Carousel Image'}</h2>
+                                    <p className="text-xs text-gray-400">Configure homepage carousel image, title, and display order</p>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={closeForm}
+                                className="rounded-lg p-1 text-gray-400 hover:text-white"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={submit} className="mt-5 space-y-4">
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <div>
+                                    <label htmlFor="carousel-title" className="block text-xs font-semibold text-gray-300 mb-1.5">Title</label>
+                                    <input id="carousel-title" type="text" value={data.title} onChange={(event) => setData('title', event.target.value)} className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white placeholder:text-gray-500 focus:border-yellow-400 focus:outline-none" placeholder="Optional title" />
+                                    {errors.title && <p className="mt-1 text-xs text-red-400">{errors.title}</p>}
+                                </div>
+                                <div>
+                                    <label htmlFor="carousel-order" className="block text-xs font-semibold text-gray-300 mb-1.5">Display order</label>
+                                    <input id="carousel-order" type="number" min="0" value={data.order} onChange={(event) => setData('order', Number(event.target.value))} className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white focus:border-yellow-400 focus:outline-none" />
+                                    {errors.order && <p className="mt-1 text-xs text-red-400">{errors.order}</p>}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Carousel image {editingItem ? '(optional when keeping current image)' : '*'}</label>
+                                <FeaturedImageUpload value={data.image || (editingItem?.image_url ?? null)} onChange={(file) => setData('image', file)} />
+                                {errors.image && <p className="mt-1 text-xs text-red-400">{errors.image}</p>}
+                            </div>
+
+                            <label className="inline-flex items-center gap-2.5 text-xs font-semibold text-gray-300 cursor-pointer pt-1">
+                                <input type="checkbox" checked={Boolean(data.is_active)} onChange={(event) => setData('is_active', event.target.checked)} className="h-4 w-4 rounded border-neutral-700 bg-[#1a1a1a] text-yellow-500 focus:ring-yellow-500" />
+                                <span>Show this image in the active carousel</span>
+                            </label>
+
+                            <div className="flex items-center justify-end gap-3 border-t border-white/10 pt-4 mt-6">
+                                <button type="button" onClick={closeForm} className="rounded-xl border border-white/10 px-4 py-2.5 text-xs font-bold text-gray-300 hover:bg-white/5">Cancel</button>
+                                <button type="submit" disabled={processing} className="inline-flex items-center gap-1.5 rounded-xl bg-yellow-400 px-5 py-2.5 text-xs font-bold text-black hover:bg-yellow-300 disabled:opacity-50 transition-all shadow-[0_0_15px_rgba(251,191,36,0.2)]">
+                                    <span>{processing ? 'Saving...' : editingItem ? 'Update Image' : 'Add Image'}</span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                    <form onSubmit={submit} className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                        <div>
-                            <label htmlFor="carousel-title" className="mb-2 block text-sm font-medium text-gray-300">Title</label>
-                            <input id="carousel-title" type="text" value={data.title} onChange={(event) => setData('title', event.target.value)} className="min-h-[44px] w-full rounded-md border border-neutral-800 bg-[#1a1a1a] px-4 py-2.5 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none" placeholder="Optional title" />
-                            {errors.title && <p className="mt-1 text-sm text-red-400">{errors.title}</p>}
-                        </div>
-                        <div>
-                            <label htmlFor="carousel-order" className="mb-2 block text-sm font-medium text-gray-300">Display order</label>
-                            <input id="carousel-order" type="number" min="0" value={data.order} onChange={(event) => setData('order', Number(event.target.value))} className="min-h-[44px] w-full rounded-md border border-neutral-800 bg-[#1a1a1a] px-4 py-2.5 text-white focus:ring-2 focus:ring-yellow-500 focus:outline-none" />
-                            {errors.order && <p className="mt-1 text-sm text-red-400">{errors.order}</p>}
-                        </div>
-                        <div className="md:col-span-2">
-                            <label className="mb-2 block text-sm font-medium text-gray-300">Carousel image {editingItem ? '(optional when keeping current image)' : ''}</label>
-                            <FeaturedImageUpload value={data.image || (editingItem?.image_url ?? null)} onChange={(file) => setData('image', file)} />
-                            {errors.image && <p className="mt-1 text-sm text-red-400">{errors.image}</p>}
-                        </div>
-                        <label className="inline-flex min-h-[44px] items-center gap-3 text-sm text-gray-300 md:col-span-2">
-                            <input type="checkbox" checked={Boolean(data.is_active)} onChange={(event) => setData('is_active', event.target.checked)} className="h-4 w-4 rounded border-neutral-700 bg-[#1a1a1a] text-yellow-500 focus:ring-yellow-500" />
-                            Show this image in the active carousel
-                        </label>
-                        <div className="flex justify-end md:col-span-2"><button type="submit" disabled={processing} className="min-h-[44px] rounded-md bg-yellow-500 px-5 py-2.5 text-sm font-bold text-black hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-50">{processing ? 'Saving...' : editingItem ? 'Update Image' : 'Add Image'}</button></div>
-                    </form>
-                </section>
+                </div>,
+                document.body
             )}
 
             <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6 md:p-8">

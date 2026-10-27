@@ -309,19 +309,32 @@ class CampusTournamentController extends Controller
 
                 $resultEntries = $t->currentResultRevision?->entries->keyBy('team_id') ?? collect();
                 $teams = $t->teams->map(function (TournamentTeam $team) use ($resultEntries) {
-                    $players = $team->activeParticipants->map(fn (TournamentParticipant $p) => [
-                        'id' => $p->id,
-                        'name' => $p->user?->name ?? 'Player',
-                        'ign' => $p->user?->ml_ign ?? $p->user?->name ?? 'Player',
-                        'uid' => $p->user?->ml_id ? "{$p->user->ml_id}({$p->user->ml_server})" : 'N/A',
-                        'role' => strtoupper($p->assigned_lane_role_code ?? 'FLEX'),
-                        'status' => 'confirmed',
-                    ]);
+                    $entry = $resultEntries->get($team->id);
+                    $players = $entry
+                        ? collect($entry->roster_snapshot)->map(fn (array $player) => [
+                            'id' => $player['participant_id'],
+                            'name' => $player['name'],
+                            'ign' => $player['ign'] ?: $player['name'],
+                            'uid' => $player['uid'] ? $player['uid'].'('.$player['server'].')' : 'N/A',
+                            'role' => strtoupper($player['assigned_lane_role_code'] ?? 'FLEX'),
+                            'status' => 'confirmed',
+                        ])
+                        : $team->activeParticipants
+                            ->sortBy(fn (TournamentParticipant $participant) => $participant->roster_role === 'captain' ? 0 : 1)
+                            ->map(fn (TournamentParticipant $participant) => [
+                                'id' => $participant->id,
+                                'name' => $participant->user?->name ?? 'Player',
+                                'ign' => $participant->user?->ml_ign ?? $participant->user?->name ?? 'Player',
+                                'uid' => $participant->user?->ml_id ? "{$participant->user->ml_id}({$participant->user->ml_server})" : 'N/A',
+                                'role' => strtoupper($participant->assigned_lane_role_code ?? 'FLEX'),
+                                'status' => 'confirmed',
+                            ])->values();
 
                     return [
                         'id' => $team->id,
-                        'name' => $team->name,
-                        'placement' => $resultEntries->get($team->id)?->placement_code ?? 'participant',
+                        'name' => $entry?->team_name_snapshot ?? $team->name,
+                        'teamStatus' => $team->status->value,
+                        'placement' => $entry?->placement_code ?? 'participant',
                         'players' => $players,
                     ];
                 });
@@ -354,8 +367,16 @@ class CampusTournamentController extends Controller
                     'status' => $tabStatus,
                     'canViewReport' => $tabStatus === 'completed'
                         && Gate::allows('viewReport', $t),
+                    'canSubmitResults' => $tabStatus === 'completed'
+                        && $t->current_result_revision_id === null
+                        && Gate::allows('submitResults', $t),
+                    'canCorrectResults' => $tabStatus === 'completed'
+                        && $t->current_result_revision_id !== null
+                        && Gate::allows('correctResults', $t),
                     'rosterLockDate' => $t->roster_locked_at ? $t->roster_locked_at->format('M d, Y') : $t->registration_closes_at->format('M d, Y'),
                     'resultsSubmitted' => $t->current_result_revision_id !== null,
+                    'resultsVersion' => $t->currentResultRevision?->version,
+                    'resultsSubmittedOn' => $t->currentResultRevision?->submitted_at?->format('M d, Y'),
                     'teams' => $teams,
                     'rosterTeams' => $rosterTeams,
                 ];

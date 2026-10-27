@@ -143,8 +143,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/campus-tournaments/{tournament}/ongoing', [CampusTournamentController::class, 'showOngoing'])
         ->name('campus-tournaments.ongoing');
 
-    Route::get('/campus-tournaments/{tournament}/report', [CampusTournamentReportController::class, 'show'])
-        ->name('campus-tournaments.report');
     Route::post('/campus-tournaments/{tournament}/results', [CampusTournamentReportController::class, 'store'])
         ->name('campus-tournaments.results.store');
     Route::post('/campus-tournaments/{tournament}/result-revisions', [CampusTournamentReportController::class, 'correct'])
