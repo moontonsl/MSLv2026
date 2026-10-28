@@ -169,6 +169,18 @@ class TournamentRegistrationGuard
             ]);
         }
 
+        $alreadyCaptaining = TournamentTeam::query()
+            ->where('tournament_id', $team->tournament_id)
+            ->where('captain_user_id', $invitedUser->id)
+            ->whereIn('status', [TeamStatus::Assembling, TeamStatus::Registered])
+            ->exists();
+
+        if ($alreadyCaptaining) {
+            throw ValidationException::withMessages([
+                'user_id' => 'This player is already captaining a team in this tournament.',
+            ]);
+        }
+
         $pendingInvitations = TournamentTeamInvitation::query()
             ->where('team_id', $team->id)
             ->where('status', InvitationStatus::Pending)

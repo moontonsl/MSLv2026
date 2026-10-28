@@ -64,19 +64,36 @@ const MOBILE_OPTIONS = [
 function OptionCard({ option, onOpenInvites }) {
     const Icon = option.icon;
     const className = `group flex min-h-[72px] w-full items-center gap-3 rounded-xl border px-3 py-3 text-left transition-colors sm:gap-4 sm:px-4 ${
-        option.highlight
-            ? 'border-yellow-500/40 bg-yellow-500/10 hover:bg-yellow-500/15'
-            : 'border-neutral-800 bg-[#0a0a0a] hover:border-neutral-600'
+        option.disabled
+            ? 'cursor-not-allowed border-neutral-800 bg-[#0a0a0a] opacity-50'
+            : option.highlight
+              ? 'border-yellow-500/40 bg-yellow-500/10 hover:bg-yellow-500/15'
+              : 'border-neutral-800 bg-[#0a0a0a] hover:border-neutral-600'
     }`;
-
     const content = (
         <>
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-yellow-500 text-black">
+            <span
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
+                    option.disabled
+                        ? 'bg-neutral-700 text-neutral-400'
+                        : 'bg-yellow-500 text-black'
+                }`}
+            >
                 <Icon className="h-5 w-5" />
             </span>
             <span className="min-w-0 flex-1">
                 <span className="block text-sm font-bold text-white sm:text-base">
-                    {option.title}
+                    <span className="inline-flex items-center gap-2">
+                        {option.title}
+                        {option.badgeCount > 0 ? (
+                            <span
+                                className="inline-flex min-w-5 items-center justify-center rounded-full bg-yellow-500 px-1.5 py-0.5 text-xs font-bold text-black"
+                                aria-label={`${option.badgeCount} pending invitations`}
+                            >
+                                {option.badgeCount}
+                            </span>
+                        ) : null}
+                    </span>
                 </span>
                 <span className="block text-xs text-gray-400 sm:text-sm">
                     {option.description}
@@ -84,11 +101,23 @@ function OptionCard({ option, onOpenInvites }) {
             </span>
             <ChevronRight
                 className={`h-5 w-5 shrink-0 ${
-                    option.highlight ? 'text-yellow-500' : 'text-gray-400'
+                    option.disabled
+                        ? 'text-neutral-600'
+                        : option.highlight
+                          ? 'text-yellow-500'
+                          : 'text-gray-400'
                 }`}
             />
         </>
     );
+
+    if (option.disabled) {
+        return (
+            <div className={className} aria-disabled="true" title={option.description}>
+                {content}
+            </div>
+        );
+    }
 
     if (option.opensInvitesModal) {
         return (
@@ -138,15 +167,62 @@ export default function CaptainHub({
     tournament = null,
     invitations = [],
     openInvites = false,
+    hasCaptainTeam = false,
+    hasMemberTeam = false,
+    hasSoloTeam = false,
+    pendingInvitationCount = 0,
 }) {
     const [invitesOpen, setInvitesOpen] = useState(Boolean(openInvites));
     const hasTournament = Boolean(tournament);
-    const desktopOptions = DESKTOP_OPTIONS.filter(
-        (option) => !option.requiresTournament || hasTournament,
-    );
-    const mobileOptions = MOBILE_OPTIONS.filter(
-        (option) => !option.requiresTournament || hasTournament,
-    );
+    const hasCurrentTeam = hasCaptainTeam || hasMemberTeam || hasSoloTeam;
+    const currentTeamOption = {
+        title: 'View Team',
+        description: hasCaptainTeam
+            ? 'View and manage your current roster.'
+            : 'View your current team and roster.',
+        href: hasCaptainTeam
+            ? '/Tournament/CampusTournamentTeam'
+            : hasMemberTeam
+              ? '/Tournament/MemberTeam'
+              : '/Tournament/SoloPlayer',
+        icon: Users,
+    };
+    const prepareOptions = (options) =>
+        options
+            .filter(
+                (option) =>
+                    !option.requiresTournament || hasTournament || hasCurrentTeam,
+            )
+            .map((option) => {
+                if (option.id === 'create' && hasCurrentTeam) {
+                    return { ...option, ...currentTeamOption };
+                }
+
+                if (hasCurrentTeam && option.id === 'solo') {
+                    return {
+                        ...option,
+                        disabled: true,
+                        description: 'Leave your current team first.',
+                    };
+                }
+
+                if (hasCaptainTeam && option.id === 'invites') {
+                    return {
+                        ...option,
+                        disabled: true,
+                        description: 'You cannot accept invitations while captaining a team.',
+                        badgeCount: pendingInvitationCount,
+                    };
+                }
+
+                if (option.id === 'invites') {
+                    return { ...option, badgeCount: pendingInvitationCount };
+                }
+
+                return option;
+            });
+    const desktopOptions = prepareOptions(DESKTOP_OPTIONS);
+    const mobileOptions = prepareOptions(MOBILE_OPTIONS);
 
     useEffect(() => {
         setInvitesOpen(Boolean(openInvites));
@@ -179,7 +255,7 @@ export default function CaptainHub({
                             ))}
                         </div>
 
-                        {!hasTournament ? <NoTournamentAlert /> : null}
+                        {!hasTournament && !hasCurrentTeam ? <NoTournamentAlert /> : null}
                     </div>
 
                     <MediaPanel className="aspect-[16/10] min-h-[180px] border border-neutral-800" />
@@ -210,7 +286,7 @@ export default function CaptainHub({
                             ))}
                         </div>
 
-                        {!hasTournament ? <NoTournamentAlert /> : null}
+                        {!hasTournament && !hasCurrentTeam ? <NoTournamentAlert /> : null}
                     </div>
 
                     <MediaPanel className="min-h-[420px] rounded-none" />
