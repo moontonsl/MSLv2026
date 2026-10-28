@@ -2,7 +2,7 @@ import SlMatchManagement from '@/Components/CampusTournament/SlMatchManagement';
 import SlRosterPanel from '@/Components/CampusTournament/SlRosterPanel';
 import { formatDateRange } from '@/data/campusTournamentData';
 import { Link } from '@inertiajs/react';
-import { Check, ChevronDown, ChevronRight, ExternalLink } from 'lucide-react';
+import { Check, ChevronDown, ChevronRight, ExternalLink, FileSpreadsheet, Pencil } from 'lucide-react';
 import { useState } from 'react';
 
 const INNER_TABS = [
@@ -12,6 +12,7 @@ const INNER_TABS = [
 
 /**
  * Expandable SL tournament card with Match Management / Roster tabs.
+ * Figma: Edit + Export sit on the right of the inner tabs.
  *
  * @param {{
  *   tournament: {
@@ -23,12 +24,15 @@ const INNER_TABS = [
  *     rosterLockDate?: string;
  *     resultsSubmitted?: boolean;
  *     resultsSubmittedOn?: string;
+ *     canSubmitResults?: boolean;
+ *     canCorrectResults?: boolean;
+ *     canViewReport?: boolean;
  *     teams?: Array<object>;
  *     rosterTeams?: Array<object>;
  *   };
  *   defaultExpanded?: boolean;
  *   editingResults?: boolean;
- *   onPlacementChange?: (tournamentId: number, teamId: number, placement: string) => void;
+ *   onPlacementChange?: (tournamentId: number|string, teamId: number|string, placement: string) => void;
  *   onSubmitResults?: (tournament: object) => void;
  *   onEditResults?: (tournament: object) => void;
  *   onCancelEdit?: (tournament: object) => void;
@@ -50,9 +54,17 @@ export default function SlTournamentPanel({
     const [page, setPage] = useState(1);
 
     const resultsSubmitted = Boolean(tournament.resultsSubmitted);
+    const canExport = resultsSubmitted && Boolean(tournament.canViewReport);
+    const canCorrect = Boolean(tournament.canCorrectResults);
+    // Figma: Edit + Export on the Match Management tab row
+    const showTabActions =
+        resultsSubmitted &&
+        innerTab === "match" &&
+        !editingResults &&
+        (canCorrect || canExport);
 
     return (
-        <article className="rounded-xl border border-neutral-800 bg-[#111111]">
+        <article className="overflow-hidden rounded-xl border border-neutral-800 bg-[#111111]">
             <div className="flex items-start gap-3 p-4 sm:items-center sm:p-5">
                 <div className="min-w-0 flex-1">
                     {resultsSubmitted ? (
@@ -111,46 +123,104 @@ export default function SlTournamentPanel({
 
             {expanded ? (
                 <div className="border-t border-neutral-800 px-4 pb-4 sm:px-5 sm:pb-5">
-                    <div className="mb-4 flex gap-6 border-b border-neutral-800">
-                        {INNER_TABS.map((tab) => {
-                            const isActive = innerTab === tab.id;
-                            return (
+                    <div className="mb-4 flex flex-col gap-3 border-b border-neutral-800 sm:flex-row sm:items-end sm:justify-between">
+                        <div className="flex gap-6">
+                            {INNER_TABS.map((tab) => {
+                                const isActive = innerTab === tab.id;
+                                return (
+                                    <button
+                                        key={tab.id}
+                                        type="button"
+                                        onClick={() => setInnerTab(tab.id)}
+                                        className={`relative pb-3 pt-4 text-sm font-semibold transition-colors ${
+                                            isActive
+                                                ? "text-yellow-500"
+                                                : "text-gray-400 hover:text-white"
+                                        }`}
+                                    >
+                                        {tab.label}
+                                        {isActive ? (
+                                            <span className="absolute inset-x-0 bottom-0 h-0.5 bg-yellow-500" />
+                                        ) : null}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        {showTabActions ? (
+                            <div className="flex items-center justify-end gap-2 pb-3">
+                                {canCorrect ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => onEditResults?.(tournament)}
+                                        className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg border border-neutral-600 bg-[#1a1a1a] px-4 text-sm font-semibold text-white transition-colors hover:border-neutral-400"
+                                    >
+                                        <Pencil className="h-4 w-4" />
+                                        Edit
+                                    </button>
+                                ) : null}
+                                {canExport ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => onExport?.(tournament)}
+                                        className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                                    >
+                                        <FileSpreadsheet className="h-4 w-4" />
+                                        Export to Excel
+                                    </button>
+                                ) : null}
+                            </div>
+                        ) : null}
+
+                        {editingResults && innerTab === "match" ? (
+                            <div className="flex items-center justify-end gap-2 pb-3">
                                 <button
-                                    key={tab.id}
                                     type="button"
-                                    onClick={() => setInnerTab(tab.id)}
-                                    className={`relative pb-3 pt-4 text-sm font-semibold transition-colors ${
-                                        isActive
-                                            ? "text-yellow-500"
-                                            : "text-gray-400 hover:text-white"
-                                    }`}
+                                    disabled
+                                    className="inline-flex min-h-[40px] cursor-not-allowed items-center justify-center gap-2 rounded-lg border border-neutral-600 bg-[#1a1a1a] px-4 text-sm font-semibold text-white opacity-40"
                                 >
-                                    {tab.label}
-                                    {isActive ? (
-                                        <span className="absolute inset-x-0 bottom-0 h-0.5 bg-yellow-500" />
-                                    ) : null}
+                                    <Pencil className="h-4 w-4" />
+                                    Edit
                                 </button>
-                            );
-                        })}
+                                {canExport ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => onExport?.(tournament)}
+                                        className="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                                    >
+                                        <FileSpreadsheet className="h-4 w-4" />
+                                        Export to Excel
+                                    </button>
+                                ) : null}
+                            </div>
+                        ) : null}
                     </div>
 
                     {innerTab === "match" ? (
                         <SlMatchManagement
-                            teams={(tournament.teams ?? []).filter((team) =>
-                                tournament.status !== 'completed' || team.teamStatus === 'registered'
+                            teams={(tournament.teams ?? []).filter(
+                                (team) =>
+                                    tournament.status !== "completed" ||
+                                    team.teamStatus === "registered",
                             )}
                             page={page}
                             totalPages={1}
                             onPageChange={setPage}
-                            editable={tournament.canSubmitResults || editingResults}
+                            editable={
+                                Boolean(tournament.canSubmitResults) ||
+                                editingResults
+                            }
                             resultsSubmitted={resultsSubmitted}
-                            canSubmit={tournament.canSubmitResults}
-                            canCorrect={tournament.canCorrectResults}
-                            onPlacementChange={(teamId, placement) => onPlacementChange?.(tournament.id, teamId, placement)}
+                            canSubmit={Boolean(tournament.canSubmitResults)}
+                            onPlacementChange={(teamId, placement) =>
+                                onPlacementChange?.(
+                                    tournament.id,
+                                    teamId,
+                                    placement,
+                                )
+                            }
                             onSubmitResults={() => onSubmitResults?.(tournament)}
-                            onEditResults={() => onEditResults?.(tournament)}
                             onCancelEdit={() => onCancelEdit?.(tournament)}
-                            onExport={resultsSubmitted && tournament.canViewReport ? () => onExport?.(tournament) : undefined}
                         />
                     ) : (
                         <SlRosterPanel

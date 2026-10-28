@@ -287,86 +287,85 @@ export default function ViewTournamentModal({
                                     ))}
                                 </div>
 
-                                <div className="flex flex-col gap-4 border-t border-neutral-800 pt-4 sm:flex-row sm:items-center sm:justify-between">
-                                    <div className="flex items-center justify-center gap-3 sm:justify-start">
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                setPage((prev) =>
-                                                    Math.max(1, prev - 1),
-                                                )
-                                            }
-                                            disabled={page <= 1}
-                                            className="inline-flex h-9 items-center justify-center rounded-md bg-yellow-500 px-3 text-sm font-bold text-black disabled:opacity-40 sm:min-w-[100px]"
-                                            aria-label="Previous page"
-                                        >
-                                            <span className="hidden sm:inline">
-                                                Previous
-                                            </span>
-                                            <ChevronLeft className="h-5 w-5 sm:hidden" />
-                                        </button>
-                                        <div className="hidden items-center gap-1 sm:flex">
-                                            {[1, 2, 3, '...', 8, 9, 10].map(
-                                                (item, index) =>
-                                                    item === '...' ? (
-                                                        <span
-                                                            key={`ellipsis-${index}`}
-                                                            className="px-1 text-sm text-gray-400"
-                                                        >
-                                                            ...
-                                                        </span>
-                                                    ) : (
-                                                        <button
-                                                            key={item}
-                                                            type="button"
-                                                            onClick={() =>
-                                                                setPage(item)
-                                                            }
-                                                            className={`inline-flex h-9 min-w-9 items-center justify-center rounded-md text-sm font-semibold ${
-                                                                page === item
-                                                                    ? 'bg-yellow-500 text-black'
-                                                                    : 'text-gray-300 hover:text-white'
-                                                            }`}
-                                                        >
-                                                            {item}
-                                                        </button>
-                                                    ),
-                                            )}
-                                        </div>
-                                        <p className="text-sm font-medium text-white sm:hidden">
-                                            Page {page} of {totalPages}
-                                        </p>
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                setPage((prev) =>
-                                                    Math.min(
-                                                        totalPages,
-                                                        prev + 1,
-                                                    ),
-                                                )
-                                            }
-                                            disabled={page >= totalPages}
-                                            className="inline-flex h-9 items-center justify-center rounded-md bg-yellow-500 px-3 text-sm font-bold text-black disabled:opacity-40 sm:min-w-[100px]"
-                                            aria-label="Next page"
-                                        >
-                                            <span className="hidden sm:inline">
-                                                Next
-                                            </span>
-                                            <ChevronRight className="h-5 w-5 sm:hidden" />
-                                        </button>
+                                {/* Figma: pagination on its own row */}
+                                <div className="flex items-center justify-between gap-3 border-t border-neutral-800 pt-4">
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setPage((prev) =>
+                                                Math.max(1, prev - 1),
+                                            )
+                                        }
+                                        disabled={page <= 1}
+                                        className="inline-flex h-9 items-center justify-center rounded-md border border-yellow-500 bg-transparent px-3 text-sm font-semibold text-yellow-500 disabled:opacity-40 sm:min-w-[100px]"
+                                        aria-label="Previous page"
+                                    >
+                                        <span className="hidden sm:inline">
+                                            Previous
+                                        </span>
+                                        <ChevronLeft className="h-5 w-5 sm:hidden" />
+                                    </button>
+                                    <div className="hidden items-center gap-1 sm:flex">
+                                        {[1, 2, 3, '...', 8, 9, 10].map(
+                                            (item, index) =>
+                                                item === '...' ? (
+                                                    <span
+                                                        key={`ellipsis-${index}`}
+                                                        className="px-1 text-sm text-gray-400"
+                                                    >
+                                                        ...
+                                                    </span>
+                                                ) : (
+                                                    <button
+                                                        key={item}
+                                                        type="button"
+                                                        onClick={() =>
+                                                            setPage(item)
+                                                        }
+                                                        className={`inline-flex h-9 min-w-9 items-center justify-center rounded-full text-sm font-semibold ${
+                                                            page === item
+                                                                ? 'bg-yellow-500 text-black'
+                                                                : 'text-gray-300 hover:text-white'
+                                                        }`}
+                                                    >
+                                                        {item}
+                                                    </button>
+                                                ),
+                                        )}
                                     </div>
+                                    <p className="text-sm font-medium text-white sm:hidden">
+                                        Page {page} of {totalPages}
+                                    </p>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setPage((prev) =>
+                                                Math.min(totalPages, prev + 1),
+                                            )
+                                        }
+                                        disabled={page >= totalPages}
+                                        className="inline-flex h-9 items-center justify-center rounded-md bg-yellow-500 px-3 text-sm font-bold text-black disabled:opacity-40 sm:min-w-[100px]"
+                                        aria-label="Next page"
+                                    >
+                                        <span className="hidden sm:inline">
+                                            Next
+                                        </span>
+                                        <ChevronRight className="h-5 w-5 sm:hidden" />
+                                    </button>
+                                </div>
 
-                                    {isCompleted && !isReviewed ? (
+                                {/* Figma: Mark as Reviewed — bottom-right, separate from pagination */}
+                                {isCompleted && !isReviewed ? (
+                                    <div className="flex justify-end pt-2">
                                         <button
                                             type="button"
                                             onClick={() => setAckOpen(true)}
-                                            className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-5 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                                            className="inline-flex min-h-[44px] w-full items-center justify-center rounded-lg bg-yellow-500 px-6 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:w-auto"
                                         >
                                             Mark as Reviewed
                                         </button>
-                                    ) : null}
-                                </div>
+                                    </div>
+                                ) : null}
                             </div>
                         ) : (
                             <SlRosterPanel

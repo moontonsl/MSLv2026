@@ -1,13 +1,27 @@
+import BaseModal from "@/Components/Admin/BaseModal";
 import SuccessModal from "@/Components/Admin/SuccessModal";
+import { MODAL_CLOSE_BUTTON_CLASS } from "@/Components/Admin/adminModalFormStyles";
 import MemberInviteModal from "@/Components/CampusTournament/MemberInviteModal";
 import TeamInvitationRow from "@/Components/CampusTournament/TeamInvitationRow";
 import ViewTeamInvitationModal from "@/Components/CampusTournament/ViewTeamInvitationModal";
-import MainLayout from "@/Layouts/MainLayout";
-import { Head, Link, router } from "@inertiajs/react";
+import { router } from "@inertiajs/react";
 import { BellOff, X } from "lucide-react";
 import { useState } from "react";
 
-export default function MemberInvite({ invitations = [] }) {
+/**
+ * Team Invitations list modal (Figma — overlay on hub, not a separate page).
+ *
+ * @param {{
+ *   isOpen: boolean;
+ *   invitations?: Array<object>;
+ *   onClose: () => void;
+ * }} props
+ */
+export default function TeamInvitationsModal({
+    isOpen,
+    invitations = [],
+    onClose,
+}) {
     const [viewInvitation, setViewInvitation] = useState(null);
     const [selectedInvitation, setSelectedInvitation] = useState(null);
     const [decision, setDecision] = useState(null);
@@ -110,27 +124,46 @@ export default function MemberInvite({ invitations = [] }) {
                 setSelectedInvitation(null);
                 setDecision(null);
                 setViewInvitation(null);
+                if (decision !== "accept") {
+                    router.reload({ preserveScroll: true });
+                }
             },
         });
     };
 
-    return (
-        <MainLayout fullWidth>
-            <Head title="Team Invitations — Campus Tournament" />
+    const handleClose = () => {
+        if (processing) return;
+        setViewInvitation(null);
+        setSelectedInvitation(null);
+        setDecision(null);
+        setError(null);
+        onClose();
+    };
 
-            <div className="flex min-h-[calc(100vh-8rem)] items-start justify-center bg-[#0a0a0a] px-4 py-8 text-white sm:px-6 sm:py-10">
-                <div className="relative w-full max-w-5xl rounded-2xl border border-neutral-800 bg-[#111111] p-5 sm:p-8">
-                    <Link
-                        href="/Tournament/CampusTournament"
-                        className="absolute right-4 top-4 inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
+    return (
+        <>
+            <BaseModal
+                isOpen={isOpen}
+                onClose={handleClose}
+                hideHeader
+                showCloseButton={false}
+                scrollable
+                maxWidth="max-w-5xl"
+                panelClassName="max-h-[90vh]"
+            >
+                <div className="relative px-1 pb-2 pt-2">
+                    <button
+                        type="button"
+                        onClick={handleClose}
+                        className={`absolute -right-1 -top-1 ${MODAL_CLOSE_BUTTON_CLASS}`}
                         aria-label="Close"
                     >
                         <X className="h-5 w-5" />
-                    </Link>
+                    </button>
 
-                    <h1 className="mb-6 text-center text-xl font-bold text-yellow-500 sm:text-2xl">
+                    <h2 className="mb-6 text-center text-xl font-bold text-yellow-500 sm:text-2xl">
                         Team Invitations
-                    </h1>
+                    </h2>
 
                     {error ? (
                         <div className="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
@@ -141,9 +174,9 @@ export default function MemberInvite({ invitations = [] }) {
                     {invitations.length === 0 ? (
                         <section className="rounded-xl border border-neutral-800 bg-[#0a0a0a] px-6 py-16 text-center">
                             <BellOff className="mx-auto h-10 w-10 text-gray-500" />
-                            <h2 className="mt-4 text-xl font-bold">
-                                No team invitations
-                            </h2>
+                            <h3 className="mt-4 text-xl font-bold text-white">
+                                No team invitations yet.
+                            </h3>
                             <p className="mt-2 text-sm text-gray-400">
                                 Active team invitations will appear here until
                                 they expire or you respond.
@@ -177,7 +210,7 @@ export default function MemberInvite({ invitations = [] }) {
                         </div>
                     )}
                 </div>
-            </div>
+            </BaseModal>
 
             <ViewTeamInvitationModal
                 isOpen={viewInvitation != null}
@@ -190,7 +223,7 @@ export default function MemberInvite({ invitations = [] }) {
             <MemberInviteModal
                 isOpen={decision != null}
                 variant={decision ?? "accept"}
-                teamName={selectedInvitation?.team.name}
+                teamName={selectedInvitation?.team?.name}
                 processing={processing}
                 onCancel={closeConfirm}
                 onConfirm={confirmInvite}
@@ -198,9 +231,12 @@ export default function MemberInvite({ invitations = [] }) {
 
             <SuccessModal
                 isOpen={Boolean(successMessage)}
-                onClose={() => setSuccessMessage("")}
+                onClose={() => {
+                    setSuccessMessage("");
+                    handleClose();
+                }}
                 message={successMessage}
             />
-        </MainLayout>
+        </>
     );
 }

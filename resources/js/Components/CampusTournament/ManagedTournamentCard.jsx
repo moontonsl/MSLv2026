@@ -1,6 +1,10 @@
 import { formatDateRange } from "@/data/campusTournamentData";
 
 /**
+ * RA managed tournament row (Upcoming / Ongoing / Completed).
+ * Figma Ongoing: stats + yellow View on the far right.
+ * Figma Upcoming: View + Resched + Delete.
+ *
  * @param {{
  *   tournament: {
  *     id: string;
@@ -74,20 +78,12 @@ export default function ManagedTournamentCard({
                 </div>
 
                 {hasActions ? (
-                    <div
-                        className={`grid gap-2 lg:flex lg:w-auto lg:flex-row lg:gap-2 lg:pl-6 ${
-                            canChangeSchedule && canView
-                                ? "grid-cols-3"
-                                : canChangeSchedule
-                                  ? "grid-cols-2"
-                                  : "grid-cols-1"
-                        }`}
-                    >
+                    <div className="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center lg:pl-6">
                         {canView ? (
                             <button
                                 type="button"
                                 onClick={() => onView(tournament)}
-                                className={`inline-flex min-h-[44px] items-center justify-center rounded-lg px-2 text-sm font-bold transition-colors sm:px-4 ${
+                                className={`inline-flex min-h-[44px] flex-1 items-center justify-center rounded-lg px-5 text-sm font-bold transition-colors sm:flex-none ${
                                     canChangeSchedule
                                         ? "border border-neutral-500 bg-transparent text-white hover:border-neutral-300"
                                         : "bg-yellow-500 text-black hover:bg-yellow-400"
@@ -101,14 +97,14 @@ export default function ManagedTournamentCard({
                                 <button
                                     type="button"
                                     onClick={() => onReschedule?.(tournament)}
-                                    className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-2 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:px-4"
+                                    className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-lg bg-yellow-500 px-5 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:flex-none"
                                 >
                                     Resched
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => onDelete?.(tournament)}
-                                    className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-red-600 px-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 sm:px-4"
+                                    className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-lg bg-red-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-red-700 sm:flex-none"
                                 >
                                     Delete
                                 </button>

@@ -1,6 +1,8 @@
+import TeamInvitationsModal from '@/Components/CampusTournament/TeamInvitationsModal';
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, Link } from '@inertiajs/react';
 import { AlertCircle, ChevronRight, MessageCircle, Play, UserPlus, Users, Zap } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const DESKTOP_OPTIONS = [
     {
@@ -23,9 +25,9 @@ const DESKTOP_OPTIONS = [
         id: 'invites',
         title: 'Team Invitations',
         description: 'View pending invites from team captains.',
-        href: '/Tournament/MemberInvite',
         icon: MessageCircle,
         highlight: false,
+        opensInvitesModal: true,
         requiresTournament: true,
     },
 ];
@@ -51,26 +53,24 @@ const MOBILE_OPTIONS = [
     {
         id: 'invites',
         title: 'Team Invitations',
-        description: 'View and respond to direct team invitations.',
-        href: '/Tournament/MemberInvite',
+        description: 'View pending invites from team captains.',
         icon: MessageCircle,
         highlight: false,
+        opensInvitesModal: true,
         requiresTournament: true,
     },
 ];
 
-function OptionLink({ option }) {
+function OptionCard({ option, onOpenInvites }) {
     const Icon = option.icon;
+    const className = `group flex min-h-[72px] w-full items-center gap-3 rounded-xl border px-3 py-3 text-left transition-colors sm:gap-4 sm:px-4 ${
+        option.highlight
+            ? 'border-yellow-500/40 bg-yellow-500/10 hover:bg-yellow-500/15'
+            : 'border-neutral-800 bg-[#0a0a0a] hover:border-neutral-600'
+    }`;
 
-    return (
-        <Link
-            href={option.href}
-            className={`group flex min-h-[72px] items-center gap-3 rounded-xl border px-3 py-3 transition-colors sm:gap-4 sm:px-4 ${
-                option.highlight
-                    ? 'border-yellow-500/40 bg-yellow-500/10 hover:bg-yellow-500/15'
-                    : 'border-neutral-800 bg-[#0a0a0a] hover:border-neutral-600'
-            }`}
-        >
+    const content = (
+        <>
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-yellow-500 text-black">
                 <Icon className="h-5 w-5" />
             </span>
@@ -87,6 +87,20 @@ function OptionLink({ option }) {
                     option.highlight ? 'text-yellow-500' : 'text-gray-400'
                 }`}
             />
+        </>
+    );
+
+    if (option.opensInvitesModal) {
+        return (
+            <button type="button" onClick={onOpenInvites} className={className}>
+                {content}
+            </button>
+        );
+    }
+
+    return (
+        <Link href={option.href} className={className}>
+            {content}
         </Link>
     );
 }
@@ -120,7 +134,12 @@ function NoTournamentAlert() {
     );
 }
 
-export default function CaptainHub({ tournament = null }) {
+export default function CaptainHub({
+    tournament = null,
+    invitations = [],
+    openInvites = false,
+}) {
+    const [invitesOpen, setInvitesOpen] = useState(Boolean(openInvites));
     const hasTournament = Boolean(tournament);
     const desktopOptions = DESKTOP_OPTIONS.filter(
         (option) => !option.requiresTournament || hasTournament,
@@ -128,6 +147,10 @@ export default function CaptainHub({ tournament = null }) {
     const mobileOptions = MOBILE_OPTIONS.filter(
         (option) => !option.requiresTournament || hasTournament,
     );
+
+    useEffect(() => {
+        setInvitesOpen(Boolean(openInvites));
+    }, [openInvites]);
 
     return (
         <MainLayout fullWidth>
@@ -148,7 +171,11 @@ export default function CaptainHub({ tournament = null }) {
 
                         <div className="mt-6 space-y-3">
                             {mobileOptions.map((option) => (
-                                <OptionLink key={option.id} option={option} />
+                                <OptionCard
+                                    key={option.id}
+                                    option={option}
+                                    onOpenInvites={() => setInvitesOpen(true)}
+                                />
                             ))}
                         </div>
 
@@ -175,7 +202,11 @@ export default function CaptainHub({ tournament = null }) {
 
                         <div className="mt-8 space-y-3">
                             {desktopOptions.map((option) => (
-                                <OptionLink key={option.id} option={option} />
+                                <OptionCard
+                                    key={option.id}
+                                    option={option}
+                                    onOpenInvites={() => setInvitesOpen(true)}
+                                />
                             ))}
                         </div>
 
@@ -185,6 +216,12 @@ export default function CaptainHub({ tournament = null }) {
                     <MediaPanel className="min-h-[420px] rounded-none" />
                 </div>
             </div>
+
+            <TeamInvitationsModal
+                isOpen={invitesOpen}
+                invitations={invitations}
+                onClose={() => setInvitesOpen(false)}
+            />
         </MainLayout>
     );
 }
