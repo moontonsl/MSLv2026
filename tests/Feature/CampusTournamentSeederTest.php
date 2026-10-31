@@ -35,6 +35,9 @@ class CampusTournamentSeederTest extends TestCase
         $this->assertTrue(Hash::check('password', $regionalAdmin->password));
         $this->assertTrue(Hash::check('password', $studentLeader->password));
         $this->assertTrue(Hash::check('password', $coreAdmin->password));
+        $this->assertSame('Ramon Mendoza', $regionalAdmin->name);
+        $this->assertSame('Angela Reyes', $studentLeader->name);
+        $this->assertSame('Carlos Santos', $coreAdmin->name);
         $this->assertSame('Super Admin', $coreAdmin->user_type);
 
         $this->assertDatabaseHas('region_admins', [
@@ -72,10 +75,19 @@ class CampusTournamentSeederTest extends TestCase
             ->count());
         $this->assertDatabaseHas('users', [
             'username' => 'lspu_premade_captain',
+            'name' => 'Miguel Dela Cruz',
+            'ml_ign' => 'LAKAN',
             'is_mlbb_verified' => true,
         ]);
         $this->assertDatabaseHas('users', [
+            'username' => 'lspu_solo_player_1',
+            'name' => 'Camille Bautista',
+            'ml_ign' => 'DIWATA',
+        ]);
+        $this->assertDatabaseHas('users', [
             'username' => 'lspu_unverified_player',
+            'name' => 'Mark Castillo',
+            'ml_ign' => 'SINAG',
             'email_verified_at' => null,
             'is_mlbb_verified' => false,
         ]);
