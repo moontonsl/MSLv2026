@@ -38,7 +38,7 @@ class RegistrationVerificationMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            html: 'emails.registration-verification',
+            view: 'emails.registration-verification',
         );
     }
 

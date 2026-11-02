@@ -244,7 +244,7 @@ const SHSRegister = () => {
             return false;
             }
 
-            if (captcha != verificationCode) {
+            if (!captcha || captcha.toString().trim().length < 4) {
             return false;
             }
 
