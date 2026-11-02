@@ -16,7 +16,7 @@ class RegisterPremadeTeamRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:12'],
             'discord_id' => ['nullable', 'string', 'max:100'],
             'assigned_lane_role_code' => [
                 'required',

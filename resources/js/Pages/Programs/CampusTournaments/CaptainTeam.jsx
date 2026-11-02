@@ -1,6 +1,7 @@
 import CampusTournamentPageHeader from '@/Components/CampusTournament/CampusTournamentPageHeader';
 import CancelInvitationModal from '@/Components/CampusTournament/CancelInvitationModal';
 import CaptainTeamCard from '@/Components/CampusTournament/CaptainTeamCard';
+import TeamNoticeBanner from '@/Components/CampusTournament/TeamNoticeBanner';
 import { ROLE_SLOTS } from '@/data/campusTournamentCaptainData';
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, Link, router } from '@inertiajs/react';
@@ -128,12 +129,44 @@ export default function CaptainTeam({ team }) {
     const canManageRoster = team.canManageRoster === true;
     const canInvite = canManageRoster && (team.availableLaneRoles ?? []).length > 0;
 
+    const vacatedPlayers = useMemo(
+        () =>
+            (team.players ?? []).filter(
+                (player) => player.status === 'declined' || player.status === 'withdrawn',
+            ),
+        [team.players],
+    );
+
     const manageRoster = () => {
         (pendingSectionRef.current ?? inviteSectionRef.current)?.scrollIntoView({
             behavior: 'smooth',
             block: 'start',
         });
     };
+
+    const rosterNotice =
+        team.status === 'disqualified' ? (
+            <TeamNoticeBanner label="Notice">
+                Your team was disqualified due to incomplete members.
+            </TeamNoticeBanner>
+        ) : vacatedPlayers.length > 0 ? (
+            <div className="space-y-2">
+                {vacatedPlayers.map((player) => (
+                    <TeamNoticeBanner
+                        key={`${player.status}-${player.id}-${player.role}`}
+                        label="Action Required"
+                    >
+                        <span className="font-semibold text-red-100">
+                            {player.name}
+                        </span>{' '}
+                        {player.status === 'declined'
+                            ? 'declined the invitation.'
+                            : 'left your team.'}{' '}
+                        Please edit your roster to replace them.
+                    </TeamNoticeBanner>
+                ))}
+            </div>
+        ) : null;
 
     return (
         <MainLayout fullWidth>
@@ -160,6 +193,7 @@ export default function CaptainTeam({ team }) {
                         team={rosterTeam}
                         onEdit={canManageRoster ? manageRoster : undefined}
                         editLabel="Manage Roster"
+                        notice={rosterNotice}
                     />
 
                     {pendingInvites.length > 0 ? (

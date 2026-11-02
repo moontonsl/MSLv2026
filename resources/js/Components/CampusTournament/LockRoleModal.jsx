@@ -115,7 +115,7 @@ export default function LockRoleModal({
                         </select>
                     </div>
 
-                    <p className="text-sm leading-relaxed text-gray-400">
+                    <p className="text-sm leading-relaxed text-yellow-500/90">
                         <span className="font-semibold text-yellow-500">
                             Note:
                         </span>{" "}

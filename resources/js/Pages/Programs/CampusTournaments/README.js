@@ -12,8 +12,9 @@
  * | Team Register   | Captains creating a team    | /Tournament/CampusTournamentReg    | CaptainRegister.jsx  |
  * | Team Mgmt       | Captains managing roster    | /Tournament/CampusTournamentTeam   | CaptainTeam.jsx      |
  * | Solo MM         | Solo player matchmaking     | /Tournament/SoloPlayer             | SoloMatchmaking.jsx  |
- * | Member          | Invited roster members      | /Tournament/MemberInvite           | MemberInvite.jsx     |
- * | Join Code       | Members entering team code  | /Tournament/MemberJoin             | MemberJoinCode.jsx   |
+ * | Member          | Invited roster members      | Hub modal (Team Invitations)       | CaptainHub.jsx + TeamInvitationsModal.jsx |
+ * | Member Team     | Accepted roster members     | /Tournament/MemberTeam             | MemberTeam.jsx       |
+ * | Join Team       | Join assembling open slot   | /Tournament/MemberJoin             | MemberJoinCode.jsx   |
  *
  * Compatibility redirects (old rebuild paths → legacy URLs):
  *   /programs/campus-tournaments → /campus-tournament

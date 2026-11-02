@@ -755,4 +755,3 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
 });
 
 export default Step2EducationDetails;
-

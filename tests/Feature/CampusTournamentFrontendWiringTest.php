@@ -163,6 +163,101 @@ class CampusTournamentFrontendWiringTest extends TestCase
             ->assertRedirect('/Tournament/CampusTournament');
     }
 
+    public function test_captain_hub_identifies_an_existing_premade_team(): void
+    {
+        $tournament = $this->createApprovedTournament();
+
+        TournamentTeam::query()->create([
+            'tournament_id' => $tournament->id,
+            'name' => 'Team Alpha',
+            'active_name' => 'Team Alpha',
+            'formation_method' => TeamFormationMethod::Premade,
+            'status' => TeamStatus::Assembling,
+            'captain_user_id' => $this->student->id,
+        ]);
+
+        $this->actingAs($this->student)
+            ->get(route('campus.captainregistration'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Programs/CampusTournaments/CaptainHub')
+                ->where('hasCaptainTeam', true)
+                ->where('hasMemberTeam', false)
+                ->where('hasSoloTeam', false)
+                ->where('pendingInvitationCount', 0)
+            );
+    }
+
+    public function test_captain_hub_exposes_a_members_current_team_and_pending_invitation_count(): void
+    {
+        $tournament = $this->createApprovedTournament();
+        $captain = User::factory()->create(['status' => 'active']);
+        $team = TournamentTeam::query()->create([
+            'tournament_id' => $tournament->id,
+            'name' => 'Current Team',
+            'active_name' => 'Current Team',
+            'formation_method' => TeamFormationMethod::Premade,
+            'status' => TeamStatus::Assembling,
+            'captain_user_id' => $captain->id,
+        ]);
+        TournamentParticipant::query()->create([
+            'tournament_id' => $tournament->id,
+            'team_id' => $team->id,
+            'user_id' => $this->student->id,
+            'entry_method' => TeamFormationMethod::Premade,
+            'roster_role' => 'member',
+            'assigned_lane_role_code' => 'roam',
+            'status' => ParticipantStatus::Active,
+            'registered_at' => now(),
+            'accepted_at' => now(),
+        ]);
+        $invitingTeam = TournamentTeam::query()->create([
+            'tournament_id' => $tournament->id,
+            'name' => 'Inviting Team',
+            'active_name' => 'Inviting Team',
+            'formation_method' => TeamFormationMethod::Premade,
+            'status' => TeamStatus::Assembling,
+            'captain_user_id' => User::factory()->create(['status' => 'active'])->id,
+        ]);
+        TournamentTeamInvitation::query()->create([
+            'team_id' => $invitingTeam->id,
+            'invited_user_id' => $this->student->id,
+            'invited_by_user_id' => $invitingTeam->captain_user_id,
+            'intended_lane_role_code' => 'mid_laner',
+            'status' => InvitationStatus::Pending,
+            'expires_at' => now()->addDay(),
+        ]);
+
+        $this->actingAs($this->student)
+            ->get(route('campus.captainregistration'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Programs/CampusTournaments/CaptainHub')
+                ->where('hasCaptainTeam', false)
+                ->where('hasMemberTeam', true)
+                ->where('hasSoloTeam', false)
+                ->where('pendingInvitationCount', 1)
+            );
+
+        $this->actingAs($this->student)
+            ->get(route('campus.teamregistration'))
+            ->assertRedirect(route('campus.member.team'));
+    }
+
+    public function test_captain_hub_identifies_when_the_player_has_no_premade_team(): void
+    {
+        $this->actingAs($this->student)
+            ->get(route('campus.captainregistration'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Programs/CampusTournaments/CaptainHub')
+                ->where('hasCaptainTeam', false)
+                ->where('hasMemberTeam', false)
+                ->where('hasSoloTeam', false)
+                ->where('pendingInvitationCount', 0)
+            );
+    }
+
     public function test_generic_legacy_tournament_link_uses_the_role_aware_entry(): void
     {
         $this->get('/programs/campus-tournaments')->assertRedirect('/campus-tournament');
@@ -285,6 +380,62 @@ class CampusTournamentFrontendWiringTest extends TestCase
                 ->where('team.players.0.status', 'pending')
                 ->where('team.canManageRoster', true)
                 ->where('team.availableLaneRoles', ['gold_laner', 'exp_laner', 'mid_laner'])
+                ->where('team.status', 'pending')
+            );
+    }
+
+    public function test_captain_team_page_flags_declined_and_withdrawn_lanes_as_incomplete(): void
+    {
+        $tournament = $this->createApprovedTournament();
+        $team = TournamentTeam::query()->create([
+            'tournament_id' => $tournament->id,
+            'name' => 'Premade Beta',
+            'active_name' => 'Premade Beta',
+            'formation_method' => TeamFormationMethod::Premade,
+            'status' => TeamStatus::Assembling,
+            'captain_user_id' => $this->student->id,
+        ]);
+        TournamentParticipant::query()->create([
+            'tournament_id' => $tournament->id,
+            'team_id' => $team->id,
+            'user_id' => $this->student->id,
+            'entry_method' => TeamFormationMethod::Premade,
+            'roster_role' => 'captain',
+            'assigned_lane_role_code' => 'jungler',
+            'status' => ParticipantStatus::Active,
+            'registered_at' => now(),
+            'accepted_at' => now(),
+        ]);
+        $decliner = User::factory()->create(['status' => 'active']);
+        TournamentTeamInvitation::query()->create([
+            'team_id' => $team->id,
+            'invited_user_id' => $decliner->id,
+            'invited_by_user_id' => $this->student->id,
+            'intended_lane_role_code' => 'roam',
+            'status' => InvitationStatus::Declined,
+            'expires_at' => now()->addDay(),
+        ]);
+        $leaver = User::factory()->create(['status' => 'active']);
+        TournamentParticipant::query()->create([
+            'tournament_id' => $tournament->id,
+            'team_id' => $team->id,
+            'user_id' => $leaver->id,
+            'entry_method' => TeamFormationMethod::Premade,
+            'roster_role' => 'member',
+            'assigned_lane_role_code' => 'mid_laner',
+            'status' => ParticipantStatus::Withdrawn,
+            'registered_at' => now(),
+            'withdrawn_at' => now(),
+        ]);
+
+        $this->actingAs($this->student)
+            ->get(route('campus.team'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('team.status', 'incomplete')
+                ->has('team.players', 2)
+                ->where('team.players', fn ($players) => collect($players)->pluck('status')->sort()->values()->all() === ['declined', 'withdrawn'])
+                ->where('team.availableLaneRoles', ['roam', 'gold_laner', 'exp_laner', 'mid_laner'])
             );
     }
 
@@ -461,10 +612,10 @@ class CampusTournamentFrontendWiringTest extends TestCase
                 'team' => $team->id,
             ]))
             ->assertOk()
-            ->assertJsonCount(3, 'data')
+            ->assertJsonCount(2, 'data')
             ->assertJsonFragment(['id' => $eligible->id])
             ->assertJsonFragment(['id' => $expiredInvitee->id])
-            ->assertJsonFragment(['id' => $participatingPlayer->id])
+            ->assertJsonMissing(['id' => $participatingPlayer->id])
             ->assertJsonMissing(['id' => $alreadyInvited->id])
             ->assertJsonMissing(['id' => $currentTeammate->id]);
     }
@@ -648,12 +799,81 @@ class CampusTournamentFrontendWiringTest extends TestCase
             ->get(route('campus.member.invite'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->component('Programs/CampusTournaments/MemberInvite')
+                ->component('Programs/CampusTournaments/CaptainHub')
+                ->where('openInvites', true)
                 ->has('invitations', 1)
                 ->where('invitations.0.id', $invitation->id)
                 ->where('invitations.0.laneRoleCode', 'roam')
                 ->where('invitations.0.team.name', 'Team Beta')
                 ->where('invitations.0.team.captain.name', 'Captain One')
+            );
+    }
+
+    public function test_active_premade_member_sees_current_team_and_can_still_view_other_pending_invitations(): void
+    {
+        $tournament = $this->createApprovedTournament();
+        $captain = User::factory()->create(['status' => 'active', 'name' => 'Current Captain']);
+        $team = TournamentTeam::query()->create([
+            'tournament_id' => $tournament->id,
+            'name' => 'Current Team',
+            'active_name' => 'Current Team',
+            'formation_method' => TeamFormationMethod::Premade,
+            'status' => TeamStatus::Assembling,
+            'captain_user_id' => $captain->id,
+        ]);
+        TournamentParticipant::query()->create([
+            'tournament_id' => $tournament->id,
+            'team_id' => $team->id,
+            'user_id' => $this->student->id,
+            'entry_method' => TeamFormationMethod::Premade,
+            'roster_role' => 'member',
+            'assigned_lane_role_code' => 'roam',
+            'status' => ParticipantStatus::Active,
+            'registered_at' => now(),
+            'accepted_at' => now(),
+        ]);
+        $otherCaptain = User::factory()->create(['status' => 'active']);
+        $otherTeam = TournamentTeam::query()->create([
+            'tournament_id' => $tournament->id,
+            'name' => 'Other Team',
+            'active_name' => 'Other Team',
+            'formation_method' => TeamFormationMethod::Premade,
+            'status' => TeamStatus::Assembling,
+            'captain_user_id' => $otherCaptain->id,
+        ]);
+        TournamentTeamInvitation::query()->create([
+            'team_id' => $otherTeam->id,
+            'invited_user_id' => $this->student->id,
+            'invited_by_user_id' => $otherCaptain->id,
+            'intended_lane_role_code' => 'jungler',
+            'status' => InvitationStatus::Pending,
+            'expires_at' => now()->addDay(),
+        ]);
+
+        $this->actingAs($this->student)
+            ->get(route('campus.tournament'))
+            ->assertRedirect('/Tournament/MemberTeam');
+
+        $this->actingAs($this->student)
+            ->get(route('campus.member.team'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Programs/CampusTournaments/MemberTeam')
+                ->where('team.name', 'Current Team')
+                ->where('team.captain.name', 'Current Captain')
+                ->where('participantId', fn ($id) => is_int($id))
+            );
+
+        $this->actingAs($this->student)
+            ->get(route('campus.member.invite'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Programs/CampusTournaments/CaptainHub')
+                ->where('openInvites', true)
+                ->where('hasMemberTeam', true)
+                ->where('pendingInvitationCount', 1)
+                ->has('invitations', 1)
+                ->where('invitations.0.team.name', 'Other Team')
             );
     }
 

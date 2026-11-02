@@ -44,7 +44,7 @@ export default function GenerateReportModal({
                     <button
                         type="button"
                         onClick={onClose}
-                        className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-yellow-500 px-6 text-sm font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10 sm:min-w-[120px]"
+                        className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-neutral-600 bg-[#1a1a1a] px-6 text-sm font-semibold text-white transition-colors hover:border-neutral-400 sm:min-w-[120px]"
                     >
                         Cancel
                     </button>

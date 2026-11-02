@@ -1,7 +1,9 @@
 import { formatDateRange } from '@/data/campusTournamentData';
-import { Ban, Hourglass } from 'lucide-react';
+import { CircleX, Hourglass } from 'lucide-react';
 
 /**
+ * Pending / Rejected tournament request list (SL & Organizer).
+ *
  * @param {{
  *   title: string;
  *   count: number;
@@ -64,7 +66,7 @@ export default function RequestSection({
                                     {isPending ? (
                                         <Hourglass className="h-3.5 w-3.5" />
                                     ) : (
-                                        <Ban className="h-3.5 w-3.5" />
+                                        <CircleX className="h-3.5 w-3.5" />
                                     )}
                                     {isPending ? 'Pending' : 'Rejected'}
                                 </span>

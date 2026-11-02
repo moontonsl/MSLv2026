@@ -30,7 +30,7 @@ export default function CaptainJoin() {
 
             <div className="min-h-screen bg-[#0a0a0a] px-4 py-8 text-white sm:px-6 sm:py-10 lg:px-8">
                 <div className="mx-auto max-w-6xl space-y-6">
-                    <CampusTournamentPageHeader subtitle="Join an assembling team or leave your current lobby.">
+                    <CampusTournamentPageHeader subtitle="Join a team that already has a slot.">
                         <Link
                             href="/Tournament/CampusTournament"
                             className="text-sm text-gray-400 transition-colors hover:text-white"

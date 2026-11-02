@@ -3,11 +3,11 @@ import { MODAL_CLOSE_BUTTON_CLASS } from "@/Components/Admin/adminModalFormStyle
 import { Check, X } from "lucide-react";
 
 /**
- * Accept or Decline team invite confirmation (member view).
+ * Accept / Decline / Decline All team invite confirmation (member view).
  *
  * @param {{
  *   isOpen: boolean;
- *   variant: 'accept' | 'decline';
+ *   variant?: 'accept' | 'decline' | 'decline-all';
  *   teamName?: string;
  *   processing?: boolean;
  *   onCancel: () => void;
@@ -23,6 +23,15 @@ export default function MemberInviteModal({
     onConfirm,
 }) {
     const isAccept = variant === "accept";
+    const isDeclineAll = variant === "decline-all";
+    const confirmLabel = isAccept
+        ? "Accept"
+        : isDeclineAll
+          ? "Decline all"
+          : "Decline";
+    const confirmClass = isAccept
+        ? "bg-yellow-500 text-black hover:bg-yellow-400"
+        : "bg-red-600 text-white hover:bg-red-700";
 
     return (
         <BaseModal
@@ -46,13 +55,9 @@ export default function MemberInviteModal({
                         type="button"
                         onClick={onConfirm}
                         disabled={processing}
-                        className="order-1 min-h-[44px] w-full rounded-lg bg-yellow-500 text-base font-bold text-black transition-colors hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-60 sm:order-2 md:text-sm"
+                        className={`order-1 min-h-[44px] w-full rounded-lg text-base font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-60 sm:order-2 md:text-sm ${confirmClass}`}
                     >
-                        {processing
-                            ? "Saving…"
-                            : isAccept
-                              ? "Yes, Accept"
-                              : "Yes, Decline"}
+                        {processing ? "Saving…" : confirmLabel}
                     </button>
                 </div>
             }
@@ -82,7 +87,11 @@ export default function MemberInviteModal({
                 </div>
 
                 <h2 className="mb-2 text-xl font-bold text-white">
-                    {isAccept ? "Accept Invite?" : "Decline Invite?"}
+                    {isAccept
+                        ? "Accept Invite?"
+                        : isDeclineAll
+                          ? "Decline All Invites?"
+                          : "Decline Invite?"}
                 </h2>
 
                 {isAccept ? (
@@ -91,6 +100,14 @@ export default function MemberInviteModal({
                         <span className="font-bold text-white">{teamName}</span>
                         ? Your status will be updated to{" "}
                         <span className="font-bold text-white">Accepted.</span>
+                    </p>
+                ) : isDeclineAll ? (
+                    <p className="text-sm leading-relaxed text-gray-300">
+                        Are you sure you want to decline{" "}
+                        <span className="font-bold text-white">
+                            ALL TEAM INVITATIONS
+                        </span>
+                        ?
                     </p>
                 ) : (
                     <p className="text-sm leading-relaxed text-gray-300">

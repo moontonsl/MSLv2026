@@ -56,7 +56,7 @@ class CampusTournamentSeeder extends Seeder
             $regionalAdmin = User::query()->updateOrCreate(
                 ['username' => 'lspu_regional_admin'],
                 [
-                    'name' => 'LSPU Test Regional Admin',
+                    'name' => 'Ramon Mendoza',
                     'email' => 'lspu.regional.admin@example.test',
                     'password' => 'password',
                     'status' => 'active',
@@ -69,7 +69,7 @@ class CampusTournamentSeeder extends Seeder
             $studentLeader = User::query()->updateOrCreate(
                 ['username' => 'lspu_student_leader'],
                 [
-                    'name' => 'LSPU Test Student Leader',
+                    'name' => 'Angela Reyes',
                     'email' => 'lspu.student.leader@example.test',
                     'password' => 'password',
                     'status' => 'active',
@@ -82,7 +82,7 @@ class CampusTournamentSeeder extends Seeder
             $coreAdmin = User::query()->updateOrCreate(
                 ['username' => 'lspu_core_admin'],
                 [
-                    'name' => 'MSL Test Core Admin',
+                    'name' => 'Carlos Santos',
                     'email' => 'lspu.core.admin@example.test',
                     'password' => 'password',
                     'status' => 'active',
@@ -95,7 +95,7 @@ class CampusTournamentSeeder extends Seeder
             AdminUser::query()->updateOrCreate(
                 ['email' => 'lspu.core.admin@example.test'],
                 [
-                    'name' => 'MSL Test Core Admin',
+                    'name' => 'Carlos Santos',
                     'password' => 'password',
                     'role' => 'Super Admin',
                     'permissions' => [],
@@ -103,18 +103,18 @@ class CampusTournamentSeeder extends Seeder
             );
 
             $manualTestAccounts = [
-                ['lspu_premade_captain', 'LSPU Premade Captain', 'PREMADECAP', true],
-                ['lspu_premade_player_2', 'LSPU Premade Player 2', 'PREMADE02', true],
-                ['lspu_premade_player_3', 'LSPU Premade Player 3', 'PREMADE03', true],
-                ['lspu_premade_player_4', 'LSPU Premade Player 4', 'PREMADE04', true],
-                ['lspu_premade_player_5', 'LSPU Premade Player 5', 'PREMADE05', true],
-                ['lspu_solo_player_1', 'LSPU Solo Player 1', 'SOLO01', true],
-                ['lspu_solo_player_2', 'LSPU Solo Player 2', 'SOLO02', true],
-                ['lspu_solo_player_3', 'LSPU Solo Player 3', 'SOLO03', true],
-                ['lspu_solo_player_4', 'LSPU Solo Player 4', 'SOLO04', true],
-                ['lspu_solo_player_5', 'LSPU Solo Player 5', 'SOLO05', true],
-                ['lspu_solo_player_6', 'LSPU Solo Player 6', 'SOLO06', true],
-                ['lspu_unverified_player', 'LSPU Unverified Player', 'UNVERIFIED', false],
+                ['lspu_premade_captain', 'Miguel Dela Cruz', 'LAKAN', true],
+                ['lspu_premade_player_2', 'Bianca Reyes', 'MAYARI', true],
+                ['lspu_premade_player_3', 'Paolo Santos', 'BAGANI', true],
+                ['lspu_premade_player_4', 'Andrea Mendoza', 'TALA', true],
+                ['lspu_premade_player_5', 'Jose Villanueva', 'HABAGAT', true],
+                ['lspu_solo_player_1', 'Camille Bautista', 'DIWATA', true],
+                ['lspu_solo_player_2', 'Joshua Garcia', 'KIDLAT', true],
+                ['lspu_solo_player_3', 'Nicole Ramos', 'HIRAYA', true],
+                ['lspu_solo_player_4', 'Adrian Flores', 'ALON', true],
+                ['lspu_solo_player_5', 'Sofia Navarro', 'AMIHAN', true],
+                ['lspu_solo_player_6', 'Luis Aquino', 'MAHARLIKA', true],
+                ['lspu_unverified_player', 'Mark Castillo', 'SINAG', false],
             ];
 
             $players = collect($manualTestAccounts)->map(function (array $account, int $index) use ($campus, $regionalAdmin): User {
@@ -143,7 +143,7 @@ class CampusTournamentSeeder extends Seeder
             $outsider = User::query()->updateOrCreate(
                 ['username' => 'campus_tournament_outsider'],
                 [
-                    'name' => 'Campus Tournament Unaffiliated Player',
+                    'name' => 'Elena Torres',
                     'email' => 'campus.tournament.outsider@example.test',
                     'email_verified_at' => now(),
                     'password' => 'password',
@@ -151,7 +151,7 @@ class CampusTournamentSeeder extends Seeder
                     'user_type' => 'Student',
                     'ml_id' => '99000999',
                     'ml_server' => '1234',
-                    'ml_ign' => 'OUTSIDER',
+                    'ml_ign' => 'LAYA',
                     'is_mlbb_verified' => true,
                 ],
             );
