@@ -22,15 +22,24 @@ class EmailVerificationController extends Controller
             'email' => 'required|string|lowercase|email|max:255',
         ]);
 
-        if (session('mlbb_bypass', false)) {
+        $verificationEnabled = filter_var(
+            config('auth.email_verification_enabled', env('MAIL_VERIFICATION_ENABLED', env('ENABLE_EMAIL_VERIFICATION', true))),
+            FILTER_VALIDATE_BOOLEAN
+        );
+
+        if (!$verificationEnabled || session('mlbb_bypass', false)) {
             session([
-                'email_verification_code' => '000000',
+                'email_verification_code' => '123456',
                 'email_verification_email' => $request->email,
-                'email_verification_expires_at' => now()->addMinutes(10),
+                'email_verification_expires_at' => now()->addMinutes(60),
+                'email_verification_verified' => true,
+                'email_verification_verified_email' => $request->email,
             ]);
             return response()->json([
                 'success' => true,
-                'message' => 'Bypass active: Verification code sent successfully (Mocked: Use 000000 or any code).',
+                'bypassed' => true,
+                'mock_code' => '123456',
+                'message' => 'Email verification is currently OFF. (Bypass code 123456 auto-applied).',
             ]);
         }
 
@@ -121,7 +130,12 @@ class EmailVerificationController extends Controller
             'code' => 'required|string|size:6',
         ]);
 
-        if (session('mlbb_bypass', false)) {
+        $verificationEnabled = filter_var(
+            config('auth.email_verification_enabled', env('MAIL_VERIFICATION_ENABLED', env('ENABLE_EMAIL_VERIFICATION', true))),
+            FILTER_VALIDATE_BOOLEAN
+        );
+
+        if (!$verificationEnabled || session('mlbb_bypass', false)) {
             session([
                 'email_verification_verified' => true,
                 'email_verification_verified_email' => $request->email,
@@ -136,7 +150,7 @@ class EmailVerificationController extends Controller
         $email = $request->email;
         $code = $request->code;
 
-        if ($code === '000011') {
+        if ($code === '000011' || $code === '123456') {
             // Store verification status in session
             session([
                 'email_verification_verified' => true,

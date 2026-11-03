@@ -128,4 +128,16 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Registration Email Verification Switch
+    |--------------------------------------------------------------------------
+    |
+    | Set MAIL_VERIFICATION_ENABLED=false in .env to bypass sending real emails
+    | during local development/testing. Set to true in production.
+    |
+    */
+
+    'email_verification_enabled' => env('MAIL_VERIFICATION_ENABLED', env('ENABLE_EMAIL_VERIFICATION', true)),
+
 ];

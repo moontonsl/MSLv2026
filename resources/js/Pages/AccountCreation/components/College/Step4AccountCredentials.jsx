@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from '../../register.module.scss';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import axios from 'axios';
 
 const Step4AccountCredentials = React.forwardRef(function Step4AccountCredentials(
     {
@@ -18,6 +19,8 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
     const [codeTimer, setCodeTimer] = React.useState(0);
     const [showCodeNotice, setShowCodeNotice] = React.useState(false);
     const [hasRequestedCode, setHasRequestedCode] = React.useState(false);
+    const [sendingCode, setSendingCode] = React.useState(false);
+    const [codeMessage, setCodeMessage] = React.useState(null);
 
     const requiredFields = ['username', 'password', 'confirmPassword', 'email', 'captcha', 'termsAccepted'];
 
@@ -135,11 +138,6 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
             return false;
         }
 
-        if (name === 'captcha' && verificationCode && trimmedValue !== verificationCode) {
-            setFieldError(name, 'Incorrect code.', force);
-            return false;
-        }
-
         clearFieldError(name, force);
         return true;
     };
@@ -211,18 +209,61 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
             clearFieldError('email');
         }
         setShowCodeNotice(false);
+        setCodeMessage(null);
     };
 
-    const handleRequestCode = () => {
+    const handleRequestCode = async () => {
         if (!validateField('email', data.email, true)) {
             return;
         }
 
-        setShowCodeNotice(true);
-        setHasRequestedCode(true);
-        setCodeTimer(60);
-        setVerificationCode('123456');
-        clearFieldError('email');
+        setSendingCode(true);
+        setCodeMessage(null);
+
+        try {
+            const response = await axios.post(route('email.send-code'), {
+                email: data.email.trim(),
+            });
+
+            const resData = response.data || {};
+            setHasRequestedCode(true);
+            setShowCodeNotice(true);
+            setCodeTimer(60);
+            clearFieldError('email');
+
+            if (resData.bypassed && resData.mock_code) {
+                // Auto-fill mock code in bypass mode so testing is seamless
+                handleInputChange({
+                    target: { name: 'captcha', value: resData.mock_code },
+                });
+                if (typeof setVerificationCode === 'function') {
+                    setVerificationCode(resData.mock_code);
+                }
+                clearFieldError('captcha');
+                setCodeMessage({
+                    type: 'success',
+                    text: resData.message || `Bypass active: Verification code set to ${resData.mock_code}`,
+                });
+            } else {
+                setCodeMessage({
+                    type: 'success',
+                    text: resData.message || 'Verification code sent to your email. Check your inbox or spam folder.',
+                });
+            }
+        } catch (error) {
+            const errMsg =
+                error.response?.data?.message ||
+                error.response?.data?.errors?.email?.[0] ||
+                'Failed to send verification code. Please try again.';
+
+            setFieldError('email', errMsg, true);
+            setCodeMessage({
+                type: 'error',
+                text: errMsg,
+            });
+        } finally {
+            setSendingCode(false);
+        }
     };
 
     const handleCheckboxChange = (e) => {
@@ -391,11 +432,15 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
                             </div>
                         )}
                     </div>
-                    {showCodeNotice && (
+                    {codeMessage ? (
+                        <p className={`mt-1 text-xs ${codeMessage.type === 'error' ? 'text-red-400' : 'text-green-400'}`}>
+                            {codeMessage.text}
+                        </p>
+                    ) : showCodeNotice ? (
                         <p className="mt-1 text-xs text-green-400">
                             Verification code requested. Check your email to continue.
                         </p>
-                    )}
+                    ) : null}
                     {renderFieldError('email')}
                 </div>
 
@@ -403,14 +448,21 @@ const Step4AccountCredentials = React.forwardRef(function Step4AccountCredential
                     <button
                         type="button"
                         onClick={handleRequestCode}
-                        disabled={codeTimer > 0}
-                        className="w-full py-3 rounded-xl border border-yellow-500 text-yellow-400 font-semibold hover:bg-yellow-500 hover:text-black transition disabled:opacity-70 disabled:cursor-not-allowed"
+                        disabled={codeTimer > 0 || sendingCode}
+                        className="w-full py-3 rounded-xl border border-yellow-500 text-yellow-400 font-semibold hover:bg-yellow-500 hover:text-black transition disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
                     >
-                        {!hasRequestedCode
-                            ? 'Get Code'
-                            : codeTimer > 0
-                                ? `Resend Code (${codeTimer}s)`
-                                : 'Resend Code'}
+                        {sendingCode ? (
+                            <>
+                                <Loader2 className="animate-spin" size={16} />
+                                <span>Sending...</span>
+                            </>
+                        ) : !hasRequestedCode ? (
+                            'Get Code'
+                        ) : codeTimer > 0 ? (
+                            `Resend Code (${codeTimer}s)`
+                        ) : (
+                            'Resend Code'
+                        )}
                     </button>
                 </div>
             </div>
