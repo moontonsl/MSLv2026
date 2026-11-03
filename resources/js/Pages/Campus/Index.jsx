@@ -19,6 +19,7 @@ import {
     TrendingUp,
 } from 'lucide-react';
 import MainLayout from '@/Layouts/MainLayout';
+import DepartmentBadge from '@/Components/DepartmentBadge';
 import {
     accreditationBenefits,
     campusCommunities,
@@ -117,7 +118,7 @@ function SectionHeading({ title, description, centered = true }) {
     );
 }
 
-export default function Campus() {
+export default function Campus({ isNetworkPage = false }) {
     const [search, setSearch] = useState('');
     const [region, setRegion] = useState('All Regions');
     const [currentPage, setCurrentPage] = useState(1);
@@ -161,7 +162,7 @@ export default function Campus() {
 
     return (
         <>
-            <Head title="Campus" />
+            <Head title={isNetworkPage ? 'The MSL Network' : 'Campus'} />
 
             <MainLayout fullWidth>
                 <div className="overflow-hidden bg-[#050505] font-sans text-white">
@@ -171,10 +172,9 @@ export default function Campus() {
 
                         <div className="relative mx-auto grid max-w-7xl gap-14 px-4 py-12 sm:px-6 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-24">
                             <div className="text-center lg:text-left">
-                                <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-950/40 px-5 py-3 text-base font-semibold text-blue-400 lg:gap-3 lg:text-base lg:font-bold">
-                                    <Building2 className="h-[18px] w-[18px] lg:h-5 lg:w-5" />
-                                    Campus Department
-                                </div>
+                                <DepartmentBadge icon={Building2} tone="blue">
+                                    {isNetworkPage ? 'The MSL Network' : 'Campus Department'}
+                                </DepartmentBadge>
 
                                 <h1 className="mx-auto mt-6 max-w-3xl font-heading text-4xl font-bold leading-[44px] text-white sm:text-5xl lg:mx-0 lg:mt-7 lg:text-6xl lg:font-extrabold lg:leading-[1.08]">
                                     United by <br />

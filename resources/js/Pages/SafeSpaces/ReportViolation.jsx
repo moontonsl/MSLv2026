@@ -6,9 +6,7 @@ import {
     Info,
     Lock,
     Mail,
-    Megaphone,
     Paperclip,
-    Shield,
     ShieldAlert,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -36,20 +34,6 @@ const FIELD_CLASS =
 
 function stripProtocol(value) {
     return value.trim().replace(/^(https?:\/\/)/i, '');
-}
-
-function PolicyBanner({ icon: Icon, title, children }) {
-    return (
-        <div className="flex gap-3 rounded-xl border border-[#1E4A8C]/80 bg-[#0B1733] px-4 py-3.5 sm:px-5 sm:py-4">
-            <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#132A55] text-[#5BA3F5]">
-                <Icon className="h-4 w-4" strokeWidth={2} />
-            </div>
-            <div className="min-w-0">
-                <p className="text-sm font-semibold text-[#5BA3F5]">{title}</p>
-                <p className="mt-1 text-sm leading-relaxed text-[#9BB4D4]">{children}</p>
-            </div>
-        </div>
-    );
 }
 
 function FieldLabel({ htmlFor, children, required = false, hint }) {
@@ -123,35 +107,13 @@ export default function ReportViolation() {
                         <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
                             Safe Spaces Reporting
                         </h1>
-                        <p className="mx-auto mt-4 max-w-3xl text-sm leading-relaxed text-neutral-400 sm:text-base">
-                            In compliance with{' '}
-                            <span className="font-semibold text-white">
-                                Republic Act 11313 (Safe Spaces Act)
-                            </span>
-                            , MSL Philippines is committed to maintaining a harassment-free
-                            environment for all student-gamers.
-                        </p>
-                    </div>
-
-                    <div className="mt-8 space-y-3 sm:mt-10">
-                        <PolicyBanner icon={Megaphone} title="Zero Tolerance Policy">
-                            This form covers incidents of gender-based sexual harassment,
-                            bullying, cyber-harassment, and abuse of authority within the MSL
-                            ecosystem (Tournaments, Discord, Campus Events).
-                        </PolicyBanner>
-                        <PolicyBanner
-                            icon={Shield}
-                            title="For Child Protection (Minors under 18)"
-                        >
-                            We strictly adhere to RA 7610. Reports involving minors are
-                            prioritized immediately.
-                        </PolicyBanner>
                     </div>
 
                     <form
+                        id="report-form"
                         onSubmit={handleSubmit}
                         noValidate
-                        className="mt-6 rounded-2xl border border-neutral-800 bg-[#111111] p-4 sm:mt-8 sm:p-6 lg:p-8"
+                        className="mt-6 scroll-mt-24 rounded-2xl border border-neutral-800 bg-[#111111] p-4 sm:mt-8 sm:p-6 lg:p-8"
                     >
                         <div className="flex items-center justify-between gap-4 border-b border-neutral-800 pb-5">
                             <div className="flex min-w-0 items-start gap-3">

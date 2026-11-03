@@ -1,3 +1,5 @@
+import { comingSoonHref, MSL_NETWORK_HREF } from './siteNavigation.js';
+
 const PLANT_IMAGE =
     "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1600&q=80";
 
@@ -12,7 +14,8 @@ export const homeData = {
         title: "The NU Era:",
         description: "National University Bulldogs Reign Supreme",
         linkLabel: "See More",
-        href: "/News",
+        originalHref: "/News",
+        href: comingSoonHref('news'),
     },
 
     hero: {
@@ -27,12 +30,15 @@ export const homeData = {
         actions: [
             {
                 label: "Be A Member",
-                href: "/register",
+                originalHref: "/register",
+                href: comingSoonHref('membership'),
+                comingSoon: true,
                 variant: "primary",
             },
             {
                 label: "Partner With Us",
-                href: "/Partnerships",
+                originalHref: "/Partnerships",
+                href: MSL_NETWORK_HREF,
                 variant: "secondary",
             },
         ],
@@ -45,7 +51,9 @@ export const homeData = {
                     "The biggest inter-school MLBB tournament is back. Watch the regionals live.",
                 date: "Nov 27, 2025",
                 image: PLANT_IMAGE,
-                href: "/Event",
+                originalHref: "/Event",
+                href: comingSoonHref('events'),
+                comingSoon: true,
             },
             {
                 id: "campus-scrims",
@@ -55,7 +63,9 @@ export const homeData = {
                     "Weekly scrims for student teams. Build synergy, earn rankings, get noticed.",
                 date: "Dec 04, 2025",
                 image: PLANT_IMAGE,
-                href: "/Event",
+                originalHref: "/Event",
+                href: comingSoonHref('events'),
+                comingSoon: true,
             },
             {
                 id: "partner-spotlight",
@@ -65,7 +75,8 @@ export const homeData = {
                     "Meet our campus partners and explore resources for esports org leaders.",
                 date: "Dec 18, 2025",
                 image: PLANT_IMAGE,
-                href: "/Partnerships",
+                originalHref: "/Partnerships",
+                href: MSL_NETWORK_HREF,
             },
         ],
     },
@@ -167,7 +178,7 @@ export const homeData = {
             },
             {
                 id: "community-grants",
-                title: "Community Grants",
+                title: "Buffs & Support",
                 description:
                     "Funding and support to help verified campus communities grow sustainably.",
                 image: PLANT_IMAGE,
@@ -177,6 +188,7 @@ export const homeData = {
     },
 
     community: {
+        visible: false,
         title: "Community Voices",
         description:
             "Hear from the student leaders, campus organizers, and partners who are driving the MSL Philippines movement forward.",
@@ -261,7 +273,9 @@ export const homeData = {
                 description:
                     "Establish an MSL community in your school. Gain access to official tournaments, leadership grants, and mentorship programs.",
                 buttonLabel: "Be A Member",
-                href: "/register",
+                originalHref: "/register",
+                href: comingSoonHref('membership'),
+                comingSoon: true,
             },
             {
                 id: "partners",
@@ -271,7 +285,8 @@ export const homeData = {
                 description:
                     "Empower the next generation. Collaborate with us for campus activations, brand integration, and student-led events.",
                 buttonLabel: "Partner With Us",
-                href: "/Partnerships",
+                originalHref: "/Partnerships",
+                href: MSL_NETWORK_HREF,
             },
         ],
     },

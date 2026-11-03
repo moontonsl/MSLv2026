@@ -9,10 +9,10 @@ import {
     VISUAL_ARTS_GRID,
 } from '@/data/contentsSocialMediaData';
 import MainLayout from '@/Layouts/MainLayout';
+import DepartmentBadge from '@/Components/DepartmentBadge';
 import { Head, Link } from '@inertiajs/react';
 import {
     ArrowRight,
-    ChevronLeft,
     Globe,
     Heart,
     MessageCircle,
@@ -21,7 +21,6 @@ import {
     Palette,
     PenTool,
     Share2,
-    Sparkles,
     Video,
 } from 'lucide-react';
 
@@ -32,23 +31,11 @@ export default function ContentMedia() {
 
             <div className="min-h-screen overflow-hidden bg-[#0A0A0A] px-4 py-12 font-sans text-white sm:px-6 lg:px-8">
                 <div className="mx-auto max-w-7xl space-y-16 sm:space-y-24">
-                    <div className="mb-8 flex justify-start">
-                        <button
-                            type="button"
-                            onClick={() => window.history.back()}
-                            className="flex items-center gap-2 text-sm text-purple-400 transition-colors hover:text-purple-300"
-                        >
-                            <ChevronLeft className="h-4 w-4" />
-                            Content & Social Media Department
-                        </button>
-                    </div>
-
-                    <section className="flex flex-col-reverse items-center justify-between gap-12 pt-8 md:flex-row">
+                    <section className="flex flex-col items-center justify-between gap-12 md:flex-row">
                         <div className="flex w-full flex-col items-center text-center md:max-w-xl md:items-start md:text-left">
-                            <div className="mb-6 hidden items-center gap-2 rounded-full border border-purple-500/50 bg-purple-900/30 px-4 py-1.5 text-xs font-bold text-purple-300 md:inline-flex">
-                                <Sparkles className="h-4 w-4" />
+                            <DepartmentBadge icon={PenTool} className="mb-6">
                                 Content & Social Media Department
-                            </div>
+                            </DepartmentBadge>
                             <h1 className="mb-6 text-4xl font-black leading-tight md:text-6xl">
                                 Crafting the <br />
                                 <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
@@ -77,7 +64,7 @@ export default function ContentMedia() {
                             </div>
                         </div>
 
-                        <div className="pointer-events-none relative min-h-[400px] w-full flex-1 md:min-h-[500px]">
+                        <div className="pointer-events-none relative hidden min-h-[400px] w-full flex-1 md:block md:min-h-[500px]">
                             <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-purple-900/20 to-pink-900/10 blur-[80px]" />
 
                             <div className="absolute right-[5%] top-[8%] z-10 w-[42%] max-w-[200px] drop-shadow-[0_20px_50px_rgba(239,68,68,0.35)] md:right-[8%] md:top-[10%] md:max-w-[260px] md:w-[45%]">

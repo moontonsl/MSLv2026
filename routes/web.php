@@ -35,6 +35,7 @@ use App\Http\Controllers\TournamentRegistrationController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShortLinkController;
+use App\Http\Controllers\ComingSoonController;
 use App\Http\Controllers\Student\StudentPortalController;
 use App\Models\Faq;
 use Illuminate\Http\Request;
@@ -78,6 +79,18 @@ Route::get('/', function () {
 });
 
 Route::get('/s/{code}', [ShortLinkController::class, 'redirect'])->name('short-link.redirect');
+
+Route::get('/coming-soon/{feature?}', ComingSoonController::class)->name('coming-soon');
+
+Route::inertia('/PrivacyPolicy', 'PrivacyPolicy')->name('privacy.policy');
+Route::inertia('/TermsAndConditions', 'TermsAndConditions')->name('terms.conditions');
+Route::redirect('/privacy-policy', '/PrivacyPolicy');
+Route::redirect('/terms-of-service', '/TermsAndConditions');
+
+// Public network view; keep the legacy admin and Campus routes intact.
+Route::get('/programs/msl-network', function () {
+    return Inertia::render('Campus/Index', ['isNetworkPage' => true]);
+})->name('msl.network');
 
 Route::get('/About', function () {
     return Inertia::render('About');

@@ -1,0 +1,35 @@
+.errorCode {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.5rem, 1vw, 1rem);
+    font-size: clamp(2rem, 20vw, 16rem);
+    line-height: 1;
+}
+
+.errorIcon {
+    flex-shrink: 0;
+    width: 1.5em;
+    height: auto;
+}
+
+.comingCode {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.125em 0.25em;
+    font-size: clamp(1rem, 8vw, 7rem);
+    line-height: 1.2;
+}
+
+.comingWord {
+    display: inline-flex;
+    align-items: center;
+}
+
+.comingIcon {
+    flex-shrink: 0;
+    width: 1.25em;
+    height: auto;
+}

@@ -1,88 +1,67 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, ChevronDown, UserRound } from 'lucide-react';
 import AccountModificationModal from './AccountModificationModal';
+import MobileNavigationDrawer from './MobileNavigationDrawer';
+import { ABOUT_ITEMS, PROGRAMS_ITEMS, MAIN_LINKS, isNavigationItemActive, isNavigationGroupActive } from '@/data/siteNavigation';
 
-const ABOUT_ITEMS = [
-    { label: 'Campus', href: '/Campus' },
-    { label: 'Contents & Social Media', href: '/Contents&SocialMedia' },
-    { label: 'Partnerships', href: '/Partnerships' },
-    { label: 'General Affairs', href: '/GeneralAffairs' },
-];
+const navFocusClass = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500';
+const navRowClass = `flex min-h-12 items-center gap-2 rounded-sm text-left text-sm font-medium transition-colors duration-150 hover:text-white motion-reduce:transition-none ${navFocusClass}`;
+const navUnderlineClass = (active) => `inline-block border-b-2 py-1 ${active ? 'border-brand-500 text-brand-500' : 'border-transparent'}`;
 
-const PROGRAMS_ITEMS = [
-    { label: 'The MSL Network', href: '/MSLNetAdmin' },
-    { label: 'MSL Collegiate Cup', href: '/programs/collegiate-cup' },
-    { label: 'Campus Tournaments', href: '/campus-tournament' },
-    { label: 'Buffs & Support', href: '/Buffs&Support' },
-    { label: 'Referral Program', href: '/programs/referral' },
-];
-
-const AVATAR_PLACEHOLDER =
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&h=128&fit=crop';
-
-const menuPanelClass =
-    'absolute left-0 top-full z-[60] mt-3 min-w-[220px] rounded-2xl bg-[#1A1A1A] p-2 shadow-2xl';
-
-const menuItemClass =
-    'block w-full rounded-lg px-4 py-2.5 text-left text-sm text-gray-300 transition-colors hover:bg-[#2A2A2A] hover:text-white';
-
-const navLinkBase =
-    'rounded-full px-4 py-2 text-sm font-medium text-gray-300 transition-colors hover:bg-[#1E1E1E] hover:text-white';
-
-const navLinkActive =
-    'rounded-full bg-[#FFC107] px-4 py-2 text-sm font-medium text-black';
-
-function isPathActive(url, href) {
-    if (href === '/') return url === '/' || url === '';
-    return url === href || url.startsWith(`${href}/`) || url.startsWith(`${href}?`);
+function AccountIcon() {
+    return (
+        <span className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-brand-500/50 bg-bg-card text-brand-500 transition-colors duration-150 group-hover:border-brand-500 group-hover:bg-brand-500/10 motion-reduce:transition-none">
+            <UserRound className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+        </span>
+    );
 }
 
-function NavDropdown({ id, label, items, isOpen, onToggle, onNavigate, url }) {
-    const childActive = items.some(({ href }) => isPathActive(url, href));
+function NavItemLink({ item, url, onNavigate, mobile = false, submenu = false }) {
+    const active = isNavigationItemActive(url, item);
 
     return (
-        <div className="relative">
+        <Link
+            href={item.href}
+            aria-current={active ? 'page' : undefined}
+            className={`${navRowClass} ${mobile || submenu ? 'w-full justify-between px-3' : 'px-2'} ${active ? 'text-brand-500' : 'text-gray-300'} ${submenu ? 'hover:bg-white/5' : ''}`}
+            onClick={onNavigate}
+        >
+            <span className={submenu ? 'inline-block py-1' : navUnderlineClass(active)}>{item.label}</span>
+        </Link>
+    );
+}
+
+function NavDropdown({ id, label, items, isOpen, onToggle, onNavigate, url, mobile = false }) {
+    const childActive = isNavigationGroupActive(url, id, items);
+    const panelId = `${mobile ? 'mobile' : 'desktop'}-${id}-links`;
+
+    return (
+        <div className="relative" onKeyDown={(event) => {
+            if (event.key === 'Escape' && isOpen) {
+                event.stopPropagation();
+                onToggle(id);
+                event.currentTarget.querySelector('button')?.focus();
+            }
+        }}>
             <button
                 type="button"
-                className={`flex items-center gap-1 ${
-                    isOpen
-                        ? 'text-[#FFC107]'
-                        : childActive
-                          ? navLinkActive
-                          : navLinkBase
-                } ${isOpen ? 'px-4 py-2' : ''}`}
+                className={`${navRowClass} ${mobile ? 'w-full justify-between px-3' : 'px-2'} ${childActive || isOpen ? 'text-brand-500' : 'text-gray-300'}`}
                 aria-expanded={isOpen}
-                aria-haspopup="true"
+                aria-controls={panelId}
                 onClick={() => onToggle(id)}
             >
-                {label}
+                <span className={navUnderlineClass(childActive)}>{label}</span>
                 <ChevronDown
-                    className={`h-4 w-4 shrink-0 transition-transform ${
-                        isOpen ? 'rotate-180 text-[#FFC107]' : ''
+                    aria-hidden="true"
+                    className={`h-4 w-4 shrink-0 transition-transform duration-150 motion-reduce:transition-none ${
+                        isOpen ? 'rotate-180' : ''
                     }`}
                 />
             </button>
             {isOpen && (
-                <div className={menuPanelClass} role="menu">
-                    {items.map(({ label: itemLabel, href }) => {
-                        const active = isPathActive(url, href);
-                        return (
-                            <Link
-                                key={itemLabel}
-                                href={href}
-                                className={`${menuItemClass} ${
-                                    active
-                                        ? 'border border-[#FFC107] bg-transparent text-white'
-                                        : ''
-                                }`}
-                                role="menuitem"
-                                onClick={onNavigate}
-                            >
-                                {itemLabel}
-                            </Link>
-                        );
-                    })}
+                <div id={panelId} className={mobile ? 'mb-3 ml-3 pl-2' : 'absolute left-0 top-full z-50 mt-2 min-w-64 rounded-xl border border-white/10 bg-bg-card p-2 shadow-soft'}>
+                    {items.map((item) => <NavItemLink key={item.label} item={item} url={url} onNavigate={onNavigate} submenu mobile={mobile} />)}
                 </div>
             )}
         </div>
@@ -100,15 +79,10 @@ function DesktopNavigation({
         <nav
             ref={navRef}
             id="main-navigation"
-            className="hidden items-center gap-1 md:flex lg:gap-2"
+            className="hidden items-center gap-2 lg:flex"
             aria-label="Main"
         >
-            <Link
-                href="/"
-                className={isPathActive(url, '/') ? navLinkActive : navLinkBase}
-            >
-                Home
-            </Link>
+            <NavItemLink item={{ label: 'Home', href: '/' }} url={url} onNavigate={closeNavDropdowns} />
             <NavDropdown
                 id="about"
                 label="About"
@@ -127,18 +101,7 @@ function DesktopNavigation({
                 onNavigate={closeNavDropdowns}
                 url={url}
             />
-            <Link
-                href="/Event"
-                className={isPathActive(url, '/Event') ? navLinkActive : navLinkBase}
-            >
-                Events
-            </Link>
-            <Link
-                href="/News"
-                className={isPathActive(url, '/News') ? navLinkActive : navLinkBase}
-            >
-                News
-            </Link>
+            {MAIN_LINKS.map((item) => <NavItemLink key={item.label} item={item} url={url} onNavigate={closeNavDropdowns} />)}
         </nav>
     );
 }
@@ -272,15 +235,34 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
 
     useEffect(() => {
         const onKey = (e) => {
-            if (e.key === 'Escape') {
+            if (e.key === 'Escape' && !mobileMenuOpen) {
                 setOpenDropdown(null);
-                setMobileMenuOpen(false);
                 setIsAccountDropdownOpen(false);
             }
         };
         document.addEventListener('keydown', onKey);
         return () => document.removeEventListener('keydown', onKey);
+    }, [mobileMenuOpen]);
+
+    useEffect(() => {
+        const desktop = window.matchMedia('(min-width: 1024px)');
+        const closeOnDesktop = () => {
+            if (desktop.matches) {
+                setMobileMenuOpen(false);
+                setMobileSubmenu(null);
+            }
+        };
+
+        desktop.addEventListener('change', closeOnDesktop);
+        return () => desktop.removeEventListener('change', closeOnDesktop);
     }, []);
+
+    useEffect(() => {
+        setOpenDropdown(null);
+        setMobileMenuOpen(false);
+        setMobileSubmenu(null);
+        setIsAccountDropdownOpen(false);
+    }, [currentUrl]);
 
     const handleLogout = () => {
         setIsAccountDropdownOpen(false);
@@ -294,25 +276,27 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
     const closeNavDropdowns = () => {
         setOpenDropdown(null);
         setMobileMenuOpen(false);
+        setMobileSubmenu(null);
     };
-
-    const mobileLinkClass = (href) =>
-        `flex w-full items-center justify-between rounded-lg px-1 py-3 text-left text-base ${
-            isPathActive(currentUrl, href) ? 'font-semibold text-white' : 'font-medium text-white'
-        }`;
 
     return (
         <header className="w-full border-b border-white/5 bg-black text-white">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:h-20 sm:px-6">
-                <div className="flex min-w-0 flex-1 items-center gap-3 md:gap-8">
+                <div className="flex min-w-0 flex-1 items-center gap-3 lg:gap-6">
                     <button
                         type="button"
-                        className="shrink-0 rounded-md p-1 text-white md:hidden"
+                        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-white lg:hidden ${navFocusClass}`}
+                        aria-label="Open navigation"
+                        aria-haspopup="dialog"
                         aria-expanded={mobileMenuOpen}
                         aria-controls="mobile-main-navigation"
-                        onClick={() => setMobileMenuOpen((o) => !o)}
+                        onClick={() => {
+                            setIsAccountDropdownOpen(false);
+                            setOpenDropdown(null);
+                            setMobileMenuOpen(true);
+                        }}
                     >
-                        {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        <Menu size={24} aria-hidden="true" />
                     </button>
 
                     <Link href="/" className="flex h-9 shrink-0 items-center sm:h-10">
@@ -336,34 +320,22 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                     {!loggedIn ? (
                         <Link
                             href="/login"
-                            className="inline-flex items-center justify-center"
+                            className={`group inline-flex items-center justify-center rounded-full ${navFocusClass}`}
                             aria-label="Log in"
                         >
-                            <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[#FFC107] transition duration-300 hover:bg-[#F5B800] hover:shadow-[0_0_20px_rgba(255,193,7,.35)]">
-                                <img
-                                    src="/user-01.svg"
-                                    alt=""
-                                    className="relative h-6 w-6"
-                                    aria-hidden="true"
-                                />
-                            </span>
+                            <AccountIcon />
                         </Link>
                     ) : (
                         <div className="relative" ref={accountRef}>
                             <button
                                 type="button"
-                                className="block overflow-hidden rounded-full ring-2 ring-transparent transition hover:ring-[#FFC107]/40"
+                                className={`group block rounded-full ${navFocusClass}`}
+                                aria-label="Open account menu"
                                 onClick={() => setIsAccountDropdownOpen((o) => !o)}
                                 aria-expanded={isAccountDropdownOpen}
                                 aria-haspopup="true"
                             >
-                                <img
-                                    src={AVATAR_PLACEHOLDER}
-                                    alt=""
-                                    className="h-10 w-10 object-cover"
-                                    width={40}
-                                    height={40}
-                                />
+                                <AccountIcon />
                             </button>
 
                             {isAccountDropdownOpen && user && (
@@ -392,123 +364,19 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                 </div>
             </div>
 
-            {mobileMenuOpen && (
-                <div
-                    id="mobile-main-navigation"
-                    className="border-t border-white/10 bg-black px-4 py-2 sm:px-6 md:hidden"
-                >
-                    <div className="flex flex-col">
-                        <Link
-                            href="/"
-                            className={mobileLinkClass('/')}
-                            onClick={() => setMobileMenuOpen(false)}
-                        >
-                            Home
-                        </Link>
-
-                        <div>
-                            <button
-                                type="button"
-                                className={`flex w-full items-center justify-between py-3 text-left text-base ${
-                                    mobileSubmenu === 'about'
-                                        ? 'font-semibold text-white'
-                                        : 'font-medium text-white'
-                                }`}
-                                onClick={() =>
-                                    setMobileSubmenu((s) => (s === 'about' ? null : 'about'))
-                                }
-                            >
-                                About
-                                <ChevronDown
-                                    className={`h-4 w-4 transition-transform ${
-                                        mobileSubmenu === 'about' ? 'rotate-180' : ''
-                                    }`}
-                                />
-                            </button>
-                            {mobileSubmenu === 'about' && (
-                                <div className="mb-2 space-y-1 border-l border-white/10 pl-3">
-                                    {ABOUT_ITEMS.map(({ label, href }) => (
-                                        <Link
-                                            key={label}
-                                            href={href}
-                                            className={`block rounded-lg px-3 py-2 text-sm text-gray-300 transition-colors hover:bg-[#1E1E1E] hover:text-white ${
-                                                isPathActive(currentUrl, href)
-                                                    ? 'border border-[#FFC107] text-white'
-                                                    : ''
-                                            }`}
-                                            onClick={() => {
-                                                setMobileMenuOpen(false);
-                                                setMobileSubmenu(null);
-                                            }}
-                                        >
-                                            {label}
-                                        </Link>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        <div>
-                            <button
-                                type="button"
-                                className={`flex w-full items-center justify-between py-3 text-left text-base ${
-                                    mobileSubmenu === 'programs'
-                                        ? 'font-semibold text-white'
-                                        : 'font-medium text-white'
-                                }`}
-                                onClick={() =>
-                                    setMobileSubmenu((s) =>
-                                        s === 'programs' ? null : 'programs'
-                                    )
-                                }
-                            >
-                                Programs
-                                <ChevronDown
-                                    className={`h-4 w-4 transition-transform ${
-                                        mobileSubmenu === 'programs' ? 'rotate-180' : ''
-                                    }`}
-                                />
-                            </button>
-                            {mobileSubmenu === 'programs' && (
-                                <div className="mb-2 space-y-1 border-l border-white/10 pl-3">
-                                    {PROGRAMS_ITEMS.map(({ label, href }) => (
-                                        <Link
-                                            key={label}
-                                            href={href}
-                                            className={`block rounded-lg px-3 py-2 text-sm text-gray-300 transition-colors hover:bg-[#1E1E1E] hover:text-white ${
-                                                isPathActive(currentUrl, href)
-                                                    ? 'border border-[#FFC107] text-white'
-                                                    : ''
-                                            }`}
-                                            onClick={() => {
-                                                setMobileMenuOpen(false);
-                                                setMobileSubmenu(null);
-                                            }}
-                                        >
-                                            {label}
-                                        </Link>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        <Link
-                            href="/Event"
-                            className={mobileLinkClass('/Event')}
-                            onClick={() => setMobileMenuOpen(false)}
-                        >
-                            Events
-                        </Link>
-                        <Link
-                            href="/News"
-                            className={mobileLinkClass('/News')}
-                            onClick={() => setMobileMenuOpen(false)}
-                        >
-                            News
-                        </Link>
-                    </div>
-                </div>
-            )}
+            <MobileNavigationDrawer
+                open={mobileMenuOpen}
+                onClose={() => setMobileMenuOpen(false)}
+                onAfterLeave={() => setMobileSubmenu(null)}
+            >
+                <nav id="mobile-main-navigation" className="flex flex-col" aria-label="Mobile main">
+                    <NavItemLink item={{ label: 'Home', href: '/' }} url={currentUrl} onNavigate={closeNavDropdowns} mobile />
+                    {[{ id: 'about', label: 'About', items: ABOUT_ITEMS }, { id: 'programs', label: 'Programs', items: PROGRAMS_ITEMS }].map((group) => (
+                        <NavDropdown key={group.id} {...group} isOpen={mobileSubmenu === group.id} onToggle={(id) => setMobileSubmenu((previous) => previous === id ? null : id)} onNavigate={closeNavDropdowns} url={currentUrl} mobile />
+                    ))}
+                    {MAIN_LINKS.map((item) => <NavItemLink key={item.label} item={item} url={currentUrl} onNavigate={closeNavDropdowns} mobile />)}
+                </nav>
+            </MobileNavigationDrawer>
 
             {showModificationModal && (
                 <AccountModificationModal
