@@ -4,6 +4,7 @@ import {
     Trophy,
     Target,
 } from 'lucide-react';
+import { comingSoonHref } from '@/data/siteNavigation';
 
 export const campusStats = [
     { value: '150+', label: 'Active Communities' },
@@ -44,7 +45,8 @@ export const campusPrograms = [
         description:
             "Compete for school pride in our official competitive circuits. Whether it's the Monthly Online Tournaments for remote play or the Onsite Events held within campus premises.",
         action: 'Find Your Tournament',
-        href: '/Event',
+        originalHref: '/Event',
+        href: comingSoonHref('events'),
         Icon: Trophy,
     },
     {

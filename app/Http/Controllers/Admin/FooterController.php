@@ -12,7 +12,7 @@ use Inertia\Response;
 class FooterController extends Controller
 {
     private const DEFAULT_DESCRIPTION = 'The official student leader body of Mobile Legends: Bang Bang in the Philippines.';
-    private const DEFAULT_COPYRIGHT = '© 2025 Moonton Student Leaders Philippines. All rights reserved.';
+    private const DEFAULT_COPYRIGHT = '© 2026 Moonton Student Leaders Philippines. All rights reserved.';
 
     public function index(): Response
     {

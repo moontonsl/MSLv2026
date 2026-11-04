@@ -7,6 +7,8 @@
 
         <title inertia></title>
 
+        <link rel="icon" type="image/png" href="{{ asset('MSL_LOGO.png') }}">
+
         <!-- Scripts -->
         @routes
         @viteReactRefresh

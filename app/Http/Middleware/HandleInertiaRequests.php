@@ -83,7 +83,7 @@ class HandleInertiaRequests extends Middleware
             'main_site_url' => config('app.main_site_url') ?: env('MAIN_SITE_URL', env('APP_URL', '/')),
             'footer' => [
                 'description' => Setting::getValue('footer_description', 'The official student leader body of Mobile Legends: Bang Bang in the Philippines.'),
-                'copyright' => Setting::getValue('footer_copyright', '© 2025 Moonton Student Leaders Philippines. All rights reserved.'),
+                'copyright' => Setting::getValue('footer_copyright', '© 2026 Moonton Student Leaders Philippines. All rights reserved.'),
                 'logo' => Setting::getValue('footer_logo', '/msl-logo.png'),
                 'facebook_url' => Setting::getValue('footer_facebook_url', 'https://www.facebook.com/MSLPhilippines'),
                 'youtube_url' => Setting::getValue('footer_youtube_url', 'https://www.youtube.com/@MSLPhilippines'),

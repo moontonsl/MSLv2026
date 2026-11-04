@@ -12,40 +12,42 @@ export default function About() {
         <MainLayout fullWidth>
             <Head title="About Us" />
 
-            <div className="min-h-screen bg-[#0A0A0A] py-20 px-4 font-sans text-white sm:px-6 lg:px-8">
-                <div className="mx-auto max-w-7xl space-y-16 sm:space-y-24">
-                    <div className="mb-8 flex justify-start">
-                        <button
-                            type="button"
-                            onClick={() => window.history.back()}
-                            className="flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-[#FBBF24]"
-                        >
-                            <ChevronLeft className="h-4 w-4" />
-                            Back to Previous
-                        </button>
-                    </div>
+            <div className="min-h-screen bg-bg py-4 font-sans text-white sm:py-8 lg:py-12">
+                <div className="mx-auto max-w-7xl space-y-12 px-5 sm:space-y-16 sm:px-6 lg:space-y-20">
+                    <section className="border-b border-white/10 pb-6 sm:pb-8">
+                        <div className="mb-3 flex justify-start">
+                            <button
+                                type="button"
+                                onClick={() => window.history.back()}
+                                className="flex min-h-11 items-center gap-2 text-body-sm text-gray-100 transition-colors hover:text-brand-400"
+                            >
+                                <ChevronLeft className="h-4 w-4" />
+                                Back to Previous
+                            </button>
+                        </div>
 
-                    <section className="text-center">
-                        <h1 className="mb-6 text-4xl font-bold md:text-5xl">
-                            More Than Just{' '}
-                            <span className="text-[#FBBF24]">A Game</span>
-                        </h1>
-                        <p className="mx-auto max-w-3xl leading-relaxed text-gray-400">
-                            Moonton Student Leaders (MSL) PH is the official student body
-                            powered by Moonton Games. We unite campus communities across
-                            the Philippines, empowering student leaders to grow through
-                            esports, collaboration, and service—proving that passion for
-                            Mobile Legends can go hand-in-hand with leadership and academic
-                            excellence.
-                        </p>
+                        <div className="text-center sm:mt-8">
+                            <h1 className="mb-6 text-subsection font-bold sm:text-4xl md:text-5xl">
+                                More Than Just{' '}
+                                <span className="text-[#FBBF24]">A Game</span>
+                            </h1>
+                            <p className="mx-auto max-w-3xl text-body-sm text-gray-200 sm:text-body-md">
+                                Moonton Student Leaders (MSL) PH is the official student body
+                                powered by Moonton Games. We unite campus communities across
+                                the Philippines, empowering student leaders to grow through
+                                esports, collaboration, and service—proving that passion for
+                                Mobile Legends can go hand-in-hand with leadership and academic
+                                excellence.
+                            </p>
+                        </div>
                     </section>
 
                     <section className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
-                        <article className="rounded-2xl border border-neutral-800 bg-[#111111] p-8 transition-colors hover:border-neutral-700 md:p-10">
-                            <h2 className="mb-4 text-3xl font-bold">
+                        <article className="flex min-h-56 flex-col rounded-xl border border-brand-500/30 bg-bg-surface p-6 transition-colors hover:border-brand-500/50 sm:p-8 lg:p-10">
+                            <h2 className="mb-3 text-body-md font-bold sm:text-card-title">
                                 Our <span className="text-[#FBBF24]">Mission</span>
                             </h2>
-                            <p className="text-sm leading-relaxed text-gray-400 md:text-base">
+                            <p className="text-body-sm text-gray-200 sm:text-body-md">
                                 To empower student leaders across the Philippines by
                                 creating inclusive campus initiatives, meaningful esports
                                 experiences, and platforms where young leaders can grow,
@@ -53,11 +55,11 @@ export default function About() {
                                 pride.
                             </p>
                         </article>
-                        <article className="rounded-2xl border border-neutral-800 bg-[#111111] p-8 transition-colors hover:border-neutral-700 md:p-10">
-                            <h2 className="mb-4 text-3xl font-bold">
+                        <article className="flex min-h-56 flex-col rounded-xl border border-brand-500/30 bg-bg-surface p-6 transition-colors hover:border-brand-500/50 sm:p-8 lg:p-10">
+                            <h2 className="mb-3 text-body-md font-bold sm:text-card-title">
                                 Our <span className="text-[#FBBF24]">Vision</span>
                             </h2>
-                            <p className="text-sm leading-relaxed text-gray-400 md:text-base">
+                            <p className="text-body-sm text-gray-200 sm:text-body-md">
                                 To be the leading student-led esports organization in the
                                 Philippines—recognized for developing responsible leaders,
                                 thriving campus communities, and a culture where gaming,
@@ -71,21 +73,21 @@ export default function About() {
                             <h2 className="text-3xl font-bold text-white md:text-4xl">
                                 Our Core Values
                             </h2>
-                            <p className="mx-auto mt-3 max-w-2xl text-sm text-gray-400 md:text-base">
+                            <p className="mx-auto mt-3 max-w-2xl text-body-sm text-gray-200 sm:text-body-md">
                                 The principles that guide how we lead, collaborate, and
                                 serve our communities every day.
                             </p>
                         </div>
-                        <div className="mt-8 flex flex-wrap justify-center gap-4">
+                        <div className="mt-10 flex flex-wrap justify-center gap-5 md:gap-6">
                             {CORE_VALUES.map((value) => (
                                 <article
                                     key={value.title}
-                                    className="w-[calc(50%-0.5rem)] rounded-xl border border-neutral-800 bg-[#111111] p-5 md:w-[calc(25%-0.75rem)] xl:w-[300px]"
+                                    className="flex min-h-44 w-[calc(50%-0.625rem)] flex-col rounded-xl border border-brand-500/30 bg-bg-surface p-4 sm:min-h-48 sm:p-6 md:w-[calc(33.333333%-1rem)] lg:w-[calc(25%-1.125rem)]"
                                 >
-                                    <h3 className="mb-2 text-sm font-bold text-white">
+                                    <h3 className="mb-3 text-body-sm font-bold text-white sm:text-body-md">
                                         {value.title}
                                     </h3>
-                                    <p className="text-xs leading-relaxed text-gray-400">
+                                    <p className="text-body-xs text-gray-200 sm:text-body-sm">
                                         {value.description}
                                     </p>
                                 </article>
@@ -98,32 +100,32 @@ export default function About() {
                             <h2 className="text-3xl font-bold text-white md:text-4xl">
                                 Our Organization
                             </h2>
-                            <p className="mx-auto mt-3 max-w-2xl text-sm text-gray-400 md:text-base">
+                            <p className="mx-auto mt-3 max-w-2xl text-body-sm text-gray-200 sm:text-body-md">
                                 MSL PH is organized into specialized departments, each
                                 driving impact across campuses, content, partnerships, and
                                 operations.
                             </p>
                         </div>
-                        <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
+                        <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
                             {ORGANIZATION_DEPARTMENTS.map((dept) => (
                                 <article
                                     key={dept.title}
-                                    className="rounded-2xl border border-neutral-800 bg-[#111111] p-8 transition-colors hover:border-neutral-700"
+                                    className="flex min-h-80 flex-col rounded-xl border border-brand-500/30 bg-bg-surface p-6 transition-colors hover:border-brand-500/50 sm:p-8"
                                 >
-                                    <h3 className="text-xl font-bold text-white">
+                                    <h3 className="text-body-md font-bold text-white sm:text-xl">
                                         {dept.title}
                                     </h3>
-                                    <p className="mt-3 text-sm leading-relaxed text-gray-400">
+                                    <p className="mt-4 text-body-sm text-gray-200">
                                         {dept.description}
                                     </p>
-                                    <ul className="mt-6 space-y-3">
+                                    <ul className="mt-6 space-y-4">
                                         {dept.items.map((item) => (
                                             <li
                                                 key={item}
-                                                className="flex items-center gap-3 text-sm text-gray-300"
+                                                className="flex items-start gap-2 text-body-sm text-gray-200"
                                             >
                                                 <span
-                                                    className={`h-2 w-2 shrink-0 rounded-full ${dept.bulletColor}`}
+                                                    className={`mt-2 h-1 w-1 shrink-0 rounded-full ${dept.bulletColor}`}
                                                 />
                                                 {item}
                                             </li>
@@ -139,16 +141,16 @@ export default function About() {
                             <h2 className="mb-4 text-3xl font-bold">
                                 Meet Our National Admin
                             </h2>
-                            <p className="mx-auto mb-8 max-w-xl text-sm leading-relaxed text-gray-400">
+                            <p className="mx-auto mb-10 max-w-xl text-body-sm text-gray-200 sm:text-body-md">
                                 The core team dedicated to serving the student-gaming
                                 community across the Philippines.
                             </p>
                         </div>
-                        <div className="grid grid-cols-2 gap-3 sm:gap-6 md:grid-cols-4">
+                        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
                             {NATIONAL_ADMINS.map((admin) => (
                                 <article
                                     key={`${admin.name}-${admin.roleLines.join('-')}`}
-                                    className="group overflow-hidden rounded-2xl border border-neutral-800 bg-[#111111]"
+                                    className="group overflow-hidden rounded-xl border border-brand-500/20 bg-bg-surface"
                                 >
                                     <div className="relative aspect-[3/4] w-full overflow-hidden bg-neutral-800">
                                         <img
@@ -156,8 +158,8 @@ export default function About() {
                                             alt={admin.name}
                                             className="h-full w-full object-cover object-top"
                                         />
-                                        <div className="absolute bottom-0 w-full bg-gradient-to-t from-[#0A0A0A] to-transparent p-2 sm:p-4">
-                                            <h3 className="mb-0.5 text-xs font-bold text-white sm:mb-1 sm:text-base">
+                                        <div className="absolute bottom-0 w-full bg-gradient-to-t from-[#0A0A0A] to-transparent p-3 sm:p-4">
+                                            <h3 className="mb-0.5 text-body-xs font-normal text-white sm:mb-1 sm:text-base sm:font-bold">
                                                 {admin.name}
                                             </h3>
                                             <p
@@ -177,23 +179,23 @@ export default function About() {
                         </div>
                     </section>
 
-                    <section className="relative mt-20 overflow-hidden rounded-2xl border border-neutral-800/50 bg-gradient-to-b from-[#111111] to-[#1a0b2e] p-6 text-center shadow-2xl sm:mt-32 sm:rounded-3xl sm:p-12 md:p-20">
-                        <h2 className="relative z-10 mb-6 text-2xl font-bold text-white sm:mb-8 sm:text-3xl md:text-4xl">
+                    <section className="relative flex min-h-44 flex-col justify-center overflow-hidden rounded-xl border border-gray-500/50 bg-gradient-to-b from-[#111111] to-[#1a0b2e] px-6 py-10 text-center sm:p-12">
+                        <h2 className="relative z-10 mb-4 text-body-sm font-bold text-white sm:mb-6 sm:text-card-title">
                             Ready to Lead?
                         </h2>
-                        <div className="relative z-10 flex flex-row items-center justify-center gap-2 sm:gap-4">
-                            <Link
-                                href="/programs/msl-network"
-                                className="rounded-lg bg-[#FBBF24] px-4 py-2 text-xs font-bold text-black transition-all hover:brightness-110 sm:px-8 sm:py-3 sm:text-base"
-                            >
-                                View Programs
-                            </Link>
+                        <div className="relative z-10 mx-auto flex w-full max-w-md items-stretch justify-center gap-3">
                             <Link
                                 href="/"
-                                className="flex items-center justify-center gap-2 rounded-lg border border-gray-500 bg-transparent px-4 py-2 text-xs font-bold text-white transition-all hover:bg-white/5 sm:px-8 sm:py-3 sm:text-base"
+                                className="flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-md border border-brand-400 bg-brand-400 px-2 py-2 text-body-xs font-bold text-black transition-colors hover:bg-brand-300 sm:px-6 sm:py-3 sm:text-body-sm"
                             >
                                 Contact Us
-                                <ArrowRight className="h-4 w-4" />
+                            </Link>
+                            <Link
+                                href="/programs/msl-network"
+                                className="flex min-h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-md border border-gray-300 bg-white/5 px-2 py-2 text-body-xs font-bold text-white transition-colors hover:bg-white/10 sm:px-6 sm:py-3 sm:text-body-sm"
+                            >
+                                View Programs
+                                <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
                             </Link>
                         </div>
                     </section>

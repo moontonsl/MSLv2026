@@ -1,4 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
+import { comingSoonHref, MSL_NETWORK_HREF } from '@/data/siteNavigation';
 import {
     Facebook,
     Youtube,
@@ -11,17 +12,17 @@ import {
 } from 'lucide-react';
 
 const PROGRAM_LINKS = [
-    { label: 'The MSL Network', href: '/Programs' },
+    { label: 'The MSL Network', href: MSL_NETWORK_HREF },
     { label: 'Campus Tournaments', href: '/campus-tournament' },
-    { label: 'MCC League', href: '/programs/mcc-league' },
-    { label: 'Leadership Summit', href: '/programs/leadership-summit' },
-    { label: 'Community Grants', href: '/programs/community-grants' },
+    { label: 'MCC League', originalHref: '/programs/mcc-league', href: comingSoonHref('mcc-league'), comingSoon: true },
+    { label: 'Leadership Summit', originalHref: '/programs/leadership-summit', href: comingSoonHref('leadership-summit'), comingSoon: true },
+    { label: 'Buffs & Support', href: '/Buffs&Support' },
 ];
 
 const RESOURCE_LINKS = [
-    { label: 'Partner With Us', href: '/Partnerships' },
+    { label: 'Partner With Us', href: MSL_NETWORK_HREF },
     { label: 'Join the Team', href: '/careers' },
-    { label: 'News & Updates', href: '/News' },
+    { label: 'News & Updates', originalHref: '/News', href: comingSoonHref('news'), comingSoon: true },
 ];
 
 const TRUST_BADGES = [
@@ -55,7 +56,6 @@ const TRUST_BADGES = [
 const LEGAL_LINKS = [
     { label: 'Privacy Policy', href: '/PrivacyPolicy' },
     { label: 'Terms of Service', href: '/TermsAndConditions' },
-    { label: 'Accessibility', href: '/accessibility' },
 ];
 
 function TikTokIcon({ className }) {
@@ -72,7 +72,15 @@ function TikTokIcon({ className }) {
 }
 
 const footerLinkClass =
-    'text-sm text-gray-400 transition-colors hover:text-white';
+    'inline-flex w-fit flex-wrap items-center gap-x-2 gap-y-1 rounded-sm text-sm text-gray-400 transition-colors duration-150 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500 motion-reduce:transition-none';
+
+function FooterNavLink({ label, href }) {
+    return (
+        <Link href={href} className={footerLinkClass}>
+            <span>{label}</span>
+        </Link>
+    );
+}
 
 const Footer = () => {
     const { footer } = usePage().props;
@@ -84,14 +92,14 @@ const Footer = () => {
     const mlbbLogo = footer?.mlbb_logo || '/mlbb-logo.png';
     const moontonLogo = footer?.moonton_logo || '/moonton-logo.png';
     const description = footer?.description || 'The official student leader body of Mobile Legends: Bang Bang in the Philippines.';
-    const copyright = footer?.copyright || '© 2025 Moonton Student Leaders Philippines. All rights reserved.';
+    const copyright = footer?.copyright || '© 2026 Moonton Student Leaders Philippines. All rights reserved.';
     const customNavSections = Array.isArray(footer?.nav_sections) && footer.nav_sections.length > 0 ? footer.nav_sections : null;
 
     const socialBase =
         'inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#1A1A1A] text-white transition-colors';
 
     return (
-        <footer className="relative z-10 border-t border-white/10 bg-black pb-8 pt-14 text-white sm:pt-16">
+        <footer className="relative z-10 border-t border-white/10 bg-black pb-24 pt-16 text-white lg:pb-8">
             <div className="mx-auto max-w-7xl px-4 sm:px-6">
                 {/* Desktop: 4-column brand + nav */}
                 <div className="hidden gap-10 lg:grid lg:grid-cols-12 lg:gap-8">
@@ -107,7 +115,7 @@ const Footer = () => {
                             The official student leader body of Mobile Legends: Bang Bang in the
                             Philippines.
                         </p>
-                        <div className="mt-6 flex items-center gap-3">
+                        <div className="mt-6 flex w-full max-w-xs items-center justify-center gap-8">
                             <a
                                 href={facebookUrl}
                                 target="_blank"
@@ -141,10 +149,8 @@ const Footer = () => {
                     <div className="lg:col-span-3">
                         <h3 className="text-sm font-bold text-white">Programs</h3>
                         <nav className="mt-5 flex flex-col gap-3" aria-label="Programs">
-                            {PROGRAM_LINKS.map(({ label, href }) => (
-                                <Link key={href} href={href} className={footerLinkClass}>
-                                    {label}
-                                </Link>
+                            {PROGRAM_LINKS.map((item) => (
+                                <FooterNavLink key={item.href} {...item} />
                             ))}
                         </nav>
                     </div>
@@ -152,22 +158,17 @@ const Footer = () => {
                     <div className="lg:col-span-2">
                         <h3 className="text-sm font-bold text-white">Resources</h3>
                         <nav className="mt-5 flex flex-col gap-3" aria-label="Resources">
-                            {RESOURCE_LINKS.map(({ label, href }) => (
-                                <Link key={href} href={href} className={footerLinkClass}>
-                                    {label}
-                                </Link>
+                            {RESOURCE_LINKS.map((item) => (
+                                <FooterNavLink key={item.href} {...item} />
                             ))}
                         </nav>
                     </div>
 
                     <div className="lg:col-span-3">
                         <h3 className="text-sm font-bold text-white">Safe Spaces</h3>
-                        <p className="mb-5 mt-5 text-sm text-gray-400">
-                            We are committed to RA11313 compliance.
-                        </p>
                         <Link
                             href="/report-violation"
-                            className="inline-flex items-center justify-center gap-2 rounded-lg border border-red-700/80 bg-red-950/40 px-4 py-2.5 text-sm font-medium text-red-500 transition-colors hover:bg-red-950/60 hover:text-red-400"
+                            className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-red-700/80 bg-red-950/40 px-4 py-3 text-sm font-medium text-red-500 transition-colors hover:bg-red-950/60 hover:text-red-400"
                         >
                             <ShieldAlert className="h-4 w-4 shrink-0" />
                             Report Violation
@@ -177,7 +178,7 @@ const Footer = () => {
 
                 {/* Mobile / tablet layout */}
                 <div className="lg:hidden">
-                    <div className="flex flex-col items-start sm:items-center sm:text-center">
+                    <div className="flex flex-col items-start text-left">
                         <Link href="/" className="inline-flex">
                             <img
                                 src={logo}
@@ -190,20 +191,7 @@ const Footer = () => {
                             Philippines.
                         </p>
 
-                        <div className="mt-6 flex flex-wrap items-center justify-center gap-6">
-                            <img
-                                src={moontonLogo}
-                                alt="Moonton"
-                                className="h-8 w-auto object-contain opacity-90"
-                            />
-                            <img
-                                src={mlbbLogo}
-                                alt="Mobile Legends: Bang Bang"
-                                className="h-8 w-auto object-contain opacity-90"
-                            />
-                        </div>
-
-                        <div className="mt-6 flex items-center gap-3">
+                        <div className="mt-6 flex w-full items-center justify-center gap-8">
                             <a
                                 href={facebookUrl}
                                 target="_blank"
@@ -234,44 +222,51 @@ const Footer = () => {
                         </div>
                     </div>
 
-                    <div className="mt-10 grid grid-cols-2 gap-8">
-                        <div>
+                    <div className="mt-10 grid grid-cols-2 gap-y-8 text-center">
+                        <div className="min-w-0">
                             <h3 className="text-sm font-bold text-white">Programs</h3>
-                            <nav className="mt-4 flex flex-col gap-3" aria-label="Programs">
-                                {PROGRAM_LINKS.map(({ label, href }) => (
-                                    <Link key={href} href={href} className={footerLinkClass}>
-                                        {label}
-                                    </Link>
+                            <nav className="mt-6 flex flex-col items-center gap-4" aria-label="Programs">
+                                {PROGRAM_LINKS.map((item) => (
+                                    <FooterNavLink key={item.href} {...item} />
                                 ))}
                             </nav>
                         </div>
-                        <div>
+                        <div className="min-w-0">
                             <h3 className="text-sm font-bold text-white">Resources</h3>
-                            <nav className="mt-4 flex flex-col gap-3" aria-label="Resources">
-                                {RESOURCE_LINKS.map(({ label, href }) => (
-                                    <Link key={href} href={href} className={footerLinkClass}>
-                                        {label}
-                                    </Link>
+                            <nav className="mt-6 flex flex-col items-center gap-4" aria-label="Resources">
+                                {RESOURCE_LINKS.map((item) => (
+                                    <FooterNavLink key={item.href} {...item} />
                                 ))}
                             </nav>
                         </div>
                     </div>
 
-                    <div className="mt-10">
+                    <div className="mt-10 text-center">
                         <h3 className="text-sm font-bold text-white">Safe Spaces</h3>
-                        <p className="mb-4 mt-3 text-sm text-gray-400">
-                            We are committed to RA11313 compliance.
-                        </p>
                         <Link
                             href="/report-violation"
-                            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-red-700/80 bg-red-950/40 px-4 py-3 text-sm font-medium text-red-500 transition-colors hover:bg-red-950/60 hover:text-red-400"
+                            className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-red-700/80 bg-red-950/40 px-4 py-3 text-sm font-medium text-red-500 transition-colors hover:bg-red-950/60 hover:text-red-400"
                         >
                             <ShieldAlert className="h-4 w-4 shrink-0" />
                             Report Violation
                         </Link>
                     </div>
 
-                    <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-6">
+                    <div className="mt-8 flex flex-row-reverse items-center justify-center gap-6 border-t border-white/10 pt-8">
+                        <img
+                            src={moontonLogo}
+                            alt="Moonton"
+                            className="h-12 w-auto max-w-[72px] object-contain opacity-90"
+                        />
+                        <img
+                            src={mlbbLogo}
+                            alt="Mobile Legends: Bang Bang"
+                            className="h-12 w-auto max-w-[144px] object-contain opacity-90"
+                        />
+                    </div>
+
+                    {/* Retained for reactivation; omitted from the mobile reference layout. */}
+                    <div className="mt-10 hidden grid-cols-2 gap-x-4 gap-y-6">
                         {TRUST_BADGES.map(({ Icon, title, subtitle }) => (
                             <div key={title} className="flex items-start gap-2.5">
                                 <Icon
@@ -304,12 +299,12 @@ const Footer = () => {
                 </div>
 
                 {/* Copyright + legal */}
-                <div className="mt-10 flex flex-col items-center gap-4 border-t border-white/10 pt-8 text-xs text-gray-500 lg:mt-8 lg:flex-row lg:items-center lg:justify-between lg:border-0 lg:pt-0">
-                    <p className="text-center lg:text-left">
-                        © 2025 Moonton Student Leaders Philippines. All rights reserved.
+                <div className="mt-6 flex flex-col items-stretch gap-6 text-sm text-gray-500 lg:mt-8 lg:flex-row lg:items-center lg:justify-between lg:gap-4 lg:text-xs">
+                    <p className="text-left text-body-sm lg:text-body-md">
+                        © 2026 Moonton Student Leaders Philippines. All rights reserved.
                     </p>
                     <nav
-                        className="flex flex-col items-center gap-3 lg:flex-row lg:gap-6"
+                        className="flex w-full flex-col items-center gap-7 lg:w-auto lg:flex-row lg:gap-6"
                         aria-label="Legal"
                     >
                         {LEGAL_LINKS.map(({ label, href }) => (

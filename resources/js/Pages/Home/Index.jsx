@@ -27,7 +27,9 @@ export default function Home({ pinnedFaqs = [] }) {
                 <AboutSection data={homeData.about} />
                 <NetworkSection data={homeData.network} />
                 <ProgramsSection data={homeData.programs} />
-                <CommunityVoicesSection data={homeData.community} />
+                {homeData.community.visible !== false && (
+                    <CommunityVoicesSection data={homeData.community} />
+                )}
                 <ChooseYourPathSection data={homeData.paths} />
                 <FAQSection data={faqData} />
             </div>
