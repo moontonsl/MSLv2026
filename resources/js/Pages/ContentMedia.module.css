@@ -1,0 +1,412 @@
+.typography {
+    font-family: var(--font-inter);
+}
+
+.interactionScope :where(a[href], button, [role='button'], [role='tab']) {
+    cursor: pointer;
+}
+
+.interactionScope :where(:disabled, [aria-disabled='true']) {
+    cursor: not-allowed;
+}
+
+.interactionScope :global(.cursor-zoom-in):not(:disabled):not([aria-disabled='true']) {
+    cursor: zoom-in;
+}
+
+.heroTitle,
+.sectionTitle {
+    font-family: var(--font-manrope);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.0002em;
+}
+
+.heroTitle {
+    font-size: 28px;
+}
+
+.sectionTitle {
+    font-size: 32px;
+}
+
+.heroDescription,
+.sectionDescription {
+    font-family: var(--font-inter);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+}
+
+.subsectionTitle,
+.ralewayTitle,
+.departmentBadge {
+    font-family: 'Raleway', var(--font-inter);
+    font-weight: 700;
+}
+
+.subsectionTitle {
+    font-size: 18px;
+    line-height: 28px;
+}
+
+.departmentBadge {
+    min-height: 32px;
+    gap: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    line-height: 18px;
+}
+
+.departmentBadge svg {
+    width: 16px;
+    height: 16px;
+}
+
+.featuredRole {
+    font-family: 'Nimbus Sans', var(--font-inter);
+    font-size: 10.4px;
+    font-weight: 900;
+    line-height: 16px;
+    letter-spacing: 2.08px;
+}
+
+.featuredQuote {
+    font-family: 'Nimbus Sans', var(--font-inter);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 23px;
+}
+
+.heroSection {
+    padding-bottom: 48px;
+    border-bottom: 1px solid #262626;
+}
+
+.heroArtwork {
+    position: relative;
+    display: none;
+    flex: 1;
+    min-width: 0;
+    height: 600px;
+    isolation: isolate;
+}
+
+.heroArtCard {
+    position: absolute;
+    display: block;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 16%);
+    border-radius: 14px;
+    background: #100c15;
+    color: white;
+    text-align: left;
+    box-shadow: 0 20px 48px rgb(0 0 0 / 34%);
+}
+
+.heroDesignCard {
+    top: 43%;
+    left: 2%;
+    z-index: 2;
+    width: 64%;
+    aspect-ratio: 4 / 5;
+    transform: rotate(-7deg);
+}
+
+.heroBroadcastCard {
+    top: 6%;
+    right: 1%;
+    z-index: 1;
+    width: 78%;
+    aspect-ratio: 16 / 10;
+    transform: rotate(6deg);
+}
+
+.heroArtImage {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.heroArtShade {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(to top, rgb(0 0 0 / 95%), rgb(0 0 0 / 10%) 70%, transparent);
+}
+
+.heroCardCaption {
+    position: absolute;
+    inset-inline: 16px;
+    bottom: 16px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.heroCardCategory {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-inter);
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 16px;
+    color: #d8b4fe;
+}
+
+.heroCardTitle {
+    display: block;
+    margin-top: 4px;
+    font-family: 'Raleway', var(--font-inter);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 20px;
+}
+
+.heroBroadcastCard .heroCardCategory {
+    color: #fca5a5;
+}
+
+.heroCardPlay {
+    position: absolute;
+    top: 36%;
+    left: 50%;
+    z-index: 2;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+}
+
+.closingSection {
+    margin-inline: calc(50% - 50vw);
+    padding: 64px 16px;
+    border-top: 1px solid #262626;
+    background: #111;
+}
+
+@media (min-width: 390px) {
+    .heroTitle {
+        font-size: 32px;
+    }
+}
+
+@media (min-width: 640px) {
+    .heroTitle {
+        font-size: 48px;
+    }
+}
+
+@media (min-width: 768px) {
+    .heroTitle {
+        font-size: 36px;
+    }
+
+    .heroDescription {
+        font-size: 16px;
+        line-height: 26px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .heroArtwork {
+        display: block;
+    }
+
+    .departmentBadge {
+        min-height: 40px;
+        padding: 7px 16px;
+        font-size: 16px;
+        line-height: 24px;
+    }
+
+    .departmentBadge svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .heroTitle,
+    .sectionTitle {
+        font-size: 48px;
+    }
+
+    .sectionDescription {
+        font-size: 18px;
+        line-height: 28px;
+    }
+
+    .subsectionTitle {
+        font-size: 30px;
+        line-height: 38px;
+    }
+
+    .heroSection {
+        padding-bottom: 64px;
+    }
+
+    .closingSection {
+        padding-block: 64px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .heroTitle,
+    .sectionTitle {
+        font-size: 60px;
+    }
+
+    .heroDescription {
+        font-size: 18px;
+        line-height: 28px;
+    }
+}
+
+.poster {
+    isolation: isolate;
+    transition: border-color 180ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.poster::after {
+    content: '';
+    position: absolute;
+    inset: -35% auto -35% 0;
+    z-index: 1;
+    width: 65%;
+    pointer-events: none;
+    background: linear-gradient(
+        105deg,
+        transparent 15%,
+        rgb(255 255 255 / 4%) 35%,
+        rgb(255 255 255 / 24%) 49%,
+        rgb(255 255 255 / 9%) 54%,
+        transparent 75%
+    );
+    opacity: 0;
+    transform: translateX(-150%) skewX(-18deg);
+    transition:
+        transform 1400ms cubic-bezier(0.25, 0.1, 0.25, 1),
+        opacity 300ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.poster figcaption {
+    z-index: 2;
+    pointer-events: none;
+}
+
+.zoomFrame {
+    overflow: hidden;
+}
+
+.posterImage {
+    transition: transform 500ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.talentCard {
+    position: relative;
+}
+
+.talentImage {
+    transition:
+        transform 500ms cubic-bezier(0.23, 1, 0.32, 1),
+        filter 500ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.interactiveCard {
+    transition:
+        border-color 180ms cubic-bezier(0.23, 1, 0.32, 1),
+        background-color 180ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.interactiveCardIcon {
+    transition:
+        transform 240ms cubic-bezier(0.23, 1, 0.32, 1),
+        color 180ms cubic-bezier(0.23, 1, 0.32, 1),
+        background-color 180ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.interactiveCard:focus-within {
+    border-color: currentColor;
+    border-color: color-mix(in srgb, currentColor 60%, transparent);
+    background-color: #202020;
+}
+
+.interactiveCard:focus-within .interactiveCardIcon {
+    color: inherit;
+    background-color: rgb(255 255 255 / 8%);
+    background-color: color-mix(in srgb, currentColor 16%, transparent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .interactiveCard:hover {
+        border-color: currentColor;
+        border-color: color-mix(in srgb, currentColor 60%, transparent);
+        background-color: #202020;
+    }
+
+    .interactiveCard:hover .interactiveCardIcon {
+        color: inherit;
+        background-color: rgb(255 255 255 / 8%);
+        background-color: color-mix(in srgb, currentColor 16%, transparent);
+    }
+
+    .talentImage {
+        filter: grayscale(1);
+    }
+
+    .talentCard:hover .talentImage,
+    .talentCard:focus-within .talentImage {
+        filter: grayscale(0);
+    }
+
+    .talentCard:hover,
+    .talentCard:focus-within {
+        border-color: rgb(45 212 191 / 60%);
+    }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .interactiveCard:hover .interactiveCardIcon {
+        transform: scale(1.1);
+    }
+
+    .poster:hover,
+    .poster:focus-within {
+        border-color: rgb(192 132 252 / 60%);
+    }
+
+    .talentCard:hover,
+    .talentCard:focus-within {
+        border-color: rgb(45 212 191 / 60%);
+    }
+
+    .poster:hover::after,
+    .poster:focus-within::after {
+        opacity: 1;
+        transform: translateX(205%) skewX(-18deg);
+    }
+
+    .poster:hover .posterImage,
+    .poster:focus-within .posterImage,
+    .zoomFrame:hover .posterImage,
+    .zoomFrame:focus-within .posterImage {
+        transform: scale(1.1);
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .interactiveCard:focus-within .interactiveCardIcon {
+        transform: scale(1.1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .poster,
+    .poster::after,
+    .posterImage,
+    .talentImage,
+    .interactiveCard,
+    .interactiveCardIcon {
+        transition: none;
+    }
+}

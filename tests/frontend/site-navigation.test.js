@@ -12,9 +12,13 @@ test('active routes ignore query strings, hashes, and trailing slashes without m
 });
 
 test('parent navigation follows both temporary pages and original destinations', () => {
+    const campus = ABOUT_ITEMS.find((item) => item.label === 'Campus');
     const partnerships = ABOUT_ITEMS.find((item) => item.label === 'Partnerships');
     const cup = PROGRAMS_ITEMS.find((item) => item.label === 'MSL Collegiate Cup');
     const news = MAIN_LINKS.find((item) => item.label === 'News');
+    assert.equal(isNavigationItemActive('/coming-soon/campus', campus), true);
+    assert.equal(isNavigationItemActive('/Campus', campus), true);
+    assert.equal(isNavigationGroupActive('/coming-soon/campus', 'about', ABOUT_ITEMS), true);
     assert.equal(isNavigationItemActive('/coming-soon/partnerships', partnerships), true);
     assert.equal(isNavigationItemActive('/Partnerships', partnerships), true);
     assert.equal(isNavigationItemActive('/coming-soon/collegiate-cup', cup), true);

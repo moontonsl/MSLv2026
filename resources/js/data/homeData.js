@@ -150,39 +150,43 @@ export const homeData = {
                 description:
                     "Gain official tournaments, grants, and mentorship for your campus community.",
                 image: PLANT_IMAGE,
-                href: "/CampusTournament",
+                href: "/campus-tournament",
             },
             {
-                id: "event-sponsorships",
-                title: "Event Sponsorships",
+                id: "events",
+                title: "Events",
                 description:
-                    "Partner-backed events and resources that elevate your student programs.",
+                    "Explore MSL events and activities.",
+                image: PLANT_IMAGE,
+                originalHref: "/Event",
+                href: comingSoonHref('events'),
+                comingSoon: true,
+            },
+            {
+                id: "msl-network",
+                title: "The MSL Network",
+                description:
+                    "Connect with school communities through The MSL Network.",
+                image: PLANT_IMAGE,
+                href: MSL_NETWORK_HREF,
+            },
+            {
+                id: "buffs-support",
+                title: "Buff and Supports",
+                description:
+                    "Find resources and support for campus communities.",
                 image: PLANT_IMAGE,
                 href: "/Buffs&Support",
             },
             {
-                id: "leadership-labs",
-                title: "Leadership Labs",
+                id: "mcc-league",
+                title: "MCC League",
                 description:
-                    "Workshops and training that sharpen skills for the next generation of leaders.",
+                    "View updates about MCC League.",
                 image: PLANT_IMAGE,
-                href: "/Programs",
-            },
-            {
-                id: "mlbb-campaigns",
-                title: "MLBB Campaigns",
-                description:
-                    "Creative activations and nationwide drives that celebrate the spirit of Mobile Legends.",
-                image: PLANT_IMAGE,
-                href: "/Programs",
-            },
-            {
-                id: "community-grants",
-                title: "Buffs & Support",
-                description:
-                    "Funding and support to help verified campus communities grow sustainably.",
-                image: PLANT_IMAGE,
-                href: "/Buffs&Support",
+                originalHref: "/programs/mcc-league",
+                href: comingSoonHref('mcc-league'),
+                comingSoon: true,
             },
         ],
     },

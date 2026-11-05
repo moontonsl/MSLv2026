@@ -15,7 +15,6 @@ const PROGRAM_LINKS = [
     { label: 'The MSL Network', href: MSL_NETWORK_HREF },
     { label: 'Campus Tournaments', href: '/campus-tournament' },
     { label: 'MCC League', originalHref: '/programs/mcc-league', href: comingSoonHref('mcc-league'), comingSoon: true },
-    { label: 'Leadership Summit', originalHref: '/programs/leadership-summit', href: comingSoonHref('leadership-summit'), comingSoon: true },
     { label: 'Buffs & Support', href: '/Buffs&Support' },
 ];
 
