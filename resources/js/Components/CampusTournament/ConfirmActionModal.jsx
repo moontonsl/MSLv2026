@@ -39,7 +39,7 @@ export default function ConfirmActionModal({
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="min-h-[44px] w-full rounded-lg border border-yellow-500 bg-transparent text-base font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10 md:text-sm"
+                        className="min-h-[44px] w-full rounded-lg border border-yellow-500 bg-[#1a1a1a] text-base font-semibold text-yellow-500 transition-colors hover:bg-yellow-500/10 md:text-sm"
                     >
                         Cancel
                     </button>
