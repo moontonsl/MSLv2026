@@ -35,8 +35,8 @@ export default function ManagedTournamentCard({
 
     return (
         <article className="rounded-2xl border border-neutral-800 bg-[#111111] p-4 sm:p-5">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-5 lg:justify-between">
-                <div className="min-w-0 flex-1 border-b border-neutral-800 pb-4 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-6">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="min-w-0 flex-1 border-b border-neutral-800 pb-4 md:border-b-0 md:border-r md:pb-0 md:pr-6">
                     <p className="text-xs font-medium text-gray-500">
                         School Name
                     </p>
@@ -51,7 +51,7 @@ export default function ManagedTournamentCard({
                     </p>
                 </div>
 
-                <div className="grid flex-1 grid-cols-3 gap-2 border-b border-neutral-800 pb-4 text-center sm:gap-3 lg:border-b-0 lg:border-r lg:pb-0 lg:px-6">
+                <div className="grid flex-1 grid-cols-3 gap-2 border-b border-neutral-800 pb-4 text-center sm:gap-3 md:border-b-0 md:border-r md:px-6 md:pb-0">
                     {[
                         {
                             label: "Verified Teams",
@@ -78,12 +78,16 @@ export default function ManagedTournamentCard({
                 </div>
 
                 {hasActions ? (
-                    <div className="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center lg:pl-6">
+                    <div
+                        className={`grid shrink-0 gap-2 md:flex md:pl-6 ${
+                            canChangeSchedule ? "grid-cols-3" : "grid-cols-1"
+                        }`}
+                    >
                         {canView ? (
                             <button
                                 type="button"
                                 onClick={() => onView(tournament)}
-                                className={`inline-flex min-h-[44px] flex-1 items-center justify-center rounded-lg px-5 text-sm font-bold transition-colors sm:flex-none ${
+                                className={`inline-flex min-h-10 items-center justify-center rounded-lg px-4 text-sm font-bold transition-colors ${
                                     canChangeSchedule
                                         ? "border border-neutral-500 bg-transparent text-white hover:border-neutral-300"
                                         : "bg-yellow-500 text-black hover:bg-yellow-400"
@@ -97,14 +101,14 @@ export default function ManagedTournamentCard({
                                 <button
                                     type="button"
                                     onClick={() => onReschedule?.(tournament)}
-                                    className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-lg bg-yellow-500 px-5 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:flex-none"
+                                    className="inline-flex min-h-10 items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
                                 >
                                     Resched
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => onDelete?.(tournament)}
-                                    className="inline-flex min-h-[44px] flex-1 items-center justify-center rounded-lg bg-red-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-red-700 sm:flex-none"
+                                    className="inline-flex min-h-10 items-center justify-center rounded-lg bg-red-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-red-700"
                                 >
                                     Delete
                                 </button>
