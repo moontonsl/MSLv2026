@@ -1,8 +1,23 @@
-import { Head, Link } from '@inertiajs/react';
-import { ChevronRight } from 'lucide-react';
+import { Head, Link, router } from '@inertiajs/react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import styles from './UnavailablePage.module.css';
 
 export default function UnavailablePage({ pageTitle, description, notFound = false }) {
+    const NavigationAction = notFound ? Link : 'button';
+    const NavigationIcon = notFound ? ChevronRight : ChevronLeft;
+    const navigationProps = notFound
+        ? { href: '/' }
+        : {
+            type: 'button',
+            onClick: () => {
+                if (window.history.length > 1) {
+                    window.history.back();
+                } else {
+                    router.visit('/');
+                }
+            },
+        };
+
     return (
         <>
             <Head title={pageTitle} />
@@ -28,10 +43,11 @@ export default function UnavailablePage({ pageTitle, description, notFound = fal
                         </h1>
                     )}
                     <p className="mx-auto mt-6 max-w-3xl text-body-md font-semibold text-gray-100 sm:text-body-xl">{description}</p>
-                    <Link href="/" className="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-sm py-2 text-body-md font-semibold text-brand-500 transition-colors duration-150 hover:text-brand-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500 motion-reduce:transition-none sm:mt-8 sm:text-body-lg">
-                        Go back to Homepage
-                        <ChevronRight className="h-5 w-5 shrink-0" aria-hidden="true" />
-                    </Link>
+                    <NavigationAction {...navigationProps} className="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-sm py-2 text-body-md font-semibold text-brand-500 transition-colors duration-150 hover:text-brand-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500 motion-reduce:transition-none sm:mt-8 sm:text-body-lg">
+                        {!notFound && <NavigationIcon className="h-5 w-5 shrink-0" aria-hidden="true" />}
+                        {notFound ? 'Go back to Homepage' : 'Back to Previous'}
+                        {notFound && <NavigationIcon className="h-5 w-5 shrink-0" aria-hidden="true" />}
+                    </NavigationAction>
                 </section>
             </main>
         </>

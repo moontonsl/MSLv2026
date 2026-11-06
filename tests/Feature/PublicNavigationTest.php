@@ -18,7 +18,7 @@ class PublicNavigationTest extends TestCase
     public function test_each_unavailable_feature_has_a_public_coming_soon_page(): void
     {
         foreach ([
-            'partnerships', 'general-affairs', 'collegiate-cup', 'referral',
+            'campus', 'partnerships', 'general-affairs', 'collegiate-cup', 'referral',
             'events', 'news', 'membership', 'leadership-summit', 'mcc-league',
         ] as $feature) {
             $this->get('/coming-soon/'.$feature)

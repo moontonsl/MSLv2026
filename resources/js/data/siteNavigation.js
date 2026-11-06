@@ -2,6 +2,7 @@ export const MSL_NETWORK_HREF = '/programs/msl-network';
 
 export const COMING_SOON_FEATURES = {
     msl: { title: 'More from MSL', description: 'More ways to connect with the MSL Philippines community are on the way.' },
+    campus: { title: 'Campus', description: 'A dedicated space for campus communities is on the way. Check back for updates.' },
     partnerships: { title: 'Partnerships', description: 'A new space for collaborations that support student-gamers and campus communities is on the way.' },
     'general-affairs': { title: 'General Affairs', description: 'We’re preparing a dedicated space for General Affairs updates and resources.' },
     'collegiate-cup': { title: 'MSL Collegiate Cup', description: 'The next chapter of collegiate competition is on the way. Check back for official updates.' },
@@ -18,7 +19,7 @@ export const comingSoonHref = (feature) => `/coming-soon/${feature}`;
 // Keep the original destinations alongside the temporary links for reactivation.
 export const ABOUT_ITEMS = [
     { label: 'About Us', href: '/About', activePaths: ['/about'] },
-    { label: 'Campus', href: '/Campus', activePaths: ['/about/campus'] },
+    { label: 'Campus', originalHref: '/Campus', href: comingSoonHref('campus'), activePaths: ['/about/campus'], comingSoon: true },
     { label: 'Contents & Social Media', href: '/Contents&SocialMedia' },
     { label: 'Partnerships', originalHref: '/Partnerships', href: comingSoonHref('partnerships'), comingSoon: true },
     { label: 'General Affairs', originalHref: '/GeneralAffairs', href: comingSoonHref('general-affairs'), comingSoon: true },
