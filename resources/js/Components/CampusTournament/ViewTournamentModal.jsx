@@ -80,16 +80,7 @@ export default function ViewTournamentModal({
                 panelClassName="max-h-[90vh]"
             >
                 <div className="relative px-1 pb-2 pt-1">
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="absolute right-0 top-0 inline-flex h-9 w-9 items-center justify-center rounded-md bg-red-600 text-white transition-colors hover:bg-red-700"
-                        aria-label="Close"
-                    >
-                        <X className="h-4 w-4" />
-                    </button>
-
-                    <div className="mb-3 flex flex-wrap items-center gap-2 pr-12">
+                    <div className="mb-3 flex items-center justify-between gap-2 sm:absolute sm:right-1 sm:top-1 sm:mb-0 sm:justify-end">
                         <span
                             className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
                                 isReviewed || isCompleted
@@ -104,13 +95,21 @@ export default function ViewTournamentModal({
                             )}
                             {statusLabel}
                         </span>
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-red-600 text-white transition-colors hover:bg-red-700"
+                            aria-label="Close"
+                        >
+                            <X className="h-4 w-4" />
+                        </button>
                     </div>
 
-                    <h2 className="pr-10 text-lg font-bold uppercase text-yellow-500 sm:text-xl">
+                    <h2 className="text-center text-lg font-bold uppercase text-yellow-500 sm:px-40 sm:text-xl">
                         {tournament?.title ?? 'Tournament'}
                     </h2>
                     {tournament ? (
-                        <p className="mt-1 text-sm text-gray-400">
+                        <p className="mt-1 text-center text-sm text-gray-400">
                             {formatDateRange(
                                 tournament.startDate,
                                 tournament.endDate,
@@ -297,7 +296,7 @@ export default function ViewTournamentModal({
                                             )
                                         }
                                         disabled={page <= 1}
-                                        className="inline-flex h-9 items-center justify-center rounded-md border border-yellow-500 bg-transparent px-3 text-sm font-semibold text-yellow-500 disabled:opacity-40 sm:min-w-[100px]"
+                                        className="inline-flex h-9 items-center justify-center rounded-md bg-yellow-500 px-3 text-sm font-bold text-black disabled:opacity-40 sm:min-w-[100px]"
                                         aria-label="Previous page"
                                     >
                                         <span className="hidden sm:inline">
@@ -356,7 +355,7 @@ export default function ViewTournamentModal({
 
                                 {/* Figma: Mark as Reviewed — bottom-right, separate from pagination */}
                                 {isCompleted && !isReviewed ? (
-                                    <div className="flex justify-end pt-2">
+                                    <div className="flex justify-center pt-3">
                                         <button
                                             type="button"
                                             onClick={() => setAckOpen(true)}
