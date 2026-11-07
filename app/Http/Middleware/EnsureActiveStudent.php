@@ -59,7 +59,11 @@ class EnsureActiveStudent
                 ]);
             }
 
-            if ($user->status === 'pending') {
+            if (
+                $user->status === 'pending'
+                && !$request->is('pending-verification')
+                && !$request->is('logout')
+            ) {
                 return redirect()->route('pending.verification');
             }
 
@@ -71,7 +75,12 @@ class EnsureActiveStudent
                 return redirect()->route('renewal.review');
             }
 
-            if ($user->status === 'rejected') {
+            if (
+                $user->status === 'rejected'
+                && !$request->is('rejected-verification')
+                && !$request->is('reapply')
+                && !$request->is('logout')
+            ) {
                 return redirect()->route('rejected.verification');
             }
         }
