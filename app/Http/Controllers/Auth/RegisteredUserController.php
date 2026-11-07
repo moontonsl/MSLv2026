@@ -196,7 +196,7 @@ class RegisteredUserController extends Controller
                     'password' => Hash::make($request->password),
                     'user_type' => 'Student',
                     'division' => strtolower($request->division),
-                    'status' => 'pending-review',
+                    'status' => 'pending',
                 ]);
 
                 // Clear temporary session tokens
