@@ -38,15 +38,15 @@ class PublicNavigationTest extends TestCase
         $this->get('/coming-soon/not-a-real-feature')->assertNotFound();
     }
 
-    public function test_network_is_a_public_view_of_the_existing_campus_directory(): void
+    public function test_network_and_campus_have_separate_public_pages(): void
     {
         $this->get(route('msl.network'))
             ->assertOk()
             ->assertInertia(fn ($page) => $page
-                ->component('Campus/Index')
-                ->where('isNetworkPage', true));
+                ->component('MSLNetwork')
+                ->missing('isNetworkPage'));
 
-        $this->get('/Campus')
+        $this->get('/about/campus')
             ->assertOk()
             ->assertInertia(fn ($page) => $page->component('Campus/Index')->missing('isNetworkPage'));
     }
@@ -54,8 +54,10 @@ class PublicNavigationTest extends TestCase
     public function test_existing_pages_are_preserved_when_public_links_are_retargeted(): void
     {
         foreach ([
-            '/About' => 'About',
-            '/Partnerships' => 'About',
+            '/about' => 'About',
+            '/about/partnerships' => 'Partnerships',
+            '/about/contents-social-media' => 'ContentMedia',
+            '/programs/buffs-support' => 'Buffs and Support/Index',
             '/GeneralAffairs' => 'About',
             '/Event' => 'Events/Index',
             '/report-violation' => 'SafeSpaces/ReportViolation',
@@ -64,5 +66,41 @@ class PublicNavigationTest extends TestCase
                 ->assertOk()
                 ->assertInertia(fn ($page) => $page->component($component));
         }
+    }
+
+    public function test_legacy_public_urls_redirect_directly_to_the_canonical_pages(): void
+    {
+        foreach ([
+            '/About' => '/about',
+            '/Campus' => '/about/campus',
+            '/Contents&SocialMedia' => '/about/contents-social-media',
+            '/content-media' => '/about/contents-social-media',
+            '/Partnerships' => '/about/partnerships',
+            '/partner' => '/about/partnerships',
+            '/Buffs&Support' => '/programs/buffs-support',
+            '/Programs' => '/#home-programs',
+            '/programs' => '/#home-programs',
+        ] as $oldUrl => $canonicalUrl) {
+            $this->get($oldUrl)->assertStatus(301)->assertRedirect($canonicalUrl);
+        }
+    }
+
+    public function test_named_public_routes_use_the_canonical_urls(): void
+    {
+        foreach ([
+            'about' => '/about',
+            'campus' => '/about/campus',
+            'contents.social.media' => '/about/contents-social-media',
+            'partnerships' => '/about/partnerships',
+            'msl.network' => '/programs/msl-network',
+            'buffs.support' => '/programs/buffs-support',
+        ] as $name => $path) {
+            $this->assertSame($path, route($name, [], false));
+        }
+    }
+
+    public function test_tournament_entry_still_requires_authentication(): void
+    {
+        $this->get('/campus-tournament')->assertRedirect(route('login'));
     }
 }

@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { comingSoonHref, MSL_NETWORK_HREF } from '@/data/siteNavigation';
+import { comingSoonHref, MSL_NETWORK_HREF, PUBLIC_ROUTES } from '@/data/siteNavigation';
 import {
     Facebook,
     Youtube,
@@ -15,7 +15,7 @@ const PROGRAM_LINKS = [
     { label: 'The MSL Network', href: MSL_NETWORK_HREF },
     { label: 'Campus Tournaments', href: '/campus-tournament' },
     { label: 'MCC League', originalHref: '/programs/mcc-league', href: comingSoonHref('mcc-league'), comingSoon: true },
-    { label: 'Buffs & Support', href: '/Buffs&Support' },
+    { label: 'Buffs & Support', href: PUBLIC_ROUTES.buffsSupport },
 ];
 
 const RESOURCE_LINKS = [
@@ -53,8 +53,8 @@ const TRUST_BADGES = [
 ];
 
 const LEGAL_LINKS = [
-    { label: 'Privacy Policy', href: '/PrivacyPolicy' },
-    { label: 'Terms of Service', href: '/TermsAndConditions' },
+    { label: 'Privacy Policy', href: PUBLIC_ROUTES.privacy },
+    { label: 'Terms of Service', href: PUBLIC_ROUTES.terms },
 ];
 
 function TikTokIcon({ className }) {

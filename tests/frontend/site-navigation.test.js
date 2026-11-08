@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { ABOUT_ITEMS, PROGRAMS_ITEMS, MAIN_LINKS, COMING_SOON_FEATURES, MSL_NETWORK_HREF, isPathActive, isNavigationItemActive, isNavigationGroupActive } from '../../resources/js/data/siteNavigation.js';
+import { ABOUT_ITEMS, PROGRAMS_ITEMS, MAIN_LINKS, COMING_SOON_FEATURES, MSL_NETWORK_HREF, PUBLIC_ROUTES, isPathActive, isNavigationItemActive, isNavigationGroupActive } from '../../resources/js/data/siteNavigation.js';
 import { homeData } from '../../resources/js/data/homeData.js';
 
 test('active routes ignore query strings, hashes, and trailing slashes without matching a different path', () => {
@@ -54,4 +54,38 @@ test('membership and partnership calls to action have consistent destinations', 
 test('community voices remain stored and can be restored through their visibility flag', () => {
     assert.equal(homeData.community.visible, false);
     assert.ok(homeData.community.voices.length > 0);
+});
+
+test('Partnerships is publicly available and keeps About active for its page and aliases', () => {
+    const partnerships = ABOUT_ITEMS.find((item) => item.label === 'Partnerships');
+    assert.equal(partnerships.href, PUBLIC_ROUTES.partnerships);
+    assert.equal(Boolean(partnerships.comingSoon), false);
+    for (const url of ['/Partnerships', '/about/partnerships', '/partner']) {
+        assert.equal(isNavigationItemActive(url, partnerships), true);
+        assert.equal(isNavigationGroupActive(url, 'about', ABOUT_ITEMS), true);
+    }
+});
+
+test('nested About pages select only their own submenu item and keep About active', () => {
+    for (const [url, label] of [
+        ['/about', 'About Us'],
+        ['/about/campus', 'Campus'],
+        ['/about/contents-social-media', 'Contents & Social Media'],
+        ['/about/partnerships/?source=home#team', 'Partnerships'],
+    ]) {
+        assert.deepEqual(
+            ABOUT_ITEMS.filter((item) => isNavigationItemActive(url, item)).map((item) => item.label),
+            [label],
+        );
+        assert.equal(isNavigationGroupActive(url, 'about', ABOUT_ITEMS), true);
+    }
+    assert.equal(isNavigationGroupActive('/MSLNetAdmin', 'programs', PROGRAMS_ITEMS), false);
+});
+
+test('homepage destinations use canonical public routes and its existing programs anchor', () => {
+    assert.equal(homeData.about.href, '/about');
+    assert.equal(homeData.programs.href, '/#home-programs');
+    assert.equal(homeData.programs.items.find((item) => item.id === 'buffs-support').href, '/programs/buffs-support');
+    assert.equal(homeData.programs.items.find((item) => item.id === 'msl-network').href, MSL_NETWORK_HREF);
+    assert.equal(isPathActive(homeData.programs.href, '/'), true);
 });

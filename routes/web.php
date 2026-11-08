@@ -82,31 +82,31 @@ Route::get('/s/{code}', [ShortLinkController::class, 'redirect'])->name('short-l
 
 Route::get('/coming-soon/{feature?}', ComingSoonController::class)->name('coming-soon');
 
-Route::inertia('/PrivacyPolicy', 'PrivacyPolicy')->name('privacy.policy');
-Route::inertia('/TermsAndConditions', 'TermsAndConditions')->name('terms.conditions');
-Route::redirect('/privacy-policy', '/PrivacyPolicy');
-Route::redirect('/terms-of-service', '/TermsAndConditions');
+Route::inertia('/privacy-policy', 'PrivacyPolicy')->name('privacy.policy');
+Route::inertia('/terms-of-service', 'TermsAndConditions')->name('terms.conditions');
+Route::redirect('/PrivacyPolicy', '/privacy-policy', 301);
+Route::redirect('/TermsAndConditions', '/terms-of-service', 301);
 
-// Public network view; keep the legacy admin and Campus routes intact.
+// Dedicated public Network page; Campus and admin routes remain separate.
 Route::get('/programs/msl-network', function () {
-    return Inertia::render('Campus/Index', ['isNetworkPage' => true]);
+    return Inertia::render('MSLNetwork');
 })->name('msl.network');
 
-Route::get('/About', function () {
+Route::get('/about', function () {
     return Inertia::render('About');
 })->name('about');
-Route::redirect('/about', '/About');
+Route::redirect('/About', '/about', 301);
 Route::redirect('/Login', '/login');
 
 Route::get('/report-violation', function () {
     return Inertia::render('SafeSpaces/ReportViolation');
 })->name('report.violation');
 
-Route::get('/Contents&SocialMedia', function () {
+Route::get('/about/contents-social-media', function () {
     return Inertia::render('ContentMedia');
 })->name('contents.social.media');
-Route::redirect('/content-media', '/Contents&SocialMedia');
-Route::redirect('/about/contents-social-media', '/Contents&SocialMedia');
+Route::redirect('/Contents&SocialMedia', '/about/contents-social-media', 301);
+Route::redirect('/content-media', '/about/contents-social-media', 301);
 
 Route::get('/News', [NewsController::class, 'index'])->name('news.index');
 Route::get('/News/{canonical}', [NewsController::class, 'show'])->name('news.show');
@@ -118,15 +118,15 @@ Route::get('/Event', function () {
 Route::redirect('/Events', '/Event');
 Route::redirect('/events', '/Event');
 
-Route::get('/Buffs&Support', function () {
+Route::get('/programs/buffs-support', function () {
     return Inertia::render('Buffs and Support/Index');
 })->name('buffs.support');
-Route::redirect('/programs/buffs-support', '/Buffs&Support');
+Route::redirect('/Buffs&Support', '/programs/buffs-support', 301);
 
-Route::get('/Campus', function () {
+Route::get('/about/campus', function () {
     return Inertia::render('Campus/Index');
 })->name('campus');
-Route::redirect('/about/campus', '/Campus');
+Route::redirect('/Campus', '/about/campus', 301);
 
 /*
 |--------------------------------------------------------------------------
@@ -213,21 +213,14 @@ Route::get('/CampusTournament', function () {
     return Inertia::render('Campus/Index');
 })->name('campus.tournament.listing');
 
-Route::get('/Programs', function () {
-    return Inertia::render('Home/Index', [
-        'pinnedFaqs' => Faq::query()
-            ->where('is_active', true)
-            ->where('is_pinned', true)
-            ->orderBy('id')
-            ->get(['id', 'question', 'answer']),
-    ]);
-})->name('programs');
+Route::redirect('/Programs', '/#home-programs', 301)->name('programs');
+Route::redirect('/programs', '/#home-programs', 301);
 
-Route::get('/Partnerships', function () {
-    return Inertia::render('About');
+Route::get('/about/partnerships', function () {
+    return Inertia::render('Partnerships');
 })->name('partnerships');
-Route::redirect('/about/partnerships', '/Partnerships');
-Route::redirect('/partner', '/Partnerships');
+Route::redirect('/Partnerships', '/about/partnerships', 301);
+Route::redirect('/partner', '/about/partnerships', 301);
 
 Route::get('/GeneralAffairs', function () {
     return Inertia::render('About');

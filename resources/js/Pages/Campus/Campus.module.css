@@ -1,0 +1,61 @@
+.page > section {
+    padding-block: 64px;
+    scroll-margin-top: 112px;
+}
+
+.page > section:first-child {
+    padding-top: 32px;
+    padding-bottom: 48px;
+}
+
+.page > section:first-child > :last-child {
+    padding-block: 0;
+}
+
+.page h2 {
+    font-family: var(--font-manrope);
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.0002em;
+}
+
+.page h3 {
+    font-family: 'Raleway', var(--font-inter);
+    font-weight: 700;
+}
+
+.page section:not(:first-child) > div > div > p {
+    font-size: 14px;
+    line-height: 22px;
+}
+
+@media (min-width: 1024px) {
+    .page > section {
+        padding-block: 96px;
+    }
+
+    .page > section:first-child {
+        padding-top: 80px;
+        padding-bottom: 64px;
+    }
+
+    .page > section > :last-child {
+        padding-inline: 32px;
+    }
+
+    .page h2 {
+        font-size: 48px;
+    }
+
+    .page section:not(:first-child) > div > div > p {
+        font-size: 18px;
+        line-height: 28px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .page h2 {
+        font-size: 60px;
+    }
+}

@@ -10,7 +10,7 @@ function storySections(journey, moments, unique, principles, journeyItems, journ
 export const LEADERSHIP_PROFILES = [
     {
         id: 'mary',
-        name: 'Madam Mary',
+        name: "Ma'am Mary",
         displayName: 'Mary Clarence S. Pasco',
         featuredRole: 'Department Head',
         featuredQuote: 'We are the voice and the face of the MSL network. Our mission is to tell the stories of our student leaders, amplify the excitement of our tournaments, and create content that resonates with the collegiate gaming community.',
@@ -42,7 +42,7 @@ export const LEADERSHIP_PROFILES = [
     },
     {
         id: 'aj',
-        name: 'Miss AJ',
+        name: "Ma'am AJ",
         role: 'Creatives',
         image: '/Images/CSM/Leadership/aj.png',
         summary: 'My journey in MSL started when I became a Campus Student Leader, where I was given the opportunity to organize tournaments and contribute to the gaming community.',
@@ -197,7 +197,7 @@ export const LEADERSHIP_PROFILES = [
     },
     {
         id: 'june',
-        name: 'Juniieeyaaa',
+        name: 'Sir June',
         role: 'Editorial Team',
         image: '/Images/CSM/Leadership/june.png',
         summary: 'My journey in MSL started with something I have always been passionate about, and it’s writing.',

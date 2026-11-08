@@ -117,6 +117,11 @@ export default function HomeHero({ data }) {
                                 src={activeSlide.image}
                                 alt=""
                                 fetchPriority="high"
+                                style={{
+                                    objectPosition: activeSlide.imagePosition || "50% 50%",
+                                    transform: `scale(${activeSlide.imageScale || 1})`,
+                                    transformOrigin: activeSlide.imageOrigin || "50% 50%",
+                                }}
                                 className="absolute inset-0 h-full w-full object-cover"
                             />
 

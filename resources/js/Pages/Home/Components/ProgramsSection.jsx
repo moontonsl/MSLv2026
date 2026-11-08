@@ -64,7 +64,13 @@ export default function ProgramsSection({ data }) {
                                 src={program.image}
                                 alt=""
                                 loading="lazy"
-                                className="absolute inset-0 h-full w-full object-cover grayscale transition-[transform,filter] duration-500 group-hover:grayscale-0 motion-safe:group-hover:scale-[1.035] motion-reduce:transition-none"
+                                style={{
+                                    objectPosition: program.imagePosition || "50% 50%",
+                                    objectFit: program.imageFit || "cover",
+                                    transformOrigin: program.imageOrigin || "50% 50%",
+                                    "--program-image-scale": program.imageScale || 1,
+                                }}
+                                className="absolute inset-0 h-full w-full grayscale transition-[transform,filter] duration-500 group-hover:grayscale-0 motion-safe:group-hover:scale-[1.035] motion-reduce:transition-none lg:[scale:var(--program-image-scale)]"
                             />
 
                             <span className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" />

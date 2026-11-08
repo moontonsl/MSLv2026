@@ -20,6 +20,9 @@ import {
 } from 'lucide-react';
 import MainLayout from '@/Layouts/MainLayout';
 import DepartmentBadge from '@/Components/DepartmentBadge';
+import { PUBLIC_ROUTES } from '@/data/siteNavigation';
+import typography from '../ContentMedia.module.css';
+import styles from './Campus.module.css';
 import {
     accreditationBenefits,
     campusCommunities,
@@ -34,7 +37,7 @@ import {
 const PAGE_SIZE = 6;
 
 const sectionTitleClass =
-    'font-heading text-4xl font-bold leading-[44px] text-white sm:text-4xl lg:text-5xl lg:font-extrabold lg:leading-tight';
+    `${typography.sectionTitle} text-white`;
 
 const tierStyles = {
     'Tier A': 'border-purple-400/40 bg-purple-500/10 text-purple-300',
@@ -113,12 +116,12 @@ function SectionHeading({ title, description, centered = true }) {
     return (
         <div className={centered ? 'mx-auto max-w-3xl text-center' : 'max-w-3xl'}>
             <h2 className={sectionTitleClass}>{title}</h2>
-            <p className="mt-4 text-sm leading-[22px] text-gray-300 sm:text-base sm:leading-7">{description}</p>
+            <p className={`mt-3 text-gray-300 ${typography.sectionDescription}`}>{description}</p>
         </div>
     );
 }
 
-export default function Campus({ isNetworkPage = false }) {
+export default function Campus() {
     const [search, setSearch] = useState('');
     const [region, setRegion] = useState('All Regions');
     const [currentPage, setCurrentPage] = useState(1);
@@ -162,25 +165,27 @@ export default function Campus({ isNetworkPage = false }) {
 
     return (
         <>
-            <Head title={isNetworkPage ? 'The MSL Network' : 'Campus'} />
+            <Head title="Campus Department">
+                <link head-key="csmd-raleway" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@700&display=swap" />
+            </Head>
 
             <MainLayout fullWidth>
-                <div className="overflow-hidden bg-[#050505] font-sans text-white">
+                <div className={`${styles.page} ${typography.typography} ${typography.interactionScope} overflow-hidden bg-[#050505] text-white`}>
                     <section className="relative border-b border-white/10">
                         <div className="absolute -left-40 top-0 h-96 w-96 rotate-12 bg-blue-600/10 blur-3xl" />
                         <div className="absolute -right-32 bottom-0 h-96 w-96 bg-blue-400/10 blur-3xl" />
 
                         <div className="relative mx-auto grid max-w-7xl gap-14 px-4 py-12 sm:px-6 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-24">
                             <div className="text-center lg:text-left">
-                                <DepartmentBadge icon={Building2} tone="blue">
-                                    {isNetworkPage ? 'The MSL Network' : 'Campus Department'}
+                                <DepartmentBadge icon={Building2} tone="blue" className={typography.departmentBadge}>
+                                    Campus Department
                                 </DepartmentBadge>
 
-                                <h1 className="mx-auto mt-6 max-w-3xl font-heading text-4xl font-bold leading-[44px] text-white sm:text-5xl lg:mx-0 lg:mt-7 lg:text-6xl lg:font-extrabold lg:leading-[1.08]">
+                                <h1 className={`mx-auto mt-6 max-w-3xl text-white lg:mx-0 ${typography.heroTitle}`}>
                                     United by <br />
                                     <span className="text-blue-500">School Spirit.</span>
                                 </h1>
-                                <p className="mx-auto mt-6 max-w-2xl text-sm leading-[22px] text-white sm:text-lg sm:leading-8 lg:mx-0 lg:text-gray-300">
+                                <p className={`mx-auto mt-6 max-w-xl text-gray-300 lg:mx-0 ${typography.heroDescription}`}>
                                     We manage the largest network of collegiate gaming communities
                                     in the Philippines. From Luzon to Mindanao, we empower student
                                     leaders to build thriving esports communities.
@@ -322,7 +327,7 @@ export default function Campus({ isNetworkPage = false }) {
                                 </div>
 
                                 <Link
-                                    href="#"
+                                    href={PUBLIC_ROUTES.programs}
                                     className="flex items-center gap-2 text-[16px] font-semibold text-blue-500 hover:text-blue-400"
                                 >
                                     View All MSL Programs

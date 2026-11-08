@@ -1,11 +1,12 @@
-import { useMemo, useState } from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { useEffect, useRef, useState } from 'react';
+import { Head } from '@inertiajs/react';
 import {
     ArrowRight,
     Banknote,
     Check,
     ChevronDown,
-    Gamepad2,
+    ChevronLeft,
+    ChevronRight,
     Gift,
     GraduationCap,
     HeartHandshake,
@@ -14,24 +15,22 @@ import {
     Megaphone,
     Pencil,
     Shield,
-    Sparkles,
     Trophy,
     Zap,
 } from 'lucide-react';
 import MainLayout from '@/Layouts/MainLayout';
+import DepartmentBadge from '@/Components/DepartmentBadge';
+import SupportConfigurator from '@/Components/SupportConfigurator';
+import typography from '../ContentMedia.module.css';
+import styles from './BuffsSupport.module.css';
 
-const SCOPE_OPTIONS = ['Department', 'College', 'University', 'System', 'Nationwide'];
-const MONETARY_SCOPES = ['College', 'University', 'System', 'Nationwide'];
-const VOLUME_TIERS = [
-    { key: 'small', label: 'SMALL', caption: '4-7 Teams (Small)', diamonds: 8000 },
-    { key: 'medium', label: 'MEDIUM', caption: '8-15 Teams (Medium)', diamonds: 15000 },
-    { key: 'large', label: 'LARGE', caption: '16+ Teams (Large)', diamonds: 25000 },
-];
+const SPONSORSHIP_GUIDELINES_URL = 'https://bit.ly/SponsorshipsByMSL';
+const SPONSORSHIP_GUIDELINES_DOWNLOAD_URL = '/downloads/buffs-and-support-quick-application-guide.pdf';
 
 const ROADMAP_STEPS = [
     {
         title: 'Application Process',
-        body: 'Submit proposals and pitch decks (2–3 weeks before for diamonds, 45 days for monetary).',
+        body: 'Submit application for at least 1–2 weeks before for diamonds and tournament lobby, and 2 months before for merchandise and monetary support.',
     },
     {
         title: 'Registration',
@@ -58,43 +57,153 @@ const EVENT_TYPES = [
 ];
 
 const PROVIDE_ITEMS = [
-    { label: 'Diamonds', value: '10,000', color: 'text-brand-500' },
-    { label: 'Cash', value: '₱5,000', color: 'text-emerald-400' },
-    { label: 'Tournament Lobby', value: '1 week', color: 'text-sky-400' },
-    { label: 'Merch', value: 'Sets', color: 'text-orange-400' },
+    { label: 'Diamonds', value: 'Funding', color: 'text-brand-500', border: 'border-brand-500/25' },
+    { label: 'Cash', value: 'Grants', color: 'text-emerald-400', border: 'border-emerald-500/25' },
+    { label: 'Tournament Lobby', value: 'Access', color: 'text-sky-400', border: 'border-sky-500/25' },
+    { label: 'Merch', value: 'Swag', color: 'text-orange-400', border: 'border-orange-500/25' },
 ];
 
-function formatDiamonds(n) {
-    return `${n.toLocaleString('en-US')} Diamonds`;
-}
+const EVENT_PHOTOS = [
+    {
+        id: 1,
+        event: 'Ascend 2025: Sovereign',
+        school: 'Technological University of the Philippines - Manila',
+        image: '/Images/BuffsSupport/tup-ascend-2025-sovereign.jpg',
+        alt: 'Participants at Ascend 2025: Sovereign, Technological University of the Philippines - Manila',
+        position: '50% 62%',
+    },
+    {
+        id: 2,
+        event: '59th University Intramural Games "SIEVING FOR EXCELLENCE: Shaping Athletes, Building Legacy"',
+        school: 'Nueva Ecija University of Science and Technology',
+        image: '/Images/BuffsSupport/neust-59th-intramural-games.jpg',
+        alt: 'Participants at the 59th University Intramural Games, Nueva Ecija University of Science and Technology',
+        position: '50% 68%',
+    },
+    {
+        id: 3,
+        event: 'NUlympics 2026',
+        school: 'National University Clark',
+        image: '/Images/BuffsSupport/nu-clark-nulympics-2026.jpg',
+        alt: 'National University Clark students participating in NUlympics 2026',
+        position: '50% 40%',
+    },
+    {
+        id: 4,
+        event: 'ATENEOLYMPICS 2026',
+        school: 'ATENEO DE DAVAO UNIVERSITY',
+        image: '/Images/BuffsSupport/ateneo-de-davao-ateneolympics-2026.jpg',
+        alt: 'Ateneo de Davao University players competing in ATENEOLYMPICS 2026',
+        position: '50% 42%',
+    },
+    {
+        id: 5,
+        event: 'PNU Sulo General Assembly: Featuring MLBB',
+        school: 'Philippine Normal University Manila',
+        image: '/Images/BuffsSupport/pnu-sulo-general-assembly-mlbb.jpg',
+        alt: 'Philippine Normal University Manila participants at PNU Sulo General Assembly: Featuring MLBB',
+        position: '50% 50%',
+    },
+    {
+        id: 6,
+        event: '78th JBLFMU Foundation Esports Tournament',
+        school: 'John B. Lacson Foundation Maritime University (Arevalo) Inc.',
+        image: '/Images/BuffsSupport/jblfmu-78th-foundation-esports-tournament.jpg',
+        alt: 'John B. Lacson Foundation Maritime University (Arevalo) Inc. participants at the 78th JBLFMU Foundation Esports Tournament',
+        position: '50% 45%',
+    },
+];
 
-function ScopeButtons({ options, value, onChange }) {
+function EventPhotoCarousel() {
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [dragX, setDragX] = useState(0);
+    const gesture = useRef(null);
+    const move = (direction) => setActiveIndex((index) => (index + direction + EVENT_PHOTOS.length) % EVENT_PHOTOS.length);
+
+    const endGesture = (event, cancelled = false) => {
+        const start = gesture.current;
+        if (!start || start.id !== event.pointerId) return;
+        const dx = event.clientX - start.x;
+        const dy = event.clientY - start.y;
+        if (!cancelled && Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) move(dx < 0 ? 1 : -1);
+        gesture.current = null;
+        setDragX(0);
+    };
+
     return (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {options.map((opt) => {
-                const active = value === opt;
-                return (
-                    <button
-                        key={opt}
-                        type="button"
-                        onClick={() => onChange(opt)}
-                        className={`rounded-lg px-3 py-2.5 text-left text-sm font-semibold transition ${
-                            active
-                                ? 'bg-brand-500 text-gray-900'
-                                : 'bg-[#1A1A1A] text-white hover:bg-[#222222]'
-                        }`}
-                    >
-                        {opt}
-                    </button>
-                );
-            })}
+        <div role="region" aria-roledescription="carousel" aria-label="Event photos" className={styles.eventCarousel}>
+            <h2 className={`text-center text-white ${typography.sectionTitle}`}>Event Photos</h2>
+            <p className={`mx-auto mt-3 max-w-2xl text-center text-gray-400 ${typography.sectionDescription}`}>
+                Capturing memorable moments from our latest tournaments and events.
+            </p>
+            <div
+                className={`${styles.photoStage} ${dragX ? styles.draggingPhotos : ''}`}
+                style={{ '--photo-drag': `${dragX}px` }}
+                onPointerDown={(event) => {
+                    if (!event.isPrimary || event.button !== 0) return;
+                    gesture.current = { id: event.pointerId, x: event.clientX, y: event.clientY };
+                    event.currentTarget.setPointerCapture(event.pointerId);
+                }}
+                onPointerMove={(event) => {
+                    const start = gesture.current;
+                    if (!start || start.id !== event.pointerId) return;
+                    const dx = event.clientX - start.x;
+                    if (Math.abs(dx) > Math.abs(event.clientY - start.y)) setDragX(Math.max(-80, Math.min(80, dx)));
+                }}
+                onPointerUp={(event) => endGesture(event)}
+                onPointerCancel={(event) => endGesture(event, true)}
+                onLostPointerCapture={(event) => endGesture(event, true)}
+            >
+                {EVENT_PHOTOS.map((photo, index) => {
+                    const offset = ((index - activeIndex + EVENT_PHOTOS.length + 2) % EVENT_PHOTOS.length) - 2;
+                    const active = offset === 0;
+                    return (
+                        <div
+                            key={photo.id}
+                            className={`${styles.photoSlide} ${active ? styles.activePhoto : offset === -1 ? styles.previousPhoto : offset === 1 ? styles.nextPhoto : styles.hiddenPhoto}`}
+                            style={Math.abs(offset) > 1 ? { '--hidden-direction': offset < 0 ? -1 : 1 } : undefined}
+                            aria-hidden={!active}
+                            role={active ? 'group' : undefined}
+                            aria-roledescription={active ? 'slide' : undefined}
+                            aria-label={active ? `${index + 1} of ${EVENT_PHOTOS.length}` : undefined}
+                        >
+                            <img src={photo.image} alt={photo.alt} style={{ objectPosition: photo.position || 'center' }} loading="lazy" draggable={false} />
+                            <div className={styles.photoCaption}>
+                                <span className="block text-sm font-bold sm:text-base">{photo.event}</span>
+                                <span className="mt-1 block text-xs text-gray-300 sm:text-sm">{photo.school}</span>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+            <div className={styles.photoControls}>
+                <button type="button" onClick={() => move(-1)} aria-label="Previous event photo" className={styles.photoArrow}>
+                    <ChevronLeft size={18} aria-hidden="true" />
+                </button>
+                <div className="flex items-center gap-1">
+                    {EVENT_PHOTOS.map((photo, index) => (
+                        <button
+                            key={photo.id}
+                            type="button"
+                            onClick={() => setActiveIndex(index)}
+                            aria-label={`Show event photo ${index + 1}`}
+                            aria-current={activeIndex === index ? 'true' : undefined}
+                            className={styles.photoDot}
+                        ><span /></button>
+                    ))}
+                </div>
+                <button type="button" onClick={() => move(1)} aria-label="Next event photo" className={styles.photoArrow}>
+                    <ChevronRight size={18} aria-hidden="true" />
+                </button>
+            </div>
+            <p className="sr-only" aria-live="polite" aria-atomic="true">{EVENT_PHOTOS[activeIndex].event}, {EVENT_PHOTOS[activeIndex].school}</p>
         </div>
     );
 }
 
-function FieldSelect({ label, required, value, options, onChange }) {
+function FieldSelect({ label, required, value, options, onChange, disabled = false }) {
     return (
-        <label className="block">
+        <label className="block min-w-0">
             <span className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-gray-400">
                 {label}
                 {required ? <span className="text-red-500">*</span> : null}
@@ -102,8 +211,9 @@ function FieldSelect({ label, required, value, options, onChange }) {
             <div className="relative">
                 <select
                     value={value}
+                    disabled={disabled}
                     onChange={(e) => onChange(e.target.value)}
-                    className="w-full appearance-none rounded-lg border border-white/10 bg-[#111111] px-3.5 py-2.5 pr-10 font-sans text-sm font-medium text-white outline-none transition focus:border-brand-500"
+                    className="w-full appearance-none rounded-lg border border-white/10 bg-[#0b0b0b] px-3.5 py-2.5 pr-10 font-sans text-sm font-medium text-white outline-none transition focus:border-brand-500 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                     {options.map((opt) => (
                         <option key={opt} value={opt}>
@@ -117,292 +227,153 @@ function FieldSelect({ label, required, value, options, onChange }) {
     );
 }
 
-function TeamVolumeSlider({ value, onChange }) {
-    const index = VOLUME_TIERS.findIndex((t) => t.key === value);
-    const pct = index <= 0 ? 0 : index === 1 ? 50 : 100;
+function AllocationFooter({ amount, selectionKey }) {
+    const panelRef = useRef(null);
+    const amountRef = useRef(null);
+    const previousSelection = useRef(selectionKey);
+    const displayedNumber = useRef(Number(amount.match(/[\d,]+/)?.[0]?.replaceAll(',', '')) || 0);
 
-    return (
-        <div>
-            <div className="mb-3 flex items-center justify-between gap-3">
-                <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">
-                    Team Volume
-                </span>
-                <span className="text-xs font-medium text-gray-300">
-                    {VOLUME_TIERS[index]?.caption}
-                </span>
-            </div>
-            <div className="relative px-1 pt-1">
-                <div className="h-2 rounded-full bg-gray-700" />
-                <div
-                    className="absolute top-1 h-2 rounded-full bg-gray-500 transition-all"
-                    style={{ width: `${pct}%`, left: 4, maxWidth: 'calc(100% - 8px)' }}
-                />
-                <input
-                    type="range"
-                    min={0}
-                    max={2}
-                    step={1}
-                    value={index}
-                    onChange={(e) => onChange(VOLUME_TIERS[Number(e.target.value)].key)}
-                    className="absolute inset-x-0 top-0 h-4 w-full cursor-pointer appearance-none bg-transparent
-                        [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none
-                        [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white
-                        [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:rounded-full
-                        [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-white"
-                    aria-label="Team volume"
-                />
-            </div>
-            <div className="mt-2 flex justify-between text-[10px] font-semibold uppercase tracking-wide text-gray-400">
-                {VOLUME_TIERS.map((t) => (
-                    <button
-                        key={t.key}
-                        type="button"
-                        onClick={() => onChange(t.key)}
-                        className={value === t.key ? 'text-white' : ''}
-                    >
-                        {t.label}
-                    </button>
-                ))}
-            </div>
-        </div>
-    );
-}
+    useEffect(() => {
+        // Defaults are immediately readable; animate only after a selection changes.
+        if (previousSelection.current === selectionKey) return;
+        previousSelection.current = selectionKey;
 
-function AllocationFooter({ amount, highlight }) {
+        const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const numericPart = amount.match(/[\d,]+/);
+        const target = numericPart ? Number(numericPart[0].replaceAll(',', '')) : null;
+        const from = displayedNumber.current;
+        let frame;
+        let highlight;
+
+        const finish = () => {
+            window.cancelAnimationFrame(frame);
+            highlight?.cancel();
+            if (amountRef.current) amountRef.current.textContent = amount;
+            displayedNumber.current = target ?? 0;
+        };
+
+        if (media.matches) {
+            finish();
+            return;
+        }
+
+        highlight = panelRef.current?.animate?.([
+            { backgroundColor: 'rgba(242, 194, 26, 0.16)', borderColor: 'rgba(242, 194, 26, 0.7)' },
+            { backgroundColor: 'rgba(0, 0, 0, 0.4)', borderColor: 'transparent' },
+        ], { duration: 420, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' });
+
+        if (target !== null && from !== target) {
+            const start = performance.now();
+            const renderNumber = (value) => {
+                displayedNumber.current = value;
+                if (amountRef.current) amountRef.current.textContent = amount.replace(numericPart[0], Math.round(value).toLocaleString('en-PH'));
+            };
+            renderNumber(from);
+            const tick = (time) => {
+                const progress = Math.min(1, (time - start) / 420);
+                renderNumber(from + (target - from) * (1 - (1 - progress) ** 3));
+                if (progress < 1) frame = window.requestAnimationFrame(tick);
+            };
+            frame = window.requestAnimationFrame(tick);
+        } else {
+            if (amountRef.current) amountRef.current.textContent = amount;
+            displayedNumber.current = target ?? 0;
+        }
+
+        const onMotionPreference = () => { if (media.matches) finish(); };
+        media.addEventListener('change', onMotionPreference);
+        return () => {
+            window.cancelAnimationFrame(frame);
+            highlight?.cancel();
+            media.removeEventListener('change', onMotionPreference);
+        };
+    }, [amount, selectionKey]);
+
     return (
         <div className="mt-auto border-t border-white/10 pt-4">
-            <div className="rounded-xl bg-black/40 px-4 py-3">
+            <div ref={panelRef} className={`${styles.budgetPanel} rounded-xl border border-transparent bg-black/40 px-4 py-3`}>
                 <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-500">
-                    Total Allocation
+                    Maximum Allowable Budget
                 </p>
                 <p
-                    className={`mt-1 font-heading text-2xl font-extrabold ${
-                        highlight ? 'text-brand-500' : 'text-white'
-                    }`}
+                    className={`font-heading text-2xl font-extrabold tabular-nums ${styles.configAmount}`}
+                    aria-hidden="true"
+                    ref={amountRef}
                 >
                     {amount}
                 </p>
+                <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">Maximum Allowable Budget: {amount}</span>
             </div>
         </div>
     );
 }
 
-function ConfigCard({ icon: Icon, iconClass, title, children, amount, highlight }) {
+function ConfigCard({ icon: Icon, title, children, amount, selectionKey }) {
     return (
-        <article className="flex h-full flex-col gap-5 rounded-2xl border border-white/10 bg-[#121212] p-5 shadow-[0_0_40px_rgba(0,0,0,0.35)] sm:p-6">
+        <article className={`${styles.configCard} flex h-full flex-col gap-5 rounded-2xl border p-5 sm:p-6`}>
             <div className="flex items-center gap-3">
                 <span
-                    className={`inline-flex h-11 w-11 items-center justify-center rounded-xl ${iconClass}`}
+                    className={`${styles.configIcon} inline-flex h-11 w-11 items-center justify-center rounded-xl`}
                 >
                     <Icon className="h-5 w-5" />
                 </span>
                 <h3 className="font-heading text-lg font-bold text-white sm:text-xl">{title}</h3>
             </div>
             <div className="flex flex-1 flex-col gap-4">{children}</div>
-            <AllocationFooter amount={amount} highlight={highlight} />
+            <AllocationFooter amount={amount} selectionKey={selectionKey} />
         </article>
     );
 }
 
-function BuffConfigurator() {
-    const [diamondScope, setDiamondScope] = useState('Department');
-    const [eventType, setEventType] = useState('Tournament');
-    const [accreditation, setAccreditation] = useState('Level 1');
-
-    const [shEvent, setShEvent] = useState('High School Intramurals');
-    const [shType, setShType] = useState('Tournament');
-    const [shSetup, setShSetup] = useState('Onsite');
-    const [shMode, setShMode] = useState('Livestreamed');
-
-    const [causeSetup, setCauseSetup] = useState('Onsite / Physical');
-    const [volume, setVolume] = useState('small');
-
-    const [moneyScope, setMoneyScope] = useState('College');
-    const [activityBase, setActivityBase] = useState('Tournament');
-
-    const diamondTotal = useMemo(() => {
-        const base = { Department: 10000, College: 12000, University: 15000, System: 20000, Nationwide: 25000 };
-        const levelBoost = accreditation === 'Level 2' ? 2000 : accreditation === 'Level 3' ? 5000 : 0;
-        return (base[diamondScope] ?? 10000) + levelBoost;
-    }, [diamondScope, accreditation]);
-
-    const shTotal = useMemo(() => {
-        if (shType === 'Non-Tournament') return 8000;
-        if (shSetup === 'Hybrid') return 25000;
-        return shMode === 'Livestreamed' ? 8000 : 12000;
-    }, [shType, shSetup, shMode]);
-
-    const causeTotal = VOLUME_TIERS.find((t) => t.key === volume)?.diamonds ?? 8000;
-
-    const moneyTotal = useMemo(() => {
-        const map = { College: 10000, University: 15000, System: 20000, Nationwide: 30000 };
-        return map[moneyScope] ?? 10000;
-    }, [moneyScope]);
-
-    return (
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-            <ConfigCard
-                icon={GraduationCap}
-                iconClass="bg-brand-500/20 text-brand-500"
-                title="Diamonds Support"
-                amount={formatDiamonds(diamondTotal)}
-                highlight
-            >
-                <div>
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
-                        Scope of Event
-                    </p>
-                    <ScopeButtons
-                        options={SCOPE_OPTIONS}
-                        value={diamondScope}
-                        onChange={setDiamondScope}
-                    />
-                </div>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <FieldSelect
-                        label="Event Type"
-                        required
-                        value={eventType}
-                        onChange={setEventType}
-                        options={['Tournament', 'Non-Tournament', 'Hybrid']}
-                    />
-                    <FieldSelect
-                        label="Accreditation"
-                        required
-                        value={accreditation}
-                        onChange={setAccreditation}
-                        options={['Level 1', 'Level 2', 'Level 3']}
-                    />
-                </div>
-            </ConfigCard>
-
-            <ConfigCard
-                icon={Layers}
-                iconClass="bg-white/10 text-white"
-                title="Senior High School"
-                amount={formatDiamonds(shTotal)}
-            >
-                <FieldSelect
-                    label="Program"
-                    value={shEvent}
-                    onChange={setShEvent}
-                    options={[
-                        'High School Intramurals',
-                        'Inter-School Cup',
-                        'Club Championship',
-                    ]}
-                />
-                <div>
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
-                        Event Type
-                    </p>
-                    <div className="grid grid-cols-2 gap-2">
-                        {['Tournament', 'Non-Tournament'].map((opt) => (
-                            <button
-                                key={opt}
-                                type="button"
-                                onClick={() => setShType(opt)}
-                                className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition ${
-                                    shType === opt
-                                        ? 'bg-[#2A2A2A] text-white ring-1 ring-white/20'
-                                        : 'bg-[#1A1A1A] text-gray-400 hover:text-white'
-                                }`}
-                            >
-                                {opt}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <FieldSelect
-                        label="Setup"
-                        required
-                        value={shSetup}
-                        onChange={setShSetup}
-                        options={['Onsite', 'Online', 'Hybrid']}
-                    />
-                    <FieldSelect
-                        label="Mode"
-                        required
-                        value={shMode}
-                        onChange={setShMode}
-                        options={['Livestreamed', 'Offline Only']}
-                    />
-                </div>
-            </ConfigCard>
-
-            <ConfigCard
-                icon={HeartHandshake}
-                iconClass="bg-white/10 text-white"
-                title="Events for a Cause"
-                amount={formatDiamonds(causeTotal)}
-            >
-                <FieldSelect
-                    label="Setup Type"
-                    required
-                    value={causeSetup}
-                    onChange={setCauseSetup}
-                    options={['Onsite / Physical', 'Online', 'Hybrid']}
-                />
-                <TeamVolumeSlider value={volume} onChange={setVolume} />
-            </ConfigCard>
-
-            <ConfigCard
-                icon={Banknote}
-                iconClass="bg-brand-500/20 text-brand-500"
-                title="Monetary Grants"
-                amount={formatDiamonds(moneyTotal)}
-                highlight
-            >
-                <div>
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
-                        Target Scope
-                    </p>
-                    <ScopeButtons
-                        options={MONETARY_SCOPES}
-                        value={moneyScope}
-                        onChange={setMoneyScope}
-                    />
-                </div>
-                <FieldSelect
-                    label="Activity Base"
-                    required
-                    value={activityBase}
-                    onChange={setActivityBase}
-                    options={['Tournament', 'Community Drive', 'Leadership Summit']}
-                />
-            </ConfigCard>
-        </div>
-    );
-}
-
 function SponsorshipRoadmap() {
+    const roadmapRef = useRef(null);
+    const [motionState, setMotionState] = useState('off');
+
+    useEffect(() => {
+        const roadmap = roadmapRef.current;
+        const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (!roadmap || !window.IntersectionObserver) return;
+        let inView = false;
+        const updateMotion = () => {
+            setMotionState(media.matches ? 'off' : inView && !document.hidden ? 'running' : 'paused');
+        };
+        const observer = new IntersectionObserver((entries) => {
+            inView = entries[0].isIntersecting;
+            updateMotion();
+        }, { threshold: 0, rootMargin: '0px 0px -24px 0px' });
+        observer.observe(roadmap);
+        media.addEventListener('change', updateMotion);
+        document.addEventListener('visibilitychange', updateMotion);
+        updateMotion();
+
+        return () => {
+            observer.disconnect();
+            media.removeEventListener('change', updateMotion);
+            document.removeEventListener('visibilitychange', updateMotion);
+        };
+    }, []);
+
     return (
-        <ol className="relative mx-auto max-w-3xl">
+        <div className="mx-auto max-w-3xl">
+            <ol ref={roadmapRef} data-motion={motionState} className={`relative ${styles.roadmap}`}>
             {ROADMAP_STEPS.map((step, idx) => {
-                const isFirst = idx === 0;
                 const isLast = idx === ROADMAP_STEPS.length - 1;
                 return (
-                    <li key={step.title} className="relative flex gap-4 pb-6 last:pb-0 sm:gap-6">
+                    <li key={step.title} style={{ '--step-delay': `${idx * 2}s` }} className={`relative flex gap-4 pb-6 last:pb-0 sm:gap-6 ${styles.roadmapStep}`}>
                         <div className="relative flex w-10 shrink-0 flex-col items-center">
                             {!isLast && (
-                                <span
-                                    className={`absolute top-10 bottom-0 w-0.5 ${
-                                        isFirst ? 'bg-brand-500' : 'bg-white/15'
-                                    }`}
-                                />
+                                <span aria-hidden="true" className={`absolute top-10 -bottom-6 w-0.5 ${styles.roadmapLine}`} />
                             )}
                             <span
-                                className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border bg-[#121212] font-heading text-base font-bold ${
-                                    isFirst
-                                        ? 'border-brand-500 text-brand-500 shadow-[0_0_16px_rgba(242,194,26,0.45)]'
-                                        : 'border-white/15 text-white'
-                                }`}
+                                className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border font-heading text-base font-bold ${styles.roadmapBadge}`}
                             >
                                 {idx + 1}
                             </span>
                         </div>
-                        <div className="min-w-0 flex-1 rounded-2xl border border-white/10 bg-[#121212] px-5 py-4 sm:px-6 sm:py-5">
+                        <div className={`min-w-0 flex-1 rounded-2xl border px-5 py-4 sm:px-6 sm:py-5 ${styles.roadmapContent}`}>
+                            <svg className={styles.roadmapOutline} aria-hidden="true" focusable="false">
+                                <rect x="1" y="1" rx="15" pathLength="100" strokeDasharray="100 100" className={styles.roadmapOutlineStroke} />
+                            </svg>
                             <h3 className="font-heading text-lg font-bold text-white sm:text-xl">
                                 {step.title}
                             </h3>
@@ -411,14 +382,18 @@ function SponsorshipRoadmap() {
                     </li>
                 );
             })}
-        </ol>
+            </ol>
+        </div>
     );
 }
 
 export default function BuffsAndSupportIndex() {
     return (
         <MainLayout fullWidth>
-            <Head title="Buffs & Support" />
+            <Head title="Buffs & Support">
+                <link head-key="csmd-raleway" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Raleway:wght@700&display=swap" />
+            </Head>
+            <div className={`${styles.page} ${typography.typography} ${typography.interactionScope} text-white`}>
 
             {/* Hero */}
             <section className="relative overflow-hidden border-b border-white/10 bg-[#050505]">
@@ -432,33 +407,33 @@ export default function BuffsAndSupportIndex() {
                 />
                 <div className="container-page relative py-12 md:py-16 lg:py-20">
                     <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-12">
-                        <div className="text-left">
-                            <div className="inline-flex items-center gap-1.5 rounded-full bg-brand-500 px-3 py-1 text-xs font-bold uppercase tracking-wide text-gray-900">
-                                <Zap className="h-3.5 w-3.5" />
+                        <div className="text-center lg:text-left">
+                            <DepartmentBadge icon={Zap} tone="gold" className={typography.departmentBadge}>
                                 Sponsorship Program
-                            </div>
-                            <h1 className="mt-5 font-heading text-[40px] font-extrabold leading-[48px] text-white sm:text-hero-md sm:leading-[58px]">
+                            </DepartmentBadge>
+                            <h1 className={`mt-6 text-white ${typography.heroTitle}`}>
                                 Power Up Your{' '}
                                 <span className="text-brand-500 drop-shadow-[0_0_24px_rgba(242,194,26,0.35)]">
                                     Events
                                 </span>
                             </h1>
-                            <p className="mt-5 max-w-xl font-sans text-body-md text-gray-400">
+                            <p className={`mx-auto mt-6 max-w-xl text-gray-400 lg:mx-0 ${typography.heroDescription}`}>
                                 The ultimate support system for student esports. Unlock diamonds,
                                 funds, and specialized tools to take your campus tournaments to the
                                 next level.
                             </p>
-                            <div className="mt-7 flex flex-wrap items-center gap-3">
+                            <div className="mt-6 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center lg:mt-8 lg:justify-start">
                                 <a
-                                    href="#roadmap"
-                                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-brand-600 bg-brand-500 px-5 py-3 font-sans text-body-md font-semibold text-gray-900 no-underline transition hover:bg-brand-400"
+                                    href="https://forms.gle/qADENJyDirsrKE6P9"
+                                    className={`${styles.actionButton} ${styles.primaryButton}`}
                                 >
-                                    Apply for Support
+                                    Apply for Buffs Now
                                     <ArrowRight className="h-5 w-5" />
                                 </a>
                                 <a
-                                    href="#guidelines"
-                                    className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-transparent px-5 py-3 font-sans text-body-md font-semibold text-white no-underline transition hover:bg-white/5"
+                                    href={SPONSORSHIP_GUIDELINES_DOWNLOAD_URL}
+                                    download="[PUBLIC] Buffs and Support Program - Quick Application Guide.pdf"
+                                    className={`${styles.actionButton} ${styles.secondaryButton}`}
                                 >
                                     Download Guidelines
                                 </a>
@@ -552,9 +527,9 @@ export default function BuffsAndSupportIndex() {
                     </article>
 
                     <article className="rounded-2xl border border-white/10 bg-[#121212] p-6 sm:p-8">
-                        <div className="flex items-center gap-3">
-                            <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-500/20 text-brand-500">
-                                <Medal className="h-5 w-5" />
+                        <div className="flex flex-col items-start gap-4">
+                            <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-500/10 text-brand-500">
+                                <Gift className="h-5 w-5" />
                             </span>
                             <h2 className="font-heading text-xl font-bold text-white sm:text-2xl">
                                 What We Provide
@@ -564,13 +539,13 @@ export default function BuffsAndSupportIndex() {
                             {PROVIDE_ITEMS.map((item) => (
                                 <div
                                     key={item.label}
-                                    className="rounded-xl border border-white/5 bg-[#1A1A1A] px-4 py-5"
+                                    className={`flex min-h-[100px] flex-col items-center justify-center rounded-xl border bg-[#0b0b0b] px-3 py-5 text-center ${item.border}`}
                                 >
-                                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                    <p className={`font-heading text-xl font-extrabold leading-7 sm:text-2xl ${item.color}`}>
                                         {item.label}
                                     </p>
                                     <p
-                                        className={`mt-2 font-heading text-xl font-extrabold sm:text-2xl ${item.color}`}
+                                        className="mt-1 text-[10px] font-bold uppercase leading-4 tracking-widest text-gray-500"
                                     >
                                         {item.value}
                                     </p>
@@ -581,72 +556,15 @@ export default function BuffsAndSupportIndex() {
                 </div>
             </section>
 
-            {/* Reward Your Community */}
+            {/* Event Photos */}
             <section className="border-b border-white/10 bg-[#0B0B0B] py-12 md:py-20">
-                <div className="container-page grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-14">
-                    <div>
-                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-500">
-                            Rewards and More
-                        </p>
-                        <h2 className="mt-3 font-heading text-section font-bold text-white">
-                            Reward Your{' '}
-                            <span className="text-brand-500">Community</span>
-                        </h2>
-                        <p className="mt-4 max-w-lg font-sans text-body-lg text-gray-400">
-                            Reward your student leaders and participants with everything from
-                            in-game currency to physical merchandise.
-                        </p>
-                        <div className="mt-6 flex flex-wrap gap-3">
-                            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white">
-                                <Sparkles className="h-4 w-4 text-brand-500" />
-                                Leader Loot
-                            </span>
-                            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white">
-                                <Gift className="h-4 w-4 text-brand-500" />
-                                Giveaways
-                            </span>
-                        </div>
-                        <ul className="mt-6 space-y-2.5">
-                            {['Diamond prizes', 'Official merch'].map((item) => (
-                                <li key={item} className="flex items-center gap-2.5 text-sm text-gray-300">
-                                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-brand-500 text-gray-900">
-                                        <Check className="h-3 w-3" strokeWidth={3} />
-                                    </span>
-                                    {item}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#121212]">
-                        <img
-                            src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1200&q=80"
-                            alt="Community rewards"
-                            className="aspect-[4/3] w-full object-cover grayscale"
-                            loading="lazy"
-                        />
-                    </div>
-                </div>
-            </section>
-
-            {/* Buff Configurator */}
-            <section className="border-b border-white/10 bg-[#050505] py-12 md:py-20">
                 <div className="container-page">
-                    <div className="mx-auto max-w-2xl text-center">
-                        <h2 className="font-heading text-section font-bold text-white">
-                            Buff Configurator
-                        </h2>
-                        <p className="mt-3 font-sans text-body-md text-gray-400">
-                            Select a package to see the buff value you can get for your community.
-                        </p>
-                    </div>
-                    <div className="mt-10 md:mt-12">
-                        <BuffConfigurator />
-                    </div>
+                    <EventPhotoCarousel />
                 </div>
             </section>
 
             {/* Tournament Lobby */}
-            <section className="relative overflow-hidden border-b border-white/10 bg-[#0B0B0B] py-12 md:py-20">
+            <section id="tournament-lobby" className="relative overflow-hidden border-b border-white/10 bg-[#0B0B0B] py-12 md:py-20">
                 <div className="pointer-events-none absolute -left-20 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-violet-600/20 blur-3xl" />
                 <div className="pointer-events-none absolute -right-16 bottom-0 h-64 w-64 rounded-full bg-blue-600/15 blur-3xl" />
                 <div className="container-page relative grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-14">
@@ -654,7 +572,7 @@ export default function BuffsAndSupportIndex() {
                         <span className="inline-flex rounded-full bg-violet-500/20 px-3 py-1 text-xs font-bold uppercase tracking-wide text-violet-300">
                             The Hub
                         </span>
-                        <h2 className="mt-4 font-heading text-section font-bold text-white">
+                        <h2 className={`mt-4 text-white ${typography.sectionTitle}`}>
                             Access the{' '}
                             <span className="bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent">
                                 Tournament Lobby
@@ -679,33 +597,42 @@ export default function BuffsAndSupportIndex() {
                                 </li>
                             ))}
                         </ul>
-                        <button
-                            type="button"
-                            className="mt-8 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-500 px-5 py-3 font-sans text-body-md font-semibold text-white transition hover:brightness-110"
+                        <a
+                            href="https://forms.gle/GQZWtpVob91riAfh6"
+                            className={`mt-8 ${styles.actionButton} ${styles.primaryButton}`}
                         >
-                            Request Access
+                            TL Application
                             <ArrowRight className="h-5 w-5" />
-                        </button>
+                        </a>
                     </div>
 
-                    <article className="rounded-3xl border border-white/10 bg-[#121212] p-8 text-center sm:p-10">
-                        <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-2xl bg-white/5">
-                            <Gamepad2 className="h-12 w-12 text-gray-500" strokeWidth={1.25} />
-                        </div>
-                        <h3 className="mt-6 font-heading text-xl font-bold text-white">
-                            Restricted Access
-                        </h3>
-                        <p className="mx-auto mt-2 max-w-sm text-sm text-gray-400">
-                            Sign in with an approved Student Leader account to unlock the official
-                            Tournament Lobby tools.
+                    <figure className={styles.lobbyPreview}>
+                        <img
+                            src="/Images/BuffsSupport/tournament-lobby.jpg"
+                            alt="MLBB Tournament Lobby showing the blue and red team slots, referee area, and Start Game control"
+                            width={2048}
+                            height={956}
+                            loading="lazy"
+                            className={styles.lobbyImage}
+                        />
+                    </figure>
+                </div>
+            </section>
+
+            {/* Buff Configurator */}
+            <section className="border-b border-white/10 bg-[#050505] py-12 md:py-20">
+                <div className="container-page">
+                    <div className="mx-auto max-w-2xl text-center">
+                        <h2 className={`text-white ${typography.sectionTitle}`}>
+                            Buff Configurator
+                        </h2>
+                        <p className="mt-3 font-sans text-body-md text-gray-400">
+                            Select a package to see the buff value you can get for your community.
                         </p>
-                        <Link
-                            href="/login"
-                            className="mt-6 inline-flex items-center justify-center rounded-xl border border-white/15 px-5 py-2.5 text-sm font-semibold text-white no-underline transition hover:bg-white/5"
-                        >
-                            Login / Register
-                        </Link>
-                    </article>
+                    </div>
+                    <div className="mt-10 md:mt-12">
+                        <SupportConfigurator ConfigCard={ConfigCard} FieldSelect={FieldSelect} />
+                    </div>
                 </div>
             </section>
 
@@ -713,7 +640,7 @@ export default function BuffsAndSupportIndex() {
             <section id="roadmap" className="bg-[#050505] py-12 md:py-20">
                 <div className="container-page">
                     <div className="mx-auto max-w-2xl text-center">
-                        <h2 className="font-heading text-section font-bold text-white">
+                        <h2 className={`text-white ${typography.sectionTitle}`}>
                             Sponsorship Roadmap
                         </h2>
                         <p className="mt-3 font-sans text-body-md text-gray-400">
@@ -727,22 +654,23 @@ export default function BuffsAndSupportIndex() {
                         id="guidelines"
                         className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4"
                     >
-                        <button
-                            type="button"
-                            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-brand-600 bg-brand-500 px-6 py-3.5 font-sans text-body-md font-semibold text-gray-900 transition hover:bg-brand-400 sm:w-auto"
+                        <a
+                            href="https://forms.gle/qADENJyDirsrKE6P9"
+                            className={`${styles.actionButton} ${styles.primaryButton}`}
                         >
-                            Apply for Support
+                            Apply for Buffs Now
                             <ArrowRight className="h-5 w-5" />
-                        </button>
-                        <button
-                            type="button"
-                            className="inline-flex w-full items-center justify-center rounded-xl border border-white/15 px-6 py-3.5 font-sans text-body-md font-semibold text-white transition hover:bg-white/5 sm:w-auto"
+                        </a>
+                        <a
+                            href={SPONSORSHIP_GUIDELINES_URL}
+                            className={`${styles.actionButton} ${styles.secondaryButton}`}
                         >
                             View Guidelines
-                        </button>
+                        </a>
                     </div>
                 </div>
             </section>
+            </div>
         </MainLayout>
     );
 }
