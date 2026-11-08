@@ -339,6 +339,14 @@ class CollegeInstitutionSeeder extends Seeder
             ['name' => 'University of Caloocan City - Bagong Silang', 'acronym' => 'UCC', 'region' => 'NCR', 'island' => 'Luzon'],
         ];
 
+        $campusesJsonPath = base_path('database/data/philippine_campuses.json');
+        if (File::exists($campusesJsonPath)) {
+            $extraCampuses = json_decode(File::get($campusesJsonPath), true);
+            if (is_array($extraCampuses)) {
+                $majorBranches = array_merge($majorBranches, $extraCampuses);
+            }
+        }
+
         foreach ($majorBranches as $branch) {
             $name = trim($branch['name']);
             $allEntries[$name] = [

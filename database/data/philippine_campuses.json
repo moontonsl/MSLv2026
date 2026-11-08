@@ -1,0 +1,3422 @@
+[
+  {
+    "name": "Technological Institute of the Philippines - Manila",
+    "acronym": "TIP TIP-Manila TIP-MNL",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Technological Institute of the Philippines - Quezon City",
+    "acronym": "TIP TIP-QC TIP-Cubao",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the East - Manila",
+    "acronym": "UE UE-Manila UE-MNL",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the East - Caloocan",
+    "acronym": "UE UE-Caloocan UE-Cal",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the East Ramon Magsaysay Memorial Medical Center",
+    "acronym": "UERM UERMMMC",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "San Beda University - Manila",
+    "acronym": "SBU San Beda Mendiola",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "San Beda University - Rizal",
+    "acronym": "SBU San Beda Taytay",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "San Beda College Alabang",
+    "acronym": "SBCA San Beda Alabang",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "San Sebastian College - Recoletos Manila",
+    "acronym": "SSCR Baste Manila",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "San Sebastian College - Recoletos Canlubang",
+    "acronym": "SSCR-C Baste Canlubang Calamba",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "San Sebastian College - Recoletos de Cavite",
+    "acronym": "SSCR-D Baste Cavite",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Arellano University - Juan Sumulong Campus",
+    "acronym": "AU AU-Legarda AU-Manila",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Arellano University - Jose Rizal Campus",
+    "acronym": "AU AU-Malabon",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Arellano University - Andres Bonifacio Campus",
+    "acronym": "AU AU-Pasig",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Arellano University - Jose Abad Santos Campus",
+    "acronym": "AU AU-Pasay",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Arellano University - Plaridel Campus",
+    "acronym": "AU AU-Mandaluyong",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Arellano University - Elisa Esguerra Campus",
+    "acronym": "AU AU-Malabon",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Arellano University - Apolinario Mabini Campus",
+    "acronym": "AU AU-Pasay",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Perpetual Help System DALTA - Las Pi\u00f1as",
+    "acronym": "UPHSD Perpetual Las Pinas",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Perpetual Help System DALTA - Molino",
+    "acronym": "UPHSD Perpetual Molino Bacoor",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Perpetual Help System DALTA - Calamba",
+    "acronym": "UPHSD Perpetual Calamba",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Perpetual Help System Laguna",
+    "acronym": "UPHSL Perpetual Binan",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Perpetual Help System - GMA Campus",
+    "acronym": "UPHS Perpetual GMA Cavite",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Perpetual Help System - Manila Campus",
+    "acronym": "UPHS Perpetual Manila",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Perpetual Help System - Isabela",
+    "acronym": "UPHS Perpetual Cauayan Isabela",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Perpetual Help System - Malasiqui",
+    "acronym": "UPHS Perpetual Malasiqui Pangasinan",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Our Lady of Fatima University - Valenzuela",
+    "acronym": "OLFU Fatima Valenzuela",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Our Lady of Fatima University - Quezon City",
+    "acronym": "OLFU Fatima QC Fairview",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Our Lady of Fatima University - Antipolo",
+    "acronym": "OLFU Fatima Antipolo Rizal",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Our Lady of Fatima University - Pampanga",
+    "acronym": "OLFU Fatima San Fernando Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Our Lady of Fatima University - Nueva Ecija",
+    "acronym": "OLFU Fatima Cabanatuan",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Our Lady of Fatima University - Laguna",
+    "acronym": "OLFU Fatima Santa Rosa",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Centro Escolar University - Manila",
+    "acronym": "CEU CEU-Manila Mendiola",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Centro Escolar University - Makati (Gil Puyat)",
+    "acronym": "CEU CEU-Makati",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Centro Escolar University - Makati (Legazpi)",
+    "acronym": "CEU CEU-Makati",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Centro Escolar University - Malolos",
+    "acronym": "CEU CEU-Malolos Bulacan",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Lyceum of the Philippines University - Manila",
+    "acronym": "LPU LPU-Manila Intramuros",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Lyceum of the Philippines University - Makati",
+    "acronym": "LPU LPU-Makati",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Lyceum of the Philippines University - Batangas",
+    "acronym": "LPU LPU-Batangas",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Lyceum of the Philippines University - Laguna",
+    "acronym": "LPU LPU-Laguna Calamba",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Lyceum of the Philippines University - Cavite",
+    "acronym": "LPU LPU-Cavite GenTri",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Lyceum of the Philippines University - Davao",
+    "acronym": "LPU LPU-Davao",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Map\u00faa University - Manila",
+    "acronym": "MU MAPUA Intramuros",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Map\u00faa University - Makati",
+    "acronym": "MU MAPUA Makati",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Map\u00faa Malayan Colleges Laguna",
+    "acronym": "MMCL MCL MAPUA Cabuyao Laguna",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Map\u00faa Malayan Colleges Mindanao",
+    "acronym": "MMCM MCM MAPUA Davao",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Philippine Christian University - Manila",
+    "acronym": "PCU PCU-Manila",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Philippine Christian University - Dasmari\u00f1as",
+    "acronym": "PCU PCU-Dasma",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Philippine Women's University - Manila",
+    "acronym": "PWU PWU-Manila Taft",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Philippine Women's University - Quezon City",
+    "acronym": "PWU PWU-QC",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Philippine Women's University - Santa Cruz",
+    "acronym": "PWU PWU-Laguna",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Philippine Women's University - Davao",
+    "acronym": "PWU PWU-Davao",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Emilio Aguinaldo College - Manila",
+    "acronym": "EAC EAC-Manila",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Emilio Aguinaldo College - Cavite",
+    "acronym": "EAC EAC-Cavite EAC-Dasma",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Paul University Philippines",
+    "acronym": "SPUP St Paul Tuguegarao",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Paul University - Manila",
+    "acronym": "SPU Manila St Paul",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Paul University - Quezon City",
+    "acronym": "SPU QC St Paul",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Paul University - Dumaguete",
+    "acronym": "SPU Dumaguete St Paul",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "St. Paul University - Iloilo",
+    "acronym": "SPU Iloilo St Paul",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "St. Paul University - Surigao",
+    "acronym": "SPU Surigao St Paul",
+    "region": "Caraga",
+    "island": "Mindanao"
+  },
+  {
+    "name": "St. Paul College of Bocaue",
+    "acronym": "SPC Bocaue Bulacan",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Paul College of Pasig",
+    "acronym": "SPCP St Paul Pasig",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Paul College of Para\u00f1aque",
+    "acronym": "SPCP St Paul Paranaque",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "La Consolacion College - Manila",
+    "acronym": "LCCM LCC Manila Mendiola",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "La Consolacion College - Bacolod",
+    "acronym": "LCCB LCC Bacolod",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "La Consolacion College - Caloocan",
+    "acronym": "LCCC LCC Caloocan",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "La Consolacion College - Novaliches",
+    "acronym": "LCCN LCC Novaliches",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "La Consolacion College - Tanauan",
+    "acronym": "LCCT LCC Tanauan Batangas",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "La Consolacion College - Bi\u00f1an",
+    "acronym": "LCCB LCC Binan Laguna",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "La Consolacion College - Iriga",
+    "acronym": "LCCI LCC Iriga",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "La Consolacion College - Daet",
+    "acronym": "LCCD LCC Daet",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "La Consolacion College - Bais",
+    "acronym": "LCCB LCC Bais",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "La Consolacion College - Liloan",
+    "acronym": "LCCL LCC Liloan Cebu",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "AMA Computer University - Quezon City",
+    "acronym": "AMA AMA-QC Project 8",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Manila",
+    "acronym": "AMA AMA-Manila Sta Mesa",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - East Rizal",
+    "acronym": "AMA AMA-Cainta Rizal",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Fairview",
+    "acronym": "AMA AMA-Fairview QC",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Caloocan",
+    "acronym": "AMA AMA-Caloocan",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Pasig",
+    "acronym": "AMA AMA-Pasig",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Makati",
+    "acronym": "AMA AMA-Makati",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Para\u00f1aque",
+    "acronym": "AMA AMA-Paranaque",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Las Pi\u00f1as",
+    "acronym": "AMA AMA-Las Pinas",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Bi\u00f1an",
+    "acronym": "AMA AMA-Binan Laguna",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Cavite",
+    "acronym": "AMA AMA-Cavite Dasma",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Lipa",
+    "acronym": "AMA AMA-Lipa Batangas",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Batangas City",
+    "acronym": "AMA AMA-Batangas",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - San Fernando",
+    "acronym": "AMA AMA-Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Angeles City",
+    "acronym": "AMA AMA-Angeles",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Tarlac",
+    "acronym": "AMA AMA-Tarlac",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Cabanatuan",
+    "acronym": "AMA AMA-Cabanatuan Nueva Ecija",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Olongapo",
+    "acronym": "AMA AMA-Olongapo Zambales",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Baguio",
+    "acronym": "AMA AMA-Baguio",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Dagupan",
+    "acronym": "AMA AMA-Dagupan Pangasinan",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Laoag",
+    "acronym": "AMA AMA-Laoag Ilocos",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Santiago",
+    "acronym": "AMA AMA-Santiago Isabela",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Tuguegarao",
+    "acronym": "AMA AMA-Tuguegarao Cagayan",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Legazpi",
+    "acronym": "AMA AMA-Legazpi Albay",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Naga",
+    "acronym": "AMA AMA-Naga Camarines Sur",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Lucena",
+    "acronym": "AMA AMA-Lucena Quezon",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Puerto Princesa",
+    "acronym": "AMA AMA-Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "AMA Computer College - Iloilo",
+    "acronym": "AMA AMA-Iloilo",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "AMA Computer College - Bacolod",
+    "acronym": "AMA AMA-Bacolod Negros",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "AMA Computer College - Cebu",
+    "acronym": "AMA AMA-Cebu",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "AMA Computer College - Dumaguete",
+    "acronym": "AMA AMA-Dumaguete",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "AMA Computer College - Tacloban",
+    "acronym": "AMA AMA-Tacloban Leyte",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "AMA Computer College - Cagayan de Oro",
+    "acronym": "AMA AMA-CDO",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "AMA Computer College - Davao",
+    "acronym": "AMA AMA-Davao",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "AMA Computer College - General Santos",
+    "acronym": "AMA AMA-GenSan",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "AMA Computer College - Zamboanga",
+    "acronym": "AMA AMA-Zamboanga",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "AMA Computer College - Butuan",
+    "acronym": "AMA AMA-Butuan",
+    "region": "Caraga",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Informatics College - Manila",
+    "acronym": "Informatics Manila",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Informatics College - Eastwood",
+    "acronym": "Informatics Eastwood QC",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Informatics College - Northgate",
+    "acronym": "Informatics Alabang Muntinlupa",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Informatics College - Cavite",
+    "acronym": "Informatics Cavite",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Informatics College - Caloocan",
+    "acronym": "Informatics Caloocan",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Informatics College - San Fernando",
+    "acronym": "Informatics Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Informatics College - Cebu",
+    "acronym": "Informatics Cebu",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Informatics College - Baguio",
+    "acronym": "Informatics Baguio",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Informatics College - Cagayan de Oro",
+    "acronym": "Informatics CDO",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Cebu - Main Campus",
+    "acronym": "UC UC-Main Sanciangko",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of Cebu - Banilad",
+    "acronym": "UC UC-Banilad",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of Cebu - Lapu-Lapu and Mandaue",
+    "acronym": "UC UC-LM LM",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of Cebu - METC",
+    "acronym": "UC UC-METC Mambaling",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of Cebu - Pardo Talisay",
+    "acronym": "UC UC-Pardo",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of the Visayas - Main Campus",
+    "acronym": "UV UV-Main Colon Cebu",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of the Visayas - Mandaue",
+    "acronym": "UV UV-Mandaue",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of the Visayas - Danao",
+    "acronym": "UV UV-Danao",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of the Visayas - Compostela",
+    "acronym": "UV UV-Compostela",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of the Visayas - Minglanilla",
+    "acronym": "UV UV-Minglanilla",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of the Visayas - Toledo",
+    "acronym": "UV UV-Toledo",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of the Visayas - Pardo",
+    "acronym": "UV UV-Pardo",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of San Carlos - Talamban Campus",
+    "acronym": "USC USC-TC Talamban",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of San Carlos - Downtown Campus",
+    "acronym": "USC USC-Main Downtown",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of San Carlos - North Campus",
+    "acronym": "USC USC-North",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of San Carlos - South Campus",
+    "acronym": "USC USC-South",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of San Jose - Recoletos - Main Campus",
+    "acronym": "USJ-R USJR USJR-Main Magallanes",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of San Jose - Recoletos - Basak Campus",
+    "acronym": "USJ-R USJR USJR-Basak",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of San Jose - Recoletos - Balamban Campus",
+    "acronym": "USJ-R USJR USJR-Balamban",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of Mindanao - Matina Campus",
+    "acronym": "UM UM-Matina Davao",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Mindanao - Bolton Campus",
+    "acronym": "UM UM-Bolton Davao",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Mindanao - Tagum Campus",
+    "acronym": "UM UM-Tagum",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Mindanao - Panabo Campus",
+    "acronym": "UM UM-Panabo",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Mindanao - Digos Campus",
+    "acronym": "UM UM-Digos",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Mindanao - Bansalan Campus",
+    "acronym": "UM UM-Bansalan",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Mindanao - Pe\u00f1aplata Campus",
+    "acronym": "UM UM-Samal",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Mindanao - Guianga Campus",
+    "acronym": "UM UM-Guianga",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Mindanao - Ilang Campus",
+    "acronym": "UM UM-Ilang",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Mindanao - Cotabato Campus",
+    "acronym": "UM UM-Cotabato",
+    "region": "BARMM",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Sta. Mesa, Manila",
+    "acronym": "PUP PUP-Main Sta Mesa",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Commonwealth",
+    "acronym": "PUP PUP-Commonwealth QC",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Taguig",
+    "acronym": "PUP PUP-Taguig",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - San Juan",
+    "acronym": "PUP PUP-San Juan",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Para\u00f1aque",
+    "acronym": "PUP PUP-Paranaque",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Bataan",
+    "acronym": "PUP PUP-Bataan Mariveles",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Santa Maria",
+    "acronym": "PUP PUP-Santa Maria Bulacan",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Pulilan",
+    "acronym": "PUP PUP-Pulilan Bulacan",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Cabiao",
+    "acronym": "PUP PUP-Cabiao Nueva Ecija",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Lopez",
+    "acronym": "PUP PUP-Lopez Quezon",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Mulanay",
+    "acronym": "PUP PUP-Mulanay Quezon",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - General Luna",
+    "acronym": "PUP PUP-GenLuna Quezon",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Unisan",
+    "acronym": "PUP PUP-Unisan Quezon",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Calauag",
+    "acronym": "PUP PUP-Calauag Quezon",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Ragay",
+    "acronym": "PUP PUP-Ragay Camarines Sur",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Alfonso",
+    "acronym": "PUP PUP-Alfonso Cavite",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Maragondon",
+    "acronym": "PUP PUP-Maragondon Cavite",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Bansud",
+    "acronym": "PUP PUP-Bansud Oriental Mindoro",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Sablayan",
+    "acronym": "PUP PUP-Sablayan Occidental Mindoro",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Bi\u00f1an",
+    "acronym": "PUP PUP-Binan Laguna",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Santa Rosa",
+    "acronym": "PUP PUP-Santa Rosa Laguna",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - San Pedro",
+    "acronym": "PUP PUP-San Pedro Laguna",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Calamba",
+    "acronym": "PUP PUP-Calamba Laguna",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Polytechnic University of the Philippines - Santo Tomas",
+    "acronym": "PUP PUP-Sto Tomas Batangas",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Don Honorio Ventura State University - Bacolor",
+    "acronym": "DHVSU DHVSU-Main Bacolor Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Don Honorio Ventura State University - Mexico",
+    "acronym": "DHVSU DHVSU-Mexico Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Don Honorio Ventura State University - Porac",
+    "acronym": "DHVSU DHVSU-Porac Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Don Honorio Ventura State University - Sto. Tomas",
+    "acronym": "DHVSU DHVSU-Sto Tomas Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Don Honorio Ventura State University - Lubao",
+    "acronym": "DHVSU DHVSU-Lubao Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Don Honorio Ventura State University - Candaba",
+    "acronym": "DHVSU DHVSU-Candaba Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Don Honorio Ventura State University - Apalit",
+    "acronym": "DHVSU DHVSU-Apalit Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Don Honorio Ventura State University - Floridablanca",
+    "acronym": "DHVSU DHVSU-Floridablanca Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Don Honorio Ventura State University - Guagua",
+    "acronym": "DHVSU DHVSU-Guagua Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Don Honorio Ventura State University - Sasmuan",
+    "acronym": "DHVSU DHVSU-Sasmuan Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Don Honorio Ventura State University - Sta. Rita",
+    "acronym": "DHVSU DHVSU-Sta Rita Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Laguna State Polytechnic University - Santa Cruz",
+    "acronym": "LSPU LSPU-Main Santa Cruz Laguna",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Laguna State Polytechnic University - Siniloan",
+    "acronym": "LSPU LSPU-Siniloan Laguna",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Laguna State Polytechnic University - Los Ba\u00f1os",
+    "acronym": "LSPU LSPU-LB Los Banos Laguna",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Laguna State Polytechnic University - San Pablo City",
+    "acronym": "LSPU LSPU-SPC San Pablo Laguna",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Laguna State Polytechnic University - Lopez Satellite",
+    "acronym": "LSPU LSPU-Lopez",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Laguna State Polytechnic University - Nagcarlan Satellite",
+    "acronym": "LSPU LSPU-Nagcarlan",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Laguna State Polytechnic University - Magdalena Satellite",
+    "acronym": "LSPU LSPU-Magdalena",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southern Luzon State University - Lucban",
+    "acronym": "SLSU SLSU-Main Lucban Quezon",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southern Luzon State University - Lucena",
+    "acronym": "SLSU SLSU-Lucena Quezon",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southern Luzon State University - Tiaong",
+    "acronym": "SLSU SLSU-Tiaong Quezon",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southern Luzon State University - Catanauan",
+    "acronym": "SLSU SLSU-Catanauan Quezon",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southern Luzon State University - Tagkawayan",
+    "acronym": "SLSU SLSU-Tagkawayan Quezon",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southern Luzon State University - Alabat",
+    "acronym": "SLSU SLSU-Alabat Quezon",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southern Luzon State University - Polillo",
+    "acronym": "SLSU SLSU-Polillo Quezon",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southern Luzon State University - Infanta",
+    "acronym": "SLSU SLSU-Infanta Quezon",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southern Luzon State University - Gumaca",
+    "acronym": "SLSU SLSU-Gumaca Quezon",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southern Luzon State University - Tayabas",
+    "acronym": "SLSU SLSU-Tayabas Quezon",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Tarlac State University - Main Campus",
+    "acronym": "TSU TSU-Main Tarlac City",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Tarlac State University - Lucinda",
+    "acronym": "TSU TSU-Lucinda Tarlac",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Tarlac State University - San Isidro",
+    "acronym": "TSU TSU-San Isidro Tarlac",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Tarlac State University - Capas",
+    "acronym": "TSU TSU-Capas Tarlac",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Tarlac State University - La Paz",
+    "acronym": "TSU TSU-La Paz Tarlac",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Nueva Ecija University of Science and Technology - General Tinio Campus",
+    "acronym": "NEUST NEUST-Main Cabanatuan",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Nueva Ecija University of Science and Technology - Sumacab Campus",
+    "acronym": "NEUST NEUST-Sumacab Cabanatuan",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Nueva Ecija University of Science and Technology - San Isidro Campus",
+    "acronym": "NEUST NEUST-San Isidro Nueva Ecija",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Nueva Ecija University of Science and Technology - Fort Magsaysay Campus",
+    "acronym": "NEUST NEUST-Fort Magsaysay Palayan",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Nueva Ecija University of Science and Technology - Atate Campus",
+    "acronym": "NEUST NEUST-Atate Palayan",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Nueva Ecija University of Science and Technology - Gabaldon Campus",
+    "acronym": "NEUST NEUST-Gabaldon Nueva Ecija",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Nueva Ecija University of Science and Technology - Pe\u00f1aranda Campus",
+    "acronym": "NEUST NEUST-Penaranda Nueva Ecija",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Nueva Ecija University of Science and Technology - Talavera Campus",
+    "acronym": "NEUST NEUST-Talavera Nueva Ecija",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Nueva Ecija University of Science and Technology - Carranglan Campus",
+    "acronym": "NEUST NEUST-Carranglan Nueva Ecija",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Nueva Ecija University of Science and Technology - Sto. Domingo Campus",
+    "acronym": "NEUST NEUST-Sto Domingo Nueva Ecija",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Nueva Ecija University of Science and Technology - San Antonio Campus",
+    "acronym": "NEUST NEUST-San Antonio Nueva Ecija",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Nueva Ecija University of Science and Technology - Papaya Campus",
+    "acronym": "NEUST NEUST-Papaya General Tinio",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pangasinan State University - Lingayen",
+    "acronym": "PSU PSU-Main Lingayen Pangasinan",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pangasinan State University - Alaminos City",
+    "acronym": "PSU PSU-Alaminos",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pangasinan State University - Asingan",
+    "acronym": "PSU PSU-Asingan",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pangasinan State University - Bayambang",
+    "acronym": "PSU PSU-Bayambang",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pangasinan State University - Binmaley",
+    "acronym": "PSU PSU-Binmaley",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pangasinan State University - Infanta",
+    "acronym": "PSU PSU-Infanta",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pangasinan State University - San Carlos City",
+    "acronym": "PSU PSU-San Carlos",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pangasinan State University - Santa Maria",
+    "acronym": "PSU PSU-Santa Maria",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pangasinan State University - Urdaneta City",
+    "acronym": "PSU PSU-Urdaneta",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mariano Marcos State University - Batac",
+    "acronym": "MMSU MMSU-Main Batac Ilocos Norte",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mariano Marcos State University - Laoag",
+    "acronym": "MMSU MMSU-Laoag",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mariano Marcos State University - Currimao",
+    "acronym": "MMSU MMSU-Currimao",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mariano Marcos State University - Dingras",
+    "acronym": "MMSU MMSU-Dingras",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Isabela State University - Echague",
+    "acronym": "ISU ISU-Main Echague Isabela",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Isabela State University - Cabagan",
+    "acronym": "ISU ISU-Cabagan",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Isabela State University - Ilagan",
+    "acronym": "ISU ISU-Ilagan",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Isabela State University - Cauayan",
+    "acronym": "ISU ISU-Cauayan",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Isabela State University - Roxas",
+    "acronym": "ISU ISU-Roxas",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Isabela State University - San Mateo",
+    "acronym": "ISU ISU-San Mateo",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Isabela State University - Angadanan",
+    "acronym": "ISU ISU-Angadanan",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Isabela State University - Jones",
+    "acronym": "ISU ISU-Jones",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Isabela State University - San Mariano",
+    "acronym": "ISU ISU-San Mariano",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Isabela State University - Palanan",
+    "acronym": "ISU ISU-Palanan",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Cagayan State University - Andrews",
+    "acronym": "CSU CSU-Andrews Tuguegarao",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Cagayan State University - Carig",
+    "acronym": "CSU CSU-Carig Tuguegarao",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Cagayan State University - Aparri",
+    "acronym": "CSU CSU-Aparri",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Cagayan State University - Lal-lo",
+    "acronym": "CSU CSU-Lallo",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Cagayan State University - Gonzaga",
+    "acronym": "CSU CSU-Gonzaga",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Cagayan State University - Sanchez Mira",
+    "acronym": "CSU CSU-Sanchez Mira",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Cagayan State University - Piat",
+    "acronym": "CSU CSU-Piat",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Cagayan State University - Lasam",
+    "acronym": "CSU CSU-Lasam",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Bicol University - Main Campus",
+    "acronym": "BU BU-Main Legazpi Albay",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Bicol University - Daraga",
+    "acronym": "BU BU-Daraga Albay",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Bicol University - Polangui",
+    "acronym": "BU BU-Polangui Albay",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Bicol University - Tabaco",
+    "acronym": "BU BU-Tabaco Albay",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Bicol University - Guinobatan",
+    "acronym": "BU BU-Guinobatan Albay",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Bicol University - Gubat",
+    "acronym": "BU BU-Gubat Sorsogon",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Partido State University - Goa",
+    "acronym": "ParSU ParSU-Main Goa Camarines Sur",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Partido State University - Caramoan",
+    "acronym": "ParSU ParSU-Caramoan",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Partido State University - Lagonoy",
+    "acronym": "ParSU ParSU-Lagonoy",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Partido State University - Sag\u00f1ay",
+    "acronym": "ParSU ParSU-Sagnay",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Partido State University - Salogon",
+    "acronym": "ParSU ParSU-Salogon",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Partido State University - San Jose",
+    "acronym": "ParSU ParSU-San Jose",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Partido State University - Tinambac",
+    "acronym": "ParSU ParSU-Tinambac",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Central Bicol State University of Agriculture - Pili",
+    "acronym": "CBSUA CBSUA-Main Pili Camarines Sur",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Central Bicol State University of Agriculture - Calabanga",
+    "acronym": "CBSUA CBSUA-Calabanga",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Central Bicol State University of Agriculture - Sipocot",
+    "acronym": "CBSUA CBSUA-Sipocot",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Central Bicol State University of Agriculture - Pasacao",
+    "acronym": "CBSUA CBSUA-Pasacao",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "West Visayas State University - Main Campus",
+    "acronym": "WVSU WVSU-Main La Paz Iloilo City",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "West Visayas State University - Calinog",
+    "acronym": "WVSU WVSU-Calinog Iloilo",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "West Visayas State University - Janiuay",
+    "acronym": "WVSU WVSU-Janiuay Iloilo",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "West Visayas State University - Lambunao",
+    "acronym": "WVSU WVSU-Lambunao Iloilo",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "West Visayas State University - Pototan",
+    "acronym": "WVSU WVSU-Pototan Iloilo",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "West Visayas State University - Himamaylan",
+    "acronym": "WVSU WVSU-Himamaylan Negros",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Iloilo Science and Technology University - Main Campus",
+    "acronym": "ISAT-U ISATU La Paz Iloilo City",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Iloilo Science and Technology University - Miagao",
+    "acronym": "ISAT-U ISATU-Miagao Iloilo",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Iloilo Science and Technology University - Dumangas",
+    "acronym": "ISAT-U ISATU-Dumangas Iloilo",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Iloilo Science and Technology University - Leon",
+    "acronym": "ISAT-U ISATU-Leon Iloilo",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Iloilo Science and Technology University - Barotac Nuevo",
+    "acronym": "ISAT-U ISATU-Barotac Nuevo Iloilo",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Capiz State University - Roxas City Main",
+    "acronym": "CAPSU CAPSU-Main Roxas Capiz",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Capiz State University - Dayao",
+    "acronym": "CAPSU CAPSU-Dayao Roxas",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Capiz State University - Bailan",
+    "acronym": "CAPSU CAPSU-Bailan Pontevedra",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Capiz State University - Burias",
+    "acronym": "CAPSU CAPSU-Burias Mambusao",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Capiz State University - Poblacion Mambusao",
+    "acronym": "CAPSU CAPSU-Mambusao",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Capiz State University - Sigma",
+    "acronym": "CAPSU CAPSU-Sigma",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Capiz State University - Dumarao",
+    "acronym": "CAPSU CAPSU-Dumarao",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Capiz State University - Tapaz",
+    "acronym": "CAPSU CAPSU-Tapaz",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Capiz State University - Pilar",
+    "acronym": "CAPSU CAPSU-Pilar",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Aklan State University - Banga",
+    "acronym": "ASU ASU-Main Banga Aklan",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Aklan State University - Kalibo",
+    "acronym": "ASU ASU-Kalibo Aklan",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Aklan State University - Ibajay",
+    "acronym": "ASU ASU-Ibajay Aklan",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Aklan State University - Makato",
+    "acronym": "ASU ASU-Makato Aklan",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Aklan State University - New Washington",
+    "acronym": "ASU ASU-New Washington Aklan",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Cebu Technological University - Main Campus",
+    "acronym": "CTU CTU-Main Cebu City",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Cebu Technological University - Argao",
+    "acronym": "CTU CTU-Argao Cebu",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Cebu Technological University - Barili",
+    "acronym": "CTU CTU-Barili Cebu",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Cebu Technological University - Carmen",
+    "acronym": "CTU CTU-Carmen Cebu",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Cebu Technological University - Daanbantayan",
+    "acronym": "CTU CTU-Daanbantayan Cebu",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Cebu Technological University - Danao",
+    "acronym": "CTU CTU-Danao Cebu",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Cebu Technological University - Moalboal",
+    "acronym": "CTU CTU-Moalboal Cebu",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Cebu Technological University - San Francisco",
+    "acronym": "CTU CTU-Camotes Cebu",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Cebu Technological University - Tuburan",
+    "acronym": "CTU CTU-Tuburan Cebu",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Cebu Technological University - Naga Extension",
+    "acronym": "CTU CTU-Naga Cebu",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Cebu Technological University - Pinamungajan",
+    "acronym": "CTU CTU-Pinamungajan Cebu",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Cebu Technological University - San Fernando",
+    "acronym": "CTU CTU-San Fernando Cebu",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Bohol Island State University - Tagbilaran",
+    "acronym": "BISU BISU-Main Tagbilaran Bohol",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Bohol Island State University - Balilihan",
+    "acronym": "BISU BISU-Balilihan Bohol",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Bohol Island State University - Bilar",
+    "acronym": "BISU BISU-Bilar Bohol",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Bohol Island State University - Calape",
+    "acronym": "BISU BISU-Calape Bohol",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Bohol Island State University - Candijay",
+    "acronym": "BISU BISU-Candijay Bohol",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Bohol Island State University - Clarin",
+    "acronym": "BISU BISU-Clarin Bohol",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Negros Oriental State University - Dumaguete Main",
+    "acronym": "NORSU NORSU-Main Dumaguete",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Negros Oriental State University - Bais",
+    "acronym": "NORSU NORSU-Bais",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Negros Oriental State University - Bayawan",
+    "acronym": "NORSU NORSU-Bayawan",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Negros Oriental State University - Guihulngan",
+    "acronym": "NORSU NORSU-Guihulngan",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Negros Oriental State University - Siaton",
+    "acronym": "NORSU NORSU-Siaton",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Negros Oriental State University - Mabinay",
+    "acronym": "NORSU NORSU-Mabinay",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Eastern Visayas State University - Tacloban Main",
+    "acronym": "EVSU EVSU-Main Tacloban Leyte",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Eastern Visayas State University - Carigara",
+    "acronym": "EVSU EVSU-Carigara Leyte",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Eastern Visayas State University - Ormoc City",
+    "acronym": "EVSU EVSU-Ormoc Leyte",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Eastern Visayas State University - Burauen",
+    "acronym": "EVSU EVSU-Burauen Leyte",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Eastern Visayas State University - Tanauan",
+    "acronym": "EVSU EVSU-Tanauan Leyte",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Western Mindanao State University - Main Campus",
+    "acronym": "WMSU WMSU-Main Zamboanga City",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Western Mindanao State University - Aurora",
+    "acronym": "WMSU WMSU-Aurora Zamboanga del Sur",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Western Mindanao State University - Curuan",
+    "acronym": "WMSU WMSU-Curuan",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Western Mindanao State University - Diplahan",
+    "acronym": "WMSU WMSU-Diplahan Zamboanga Sibugay",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Western Mindanao State University - Imelda",
+    "acronym": "WMSU WMSU-Imelda Zamboanga Sibugay",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Western Mindanao State University - Ipil",
+    "acronym": "WMSU WMSU-Ipil Zamboanga Sibugay",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Western Mindanao State University - Mabuhay",
+    "acronym": "WMSU WMSU-Mabuhay",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Western Mindanao State University - Malangas",
+    "acronym": "WMSU WMSU-Malangas",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Western Mindanao State University - Molave",
+    "acronym": "WMSU WMSU-Molave Zamboanga del Sur",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Western Mindanao State University - Olutanga",
+    "acronym": "WMSU WMSU-Olutanga",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Western Mindanao State University - Pagadian City",
+    "acronym": "WMSU WMSU-Pagadian Zamboanga del Sur",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Western Mindanao State University - Siay",
+    "acronym": "WMSU WMSU-Siay",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Western Mindanao State University - Tungawan",
+    "acronym": "WMSU WMSU-Tungawan",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mindanao State University - Main Campus",
+    "acronym": "MSU MSU-Marawi",
+    "region": "BARMM",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mindanao State University - Iligan Institute of Technology",
+    "acronym": "MSU-IIT IIT Iligan",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mindanao State University - General Santos",
+    "acronym": "MSU-Gensan MSU-GSC GenSan",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mindanao State University - Naawan",
+    "acronym": "MSU-Naawan Misamis Oriental",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mindanao State University - Maguindanao",
+    "acronym": "MSU-Maguindanao",
+    "region": "BARMM",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mindanao State University - Sulu",
+    "acronym": "MSU-Sulu Jolo",
+    "region": "BARMM",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mindanao State University - Tawi-Tawi College of Technology and Oceanography",
+    "acronym": "MSU-TCTO Bongao Tawi-Tawi",
+    "region": "BARMM",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mindanao State University - Buug",
+    "acronym": "MSU-Buug Zamboanga Sibugay",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mindanao State University - LNCAT",
+    "acronym": "MSU-LNCAT Marawi",
+    "region": "BARMM",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mindanao State University - LNAC",
+    "acronym": "MSU-LNAC Sultan Naga Dimaporo",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Mindanao State University - MSAT",
+    "acronym": "MSU-MSAT Maigo Lanao del Norte",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Science and Technology of Southern Philippines - CDO",
+    "acronym": "USTP USTP-CDO Cagayan de Oro",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Science and Technology of Southern Philippines - Claveria",
+    "acronym": "USTP USTP-Claveria Misamis Oriental",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Science and Technology of Southern Philippines - Jasaan",
+    "acronym": "USTP USTP-Jasaan Misamis Oriental",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Science and Technology of Southern Philippines - Oroquieta",
+    "acronym": "USTP USTP-Oroquieta Misamis Occidental",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Science and Technology of Southern Philippines - Panaon",
+    "acronym": "USTP USTP-Panaon Misamis Occidental",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Science and Technology of Southern Philippines - Alubijid",
+    "acronym": "USTP USTP-Alubijid",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Science and Technology of Southern Philippines - Balubal",
+    "acronym": "USTP USTP-Balubal",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Science and Technology of Southern Philippines - Villanueva",
+    "acronym": "USTP USTP-Villanueva",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Southeastern Philippines - Obrero",
+    "acronym": "USeP USEP-Obrero Davao City",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Southeastern Philippines - Mintal",
+    "acronym": "USeP USEP-Mintal Davao City",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Southeastern Philippines - Tagum-Mabini",
+    "acronym": "USeP USEP-Tagum Tagum City",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Southeastern Philippines - Malabog",
+    "acronym": "USeP USEP-Malabog",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Southern Mindanao - Kabacan Main",
+    "acronym": "USM USM-Kabacan Cotabato",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Southern Mindanao - Kidapawan City",
+    "acronym": "USM USM-Kidapawan Cotabato",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Southern Mindanao - Libungan",
+    "acronym": "USM USM-Libungan Cotabato",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "University of Southern Mindanao - Aleosan",
+    "acronym": "USM USM-Aleosan Cotabato",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Palawan State University - Main Campus",
+    "acronym": "PSU PSU-Main Puerto Princesa",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University - Roxas",
+    "acronym": "PSU PSU-Roxas Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University - Cuyo",
+    "acronym": "PSU PSU-Cuyo Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University - Coron",
+    "acronym": "PSU PSU-Coron Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University - Brooke's Point",
+    "acronym": "PSU PSU-Brookes Point Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University - Quezon",
+    "acronym": "PSU PSU-Quezon Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University - Narra",
+    "acronym": "PSU PSU-Narra Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University - Rizal",
+    "acronym": "PSU PSU-Rizal Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University - Bataraza",
+    "acronym": "PSU PSU-Bataraza Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University - Sofronio Espa\u00f1ola",
+    "acronym": "PSU PSU-Espanola Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University - Dumaran",
+    "acronym": "PSU PSU-Dumaran Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University - Linapacan",
+    "acronym": "PSU PSU-Linapacan Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University - Balabac",
+    "acronym": "PSU PSU-Balabac Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University - Taytay",
+    "acronym": "PSU PSU-Taytay Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University - San Vicente",
+    "acronym": "PSU PSU-San Vicente Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University - El Nido",
+    "acronym": "PSU PSU-El Nido Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University - Araceli",
+    "acronym": "PSU PSU-Araceli Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University - Culion",
+    "acronym": "PSU PSU-Culion Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Palawan State University - San Rafael",
+    "acronym": "PSU PSU-San Rafael Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mindoro State University - Victoria Main",
+    "acronym": "MinSU MinSU-Main Victoria Oriental Mindoro",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mindoro State University - Calapan City",
+    "acronym": "MinSU MinSU-Calapan Oriental Mindoro",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mindoro State University - Bongabong",
+    "acronym": "MinSU MinSU-Bongabong Oriental Mindoro",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Occidental Mindoro State College - San Jose Main",
+    "acronym": "OMSC OMSC-Main San Jose",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Occidental Mindoro State College - Sablayan",
+    "acronym": "OMSC OMSC-Sablayan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Occidental Mindoro State College - Mamburao",
+    "acronym": "OMSC OMSC-Mamburao",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Occidental Mindoro State College - Murtha",
+    "acronym": "OMSC OMSC-Murtha",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Occidental Mindoro State College - Lubang",
+    "acronym": "OMSC OMSC-Lubang",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Romblon State University - Odiongan Main",
+    "acronym": "RSU RSU-Main Odiongan Romblon",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Romblon State University - Romblon",
+    "acronym": "RSU RSU-Romblon",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Romblon State University - San Agustin",
+    "acronym": "RSU RSU-San Agustin",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Romblon State University - Calatrava",
+    "acronym": "RSU RSU-Calatrava",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Romblon State University - San Andres",
+    "acronym": "RSU RSU-San Andres",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Romblon State University - Sta. Maria",
+    "acronym": "RSU RSU-Sta Maria",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Romblon State University - San Fernando",
+    "acronym": "RSU RSU-San Fernando",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Romblon State University - Cajidiocan",
+    "acronym": "RSU RSU-Cajidiocan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Romblon State University - Magdiwang",
+    "acronym": "RSU RSU-Magdiwang",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Romblon State University - Santa Fe",
+    "acronym": "RSU RSU-Santa Fe",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Romblon State University - Alcantara",
+    "acronym": "RSU RSU-Alcantara",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ramon Magsaysay State University - Iba Main",
+    "acronym": "RMSU RMSU-Main Iba Zambales",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ramon Magsaysay State University - Botolan",
+    "acronym": "RMSU RMSU-Botolan Zambales",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ramon Magsaysay State University - Candelaria",
+    "acronym": "RMSU RMSU-Candelaria Zambales",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ramon Magsaysay State University - Castillejos",
+    "acronym": "RMSU RMSU-Castillejos Zambales",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ramon Magsaysay State University - Masinloc",
+    "acronym": "RMSU RMSU-Masinloc Zambales",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ramon Magsaysay State University - San Marcelino",
+    "acronym": "RMSU RMSU-San Marcelino Zambales",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ramon Magsaysay State University - Santa Cruz",
+    "acronym": "RMSU RMSU-Santa Cruz Zambales",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Benguet State University - La Trinidad",
+    "acronym": "BSU BSU-Main La Trinidad Benguet",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Benguet State University - Buguias",
+    "acronym": "BSU BSU-Buguias Benguet",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Benguet State University - Bokod",
+    "acronym": "BSU BSU-Bokod Benguet",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Bukidnon State University - Malaybalay Main",
+    "acronym": "BukSU BukSU-Main Malaybalay Bukidnon",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Bukidnon State University - Alae Satellite",
+    "acronym": "BukSU BukSU-Alae Bukidnon",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Bukidnon State University - Baungon Satellite",
+    "acronym": "BukSU BukSU-Baungon Bukidnon",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Bukidnon State University - Cabanglasan Satellite",
+    "acronym": "BukSU BukSU-Cabanglasan Bukidnon",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Bukidnon State University - Damulog Satellite",
+    "acronym": "BukSU BukSU-Damulog Bukidnon",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Bukidnon State University - Kadingilan Satellite",
+    "acronym": "BukSU BukSU-Kadingilan Bukidnon",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Bukidnon State University - Kalilangan Satellite",
+    "acronym": "BukSU BukSU-Kalilangan Bukidnon",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Bukidnon State University - Kibawe Satellite",
+    "acronym": "BukSU BukSU-Kibawe Bukidnon",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Bukidnon State University - Kitaotao Satellite",
+    "acronym": "BukSU BukSU-Kitaotao Bukidnon",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Bukidnon State University - Libona Satellite",
+    "acronym": "BukSU BukSU-Libona Bukidnon",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Bukidnon State University - Malitbog Satellite",
+    "acronym": "BukSU BukSU-Malitbog Bukidnon",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Bukidnon State University - Maramag Satellite",
+    "acronym": "BukSU BukSU-Maramag Bukidnon",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Bukidnon State University - San Fernando Satellite",
+    "acronym": "BukSU BukSU-San Fernando Bukidnon",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Bukidnon State University - Talakag Satellite",
+    "acronym": "BukSU BukSU-Talakag Bukidnon",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Caraga State University - Main Campus",
+    "acronym": "CSU CSU-Main Ampayon Butuan City",
+    "region": "Caraga",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Caraga State University - Cabadbaran",
+    "acronym": "CSU CSU-Cabadbaran Agusan del Norte",
+    "region": "Caraga",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Surigao del Norte State University - Surigao City",
+    "acronym": "SNSU SNSU-Main Surigao City",
+    "region": "Caraga",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Surigao del Norte State University - Del Carmen",
+    "acronym": "SNSU SNSU-Siargao Siargao Island",
+    "region": "Caraga",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Surigao del Norte State University - Malimono",
+    "acronym": "SNSU SNSU-Malimono Surigao",
+    "region": "Caraga",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Surigao del Norte State University - Mainit",
+    "acronym": "SNSU SNSU-Mainit Surigao",
+    "region": "Caraga",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Eulogio \"Amang\" Rodriguez Institute of Science and Technology - Manila Campus",
+    "acronym": "EARIST EARIST-Main Nagtahan Sampaloc",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Eulogio \"Amang\" Rodriguez Institute of Science and Technology - Cavite Campus",
+    "acronym": "EARIST EARIST-Cavite EARIST-GMA GMA",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Rizal Technological University - Boni Campus",
+    "acronym": "RTU RTU-Boni Mandaluyong",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Rizal Technological University - Pasig Campus",
+    "acronym": "RTU RTU-Pasig",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Philippine Normal University - Manila",
+    "acronym": "PNU PNU-Main Manila Taft",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Philippine Normal University - North Luzon",
+    "acronym": "PNU PNU-NL Alicia Isabela",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Philippine Normal University - South Luzon",
+    "acronym": "PNU PNU-SL Lopez Quezon",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Philippine Normal University - Visayas",
+    "acronym": "PNU PNU-Visayas Cadiz Negros",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Philippine Normal University - Mindanao",
+    "acronym": "PNU PNU-Mindanao Prosperidad Agusan",
+    "region": "Caraga",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Abra State Institute of Sciences and Technology - Lagangilang",
+    "acronym": "ASIST ASIST-Main Abra",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Abra State Institute of Sciences and Technology - Bangued",
+    "acronym": "ASIST ASIST-Bangued Abra",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Apayao State College - Conner",
+    "acronym": "ASC ASC-Conner Apayao",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Apayao State College - Luna",
+    "acronym": "ASC ASC-Luna Apayao",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ifugao State University - Lamut",
+    "acronym": "IFSU IFSU-Main Lamut Ifugao",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ifugao State University - Lagawe",
+    "acronym": "IFSU IFSU-Lagawe Ifugao",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ifugao State University - Potia",
+    "acronym": "IFSU IFSU-Potia Ifugao",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Kalinga State University - Tabuk",
+    "acronym": "KSU KSU-Main Tabuk Kalinga",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mountain Province State Polytechnic College - Bontoc",
+    "acronym": "MPSPC MPSPC-Main Bontoc",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Mountain Province State Polytechnic College - Tadian",
+    "acronym": "MPSPC MPSPC-Tadian",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ilocos Sur Polytechnic State College - Santa Maria",
+    "acronym": "ISPSC ISPSC-Main Santa Maria Ilocos Sur",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ilocos Sur Polytechnic State College - Candon",
+    "acronym": "ISPSC ISPSC-Candon Ilocos Sur",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Ilocos Sur Polytechnic State College - Tagudin",
+    "acronym": "ISPSC ISPSC-Tagudin Ilocos Sur",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "North Luzon Philippines State College - Candon",
+    "acronym": "NLPSC Candon Ilocos Sur",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Northern Philippines - Vigan",
+    "acronym": "UNP UNP-Main Vigan Ilocos Sur",
+    "region": "Region I",
+    "island": "Luzon"
+  },
+  {
+    "name": "Batanes State College - Basco",
+    "acronym": "BSC Basco Batanes",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Nueva Vizcaya State University - Bayombong",
+    "acronym": "NVSU NVSU-Main Bayombong Nueva Vizcaya",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Nueva Vizcaya State University - Bambang",
+    "acronym": "NVSU NVSU-Bambang Nueva Vizcaya",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Quirino State University - Diffun",
+    "acronym": "QSU QSU-Main Diffun Quirino",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Quirino State University - Cabarroguis",
+    "acronym": "QSU QSU-Cabarroguis Quirino",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Quirino State University - Maddela",
+    "acronym": "QSU QSU-Maddela Quirino",
+    "region": "Region II",
+    "island": "Luzon"
+  },
+  {
+    "name": "Aurora State College of Technology - Baler",
+    "acronym": "ASCOT ASCOT-Main Baler Aurora",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Aurora State College of Technology - Casiguran",
+    "acronym": "ASCOT ASCOT-Casiguran Aurora",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Bulacan Agricultural State College - San Ildefonso",
+    "acronym": "BASC San Ildefonso Bulacan",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Central Luzon State University - Mu\u00f1oz",
+    "acronym": "CLSU Science City of Munoz Nueva Ecija",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Pampanga State Agricultural University - Magalang",
+    "acronym": "PSAU Magalang Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Philippine Merchant Marine Academy - San Narciso",
+    "acronym": "PMMA San Narciso Zambales",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Tarlac Agricultural University - Camiling",
+    "acronym": "TAU Camiling Tarlac",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Marinduque State University - Boac",
+    "acronym": "MarSU MSC Boac Marinduque",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Marinduque State University - Santa Cruz",
+    "acronym": "MarSU MSC Santa Cruz Marinduque",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Western Philippines University - Aborlan",
+    "acronym": "WPU WPU-Main Aborlan Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Western Philippines University - Puerto Princesa",
+    "acronym": "WPU WPU-Puerto Princesa Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Western Philippines University - Quezon",
+    "acronym": "WPU WPU-Quezon Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Western Philippines University - Rio Tuba",
+    "acronym": "WPU WPU-Rio Tuba Palawan",
+    "region": "Region IV-B",
+    "island": "Luzon"
+  },
+  {
+    "name": "Bicol State College of Applied Sciences and Technology - Naga",
+    "acronym": "BISCAST Naga City",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Camarines Norte State College - Daet Main",
+    "acronym": "CNSC CNSC-Main Daet Camarines Norte",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Camarines Norte State College - Labo",
+    "acronym": "CNSC CNSC-Labo Camarines Norte",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Camarines Sur Polytechnic Colleges - Nabua",
+    "acronym": "CSPC Nabua Camarines Sur",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Camarines Sur Polytechnic Colleges - Buhi",
+    "acronym": "CSPC Buhi Camarines Sur",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Catanduanes State University - Virac",
+    "acronym": "CatSU CatSU-Main Virac Catanduanes",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Dr. Emilio B. Espinosa Sr. Memorial State College - Mandaon",
+    "acronym": "DEBESMSCAT Mandaon Masbate",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Sorsogon State University - Sorsogon City Main",
+    "acronym": "SorSU SorSU-Main Sorsogon",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Sorsogon State University - Bulan",
+    "acronym": "SorSU SorSU-Bulan Sorsogon",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Sorsogon State University - Magallanes",
+    "acronym": "SorSU SorSU-Magallanes Sorsogon",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Sorsogon State University - Castilla",
+    "acronym": "SorSU SorSU-Castilla Sorsogon",
+    "region": "Region V",
+    "island": "Luzon"
+  },
+  {
+    "name": "Carlos Hilado Memorial State University - Talisay",
+    "acronym": "CHMSU CHMSU-Main Talisay Negros Occidental",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Carlos Hilado Memorial State University - Alijis",
+    "acronym": "CHMSU CHMSU-Alijis Bacolod",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Carlos Hilado Memorial State University - Fortune Towne",
+    "acronym": "CHMSU CHMSU-Fortune Towne Bacolod",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Carlos Hilado Memorial State University - Binalbagan",
+    "acronym": "CHMSU CHMSU-Binalbagan Negros Occidental",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Central Philippines State University - Kabankalan Main",
+    "acronym": "CPSU CPSU-Main Kabankalan Negros Occidental",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Central Philippines State University - Hinigaran",
+    "acronym": "CPSU CPSU-Hinigaran Negros Occidental",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Central Philippines State University - San Carlos",
+    "acronym": "CPSU CPSU-San Carlos Negros Occidental",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Guimaras State University - Buenavista",
+    "acronym": "GSU GSU-Main Buenavista Guimaras",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Guimaras State University - Jordan",
+    "acronym": "GSU GSU-Jordan Guimaras",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Northern Iloilo State University - Estancia",
+    "acronym": "NISU NISU-Main Estancia Iloilo",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Northern Iloilo State University - Sara",
+    "acronym": "NISU NISU-Sara Iloilo",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of Antique - Sibalom Main",
+    "acronym": "UA UA-Main Sibalom Antique",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of Antique - Hamtic",
+    "acronym": "UA UA-Hamtic Antique",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of Antique - Tibiao",
+    "acronym": "UA UA-Tibiao Antique",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Siquijor State College - Larena",
+    "acronym": "SSC Larena Siquijor",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Biliran Province State University - Naval",
+    "acronym": "BiPSU Naval Biliran",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Eastern Samar State University - Borongan Main",
+    "acronym": "ESSU ESSU-Main Borongan Eastern Samar",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Eastern Samar State University - Guiuan",
+    "acronym": "ESSU ESSU-Guiuan Eastern Samar",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Eastern Samar State University - Can-avid",
+    "acronym": "ESSU ESSU-Canavid Eastern Samar",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Leyte Normal University - Tacloban",
+    "acronym": "LNU Tacloban City Leyte",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Northwest Samar State University - Calbayog Main",
+    "acronym": "NwSSU Calbayog Samar",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Northwest Samar State University - San Jorge",
+    "acronym": "NwSSU San Jorge Samar",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Samar State University - Catbalogan Main",
+    "acronym": "SSU Catbalogan Samar",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Samar State University - Mercedes",
+    "acronym": "SSU Mercedes Catbalogan",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Southern Leyte State University - Sogod Main",
+    "acronym": "SLSU SLSU-Sogod Southern Leyte",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Southern Leyte State University - Tomas Oppus",
+    "acronym": "SLSU SLSU-Tomas Oppus Southern Leyte",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Southern Leyte State University - Bontoc",
+    "acronym": "SLSU SLSU-Bontoc Southern Leyte",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Southern Leyte State University - San Juan",
+    "acronym": "SLSU SLSU-San Juan Southern Leyte",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Southern Leyte State University - Hinunangan",
+    "acronym": "SLSU SLSU-Hinunangan Southern Leyte",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of Eastern Philippines - Catarman Main",
+    "acronym": "UEP UEP-Main Catarman Northern Samar",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of Eastern Philippines - Laoang",
+    "acronym": "UEP UEP-Laoang Northern Samar",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of Eastern Philippines - Catubig",
+    "acronym": "UEP UEP-Catubig Northern Samar",
+    "region": "Region VIII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Basilan State College - Isabela City",
+    "acronym": "BaSC Isabela City Basilan",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "JH Cerilles State College - Mati San Miguel",
+    "acronym": "JHCSC JHCSC-Main San Miguel Zamboanga del Sur",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "JH Cerilles State College - Pagadian",
+    "acronym": "JHCSC JHCSC-Pagadian Zamboanga del Sur",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "JH Cerilles State College - Dumingag",
+    "acronym": "JHCSC JHCSC-Dumingag Zamboanga del Sur",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Jose Rizal Memorial State University - Dapitan Main",
+    "acronym": "JRMSU JRMSU-Main Dapitan Zamboanga del Norte",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Jose Rizal Memorial State University - Dipolog",
+    "acronym": "JRMSU JRMSU-Dipolog Zamboanga del Norte",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Jose Rizal Memorial State University - Katipunan",
+    "acronym": "JRMSU JRMSU-Katipunan Zamboanga del Norte",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Jose Rizal Memorial State University - Tampilisan",
+    "acronym": "JRMSU JRMSU-Tampilisan Zamboanga del Norte",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Jose Rizal Memorial State University - Siocon",
+    "acronym": "JRMSU JRMSU-Siocon Zamboanga del Norte",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Zamboanga Peninsula Polytechnic State University - Main",
+    "acronym": "ZPPSU ZPPSU-Main Zamboanga City",
+    "region": "Region IX",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Camiguin Polytechnic State College - Mambajao",
+    "acronym": "CPSC Mambajao Camiguin",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Central Mindanao University - Maramag",
+    "acronym": "CMU Musuan Maramag Bukidnon",
+    "region": "Region X",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Davao del Norte State College - Panabo",
+    "acronym": "DNSC Panabo City Davao del Norte",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Davao Oriental State University - Mati Main",
+    "acronym": "DORSU Mati Davao Oriental",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Davao del Sur State College - Digos Main",
+    "acronym": "DSSC Digos Davao del Sur",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Southern Philippines Agri-Business and Marine and Aquatic School of Technology - Malita",
+    "acronym": "SPAMAST Malita Davao Occidental",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Cotabato State University - Cotabato City",
+    "acronym": "CotSU Cotabato City",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "South Cotabato State College - Surallah",
+    "acronym": "SCSC Surallah South Cotabato",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Sultan Kudarat State University - ACCESS Tacurong",
+    "acronym": "SKSU SKSU-Main Tacurong Sultan Kudarat",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Sultan Kudarat State University - Isulan",
+    "acronym": "SKSU SKSU-Isulan Sultan Kudarat",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Sultan Kudarat State University - Kalamansig",
+    "acronym": "SKSU SKSU-Kalamansig Sultan Kudarat",
+    "region": "Region XII",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Agusan del Sur State College of Agriculture and Technology - Bunawan",
+    "acronym": "ASSCAT Bunawan Agusan del Sur",
+    "region": "Caraga",
+    "island": "Mindanao"
+  },
+  {
+    "name": "North Eastern Mindanao State University - Tandag Main",
+    "acronym": "NEMSU NEMSU-Main Tandag Surigao del Sur",
+    "region": "Caraga",
+    "island": "Mindanao"
+  },
+  {
+    "name": "North Eastern Mindanao State University - Cantilan",
+    "acronym": "NEMSU NEMSU-Cantilan Surigao del Sur",
+    "region": "Caraga",
+    "island": "Mindanao"
+  },
+  {
+    "name": "North Eastern Mindanao State University - Lianga",
+    "acronym": "NEMSU NEMSU-Lianga Surigao del Sur",
+    "region": "Caraga",
+    "island": "Mindanao"
+  },
+  {
+    "name": "North Eastern Mindanao State University - Bislig",
+    "acronym": "NEMSU NEMSU-Bislig Surigao del Sur",
+    "region": "Caraga",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Sulu State College - Jolo",
+    "acronym": "SSC Jolo Sulu",
+    "region": "BARMM",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Tawi-Tawi Regional Agricultural College - Bongao",
+    "acronym": "TRAC Bongao Tawi-Tawi",
+    "region": "BARMM",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Holy Angel University",
+    "acronym": "HAU Angeles City Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Angeles University Foundation",
+    "acronym": "AUF Angeles City Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Wesleyan University - Philippines - Cabanatuan",
+    "acronym": "WUP Wesleyan Cabanatuan Nueva Ecija",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Wesleyan University - Philippines - Aurora",
+    "acronym": "WUP Wesleyan Maria Aurora",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Systems Plus College Foundation - Angeles",
+    "acronym": "SPCF Balibago Angeles Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "Systems Plus College Foundation - San Fernando",
+    "acronym": "SPCF San Fernando Pampanga",
+    "region": "Region III",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of Baguio",
+    "acronym": "UB Baguio City",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of the Cordilleras",
+    "acronym": "UC Baguio City",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Saint Louis University - Baguio",
+    "acronym": "SLU Baguio City",
+    "region": "CAR",
+    "island": "Luzon"
+  },
+  {
+    "name": "University of San Agustin - Iloilo",
+    "acronym": "USA San Agustin Iloilo City",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Central Philippine University - Iloilo",
+    "acronym": "CPU Jaro Iloilo City",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "Silliman University - Dumaguete",
+    "acronym": "SU Silliman Dumaguete Negros Oriental",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "Cebu Institute of Technology - University",
+    "acronym": "CIT CIT-U Cebu City",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "University of the Immaculate Conception - Davao",
+    "acronym": "UIC Davao City",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "San Pedro College - Davao",
+    "acronym": "SPC San Pedro College Davao City",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Brokenshire College - Davao",
+    "acronym": "BC Brokenshire Davao City",
+    "region": "Region XI",
+    "island": "Mindanao"
+  },
+  {
+    "name": "Colegio San Agustin - Bi\u00f1an",
+    "acronym": "CSA CSA-Binan Laguna",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  },
+  {
+    "name": "Colegio San Agustin - Bacolod",
+    "acronym": "CSA CSA-Bacolod Negros",
+    "region": "Region VI",
+    "island": "Visayas"
+  },
+  {
+    "name": "National Teachers College - Manila",
+    "acronym": "NTC Quiapo Manila",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Enderun Colleges - Taguig",
+    "acronym": "Enderun BGC Taguig",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Southville International School and Colleges",
+    "acronym": "SISC Las Pinas",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Trinity University of Asia - Quezon City",
+    "acronym": "TUA Cathedral Heights QC",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "FEATI University - Manila",
+    "acronym": "FEATI Sta Cruz Manila",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Manila Central University - Caloocan",
+    "acronym": "MCU Monumento Caloocan",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "Asia Pacific College - Makati",
+    "acronym": "APC Magallanes Makati",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "iACADEMY - Makati",
+    "acronym": "iACADEMY Yakal Makati",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "iACADEMY - Cebu",
+    "acronym": "iACADEMY Cebu",
+    "region": "Region VII",
+    "island": "Visayas"
+  },
+  {
+    "name": "CIIT College of Arts and Technology - Quezon City",
+    "acronym": "CIIT Kamuning QC",
+    "region": "NCR",
+    "island": "Luzon"
+  },
+  {
+    "name": "St. Dominic College of Asia - Bacoor",
+    "acronym": "SDCA Bacoor Cavite",
+    "region": "Region IV-A",
+    "island": "Luzon"
+  }
+]
