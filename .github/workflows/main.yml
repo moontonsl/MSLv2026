@@ -78,9 +78,10 @@ jobs:
             php artisan view:clear
 
             # Set permissions
+            mkdir -p /home/moontonslph.org/msl2026/public/uploads/proofs
             chmod -R 775 storage bootstrap/cache
             chown -R daemon:daemon storage bootstrap/cache
-            chmod -R 777 /home/moontonslph.org/msl2026/storage /home/moontonslph.org/msl2026/bootstrap/cache
+            chmod -R 777 /home/moontonslph.org/msl2026/storage /home/moontonslph.org/msl2026/bootstrap/cache /home/moontonslph.org/msl2026/public/uploads
             
             # Bring application back up
             php artisan up
