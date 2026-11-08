@@ -461,7 +461,9 @@ Route::get('/renewal-review', function () {
 Route::middleware(['auth', 'redirect.status'])->group(function () {
 
     Route::get('/pending-verification', function () {
-        return Inertia::render('Auth/PendingVerification');
+        return Inertia::render('Auth/PendingVerification', [
+            'userData' => Auth::user(),
+        ]);
     })->name('pending.verification');
 
     Route::get('/rejected-verification', function () {
