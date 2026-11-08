@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -18,21 +19,14 @@ class RegionalAdminManagementController extends Controller
         $tab = $request->string('tab', 'admins')->toString();
 
         $adminQuery = $this->regionalAdminsQuery();
-        $eligibleQuery = $this->eligibleUsersQuery();
 
         if ($region !== '') {
             $adminQuery->where('region', $region);
-            $eligibleQuery->where('region', $region);
         }
 
         $regionalAdmins = $this->search($adminQuery, $search)
             ->latest('updated_at')
             ->paginate(15, ['*'], 'admin_page')
-            ->withQueryString();
-
-        $eligibleUsers = $this->search($eligibleQuery, $search)
-            ->latest('created_at')
-            ->paginate(15, ['*'], 'eligible_page')
             ->withQueryString();
 
         $stats = [
@@ -52,15 +46,39 @@ class RegionalAdminManagementController extends Controller
 
         return Inertia::render('Admin/RegionalAdmins', [
             'regionalAdmins' => $regionalAdmins,
-            'eligibleUsers' => $eligibleUsers,
             'filters' => [
                 'search' => $search,
                 'region' => $region,
-                'tab' => $tab,
             ],
             'stats' => $stats,
             'regionsList' => $regionsList,
         ]);
+    }
+
+    public function searchStudents(Request $request): JsonResponse
+    {
+        $q = trim($request->string('q')->toString());
+        if ($q === '') {
+            return response()->json([]);
+        }
+
+        $students = User::query()
+            ->whereIn('user_type', ['Student', 'Student Leader'])
+            ->where('status', 'active')
+            ->where(function ($builder) use ($q) {
+                $builder->where('name', 'like', "%{$q}%")
+                    ->orWhere('email', 'like', "%{$q}%")
+                    ->orWhere('username', 'like', "%{$q}%")
+                    ->orWhere('studentId', 'like', "%{$q}%")
+                    ->orWhere('ml_id', 'like', "%{$q}%")
+                    ->orWhere('ml_ign', 'like', "%{$q}%")
+                    ->orWhere('university', 'like', "%{$q}%");
+            })
+            ->latest('created_at')
+            ->limit(20)
+            ->get($this->columns());
+
+        return response()->json($students);
     }
 
     public function promote(Request $request, User $user): RedirectResponse
@@ -119,14 +137,6 @@ class RegionalAdminManagementController extends Controller
     {
         return User::query()
             ->where('user_type', 'Regional Admin')
-            ->select($this->columns());
-    }
-
-    private function eligibleUsersQuery()
-    {
-        return User::query()
-            ->whereIn('user_type', ['Student', 'Student Leader'])
-            ->where('status', 'active')
             ->select($this->columns());
     }
 

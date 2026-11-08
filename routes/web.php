@@ -675,6 +675,8 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->middleware('admin.permission:manage_sl')->name('admin.users.demote-sl');
     Route::get('/admin/regional-admin-accounts', [RegionalAdminManagementController::class, 'index'])
         ->middleware('admin.permission:manage_regional_admins')->name('admin.regional-admin-management');
+    Route::get('/admin/regional-admin-accounts/search-students', [RegionalAdminManagementController::class, 'searchStudents'])
+        ->middleware('admin.permission:manage_regional_admins')->name('admin.regional-admins.search-students');
     Route::post('/admin/users/{user}/promote-regional-admin', [RegionalAdminManagementController::class, 'promote'])
         ->middleware('admin.permission:manage_regional_admins')->name('admin.users.promote-regional-admin');
     Route::post('/admin/users/{user}/demote-regional-admin', [RegionalAdminManagementController::class, 'demote'])
