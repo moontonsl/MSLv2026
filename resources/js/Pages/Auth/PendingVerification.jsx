@@ -139,7 +139,6 @@ export default function PendingVerification({ userData }) {
                             </div>
                             <ul className="text-xs sm:text-sm text-gray-300 space-y-2 pl-7 list-disc">
                                 <li>Our team will review your submitted registration details and proof of student enrollment.</li>
-                                <li>Verification usually takes <span className="text-white font-medium">24 to 48 hours</span>.</li>
                                 <li>Once approved, you will have full access to the Student Portal, campus events, and tournament participation.</li>
                             </ul>
                         </div>
