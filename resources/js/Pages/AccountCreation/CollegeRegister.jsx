@@ -1,5 +1,6 @@
-import { BadgeCheck } from 'lucide-react';
+import { BadgeCheck, AlertTriangle, Loader2 } from 'lucide-react';
 import styles from "./register.module.scss";
+import axios from 'axios';
 
 import MainLayout from "@/Layouts/MainLayout";
 import { Head } from '@inertiajs/react';
@@ -7,7 +8,7 @@ import { Head } from '@inertiajs/react';
 import React, { useRef, useState } from 'react';
 import { useForm } from '@inertiajs/react';
 
-// ✅ UPDATED IMPORT PATHS (SHS folder)
+// ✅ UPDATED IMPORT PATHS (College folder)
 import Step1BasicDetails from './components/College/Step1BasicDetails.jsx';
 import Step2EducationDetails from './components/College/Step2EducationDetails.jsx';
 import Step3GameDetails from './components/College/Step3GameDetails.jsx';
@@ -21,6 +22,7 @@ const initialFormData = {
     yearLevel: '', university: '', island: '', region: '', studentId: '', course: '', proofOfEnrollment: null,
     // Step 3
     userId: '', serverId: '', ign: '', squadName: '', squadAbbreviation: '', rank: '', inGameRole: '',
+    avatar: '', level: '', rankLevel: '',
     // Step 4
     username: '', password: '', confirmPassword: '', email: '', captcha: '', termsAccepted: false
 };
@@ -43,6 +45,7 @@ const CollegeRegister = () => {
     const [step4ShowErrors, setStep4ShowErrors] = useState(false);
     const [step4VisitId, setStep4VisitId] = useState(0);
     const [successModalOpen, setSuccessModalOpen] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
     const step1Ref = useRef(null);
     const step2Ref = useRef(null);
     const step3Ref = useRef(null);
@@ -115,7 +118,7 @@ const CollegeRegister = () => {
         setSuccessMessage("");
     };
 
-    const handleFinalStep4Submit = () => {
+    const handleFinalStep4Submit = async () => {
         setStep4ShowErrors(true);
         const isStep4Valid = step4Ref.current?.validateStep4?.();
 
@@ -125,8 +128,39 @@ const CollegeRegister = () => {
 
         setErrorMessage("");
         setSuccessMessage("");
-        setSuccessModalOpen(true);
-        return true;
+        setSubmitting(true);
+
+        try {
+            const payload = new FormData();
+            Object.entries(data).forEach(([key, value]) => {
+                if (value !== null && value !== undefined) {
+                    payload.append(key, value);
+                }
+            });
+            payload.append('division', 'college');
+
+            const res = await axios.post(route('account.creation.register'), payload, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            if (res.data.success) {
+                setSuccessModalOpen(true);
+                return true;
+            } else {
+                setErrorMessage(res.data.message || 'Registration failed. Please check your details.');
+                return false;
+            }
+        } catch (error) {
+            const message = error.response?.data?.message || 
+                (error.response?.data?.errors ? Object.values(error.response.data.errors).flat()[0] : null) || 
+                'An error occurred during registration. Please check your inputs and try again.';
+            setErrorMessage(message);
+            return false;
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     function isFormValid(step) {
@@ -269,6 +303,14 @@ const CollegeRegister = () => {
                     </div>
                 )}
 
+                {/* ERROR */}
+                {errorMessage && (
+                    <div className="bg-red-500/10 border border-red-500 text-red-400 p-3 mt-4 rounded-md text-sm flex items-center gap-2">
+                    <AlertTriangle size={18} />
+                    {errorMessage}
+                    </div>
+                )}
+
                 {/* NAV BUTTONS */}
                 <div className="flex flex-row gap-3 mt-6">
 
@@ -277,7 +319,8 @@ const CollegeRegister = () => {
                         <button
                             type="button"
                             onClick={handlePrev}
-                            className="flex-1 py-3 rounded-xl bg-gray-700 text-white hover:bg-yellow-500 transition"
+                            disabled={submitting}
+                            className="flex-1 py-3 rounded-xl bg-gray-700 text-white hover:bg-yellow-500 transition disabled:opacity-50"
                         >
                             PREVIOUS
                         </button>
@@ -296,9 +339,17 @@ const CollegeRegister = () => {
                         <button
                             type="button"
                             onClick={handleFinalStep4Submit}
-                            className="flex-1 py-3 rounded-xl bg-brand-500 text-black font-semibold hover:bg-brand-600 transition"
+                            disabled={submitting}
+                            className="flex-1 py-3 rounded-xl bg-brand-500 text-black font-semibold hover:bg-brand-600 transition flex items-center justify-center gap-2 disabled:opacity-50"
                         >
-                            SUBMIT
+                            {submitting ? (
+                                <>
+                                    <Loader2 className="animate-spin" size={18} />
+                                    <span>CREATING ACCOUNT...</span>
+                                </>
+                            ) : (
+                                'SUBMIT'
+                            )}
                         </button>
                     )}
 

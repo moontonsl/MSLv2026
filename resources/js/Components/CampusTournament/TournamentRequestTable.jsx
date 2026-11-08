@@ -51,7 +51,7 @@ export default function TournamentRequestTable({
                                     {column.label}
                                 </th>
                             ))}
-                            <th className="px-4 py-4 text-left text-sm font-semibold text-yellow-500">
+                            <th className="px-4 py-4 text-right text-sm font-semibold text-yellow-500">
                                 Action
                             </th>
                         </tr>
@@ -71,18 +71,18 @@ export default function TournamentRequestTable({
                                 </td>
                                 <td className="px-4 py-4 text-sm text-gray-300">{request.slName}</td>
                                 <td className="px-4 py-4">
-                                    <div className="flex flex-wrap items-center gap-2">
+                                    <div className="flex flex-nowrap items-center justify-end gap-2">
                                         <button
                                             type="button"
                                             onClick={() => onApprove(request)}
-                                            className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-4 py-2 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                                            className="inline-flex h-9 items-center justify-center whitespace-nowrap rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
                                         >
                                             Approve
                                         </button>
                                         <button
                                             type="button"
                                             onClick={() => onReject(request)}
-                                            className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700"
+                                            className="inline-flex h-9 items-center justify-center whitespace-nowrap rounded-lg bg-red-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-red-700"
                                         >
                                             Reject
                                         </button>
@@ -154,7 +154,7 @@ export default function TournamentRequestTable({
                     type="button"
                     disabled={currentPage <= 1}
                     onClick={() => onPageChange?.(currentPage - 1)}
-                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-yellow-500 bg-transparent px-4 py-2 text-sm font-semibold text-yellow-500 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-yellow-500 px-4 py-2 text-sm font-bold text-black disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     Previous
                 </button>
