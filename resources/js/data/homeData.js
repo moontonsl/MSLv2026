@@ -1,4 +1,4 @@
-import { comingSoonHref, MSL_NETWORK_HREF } from './siteNavigation.js';
+import { comingSoonHref, MSL_NETWORK_HREF, PUBLIC_ROUTES } from './siteNavigation.js';
 
 const PLANT_IMAGE =
     "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1600&q=80";
@@ -50,7 +50,8 @@ export const homeData = {
                 description:
                     "The biggest inter-school MLBB tournament is back. Watch the regionals live.",
                 date: "Nov 27, 2025",
-                image: PLANT_IMAGE,
+                image: "/champ poster.jpg",
+                imagePosition: "85% 50%",
                 originalHref: "/Event",
                 href: comingSoonHref('events'),
                 comingSoon: true,
@@ -62,7 +63,10 @@ export const homeData = {
                 description:
                     "Weekly scrims for student teams. Build synergy, earn rankings, get noticed.",
                 date: "Dec 04, 2025",
-                image: PLANT_IMAGE,
+                image: "/Images/Home/campus-scrims.jpg",
+                imagePosition: "35% 30%",
+                imageScale: 1.2,
+                imageOrigin: "35% 0%",
                 originalHref: "/Event",
                 href: comingSoonHref('events'),
                 comingSoon: true,
@@ -74,7 +78,8 @@ export const homeData = {
                 description:
                     "Meet our campus partners and explore resources for esports org leaders.",
                 date: "Dec 18, 2025",
-                image: PLANT_IMAGE,
+                image: "/Images/Home/msl-partner.jpg",
+                imagePosition: "50% 55%",
                 originalHref: "/Partnerships",
                 href: MSL_NETWORK_HREF,
             },
@@ -86,7 +91,7 @@ export const homeData = {
         description:
             "We are the official student leader body of Mobile Legends: Bang Bang in the Philippines. Guided by Moonton, we create inclusive campus initiatives that unite players, boost school pride, and prove that gaming passion goes hand-in-hand with academic success.",
         linkLabel: "Learn More About Us",
-        href: "/About",
+        href: PUBLIC_ROUTES.about,
         statistics: [
             {
                 icon: "user",
@@ -142,48 +147,55 @@ export const homeData = {
         description:
             "Building opportunities for student leaders through events, training, and nationwide esports initiatives.",
         linkLabel: "View All Programs",
-        href: "/Programs",
+        href: PUBLIC_ROUTES.programs,
         items: [
             {
                 id: "campus-tournament",
                 title: "Campus Tournament",
                 description:
                     "Gain official tournaments, grants, and mentorship for your campus community.",
-                image: PLANT_IMAGE,
+                image: "/Images/Home/campus-tournament.png",
+                imagePosition: "20% 50%",
                 href: "/campus-tournament",
-            },
-            {
-                id: "events",
-                title: "Events",
-                description:
-                    "Explore MSL events and activities.",
-                image: PLANT_IMAGE,
-                originalHref: "/Event",
-                href: comingSoonHref('events'),
-                comingSoon: true,
             },
             {
                 id: "msl-network",
                 title: "The MSL Network",
                 description:
                     "Connect with school communities through The MSL Network.",
-                image: PLANT_IMAGE,
+                image: "/Images/Home/msl-network.jpeg",
+                imagePosition: "65% 42%",
+                imageScale: 1.25,
+                imageOrigin: "100% 42%",
                 href: MSL_NETWORK_HREF,
+            },
+            {
+                id: "events",
+                title: "Events",
+                description:
+                    "Explore MSL events and activities.",
+                image: "/Images/Home/events.jpg",
+                originalHref: "/Event",
+                href: comingSoonHref('events'),
+                comingSoon: true,
             },
             {
                 id: "buffs-support",
                 title: "Buff and Supports",
                 description:
                     "Find resources and support for campus communities.",
-                image: PLANT_IMAGE,
-                href: "/Buffs&Support",
+                image: "/Images/Home/buffsandsupport.png",
+                href: PUBLIC_ROUTES.buffsSupport,
             },
             {
                 id: "mcc-league",
                 title: "MCC League",
                 description:
                     "View updates about MCC League.",
-                image: PLANT_IMAGE,
+                image: "/champ poster.jpg",
+                imageFit: "cover",
+                imagePosition: "85% 50%",
+                imageOrigin: "85% 50%",
                 originalHref: "/programs/mcc-league",
                 href: comingSoonHref('mcc-league'),
                 comingSoon: true,

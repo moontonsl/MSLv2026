@@ -1,0 +1,472 @@
+.page {
+    font-size: 14px;
+    line-height: 22px;
+}
+
+.roadmapBadge { border-color: rgb(255 255 255 / 15%); background: #121212; color: #fff; }
+.roadmapContent { position: relative; border-color: rgb(255 255 255 / 10%); background: #121212; }
+.roadmapOutline { position: absolute; inset: -1px; width: calc(100% + 2px); height: calc(100% + 2px); overflow: visible; pointer-events: none; }
+.roadmapOutlineStroke { width: calc(100% - 2px); height: calc(100% - 2px); fill: none; stroke: #f2c21a; stroke-width: 2; stroke-linecap: round; stroke-dashoffset: 100; opacity: 0; }
+.roadmapLine { overflow: hidden; background: rgb(255 255 255 / 15%); }
+.roadmapLine::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent, #f2c21a 45%, #ffe58a 60%, transparent); opacity: 0; transform: translateY(-100%); }
+.roadmap[data-motion='off'] .roadmapStep:first-child .roadmapBadge { border-color: #f2c21a; color: #f2c21a; }
+.roadmap:not([data-motion='off']) .roadmapBadge { animation: roadmapBeacon 10s linear var(--step-delay) infinite; }
+.roadmap:not([data-motion='off']) .roadmapContent { animation: roadmapHighlight 10s linear var(--step-delay) infinite; }
+.roadmap:not([data-motion='off']) .roadmapOutlineStroke { animation: roadmapOutlineDraw 10s linear var(--step-delay) infinite; }
+.roadmap:not([data-motion='off']) .roadmapLine::after { animation: roadmapSignal 10s linear var(--step-delay) infinite; }
+.roadmap[data-motion='paused'] .roadmapBadge,
+.roadmap[data-motion='paused'] .roadmapContent,
+.roadmap[data-motion='paused'] .roadmapOutlineStroke,
+.roadmap[data-motion='paused'] .roadmapLine::after { animation-play-state: paused; }
+
+@keyframes roadmapBeacon {
+    0%, 20%, 100% { border-color: rgb(255 255 255 / 15%); background: #121212; color: #fff; box-shadow: 0 0 0 rgb(242 194 26 / 0%); }
+    3%, 14% { border-color: #f2c21a; background: #30290c; color: #f2c21a; box-shadow: 0 0 16px rgb(242 194 26 / 25%); }
+}
+
+@keyframes roadmapHighlight {
+    0%, 20%, 100% { background: #121212; }
+    3%, 14% { background: #1e1a0d; }
+}
+
+@keyframes roadmapOutlineDraw {
+    0% { opacity: 0; stroke-dashoffset: 100; }
+    2% { opacity: 1; stroke-dashoffset: 100; }
+    13%, 18% { opacity: 1; stroke-dashoffset: 0; }
+    20%, 100% { opacity: 0; stroke-dashoffset: 0; }
+}
+
+@keyframes roadmapSignal {
+    0%, 5% { opacity: 0; transform: translateY(-100%); }
+    6% { opacity: 1; transform: translateY(-100%); }
+    17% { opacity: 1; transform: translateY(100%); }
+    20%, 100% { opacity: 0; transform: translateY(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .roadmap[data-motion] .roadmapBadge, .roadmap[data-motion] .roadmapContent, .roadmap[data-motion] .roadmapOutlineStroke, .roadmap[data-motion] .roadmapLine::after { animation: none; }
+    .roadmap .roadmapStep:first-child .roadmapBadge { border-color: #f2c21a; color: #f2c21a; }
+}
+
+.lobbyPreview {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 10%);
+    border-radius: 24px;
+    background: #121212;
+    text-align: center;
+}
+
+.lobbyImage {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.configCard {
+    --config-accent: #fff;
+    --config-icon-background: rgb(255 255 255 / 6%);
+    border-color: rgb(255 255 255 / 20%);
+    background: #121212;
+    transition: border-color 180ms ease-out, background-color 180ms ease-out;
+}
+
+.configIcon {
+    color: var(--config-accent);
+    background: var(--config-icon-background);
+    transition: color 180ms ease-out, background-color 180ms ease-out;
+}
+
+.configAmount {
+    color: var(--config-accent);
+    transition: color 180ms ease-out;
+}
+
+.scopeChoices {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.scopeTwoColumns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.segmentedChoices {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid rgb(255 255 255 / 10%);
+    border-radius: 8px;
+    background: #0b0b0b;
+}
+
+.choiceButton {
+    min-height: 36px;
+    border: 1px solid rgb(255 255 255 / 6%);
+    border-radius: 6px;
+    padding: 6px 8px;
+    background: #0b0b0b;
+    color: #9ca3af;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
+    transition: color 180ms ease-out, background-color 180ms ease-out, border-color 180ms ease-out;
+}
+
+.scopeChoices .choiceButton[aria-pressed='true'] {
+    background: #f2c21a;
+    border-color: #f2c21a;
+    color: #111;
+}
+
+.segmentedChoices .choiceButton[aria-pressed='true'] {
+    background: #262626;
+    border-color: #444;
+    color: #fff;
+}
+
+.choiceButton:focus-visible,
+.teamSlider:focus-visible {
+    outline: 2px solid #f2c21a;
+    outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .choiceButton:not(:disabled):not([aria-pressed='true']):hover {
+        background: #222;
+        color: #fff;
+    }
+}
+
+.teamSlider {
+    display: block;
+    width: 100%;
+    height: 28px;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.teamSlider::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 999px;
+    background: linear-gradient(to right, #6b7280 var(--slider-progress), #252d38 var(--slider-progress));
+}
+
+.teamSlider::-moz-range-track {
+    height: 6px;
+    border-radius: 999px;
+    background: linear-gradient(to right, #6b7280 var(--slider-progress), #252d38 var(--slider-progress));
+}
+
+.teamSlider::-webkit-slider-thumb {
+    width: 14px;
+    height: 14px;
+    margin-top: -4px;
+    appearance: none;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.teamSlider::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.teamSlider:disabled {
+    cursor: not-allowed;
+}
+
+.budgetPanel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+}
+
+.configCard:focus-within {
+    --config-accent: #f2c21a;
+    --config-icon-background: rgb(242 194 26 / 10%);
+    border-color: #f2c21a;
+    background: #17160f;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .configCard:hover {
+        --config-accent: #f2c21a;
+        --config-icon-background: rgb(242 194 26 / 10%);
+        border-color: #f2c21a;
+        background: #17160f;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .configCard,
+    .configIcon,
+    .configAmount,
+    .choiceButton {
+        transition: none;
+    }
+}
+
+.eventCarousel {
+    width: 100%;
+    max-width: 1216px;
+    margin-inline: auto;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.photoStage {
+    position: relative;
+    margin-top: 24px;
+    aspect-ratio: 2 / 1;
+    isolation: isolate;
+    touch-action: pan-y pinch-zoom;
+    cursor: grab;
+    user-select: none;
+}
+
+.photoSlide {
+    position: absolute;
+    inset: 0 8%;
+    overflow: hidden;
+    border-radius: 24px;
+    background: #181818;
+    transform: translateX(var(--photo-drag, 0px));
+    transition: transform 480ms cubic-bezier(0.23, 1, 0.32, 1), opacity 320ms ease-out, filter 480ms ease-out;
+}
+
+.photoSlide img {
+    border-radius: inherit;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    pointer-events: none;
+    transition: transform 650ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.activePhoto {
+    z-index: 2;
+    box-shadow: 0 12px 24px rgb(0 0 0 / 30%);
+}
+
+.previousPhoto,
+.nextPhoto {
+    z-index: 1;
+    filter: brightness(0.55);
+}
+
+.previousPhoto {
+    transform: translateX(calc(-17% + var(--photo-drag, 0px))) scale(0.88);
+}
+
+.nextPhoto {
+    transform: translateX(calc(17% + var(--photo-drag, 0px))) scale(0.88);
+}
+
+.hiddenPhoto {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(calc(var(--hidden-direction) * 45%)) scale(0.6);
+}
+
+.draggingPhotos { cursor: grabbing; }
+.draggingPhotos .photoSlide { transition: none; }
+
+@media (hover: hover) and (pointer: fine) {
+    .activePhoto:hover img { transform: scale(1.04); }
+}
+
+.photoCaption {
+    position: absolute;
+    inset: auto 0 0;
+    padding: 48px 16px 16px;
+    background: linear-gradient(transparent, rgb(0 0 0 / 90%));
+}
+
+.photoControls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.photoArrow,
+.photoDot {
+    display: inline-flex;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #fff;
+}
+
+.photoArrow {
+    background: #222;
+}
+
+.photoDot {
+    width: 24px;
+}
+
+.photoDot span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #777;
+}
+
+.photoDot[aria-current='true'] span {
+    background: #f2c21a;
+}
+
+.photoArrow:hover {
+    background: #343434;
+}
+
+.photoArrow:focus-visible,
+.photoDot:focus-visible {
+    outline: 2px solid #f2c21a;
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .photoSlide,
+    .photoSlide img { transition: none; }
+    .activePhoto:hover img { transform: none; }
+}
+
+.actionButton {
+    display: inline-flex;
+    min-height: 48px;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-family: var(--font-inter);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 22px;
+    text-align: center;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background-color 180ms ease-out, border-color 180ms ease-out, color 180ms ease-out;
+}
+
+.primaryButton {
+    background: #f2c21a;
+    color: #111;
+}
+
+.secondaryButton {
+    border-color: #343434;
+    background: #1a1a1a;
+    color: #e5e7eb;
+}
+
+.actionButton:focus-visible {
+    outline: 2px solid #f2c21a;
+    outline-offset: 4px;
+}
+
+@media (hover: hover) {
+    .primaryButton:hover {
+        background: #f7d34c;
+        color: #111;
+    }
+
+    .secondaryButton:hover {
+        border-color: #555;
+        background: #262626;
+        color: #fff;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .actionButton {
+        transition: none;
+    }
+}
+
+.page > section {
+    padding-block: 64px;
+    scroll-margin-top: 112px;
+}
+
+.page > section > :global(.container-page) {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: 16px;
+}
+
+.page > section:first-child {
+    padding-top: 32px;
+    padding-bottom: 48px;
+}
+
+.page > section:first-child > :global(.container-page) {
+    padding-block: 0;
+}
+
+.page h3,
+.page article h2 {
+    font-family: 'Raleway', var(--font-inter);
+    font-weight: 700;
+}
+
+.page section:not(:first-child) > :global(.container-page) > div > h2 + p {
+    margin-top: 12px;
+    font-size: 14px;
+    line-height: 22px;
+}
+
+@media (min-width: 640px) {
+    .photoStage {
+        aspect-ratio: 2.6 / 1;
+    }
+
+    .actionButton {
+        width: auto;
+        min-width: 200px;
+    }
+
+    .page > section > :global(.container-page) {
+        padding-inline: 24px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .page > section {
+        padding-block: 96px;
+    }
+
+    .page > section:first-child {
+        padding-top: 80px;
+        padding-bottom: 64px;
+    }
+
+    .page > section > :global(.container-page) {
+        padding-inline: 32px;
+    }
+
+    .page section:not(:first-child) > :global(.container-page) > div > h2 + p {
+        font-size: 18px;
+        line-height: 28px;
+    }
+}

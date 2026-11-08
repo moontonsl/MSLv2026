@@ -9,22 +9,22 @@ class LegalPagesTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_policy_pages_are_publicly_accessible_from_the_existing_footer_destinations(): void
+    public function test_policy_pages_are_publicly_accessible_from_the_canonical_footer_destinations(): void
     {
         $this->withoutVite();
 
-        $this->get('/PrivacyPolicy')
+        $this->get('/privacy-policy')
             ->assertOk()
             ->assertInertia(fn ($page) => $page->component('PrivacyPolicy'));
 
-        $this->get('/TermsAndConditions')
+        $this->get('/terms-of-service')
             ->assertOk()
             ->assertInertia(fn ($page) => $page->component('TermsAndConditions'));
     }
 
-    public function test_readable_policy_urls_redirect_to_the_canonical_pages(): void
+    public function test_legacy_policy_urls_redirect_to_the_canonical_pages(): void
     {
-        $this->get('/privacy-policy')->assertRedirect('/PrivacyPolicy');
-        $this->get('/terms-of-service')->assertRedirect('/TermsAndConditions');
+        $this->get('/PrivacyPolicy')->assertStatus(301)->assertRedirect('/privacy-policy');
+        $this->get('/TermsAndConditions')->assertStatus(301)->assertRedirect('/terms-of-service');
     }
 }

@@ -1,4 +1,17 @@
-export const MSL_NETWORK_HREF = '/programs/msl-network';
+export const PUBLIC_ROUTES = Object.freeze({
+    home: '/',
+    about: '/about',
+    campus: '/about/campus',
+    contents: '/about/contents-social-media',
+    partnerships: '/about/partnerships',
+    network: '/programs/msl-network',
+    buffsSupport: '/programs/buffs-support',
+    programs: '/#home-programs',
+    privacy: '/privacy-policy',
+    terms: '/terms-of-service',
+});
+
+export const MSL_NETWORK_HREF = PUBLIC_ROUTES.network;
 
 export const COMING_SOON_FEATURES = {
     msl: { title: 'More from MSL', description: 'More ways to connect with the MSL Philippines community are on the way.' },
@@ -18,18 +31,18 @@ export const comingSoonHref = (feature) => `/coming-soon/${feature}`;
 
 // Keep the original destinations alongside the temporary links for reactivation.
 export const ABOUT_ITEMS = [
-    { label: 'About Us', href: '/About', activePaths: ['/about'] },
-    { label: 'Campus', originalHref: '/Campus', href: comingSoonHref('campus'), activePaths: ['/about/campus'], comingSoon: true },
-    { label: 'Contents & Social Media', href: '/Contents&SocialMedia' },
-    { label: 'Partnerships', originalHref: '/Partnerships', href: comingSoonHref('partnerships'), comingSoon: true },
+    { label: 'About Us', href: PUBLIC_ROUTES.about, activePaths: ['/About'], exact: true },
+    { label: 'Campus', href: PUBLIC_ROUTES.campus, activePaths: ['/Campus', comingSoonHref('campus')] },
+    { label: 'Contents & Social Media', href: PUBLIC_ROUTES.contents, activePaths: ['/Contents&SocialMedia', '/content-media'] },
+    { label: 'Partnerships', href: PUBLIC_ROUTES.partnerships, activePaths: ['/Partnerships', '/partner', comingSoonHref('partnerships')] },
     { label: 'General Affairs', originalHref: '/GeneralAffairs', href: comingSoonHref('general-affairs'), comingSoon: true },
 ];
 
 export const PROGRAMS_ITEMS = [
-    { label: 'The MSL Network', originalHref: '/MSLNetAdmin', href: MSL_NETWORK_HREF },
+    { label: 'The MSL Network', href: MSL_NETWORK_HREF },
     { label: 'MSL Collegiate Cup', originalHref: '/programs/collegiate-cup', href: comingSoonHref('collegiate-cup'), comingSoon: true },
     { label: 'Campus Tournaments', href: '/campus-tournament', activePaths: ['/Tournament', '/campus-tournaments', '/programs/campus-tournaments'] },
-    { label: 'Buffs & Support', href: '/Buffs&Support', activePaths: ['/programs/buffs-support'] },
+    { label: 'Buffs & Support', href: PUBLIC_ROUTES.buffsSupport, activePaths: ['/Buffs&Support'] },
     { label: 'Referral Program', originalHref: '/programs/referral', href: comingSoonHref('referral'), comingSoon: true },
 ];
 
@@ -46,16 +59,16 @@ const pathname = (url) => {
     }
 };
 
-export function isPathActive(url, href) {
+export function isPathActive(url, href, exact = false) {
     const current = pathname(url);
     const target = pathname(href);
-    return current === target || (target !== '/' && current.startsWith(`${target}/`));
+    return current === target || (!exact && target !== '/' && current.startsWith(`${target}/`));
 }
 
 export function isNavigationItemActive(url, item) {
     return [item.href, item.originalHref, ...(item.activePaths || [])]
         .filter(Boolean)
-        .some((href) => isPathActive(url, href));
+        .some((href) => isPathActive(url, href, item.exact));
 }
 
 export function isNavigationGroupActive(url, id, items) {
