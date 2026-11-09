@@ -284,7 +284,10 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
 
     const handleLogout = () => {
         setIsAccountDropdownOpen(false);
-        router.post('/logout', {}, { replace: true });
+        router.post('/logout', {}, {
+            replace: true,
+            onSuccess: () => window.location.assign('/'),
+        });
     };
 
     const toggleNavDropdown = (id) => {
