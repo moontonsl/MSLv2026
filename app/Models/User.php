@@ -138,6 +138,17 @@ class User extends Authenticatable
         return $this->hasMany(RegionAdmin::class);
     }
 
+    public function assignedSchools(): BelongsToMany
+    {
+        return $this->belongsToMany(Institution::class, 'regional_admin_schools', 'user_id', 'institution_id')
+            ->withTimestamps();
+    }
+
+    public function assignedInstitutions(): BelongsToMany
+    {
+        return $this->assignedSchools();
+    }
+
     public function tournamentParticipations(): HasMany
     {
         return $this->hasMany(TournamentParticipant::class);

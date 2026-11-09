@@ -265,7 +265,9 @@ class SchoolSearchController extends Controller
             ->get()
             ->map(function ($inst) {
                 return [
-                    'id' => 'he-'.$inst->id,
+                    'id' => $inst->id,
+                    'institution_id' => $inst->id,
+                    'code' => 'he-'.$inst->id,
                     'name' => $inst->name,
                     'acronym' => $inst->acronym,
                     'region' => $inst->region ?: 'NCR',

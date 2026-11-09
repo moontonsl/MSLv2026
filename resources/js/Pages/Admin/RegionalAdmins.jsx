@@ -6,7 +6,7 @@ import {
     Mail, CalendarDays, ArrowUp, ArrowDown, Eye, Phone,
     ExternalLink, X, Shield, Gamepad2, CheckCircle2, AlertTriangle,
     Users, Award, ChevronDown, Check, LoaderCircle, Globe, Crown,
-    UserPlus, Sparkles, FileText, CheckCircle
+    UserPlus, Sparkles, FileText, CheckCircle, Plus, Trash2
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
@@ -87,6 +87,15 @@ export default function RegionalAdmins({
     const [isSearchingStudents, setIsSearchingStudents] = useState(false);
     const [hasSearchedStudents, setHasSearchedStudents] = useState(false);
 
+    // Manage Schools Modal States
+    const [manageSchoolsAdmin, setManageSchoolsAdmin] = useState(null);
+    const [assignedSchoolsList, setAssignedSchoolsList] = useState([]);
+    const [schoolSearchQuery, setSchoolSearchQuery] = useState('');
+    const [schoolSearchResults, setSchoolSearchResults] = useState([]);
+    const [isSearchingSchools, setIsSearchingSchools] = useState(false);
+    const [isSavingSchools, setIsSavingSchools] = useState(false);
+    const [searchTimeoutId, setSearchTimeoutId] = useState(null);
+
     // Form states for promotion
     const [assignedRegion, setAssignedRegion] = useState(PHILIPPINE_REGIONS[0]);
     const [assignedDesignation, setAssignedDesignation] = useState(REGIONAL_DESIGNATIONS[0]);
@@ -95,7 +104,7 @@ export default function RegionalAdmins({
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
-        if (inspectAdmin || promoteTarget || demoteTarget || isSearchStudentModalOpen) {
+        if (inspectAdmin || promoteTarget || demoteTarget || isSearchStudentModalOpen || manageSchoolsAdmin) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = '';
@@ -103,7 +112,7 @@ export default function RegionalAdmins({
         return () => {
             document.body.style.overflow = '';
         };
-    }, [inspectAdmin, promoteTarget, demoteTarget, isSearchStudentModalOpen]);
+    }, [inspectAdmin, promoteTarget, demoteTarget, isSearchStudentModalOpen, manageSchoolsAdmin]);
 
     const adminItems = regionalAdmins?.data ?? [];
 
@@ -210,6 +219,81 @@ export default function RegionalAdmins({
                 setDemoteTarget(null);
             },
         });
+    };
+
+    // Manage Schools Handlers
+    const openManageSchoolsModal = (admin) => {
+        setManageSchoolsAdmin(admin);
+        setAssignedSchoolsList(admin.assigned_schools ? [...admin.assigned_schools] : []);
+        setSchoolSearchQuery('');
+        setSchoolSearchResults([]);
+        setIsSearchingSchools(false);
+    };
+
+    const handleSchoolSearchInput = (value) => {
+        setSchoolSearchQuery(value);
+        if (searchTimeoutId) clearTimeout(searchTimeoutId);
+
+        const trimmed = value.trim();
+        if (trimmed.length < 2) {
+            setSchoolSearchResults([]);
+            setIsSearchingSchools(false);
+            return;
+        }
+
+        setIsSearchingSchools(true);
+        const timeout = setTimeout(async () => {
+            try {
+                const res = await axios.get(route('schools.search.college'), {
+                    params: { q: trimmed },
+                });
+                setSchoolSearchResults(res.data || []);
+            } catch (err) {
+                console.error('Failed to search schools:', err);
+                setSchoolSearchResults([]);
+            } finally {
+                setIsSearchingSchools(false);
+            }
+        }, 250);
+        setSearchTimeoutId(timeout);
+    };
+
+    const handleAddSchool = (school) => {
+        if (assignedSchoolsList.some((s) => s.id === school.id)) return;
+        setAssignedSchoolsList((prev) => [
+            ...prev,
+            {
+                id: school.id,
+                name: school.name,
+                acronym: school.acronym,
+                region: school.region,
+                island: school.island,
+            },
+        ]);
+    };
+
+    const handleRemoveSchool = (schoolId) => {
+        setAssignedSchoolsList((prev) => prev.filter((s) => s.id !== schoolId));
+    };
+
+    const handleSaveAssignedSchools = () => {
+        if (!manageSchoolsAdmin || isSavingSchools) return;
+        setIsSavingSchools(true);
+        router.post(
+            route('admin.users.regional-admin-schools', manageSchoolsAdmin.id),
+            {
+                school_ids: assignedSchoolsList.map((s) => s.id),
+            },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setManageSchoolsAdmin(null);
+                },
+                onFinish: () => {
+                    setIsSavingSchools(false);
+                },
+            }
+        );
     };
 
     // Combine distinct regions for filtering
@@ -401,15 +485,17 @@ export default function RegionalAdmins({
                             <thead>
                                 <tr className="border-b border-white/10 bg-white/[0.02] text-[11px] font-bold uppercase tracking-wider text-gray-400">
                                     <th className="px-5 py-4">Admin Profile</th>
-                                    <th className="px-5 py-4">Assigned Jurisdiction</th>
+                                    <th className="px-5 py-4">Assigned Schools</th>
+                                    <th className="px-5 py-4">Jurisdiction</th>
                                     <th className="px-5 py-4">Designation & Role</th>
-                                    <th className="px-5 py-4">Campus Affiliation</th>
+                                    <th className="px-5 py-4">Base Campus</th>
                                     <th className="px-5 py-4">MLBB Identity</th>
                                     <th className="px-5 py-4 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5 text-xs text-gray-300">
                                 {adminItems.map((user) => {
+                                    const assignedCount = user.assigned_schools?.length ?? 0;
                                     return (
                                         <tr
                                             key={user.id}
@@ -435,6 +521,46 @@ export default function RegionalAdmins({
                                                             <span>{user.email || '—'}</span>
                                                         </div>
                                                     </div>
+                                                </div>
+                                            </td>
+
+                                            {/* Assigned Schools */}
+                                            <td className="px-5 py-4">
+                                                <div className="space-y-1.5">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => openManageSchoolsModal(user)}
+                                                        className={`group/btn inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-bold transition-all hover:scale-105 ${
+                                                            assignedCount > 0
+                                                                ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:border-emerald-500/50 hover:bg-emerald-500/20'
+                                                                : 'border-white/10 bg-white/5 text-gray-400 hover:border-amber-400/40 hover:text-amber-400'
+                                                        }`}
+                                                        title="Click to manage assigned campuses & schools"
+                                                    >
+                                                        <Building2 className="h-3 w-3 shrink-0" />
+                                                        <span>
+                                                            {assignedCount > 0
+                                                                ? `${assignedCount} Campus${assignedCount > 1 ? 'es' : ''}`
+                                                                : 'Assign Schools'}
+                                                        </span>
+                                                        <Plus className="h-3 w-3 ml-0.5 opacity-70 group-hover/btn:rotate-90 transition-transform" />
+                                                    </button>
+
+                                                    {user.assigned_schools && user.assigned_schools.length > 0 && (
+                                                        <div
+                                                            className="text-[11px] text-gray-400 max-w-[210px] leading-tight truncate"
+                                                            title={user.assigned_schools.map(s => s.name).join(', ')}
+                                                        >
+                                                            <span className="text-gray-300 font-medium">
+                                                                {user.assigned_schools.slice(0, 2).map(s => s.acronym || s.name).join(', ')}
+                                                            </span>
+                                                            {user.assigned_schools.length > 2 && (
+                                                                <span className="text-amber-400 font-bold ml-1">
+                                                                    +{user.assigned_schools.length - 2} more
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </td>
 
@@ -464,7 +590,7 @@ export default function RegionalAdmins({
                                                 <div className="space-y-0.5">
                                                     <div className="flex items-center gap-1.5 font-medium text-gray-200">
                                                         <Building2 className="h-3.5 w-3.5 text-amber-400 shrink-0" />
-                                                        <span className="truncate max-w-[200px]" title={user.university}>
+                                                        <span className="truncate max-w-[180px]" title={user.university}>
                                                             {user.university || 'Unassigned Campus'}
                                                         </span>
                                                     </div>
@@ -491,11 +617,20 @@ export default function RegionalAdmins({
 
                                             {/* Actions */}
                                             <td className="px-5 py-4 text-right">
-                                                <div className="flex items-center justify-end gap-2">
+                                                <div className="flex items-center justify-end gap-1.5">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => openManageSchoolsModal(user)}
+                                                        className="inline-flex items-center gap-1.5 rounded-lg border border-amber-400/30 bg-amber-400/10 px-2.5 py-1.5 text-xs font-bold text-amber-400 hover:bg-amber-400 hover:text-black transition-all"
+                                                        title="Manage Assigned Schools"
+                                                    >
+                                                        <Building2 className="h-3.5 w-3.5" />
+                                                        <span>Schools</span>
+                                                    </button>
                                                     <button
                                                         type="button"
                                                         onClick={() => setInspectAdmin(user)}
-                                                        className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
+                                                        className="inline-flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
                                                         title="View Details"
                                                     >
                                                         <Eye className="h-3.5 w-3.5" />
@@ -504,7 +639,7 @@ export default function RegionalAdmins({
                                                     <button
                                                         type="button"
                                                         onClick={() => openDemoteModal(user)}
-                                                        className="inline-flex items-center gap-1 rounded-lg border border-red-500/20 bg-red-500/10 px-2.5 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/20 transition-colors"
+                                                        className="inline-flex items-center gap-1 rounded-lg border border-red-500/20 bg-red-500/10 px-2 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/20 transition-colors"
                                                         title="Revoke Regional Admin"
                                                     >
                                                         <ArrowDown className="h-3.5 w-3.5" />
@@ -978,6 +1113,65 @@ export default function RegionalAdmins({
                             </div>
                         </div>
 
+                        {/* Assigned Campuses & Schools for Regional Admin */}
+                        {inspectAdmin.user_type === 'Regional Admin' && (
+                            <div className="mt-5 rounded-2xl border border-amber-400/20 bg-amber-400/[0.03] p-4">
+                                <div className="flex items-center justify-between mb-3">
+                                    <div className="flex items-center gap-2">
+                                        <Building2 className="h-4 w-4 text-amber-400" />
+                                        <h4 className="font-bold uppercase tracking-wider text-amber-400 text-xs">
+                                            Assigned Campuses & Schools ({(inspectAdmin.assigned_schools?.length ?? 0)})
+                                        </h4>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const target = inspectAdmin;
+                                            setInspectAdmin(null);
+                                            openManageSchoolsModal(target);
+                                        }}
+                                        className="inline-flex items-center gap-1.5 rounded-lg bg-amber-400/15 border border-amber-400/30 px-2.5 py-1 text-xs font-bold text-amber-400 hover:bg-amber-400 hover:text-black transition-all"
+                                    >
+                                        <Building2 className="h-3 w-3" />
+                                        <span>Manage Assignments</span>
+                                    </button>
+                                </div>
+
+                                {inspectAdmin.assigned_schools && inspectAdmin.assigned_schools.length > 0 ? (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+                                        {inspectAdmin.assigned_schools.map((school) => (
+                                            <div
+                                                key={school.id}
+                                                className="rounded-xl border border-white/10 bg-black/40 p-2.5 flex items-center justify-between gap-2"
+                                            >
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="text-xs font-semibold text-white truncate" title={school.name}>
+                                                        {school.name}
+                                                    </p>
+                                                    <div className="flex items-center gap-1.5 mt-0.5">
+                                                        {school.acronym && (
+                                                            <span className="text-[10px] font-mono text-amber-300">
+                                                                {school.acronym}
+                                                            </span>
+                                                        )}
+                                                        {school.region && (
+                                                            <span className="text-[10px] text-emerald-400">
+                                                                • {school.region}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-xs text-gray-400 italic">
+                                        No campuses assigned yet. Click "Manage Assignments" above to assign schools to this administrator.
+                                    </p>
+                                )}
+                            </div>
+                        )}
+
                         <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                             {/* Academic Credentials */}
                             <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 space-y-2.5">
@@ -1100,6 +1294,227 @@ export default function RegionalAdmins({
                                     <span>Appoint as Regional Admin</span>
                                 </button>
                             )}
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )}
+
+            {/* ======================================================== */}
+            {/* ASSIGN SCHOOLS / CAMPUSES TO REGIONAL ADMIN MODAL       */}
+            {/* ======================================================== */}
+            {manageSchoolsAdmin && typeof document !== 'undefined' && createPortal(
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-md transition-all duration-200"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="assign-schools-modal-title"
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget && !isSavingSchools) {
+                            setManageSchoolsAdmin(null);
+                        }
+                    }}
+                >
+                    <div className="w-full max-w-2xl rounded-2xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] flex flex-col">
+                        {/* Header */}
+                        <div className="flex items-center justify-between border-b border-white/10 pb-4 shrink-0">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20 shadow-[0_0_15px_rgba(251,191,36,0.15)]">
+                                    <Building2 className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <h3 id="assign-schools-modal-title" className="text-base font-bold text-white">
+                                        Assign Schools & Campuses
+                                    </h3>
+                                    <p className="text-xs text-gray-400">
+                                        Managing territory for <strong className="text-amber-400">{manageSchoolsAdmin.name}</strong> ({manageSchoolsAdmin.region || 'Regional Admin'})
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                disabled={isSavingSchools}
+                                onClick={() => setManageSchoolsAdmin(null)}
+                                className="rounded-lg p-1 text-gray-400 hover:bg-white/10 hover:text-white"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        {/* Modal Body */}
+                        <div className="flex-1 overflow-y-auto py-4 space-y-5 pr-1">
+                            {/* Search Bar for Schools */}
+                            <div>
+                                <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1.5">
+                                    Search & Add School / Campus
+                                </label>
+                                <div className="relative">
+                                    <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                    <input
+                                        type="search"
+                                        value={schoolSearchQuery}
+                                        onChange={(e) => handleSchoolSearchInput(e.target.value)}
+                                        placeholder="Type campus name or acronym (e.g., PUP, UST, DLSU, UP, EARIST)..."
+                                        className="w-full rounded-xl border border-white/10 bg-black/60 pl-10 pr-10 py-3 text-xs text-white placeholder:text-gray-500 focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 focus:outline-none"
+                                    />
+                                    {isSearchingSchools && (
+                                        <LoaderCircle className="absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-amber-400" />
+                                    )}
+                                </div>
+
+                                {/* Autocomplete Results Dropdown */}
+                                {schoolSearchResults.length > 0 && (
+                                    <div className="mt-2 max-h-56 overflow-y-auto rounded-xl border border-white/10 bg-[#16161a] p-2 space-y-1.5 shadow-2xl">
+                                        {schoolSearchResults.map((school) => {
+                                            const isAlreadyAdded = assignedSchoolsList.some((s) => s.id === school.id);
+                                            return (
+                                                <div
+                                                    key={school.id}
+                                                    className={`flex items-center justify-between gap-3 rounded-lg p-2.5 transition-colors ${
+                                                        isAlreadyAdded
+                                                            ? 'bg-white/[0.02] opacity-60'
+                                                            : 'hover:bg-amber-400/10 hover:border-amber-400/30'
+                                                    }`}
+                                                >
+                                                    <div className="min-w-0 flex-1">
+                                                        <div className="flex items-center gap-2 flex-wrap">
+                                                            <span className="font-semibold text-white text-xs truncate">
+                                                                {school.name}
+                                                            </span>
+                                                            {school.acronym && (
+                                                                <span className="rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] font-mono text-gray-300">
+                                                                    {school.acronym}
+                                                                </span>
+                                                            )}
+                                                            {school.region && (
+                                                                <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.2 text-[10px] font-bold text-emerald-400">
+                                                                    {school.region}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        {isAlreadyAdded ? (
+                                                            <span className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-1 text-[11px] font-semibold text-gray-400">
+                                                                <Check className="h-3 w-3 text-emerald-400" /> Added
+                                                            </span>
+                                                        ) : (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleAddSchool(school)}
+                                                                className="inline-flex items-center gap-1 rounded-md bg-amber-400 px-2.5 py-1 text-[11px] font-bold text-black hover:bg-amber-300 transition-colors shadow-sm"
+                                                            >
+                                                                <Plus className="h-3 w-3" /> Assign
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                                {schoolSearchQuery.trim().length >= 2 && !isSearchingSchools && schoolSearchResults.length === 0 && (
+                                    <p className="mt-2 text-[11px] text-gray-400 italic">
+                                        No institutions found matching "{schoolSearchQuery}".
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Assigned Campuses Section */}
+                            <div>
+                                <div className="flex items-center justify-between mb-2">
+                                    <label className="text-xs font-bold uppercase tracking-wider text-gray-300 flex items-center gap-2">
+                                        <span>Assigned Campuses ({assignedSchoolsList.length})</span>
+                                        <span className="text-[11px] font-normal normal-case text-gray-400">
+                                            (Institutions under this admin)
+                                        </span>
+                                    </label>
+                                    {assignedSchoolsList.length > 0 && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setAssignedSchoolsList([])}
+                                            className="text-[11px] font-semibold text-red-400 hover:text-red-300 transition-colors"
+                                        >
+                                            Remove All
+                                        </button>
+                                    )}
+                                </div>
+
+                                {assignedSchoolsList.length === 0 ? (
+                                    <div className="rounded-xl border border-dashed border-white/10 bg-white/[0.01] p-6 text-center">
+                                        <Building2 className="h-8 w-8 text-gray-500 mx-auto mb-2 opacity-50" />
+                                        <p className="text-xs font-semibold text-gray-300">No campuses assigned yet</p>
+                                        <p className="text-[11px] text-gray-500 mt-1">
+                                            Search for schools above to assign campuses under this admin's jurisdiction.
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto pr-1">
+                                        {assignedSchoolsList.map((school) => (
+                                            <div
+                                                key={school.id}
+                                                className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 hover:border-white/20 transition-all"
+                                            >
+                                                <div className="min-w-0 flex-1">
+                                                    <div className="flex items-center gap-2 flex-wrap">
+                                                        <span className="font-semibold text-white text-xs">
+                                                            {school.name}
+                                                        </span>
+                                                        {school.acronym && (
+                                                            <span className="rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] font-mono text-gray-300">
+                                                                {school.acronym}
+                                                            </span>
+                                                        )}
+                                                        {school.region && (
+                                                            <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.2 text-[10px] font-bold text-emerald-400">
+                                                                {school.region}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleRemoveSchool(school.id)}
+                                                    className="rounded-lg p-1.5 text-gray-400 hover:bg-red-500/20 hover:text-red-400 transition-colors"
+                                                    title="Remove campus assignment"
+                                                >
+                                                    <Trash2 className="h-3.5 w-3.5" />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="border-t border-white/10 pt-4 flex items-center justify-between shrink-0">
+                            <span className="text-[11px] text-gray-400">
+                                {assignedSchoolsList.length} total institution{assignedSchoolsList.length === 1 ? '' : 's'} assigned
+                            </span>
+                            <div className="flex items-center gap-3">
+                                <button
+                                    type="button"
+                                    disabled={isSavingSchools}
+                                    onClick={() => setManageSchoolsAdmin(null)}
+                                    className="rounded-xl border border-white/10 px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="button"
+                                    disabled={isSavingSchools}
+                                    onClick={handleSaveAssignedSchools}
+                                    className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-5 py-2.5 text-xs font-bold text-black hover:bg-amber-300 transition-colors shadow-[0_0_15px_rgba(251,191,36,0.25)] disabled:opacity-50"
+                                >
+                                    {isSavingSchools ? (
+                                        <LoaderCircle className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                        <Check className="h-4 w-4" />
+                                    )}
+                                    <span>Save School Assignments</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>,

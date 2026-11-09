@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Institution;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -18,7 +20,7 @@ class RegionalAdminManagementController extends Controller
         $region = $request->string('region')->toString();
         $tab = $request->string('tab', 'admins')->toString();
 
-        $adminQuery = $this->regionalAdminsQuery();
+        $adminQuery = $this->regionalAdminsQuery()->with(['assignedSchools:id,name,acronym,region,island']);
 
         if ($region !== '') {
             $adminQuery->where('region', $region);
@@ -33,7 +35,8 @@ class RegionalAdminManagementController extends Controller
             'total_admins' => User::query()->where('user_type', 'Regional Admin')->count(),
             'covered_regions' => User::query()->where('user_type', 'Regional Admin')->whereNotNull('region')->where('region', '!=', '')->distinct('region')->count('region'),
             'total_eligible' => User::query()->whereIn('user_type', ['Student', 'Student Leader'])->where('status', 'active')->count(),
-            'total_campuses' => User::query()->where('user_type', 'Regional Admin')->whereNotNull('university')->where('university', '!=', '')->distinct('university')->count('university'),
+            'total_campuses' => DB::table('regional_admin_schools')->distinct('institution_id')->count('institution_id') ?: User::query()->where('user_type', 'Regional Admin')->whereNotNull('university')->where('university', '!=', '')->distinct('university')->count('university'),
+            'assigned_schools_count' => DB::table('regional_admin_schools')->count(),
         ];
 
         $regionsList = User::query()
@@ -94,6 +97,8 @@ class RegionalAdminManagementController extends Controller
             'region' => 'required|string|max:255',
             'division' => 'nullable|string|max:100',
             'university' => 'nullable|string|max:255',
+            'school_ids' => 'nullable|array',
+            'school_ids.*' => 'integer|exists:institutions,id',
         ]);
 
         $updates = [
@@ -110,7 +115,38 @@ class RegionalAdminManagementController extends Controller
 
         $user->update($updates);
 
+        if (!empty($validated['school_ids'])) {
+            $user->assignedSchools()->sync($validated['school_ids']);
+        }
+
         return back()->with('success', "User {$user->name} has been appointed as Regional Admin for {$user->region}.");
+    }
+
+    public function updateSchools(Request $request, User $user): RedirectResponse|JsonResponse
+    {
+        abort_unless(
+            $user->user_type === 'Regional Admin',
+            422,
+            'User is not a Regional Admin.'
+        );
+
+        $validated = $request->validate([
+            'school_ids' => 'nullable|array',
+            'school_ids.*' => 'integer|exists:institutions,id',
+        ]);
+
+        $schoolIds = $validated['school_ids'] ?? [];
+        $user->assignedSchools()->sync($schoolIds);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => "Assigned schools updated for {$user->name}.",
+                'assigned_schools' => $user->assignedSchools()->get(['id', 'name', 'acronym', 'region', 'island']),
+            ]);
+        }
+
+        return back()->with('success', "Assigned schools updated successfully for {$user->name}.");
     }
 
     public function demote(Request $request, User $user): RedirectResponse
