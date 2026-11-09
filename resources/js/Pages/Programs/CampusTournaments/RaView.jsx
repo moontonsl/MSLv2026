@@ -17,7 +17,14 @@ import {
 } from '@/data/campusTournamentData';
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, router } from '@inertiajs/react';
-import { ChevronLeft, ChevronRight, FileSpreadsheet, Hourglass, Search } from 'lucide-react';
+import {
+    ChevronLeft,
+    ChevronRight,
+    FileSpreadsheet,
+    Hourglass,
+    Search,
+    SlidersHorizontal,
+} from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 /** The controller sends roster teams, so registration stats are derived here. */
@@ -40,7 +47,7 @@ const SEARCH_CLASS =
     'w-full min-h-[44px] rounded-lg border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-10 pr-4 text-base text-white placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none md:text-sm';
 
 const SELECT_CLASS =
-    'min-h-[44px] w-full rounded-lg border border-neutral-800 bg-[#1a1a1a] px-3 py-2.5 text-base text-white outline-none focus:ring-2 focus:ring-yellow-500 md:w-auto md:min-w-[120px] md:text-sm';
+    'min-h-[44px] w-full rounded-lg border border-neutral-800 bg-[#1a1a1a] px-3 py-2.5 text-base text-white outline-none focus:ring-2 focus:ring-yellow-500 md:text-sm';
 
 const MODE_OPTIONS = [
     { value: '', label: 'Type' },
@@ -81,6 +88,7 @@ export default function RaView({
     const [month, setMonth] = useState('');
     const [year, setYear] = useState('');
     const [modeFilter, setModeFilter] = useState('');
+    const [filtersOpen, setFiltersOpen] = useState(false);
     const [requestPage, setRequestPage] = useState(1);
     const [tournamentPage, setTournamentPage] = useState(1);
     const tournamentTotalPages = 10;
@@ -124,6 +132,13 @@ export default function RaView({
         }),
         [requests, tournaments],
     );
+    const activeFilterCount = [month, year, modeFilter].filter(Boolean).length;
+
+    const changeStatusTab = (tabId) => {
+        setStatusTab(tabId);
+        setTournamentPage(1);
+        setRequestPage(1);
+    };
 
     const filteredRequests = useMemo(() => {
         const query = search.trim().toLowerCase();
@@ -386,8 +401,31 @@ export default function RaView({
                     <CampusTournamentPageHeader />
 
                     <div className="space-y-4 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-5">
-                        <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-                            <div className="inline-flex w-full flex-wrap gap-1 rounded-xl bg-[#0a0a0a] p-1 sm:w-auto">
+                        <div className="flex flex-col gap-4">
+                            <div className="sm:hidden">
+                                <label
+                                    htmlFor="ra-tournament-view"
+                                    className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-gray-400"
+                                >
+                                    Tournament view
+                                </label>
+                                <select
+                                    id="ra-tournament-view"
+                                    value={statusTab}
+                                    onChange={(event) =>
+                                        changeStatusTab(event.target.value)
+                                    }
+                                    className={SELECT_CLASS}
+                                >
+                                    {SL_MANAGEMENT_TABS.map((tab) => (
+                                        <option key={tab.id} value={tab.id}>
+                                            {tab.label} ({tabCounts[tab.id] ?? 0})
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="hidden w-full grid-cols-4 gap-1 rounded-xl bg-[#0a0a0a] p-1 sm:grid">
                                 {SL_MANAGEMENT_TABS.map((tab) => {
                                     const isActive = statusTab === tab.id;
                                     const count = tabCounts[tab.id] ?? 0;
@@ -396,12 +434,8 @@ export default function RaView({
                                         <button
                                             key={tab.id}
                                             type="button"
-                                            onClick={() => {
-                                                setStatusTab(tab.id);
-                                                setTournamentPage(1);
-                                                setRequestPage(1);
-                                            }}
-                                            className={`inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition-colors sm:flex-none sm:px-4 ${
+                                            onClick={() => changeStatusTab(tab.id)}
+                                            className={`inline-flex min-h-[44px] min-w-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg px-2 py-2 text-sm font-semibold transition-colors lg:px-4 ${
                                                 isActive
                                                     ? 'bg-yellow-500 text-black'
                                                     : 'text-gray-300 hover:text-white'
@@ -422,8 +456,47 @@ export default function RaView({
                                 })}
                             </div>
 
-                            <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center xl:w-auto xl:justify-end">
-                                <div className="relative w-full sm:min-w-[200px] sm:flex-1 xl:w-56 xl:flex-none">
+                            <div className="flex items-center gap-2 sm:hidden">
+                                <div className="relative min-w-0 flex-1">
+                                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                                    <input
+                                        type="search"
+                                        value={search}
+                                        onChange={(event) =>
+                                            setSearch(event.target.value)
+                                        }
+                                        placeholder="Search School"
+                                        className={SEARCH_CLASS}
+                                    />
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setFiltersOpen((open) => !open)}
+                                    aria-expanded={filtersOpen}
+                                    aria-controls="ra-mobile-filters"
+                                    className={`relative inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-lg border px-3 text-sm font-semibold transition-colors ${
+                                        filtersOpen || activeFilterCount > 0
+                                            ? 'border-yellow-500 bg-yellow-500/10 text-yellow-500'
+                                            : 'border-neutral-800 bg-[#1a1a1a] text-gray-300'
+                                    }`}
+                                >
+                                    <SlidersHorizontal className="h-4 w-4" />
+                                    <span className="hidden min-[380px]:inline">Filters</span>
+                                    {activeFilterCount > 0 ? (
+                                        <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-yellow-500 px-1 text-xs font-bold text-black">
+                                            {activeFilterCount}
+                                        </span>
+                                    ) : null}
+                                </button>
+                            </div>
+
+                            <div
+                                id="ra-mobile-filters"
+                                className={`${
+                                    filtersOpen ? 'grid' : 'hidden'
+                                } grid-cols-1 gap-3 sm:grid sm:grid-cols-2 lg:grid-cols-4`}
+                            >
+                                <div className="relative hidden min-w-0 sm:block">
                                     <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
                                     <input
                                         type="search"
