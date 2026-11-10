@@ -782,9 +782,7 @@ Route::get('/Testpage', function () {
 })->name('Testpage');
 
 // FORGOT PASSWORD / USERNAME + ACCOUNT CREATION (staging paths + Evren aliases)
-Route::get('/ForgotPassword', function () {
-    return Inertia::render('Login/components/ForgotPassword');
-})->name('reset.password');
+Route::redirect('/ForgotPassword', '/forgot-password');
 
 Route::get('/ForgotUsername', function () {
     return Inertia::render('Login/components/ForgotUsername');

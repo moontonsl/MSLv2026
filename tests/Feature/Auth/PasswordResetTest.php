@@ -16,7 +16,11 @@ class PasswordResetTest extends TestCase
     {
         $response = $this->get('/forgot-password');
 
-        $response->assertStatus(200);
+        $response->assertStatus(200)
+            ->assertInertia(fn ($page) => $page->component('Auth/ForgotPassword'));
+
+        // Check alias redirect
+        $this->get('/ForgotPassword')->assertRedirect('/forgot-password');
     }
 
     public function test_reset_password_link_can_be_requested(): void
@@ -69,5 +73,26 @@ class PasswordResetTest extends TestCase
 
             return true;
         });
+    }
+
+    public function test_cannot_request_reset_with_invalid_or_unknown_email(): void
+    {
+        $response = $this->post('/forgot-password', ['email' => 'nonexistent@example.com']);
+
+        $response->assertSessionHasErrors(['email']);
+    }
+
+    public function test_cannot_reset_password_with_mismatched_confirmation(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->post('/reset-password', [
+            'token' => 'dummy-token',
+            'email' => $user->email,
+            'password' => 'newpassword123',
+            'password_confirmation' => 'mismatched123',
+        ]);
+
+        $response->assertSessionHasErrors(['password']);
     }
 }
