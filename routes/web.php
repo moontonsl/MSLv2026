@@ -793,12 +793,12 @@ Route::redirect('/forgot-username', '/ForgotUsername');
 
 Route::get('/AccountCreation/SHS', function () {
     return Inertia::render('AccountCreation/SHSRegister');
-})->name('shs.register');
+})->middleware('guest')->name('shs.register');
 Route::redirect('/register/shs', '/AccountCreation/SHS');
 
 Route::get('/AccountCreation/College', function () {
     return Inertia::render('AccountCreation/CollegeRegister');
-})->name('college.register');
+})->middleware('guest')->name('college.register');
 Route::redirect('/register/college', '/AccountCreation/College');
 
 // Public routes to fetch news data

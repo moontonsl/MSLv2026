@@ -22,7 +22,7 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
     const [roleOpen, setRoleOpen] = React.useState(false);
     const [rankSearch, setRankSearch] = React.useState('');
     const [roleSearch, setRoleSearch] = React.useState('');
-    const [showVerificationModal, setShowVerificationModal] = React.useState(true);
+    const [showVerificationModal, setShowVerificationModal] = React.useState(!data.userId || !data.ign);
     const { props } = usePage();
     const mlbbBypass = props.mlbb_bypass;
 
@@ -320,7 +320,7 @@ const Step3GameDetails = React.forwardRef(function Step3GameDetails(
 
     const handleVerificationCancel = () => {
         setShowVerificationModal(false);
-        if (onCancelVerification) {
+        if (onCancelVerification && (!data.userId || !data.ign)) {
             onCancelVerification();
         }
     };

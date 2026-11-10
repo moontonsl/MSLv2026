@@ -278,3 +278,4 @@ class SampleLocalUsersSeeder extends Seeder
         }
     }
 }
+

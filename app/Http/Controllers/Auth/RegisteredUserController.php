@@ -97,7 +97,7 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'string', 'min:6', 'max:16'],
             'captcha' => ['required', 'string'],
             'division' => ['required', 'string', 'in:college,shs'],
-            'termsAccepted' => ['required'],
+            'termsAccepted' => ['required', 'accepted'],
         ]);
 
         // MLBB Duplicate Check
@@ -120,7 +120,7 @@ class RegisteredUserController extends Controller
 
         if (!$isBypass) {
             $emailMatched = ($isEmailVerified && strtolower($verifiedEmail) === strtolower($request->email))
-                || ($sessionEmailCode && $request->captcha === $sessionEmailCode)
+                || ($sessionEmailCode && $request->captcha === $sessionEmailCode && strtolower(session('email_verification_email')) === strtolower($request->email) && (!session('email_verification_expires_at') || now()->lessThanOrEqualTo(session('email_verification_expires_at'))))
                 || ($request->captcha === '000011')
                 || ($request->captcha === '123456');
 
@@ -248,7 +248,7 @@ class RegisteredUserController extends Controller
             'region' => 'required|string|max:255',
             'studentId' => 'required|string|max:255',
             'course' => 'required|string|max:255',
-            'proofOfEnrollment' => 'nullable|file|mimes:jpeg,jpg,png,pdf|max:2048',
+            'proofOfEnrollment' => 'nullable|file|mimes:jpeg,jpg,png,pdf|max:5120',
         ]);
 
         $checklist = $user->rejection_checklist ?? [];

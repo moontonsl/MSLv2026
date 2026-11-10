@@ -149,6 +149,14 @@ const Step2EducationDetails = React.forwardRef(function Step2EducationDetails(
             return false;
         }
 
+        if (file.size > 5 * 1024 * 1024) {
+            setFieldError(
+                'proofOfEnrollment',
+                'File size must not exceed 5MB.'
+            );
+            return false;
+        }
+
         clearFieldError('proofOfEnrollment');
         return true;
     };
