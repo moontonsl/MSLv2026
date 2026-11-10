@@ -74,7 +74,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $user,
                 'guard' => $admin ? 'admin' : 'web',
-                'is_super_admin' => (bool) $admin?->isSuperAdmin(),
+                'is_super_admin' => (bool) ($admin && method_exists($admin, 'isSuperAdmin') ? $admin->isSuperAdmin() : ($admin?->user_type === 'Super Admin')),
                 'permissions' => $permissions,
             ],
             'admin_notifications' => $adminNotifications,

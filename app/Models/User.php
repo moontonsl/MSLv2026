@@ -103,6 +103,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function isSuperAdmin(): bool
+    {
+        return $this->user_type === 'Super Admin';
+    }
+
     public function campusAffiliations(): HasMany
     {
         return $this->hasMany(CampusAffiliation::class);

@@ -2,9 +2,13 @@ import React, { useState } from "react";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { ShieldAlert, LogOut, ArrowRight, Upload, CheckCircle2, AlertTriangle, User, GraduationCap, Trophy, HelpCircle } from "lucide-react";
 
-export default function RejectedVerification({ rejectionReason, rejectionChecklist, userData }) {
+export default function RejectedVerification({ rejectionReason, rejectionChecklist, userData = {} }) {
     const [activeTab, setActiveTab] = useState("basic");
-    const [previewUrl, setPreviewUrl] = useState(userData.proofOfEnrollment ? `/${userData.proofOfEnrollment}` : null);
+    const [previewUrl, setPreviewUrl] = useState(
+        userData?.proofOfEnrollment
+            ? (userData.proofOfEnrollment.startsWith('/') ? userData.proofOfEnrollment : `/${userData.proofOfEnrollment}`)
+            : null
+    );
 
     // Prepare initial data from existing user properties
     // Format birthday from YYYY-MM-DD back to MM/DD/YYYY for the regex validation
