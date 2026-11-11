@@ -4,12 +4,15 @@ namespace App\Support;
 
 use App\Models\CampusTournament;
 use App\Models\TournamentResultRevision;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -22,6 +25,10 @@ class TournamentResultsWorkbook
         '4th' => 4,
         'participant' => 5,
     ];
+
+    public function __construct(
+        private TournamentBracketResolver $bracketResolver,
+    ) {}
 
     public function download(
         CampusTournament $tournament,
@@ -40,6 +47,9 @@ class TournamentResultsWorkbook
             $spreadsheet->disconnectWorksheets();
         }, $filename, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Cache-Control' => 'private, no-store, no-cache, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
         ]);
     }
 
@@ -67,26 +77,31 @@ class TournamentResultsWorkbook
         $sheet->mergeCells('B1:F1');
 
         $metadata = [
-            ['School / Campus', trim($school.($campus ? ' - '.$campus : ''))],
-            ['Registration Start Date', $this->formatDate($tournament->registration_opens_at)],
-            ['Registration End Date', $this->formatDate($tournament->registration_closes_at)],
-            ['Event Start Date', $this->formatDate($tournament->starts_at)],
-            ['Event End Date', $this->formatDate($tournament->ends_at)],
-            ['Results Submitted', $revision->submitted_at->timezone('Asia/Manila')->format('F j, Y g:i A')],
-            ['Submitted By', $revision->adminSubmitter?->name ?? $revision->submitter?->name ?? 'Unknown user'],
-            ['Tournament Type', $tournament->tournamentType?->name ?? ucfirst($tournament->tournament_type_code)],
-            ['Bracket Type', $teamCount.' registered '.Str::plural('team', $teamCount)],
-            ['Revision', 'Version '.$revision->version],
+            ['School / Campus', trim($school.($campus ? ' - '.$campus : '')), 'text'],
+            ['Registration Start Date', $tournament->registration_opens_at, 'date'],
+            ['Registration End Date', $tournament->registration_closes_at, 'date'],
+            ['Event Start Date', $tournament->starts_at, 'date'],
+            ['Event End Date', $tournament->ends_at, 'date'],
+            ['Results Submitted', $revision->submitted_at, 'date'],
+            ['Submitted By', $revision->adminSubmitter?->name ?? $revision->submitter?->name ?? 'Unknown user', 'text'],
+            ['Tournament Type', $tournament->tournamentType?->name ?? ucfirst($tournament->tournament_type_code), 'text'],
+            ['Registered Teams', $teamCount.' registered '.Str::plural('team', $teamCount), 'text'],
+            ['Bracket Type', $this->bracketResolver->describe($teamCount), 'text'],
+            ['Revision', 'Version '.$revision->version, 'text'],
         ];
 
-        foreach ($metadata as $index => [$label, $value]) {
+        foreach ($metadata as $index => [$label, $value, $type]) {
             $row = $index + 2;
             $sheet->setCellValue("A{$row}", $label);
-            $sheet->setCellValueExplicit("B{$row}", $value, DataType::TYPE_STRING);
+            if ($type === 'date') {
+                $this->setDateCell($sheet, "B{$row}", $value);
+            } else {
+                $sheet->setCellValueExplicit("B{$row}", (string) $value, DataType::TYPE_STRING);
+            }
             $sheet->mergeCells("B{$row}:F{$row}");
         }
 
-        $headerRow = 13;
+        $headerRow = count($metadata) + 3;
         $headers = ['Rank', 'Team Name', 'Player Name', 'IGN', 'Server', 'UID'];
         foreach ($headers as $columnIndex => $header) {
             $sheet->setCellValue([$columnIndex + 1, $headerRow], $header);
@@ -122,7 +137,7 @@ class TournamentResultsWorkbook
         }
 
         $lastRow = max($headerRow, $row - 1);
-        $sheet->freezePane('A14');
+        $sheet->freezePane('A'.($headerRow + 1));
         $sheet->setAutoFilter("A{$headerRow}:F{$lastRow}");
         $sheet->getStyle('A1:F1')->getFont()->setBold(true)->setSize(14);
         $sheet->getStyle("A{$headerRow}:F{$headerRow}")->applyFromArray([
@@ -133,7 +148,7 @@ class TournamentResultsWorkbook
         $sheet->getStyle("A{$headerRow}:F{$lastRow}")->getBorders()->getAllBorders()
             ->setBorderStyle(Border::BORDER_THIN)
             ->getColor()->setRGB('B7B7B7');
-        $sheet->getStyle('A2:A11')->getFont()->setBold(true);
+        $sheet->getStyle('A2:A'.(count($metadata) + 1))->getFont()->setBold(true);
         $sheet->getColumnDimension('A')->setWidth(24);
         $sheet->getColumnDimension('B')->setWidth(30);
         $sheet->getColumnDimension('C')->setWidth(28);
@@ -144,8 +159,11 @@ class TournamentResultsWorkbook
         return $spreadsheet;
     }
 
-    private function formatDate($date): string
+    private function setDateCell(Worksheet $sheet, string $coordinate, CarbonInterface $date): void
     {
-        return $date->timezone('Asia/Manila')->format('F j, Y g:i A');
+        $manilaDate = $date->toImmutable()->setTimezone('Asia/Manila');
+
+        $sheet->setCellValue($coordinate, ExcelDate::PHPToExcel($manilaDate->toDateTimeImmutable()));
+        $sheet->getStyle($coordinate)->getNumberFormat()->setFormatCode('mmmm d, yyyy h:mm AM/PM');
     }
 }

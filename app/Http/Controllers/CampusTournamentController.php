@@ -387,12 +387,39 @@ class CampusTournamentController extends Controller
             ? 'Programs/CampusTournaments/RaView'
             : 'Programs/CampusTournaments/SlView';
 
+        $canExportRegistrations = false;
+        $registrationExportCampuses = collect();
+        if ($request->routeIs('campus.tournament.regionaladmin')) {
+            $regionCodes = RegionAdmin::query()
+                ->where('user_id', $user->id)
+                ->pluck('region_code');
+            $canExportRegistrations = $user->status === 'active' && $regionCodes->isNotEmpty();
+
+            if ($canExportRegistrations) {
+                $registrationExportCampuses = Campus::query()
+                    ->whereHas('city', fn ($query) => $query->whereIn('region_code', $regionCodes))
+                    ->with('institution')
+                    ->get()
+                    ->map(fn (Campus $campus): array => [
+                        'value' => (string) $campus->id,
+                        'label' => trim(
+                            ($campus->institution?->name ?? 'MSL School')
+                            .($campus->name ? ' - '.$campus->name : ''),
+                        ),
+                    ])
+                    ->sortBy('label', SORT_NATURAL | SORT_FLAG_CASE)
+                    ->values();
+            }
+        }
+
         return Inertia::render($component, [
             'approvalRequests' => $approvalRequests,
             'rejectedRequests' => $rejectedRequests,
             'pendingCreates' => [],
             'tournaments' => $tournaments,
             'isReviewer' => $isReviewer,
+            'canExportRegistrations' => $canExportRegistrations,
+            'registrationExportCampuses' => $registrationExportCampuses,
         ]);
     }
 

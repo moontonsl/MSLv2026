@@ -55,6 +55,8 @@ const MODE_OPTIONS = [
     { value: 'Onsite', label: 'Onsite' },
 ];
 
+const EMPTY_REGISTRATION_EXPORT_CAMPUSES = [];
+
 const SECTION_TITLES = {
     requests: 'Tournament Requests',
     upcoming: 'Upcoming Tournaments',
@@ -69,6 +71,8 @@ const SECTION_TITLES = {
 export default function RaView({
     approvalRequests: initialRequests = INITIAL_SL_TOURNAMENT_REQUESTS,
     tournaments: initialTournaments = INITIAL_RA_MANAGED_TOURNAMENTS,
+    canExportRegistrations = false,
+    registrationExportCampuses = EMPTY_REGISTRATION_EXPORT_CAMPUSES,
 }) {
     const [requests, setRequests] = useState(initialRequests);
     const [tournaments, setTournaments] = useState(() =>
@@ -111,17 +115,16 @@ export default function RaView({
     const [successDescription, setSuccessDescription] = useState('');
 
     const [reportOpen, setReportOpen] = useState(false);
+    const [reportProcessing, setReportProcessing] = useState(false);
+    const [reportError, setReportError] = useState('');
     const [viewTournament, setViewTournament] = useState(null);
 
     const reportSchools = useMemo(() => {
-        const names = [
-            ...new Set(tournaments.map((item) => item.schoolName).filter(Boolean)),
-        ];
         return [
             { value: 'all', label: 'All School' },
-            ...names.map((name) => ({ value: name, label: name })),
+            ...registrationExportCampuses,
         ];
-    }, [tournaments]);
+    }, [registrationExportCampuses]);
 
     const tabCounts = useMemo(
         () => ({
@@ -138,6 +141,88 @@ export default function RaView({
         setStatusTab(tabId);
         setTournamentPage(1);
         setRequestPage(1);
+    };
+
+    const handleRegistrationExport = async ({
+        campusId,
+        startDate,
+        endDate,
+    }) => {
+        setReportProcessing(true);
+        setReportError('');
+
+        try {
+            const query = new URLSearchParams({
+                campus_id: campusId,
+                start_date: startDate,
+                end_date: endDate,
+            });
+            const response = await fetch(
+                `/campus-tournaments/registrations/export?${query.toString()}`,
+                {
+                    credentials: 'same-origin',
+                    headers: {
+                        Accept: 'application/json, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    },
+                },
+            );
+
+            if (!response.ok) {
+                const payload = await response.json().catch(() => null);
+                const firstValidationError = Object.values(
+                    payload?.errors ?? {},
+                )
+                    .flat()
+                    .find(Boolean);
+                throw new Error(
+                    firstValidationError ||
+                        payload?.message ||
+                        'Unable to generate the registration report.',
+                );
+            }
+
+            const contentType = response.headers.get('content-type') ?? '';
+            if (
+                response.redirected ||
+                !contentType.includes(
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                )
+            ) {
+                throw new Error(
+                    'Your session may have expired. Refresh the page and try again.',
+                );
+            }
+
+            const blob = await response.blob();
+            const disposition = response.headers.get('content-disposition') ?? '';
+            const utf8Filename = disposition.match(/filename\*=UTF-8''([^;]+)/i)?.[1];
+            const basicFilename = disposition.match(/filename="?([^";]+)"?/i)?.[1];
+            const filename = decodeURIComponent(
+                utf8Filename || basicFilename || 'PreReg_Report.xlsx',
+            );
+            const objectUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = objectUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
+
+            setReportOpen(false);
+            showSuccess(
+                'Report downloaded',
+                'The regional registration roster was exported successfully.',
+            );
+        } catch (error) {
+            setReportError(
+                error instanceof Error
+                    ? error.message
+                    : 'Unable to generate the registration report.',
+            );
+        } finally {
+            setReportProcessing(false);
+        }
     };
 
     const filteredRequests = useMemo(() => {
@@ -588,14 +673,19 @@ export default function RaView({
                                             the Campus Tournament Page.
                                         </p>
                                     </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => setReportOpen(true)}
-                                        className="inline-flex min-h-[44px] w-full shrink-0 items-center justify-center gap-2 self-start rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:w-auto"
-                                    >
-                                        <FileSpreadsheet className="h-4 w-4" />
-                                        Export to Excel
-                                    </button>
+                                    {canExportRegistrations ? (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setReportError('');
+                                                setReportOpen(true);
+                                            }}
+                                            className="inline-flex min-h-[44px] w-full shrink-0 items-center justify-center gap-2 self-start rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:w-auto"
+                                        >
+                                            <FileSpreadsheet className="h-4 w-4" />
+                                            Export to Excel
+                                        </button>
+                                    ) : null}
                                 </div>
 
                                 {filteredRequests.length > 0 ? (
@@ -631,6 +721,11 @@ export default function RaView({
                                                     key={tournament.id}
                                                     tournament={tournament}
                                                     onView={setViewTournament}
+                                                    onExport={(item) =>
+                                                        window.location.assign(
+                                                            `/campus-tournaments/${item.id}/results/export`,
+                                                        )
+                                                    }
                                                     onReschedule={
                                                         setRescheduleTarget
                                                     }
@@ -724,13 +819,13 @@ export default function RaView({
             <GenerateReportModal
                 isOpen={reportOpen}
                 schools={reportSchools}
-                onClose={() => setReportOpen(false)}
-                onDownload={() => {
-                    showSuccess(
-                        'Report downloaded',
-                        'Tournament results export has been prepared.',
-                    );
+                processing={reportProcessing}
+                error={reportError}
+                onClose={() => {
+                    setReportError('');
+                    setReportOpen(false);
                 }}
+                onDownload={handleRegistrationExport}
             />
 
             <ViewTournamentModal

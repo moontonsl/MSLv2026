@@ -7,15 +7,20 @@ use App\Enums\CampusTournamentApprovalStatus;
 use App\Enums\ParticipantStatus;
 use App\Enums\TeamStatus;
 use App\Http\Requests\CorrectTournamentResultsRequest;
+use App\Http\Requests\ExportRegionalTournamentRegistrationsRequest;
 use App\Http\Requests\SubmitTournamentResultsRequest;
 use App\Models\AdminUser;
+use App\Models\Campus;
 use App\Models\CampusTournament;
 use App\Models\RegionAdmin;
 use App\Models\TournamentParticipant;
 use App\Models\TournamentPlacement;
 use App\Models\TournamentResultEntry;
 use App\Models\TournamentTeam;
+use App\Support\RegionalTournamentRegistrationWorkbook;
 use App\Support\TournamentResultsWorkbook;
+use Carbon\CarbonImmutable;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -187,6 +192,67 @@ class CampusTournamentReportController extends Controller
             ->firstOrFail();
 
         return $workbook->download($tournament, $revision);
+    }
+
+    public function exportRegistrations(
+        ExportRegionalTournamentRegistrationsRequest $request,
+        RegionalTournamentRegistrationWorkbook $workbook,
+    ): JsonResponse|StreamedResponse {
+        $validated = $request->validated();
+        $regionCodes = RegionAdmin::query()
+            ->where('user_id', $request->user()->id)
+            ->pluck('region_code');
+        $startDate = CarbonImmutable::createFromFormat('!Y-m-d', $validated['start_date'], 'Asia/Manila');
+        $endDate = CarbonImmutable::createFromFormat('!Y-m-d', $validated['end_date'], 'Asia/Manila');
+        $startUtc = $startDate->utc();
+        $endExclusiveUtc = $endDate->addDay()->utc();
+        $campus = $validated['campus_id'] === 'all'
+            ? null
+            : Campus::query()->with('institution')->findOrFail((int) $validated['campus_id']);
+
+        $participants = TournamentParticipant::query()
+            ->where('status', ParticipantStatus::Active->value)
+            ->whereNotNull('team_id')
+            ->where('registered_at', '>=', $startUtc)
+            ->where('registered_at', '<', $endExclusiveUtc)
+            ->whereHas('team', fn ($query) => $query->whereIn('status', [
+                TeamStatus::Assembling->value,
+                TeamStatus::Registered->value,
+            ]))
+            ->whereHas('tournament', function ($query) use ($regionCodes, $campus): void {
+                $query
+                    ->where('approval_status', CampusTournamentApprovalStatus::Approved->value)
+                    ->whereHas('campus.city', fn ($cityQuery) => $cityQuery->whereIn('region_code', $regionCodes));
+
+                if ($campus !== null) {
+                    $query->where('campus_id', $campus->id);
+                }
+            })
+            ->with([
+                'user',
+                'team',
+                'tournament.campus.institution',
+                'tournament.campus.city.region.island',
+            ])
+            ->get()
+            ->sortBy(fn (TournamentParticipant $participant): array => [
+                mb_strtolower($participant->tournament->campus?->city?->region?->island?->name ?? ''),
+                mb_strtolower($participant->tournament->campus?->institution?->name ?? ''),
+                mb_strtolower($participant->tournament->campus?->name ?? ''),
+                mb_strtolower($participant->team?->name ?? ''),
+                $participant->roster_role === 'captain' ? 0 : 1,
+                $participant->registered_at?->getTimestamp() ?? 0,
+                $participant->id,
+            ])
+            ->values();
+
+        if ($participants->isEmpty()) {
+            return response()->json([
+                'message' => 'No registrations were found for the selected school and date range.',
+            ], 409);
+        }
+
+        return $workbook->download($participants, $startDate, $endDate, $campus);
     }
 
     private function registeredTeams(CampusTournament $tournament): array
