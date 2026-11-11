@@ -74,6 +74,29 @@ Route::get('/', function () {
         ->orderBy('order')
         ->get();
 
+    $statistics = [
+        [
+            'icon' => 'user',
+            'value' => \App\Models\Setting::getValue('homepage_stat_student_gamers', '22K+'),
+            'label' => \App\Models\Setting::getValue('homepage_stat_student_gamers_label', 'STUDENT GAMERS'),
+        ],
+        [
+            'icon' => 'building',
+            'value' => \App\Models\Setting::getValue('homepage_stat_campus_communities', '150+'),
+            'label' => \App\Models\Setting::getValue('homepage_stat_campus_communities_label', 'CAMPUS COMMUNITIES'),
+        ],
+        [
+            'icon' => 'trophy',
+            'value' => \App\Models\Setting::getValue('homepage_stat_events_sponsored', '110+'),
+            'label' => \App\Models\Setting::getValue('homepage_stat_events_sponsored_label', 'EVENTS SPONSORED'),
+        ],
+        [
+            'icon' => 'users',
+            'value' => \App\Models\Setting::getValue('homepage_stat_student_leaders', '240+'),
+            'label' => \App\Models\Setting::getValue('homepage_stat_student_leaders_label', 'STUDENT LEADERS'),
+        ],
+    ];
+
     return Inertia::render('Home/Index', [
         'pinnedFaqs' => Faq::query()
             ->where('is_active', true)
@@ -89,6 +112,7 @@ Route::get('/', function () {
             'href' => $slide->link ?: '/events',
             'image' => $slide->image_path ? (\Illuminate\Support\Str::startsWith($slide->image_path, '/') ? $slide->image_path : \Illuminate\Support\Facades\Storage::disk('public')->url('carousel/' . $slide->image_path)) : '/champ poster.jpg',
         ])->values(),
+        'statistics' => $statistics,
     ]);
 });
 
@@ -291,6 +315,8 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
 
     Route::get('/admin/home-page', [HomePageController::class, 'index'])
         ->middleware('admin.permission:manage_homepage')->name('admin.home-page');
+    Route::post('/admin/home-page/statistics', [HomePageController::class, 'updateStatistics'])
+        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.statistics');
 
     Route::get('/admin/faq', [FaqController::class, 'index'])
         ->middleware('admin.permission:manage_faq')->name('admin.faq');
