@@ -17,6 +17,7 @@ import { formatDateRange } from "@/data/campusTournamentData";
  *     totalRegistration: number;
  *   };
  *   onView?: (tournament: object) => void;
+ *   onExport?: (tournament: object) => void;
  *   onReschedule?: (tournament: object) => void;
  *   onDelete?: (tournament: object) => void;
  * }} props
@@ -24,6 +25,7 @@ import { formatDateRange } from "@/data/campusTournamentData";
 export default function ManagedTournamentCard({
     tournament,
     onView,
+    onExport,
     onReschedule,
     onDelete,
 }) {
@@ -31,7 +33,12 @@ export default function ManagedTournamentCard({
     const canView =
         ["upcoming", "ongoing", "completed"].includes(tournament.status) &&
         onView;
-    const hasActions = canView || canChangeSchedule;
+    const canExport =
+        tournament.status === "completed" &&
+        tournament.resultsSubmitted &&
+        tournament.canViewReport &&
+        onExport;
+    const hasActions = canView || canChangeSchedule || canExport;
 
     return (
         <article className="rounded-2xl border border-neutral-800 bg-[#111111] p-4 sm:p-5">
@@ -80,7 +87,11 @@ export default function ManagedTournamentCard({
                 {hasActions ? (
                     <div
                         className={`grid shrink-0 gap-2 md:flex md:pl-6 ${
-                            canChangeSchedule ? "grid-cols-3" : "grid-cols-1"
+                            canChangeSchedule
+                                ? "grid-cols-3"
+                                : canExport && canView
+                                  ? "grid-cols-2"
+                                  : "grid-cols-1"
                         }`}
                     >
                         {canView ? (
@@ -113,6 +124,15 @@ export default function ManagedTournamentCard({
                                     Delete
                                 </button>
                             </>
+                        ) : null}
+                        {canExport ? (
+                            <button
+                                type="button"
+                                onClick={() => onExport(tournament)}
+                                className="inline-flex min-h-10 items-center justify-center rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400"
+                            >
+                                Export Results
+                            </button>
                         ) : null}
                     </div>
                 ) : null}

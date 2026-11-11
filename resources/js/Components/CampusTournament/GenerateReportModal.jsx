@@ -1,10 +1,12 @@
 import BaseModal from '@/Components/Admin/BaseModal';
 import { MODAL_CLOSE_BUTTON_CLASS } from '@/Components/Admin/adminModalFormStyles';
 import { CalendarDays, ChevronDown, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const FIELD_CLASS =
     'w-full min-h-[44px] rounded-lg border border-neutral-700 bg-[#0a0a0a] px-4 py-2.5 text-sm text-white outline-none focus:ring-2 focus:ring-yellow-500';
+
+const DEFAULT_SCHOOLS = [{ value: 'all', label: 'All School' }];
 
 /**
  * RA Export / Generate Report modal (Figma).
@@ -13,23 +15,51 @@ const FIELD_CLASS =
  *   isOpen: boolean;
  *   schools?: Array<{ value: string; label: string }>;
  *   onClose: () => void;
- *   onDownload?: (payload: { school: string; startDate: string; endDate: string }) => void;
+ *   onDownload?: (payload: { campusId: string; startDate: string; endDate: string }) => void | Promise<void>;
+ *   processing?: boolean;
+ *   error?: string;
  * }} props
  */
 export default function GenerateReportModal({
     isOpen,
-    schools = [{ value: 'all', label: 'All School' }],
+    schools = DEFAULT_SCHOOLS,
     onClose,
     onDownload,
+    processing = false,
+    error = '',
 }) {
     const [school, setSchool] = useState(schools[0]?.value ?? 'all');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [validationError, setValidationError] = useState('');
 
-    const handleDownload = () => {
-        onDownload?.({ school, startDate, endDate });
-        onClose();
+    useEffect(() => {
+        if (!isOpen) {
+            return;
+        }
+
+        setSchool(schools[0]?.value ?? 'all');
+        setStartDate('');
+        setEndDate('');
+        setValidationError('');
+    }, [isOpen, schools]);
+
+    const handleDownload = async () => {
+        if (!startDate || !endDate) {
+            setValidationError('Select a start date and end date.');
+            return;
+        }
+
+        if (endDate < startDate) {
+            setValidationError('The end date must be on or after the start date.');
+            return;
+        }
+
+        setValidationError('');
+        await onDownload?.({ campusId: school, startDate, endDate });
     };
+
+    const displayedError = validationError || error;
 
     return (
         <BaseModal
@@ -44,6 +74,7 @@ export default function GenerateReportModal({
                     <button
                         type="button"
                         onClick={onClose}
+                        disabled={processing}
                         className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-neutral-600 bg-[#1a1a1a] px-6 text-sm font-semibold text-white transition-colors hover:border-neutral-400 sm:min-w-[120px]"
                     >
                         Cancel
@@ -51,9 +82,10 @@ export default function GenerateReportModal({
                     <button
                         type="button"
                         onClick={handleDownload}
-                        className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-6 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:min-w-[120px]"
+                        disabled={processing}
+                        className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-yellow-500 px-6 text-sm font-bold text-black transition-colors hover:bg-yellow-400 disabled:cursor-wait disabled:opacity-60 sm:min-w-[120px]"
                     >
-                        Download
+                        {processing ? 'Downloading...' : 'Download'}
                     </button>
                 </div>
             }
@@ -62,6 +94,7 @@ export default function GenerateReportModal({
                 <button
                     type="button"
                     onClick={onClose}
+                    disabled={processing}
                     className={`absolute -right-1 -top-1 ${MODAL_CLOSE_BUTTON_CLASS}`}
                     aria-label="Close"
                 >
@@ -70,8 +103,14 @@ export default function GenerateReportModal({
 
                 <h2 className="pr-8 text-xl font-bold text-white">Generate Report</h2>
                 <p className="mt-2 text-sm leading-relaxed text-gray-400">
-                    Download the latest tournament results for the selected school and date range.
+                    Download tournament registrations for the selected school and date range.
                 </p>
+
+                {displayedError ? (
+                    <p role="alert" className="mt-4 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+                        {displayedError}
+                    </p>
+                ) : null}
 
                 <div className="mt-5 space-y-4">
                     <div>

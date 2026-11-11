@@ -87,7 +87,7 @@ function OptionCard({ option, onOpenInvites }) {
                         {option.title}
                         {option.badgeCount > 0 ? (
                             <span
-                                className="inline-flex min-w-5 items-center justify-center rounded-full bg-yellow-500 px-1.5 py-0.5 text-xs font-bold text-black"
+                                className="inline-flex min-w-5 items-center justify-center rounded-full bg-red-600 px-1.5 py-0.5 text-xs font-bold text-white"
                                 aria-label={`${option.badgeCount} pending invitations`}
                             >
                                 {option.badgeCount}

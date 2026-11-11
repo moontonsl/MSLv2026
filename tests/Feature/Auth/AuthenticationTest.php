@@ -51,4 +51,29 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
         $response->assertRedirect('/');
     }
+
+    public function test_users_can_log_in_again_after_logging_out(): void
+    {
+        $user = User::factory()->create();
+
+        $this->post('/login', [
+            'username' => $user->email,
+            'password' => 'password',
+        ])->assertRedirect();
+
+        $this->assertAuthenticatedAs($user);
+
+        $this->post('/logout')->assertRedirect('/');
+
+        $this->assertGuest();
+
+        $this->get('/login')->assertOk();
+
+        $this->post('/login', [
+            'username' => $user->email,
+            'password' => 'password',
+        ])->assertRedirect();
+
+        $this->assertAuthenticatedAs($user);
+    }
 }

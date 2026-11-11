@@ -25,7 +25,9 @@ use Database\Seeders\TournamentReferenceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use LogicException;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 use Tests\TestCase;
 
 class CampusTournamentPostEventReportTest extends TestCase
@@ -412,8 +414,22 @@ class CampusTournamentPostEventReportTest extends TestCase
     public function test_excel_export_uses_current_revision_and_historical_player_snapshots(): void
     {
         [$tournament, $teams] = $this->completedTournamentWithTeams(2);
+        $formulaCaptain = TournamentParticipant::query()
+            ->where('team_id', $teams[1]->id)
+            ->where('roster_role', 'captain')
+            ->firstOrFail()
+            ->user;
+        $formulaCaptain->update([
+            'ml_ign' => '=1+1',
+            'ml_server' => '00381',
+            'ml_id' => '000123',
+        ]);
         $this->actingAs($this->leader)->post(route('campus-tournaments.results.store', $tournament), [
             'entries' => $this->entries($teams, ['1st', 'participant']),
+        ]);
+        $this->actingAs($this->leader)->post(route('campus-tournaments.results.correct', $tournament), [
+            'reason' => 'Corrected the final placement order.',
+            'entries' => $this->entries($teams, ['participant', '1st']),
         ]);
 
         $captain = TournamentParticipant::query()->where('team_id', $teams[0]->id)->where('roster_role', 'captain')->firstOrFail()->user;
@@ -422,7 +438,12 @@ class CampusTournamentPostEventReportTest extends TestCase
         $response = $this->actingAs($this->regionalAdmin)
             ->get(route('campus-tournaments.results.export', $tournament));
         $response->assertOk()
-            ->assertHeader('content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            ->assertHeader('content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            ->assertHeader('pragma', 'no-cache');
+        $cacheControl = (string) $response->headers->get('cache-control');
+        foreach (['private', 'no-store', 'no-cache', 'must-revalidate'] as $directive) {
+            $this->assertStringContainsString($directive, $cacheControl);
+        }
         $this->assertStringContainsString(
             'Tournament_Results_los_banos_',
             (string) $response->headers->get('content-disposition'),
@@ -434,11 +455,25 @@ class CampusTournamentPostEventReportTest extends TestCase
         $sheet = $spreadsheet->getActiveSheet();
 
         $this->assertSame('LSPU Post-Event Cup', $sheet->getCell('B1')->getValue());
+        $this->assertIsFloat($sheet->getCell('B3')->getValue());
+        $this->assertSame('mmmm d, yyyy h:mm AM/PM', $sheet->getStyle('B3')->getNumberFormat()->getFormatCode());
+        $this->assertSame(
+            $tournament->registration_opens_at->timezone('Asia/Manila')->format('Y-m-d H:i'),
+            ExcelDate::excelToDateTimeObject($sheet->getCell('B3')->getValue())
+                ->format('Y-m-d H:i'),
+        );
         $this->assertSame('2 registered teams', $sheet->getCell('B10')->getValue());
-        $this->assertSame('Rank', $sheet->getCell('A13')->getValue());
-        $this->assertSame('1st', $sheet->getCell('A14')->getValue());
-        $this->assertSame('Original IGN 1-1', $sheet->getCell('D14')->getValue());
-        $this->assertNotSame('Changed After Submission', $sheet->getCell('D14')->getValue());
+        $this->assertSame('Insufficient teams', $sheet->getCell('B11')->getValue());
+        $this->assertSame('Version 2', $sheet->getCell('B12')->getValue());
+        $this->assertSame('Rank', $sheet->getCell('A14')->getValue());
+        $this->assertSame('1st', $sheet->getCell('A15')->getValue());
+        $this->assertSame('Registered Team 2', $sheet->getCell('B15')->getValue());
+        $this->assertSame('=1+1', $sheet->getCell('D15')->getValue());
+        $this->assertSame(DataType::TYPE_STRING, $sheet->getCell('D15')->getDataType());
+        $this->assertSame('00381', $sheet->getCell('E15')->getValue());
+        $this->assertSame('000123', $sheet->getCell('F15')->getValue());
+        $this->assertSame('Original IGN 1-1', $sheet->getCell('D20')->getValue());
+        $this->assertNotSame('Changed After Submission', $sheet->getCell('D20')->getValue());
 
         $spreadsheet->disconnectWorksheets();
         unlink($path);

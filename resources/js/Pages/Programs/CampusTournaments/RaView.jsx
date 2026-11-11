@@ -17,7 +17,14 @@ import {
 } from '@/data/campusTournamentData';
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, router } from '@inertiajs/react';
-import { ChevronLeft, ChevronRight, FileSpreadsheet, Hourglass, Search } from 'lucide-react';
+import {
+    ChevronLeft,
+    ChevronRight,
+    FileSpreadsheet,
+    Hourglass,
+    Search,
+    SlidersHorizontal,
+} from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 /** The controller sends roster teams, so registration stats are derived here. */
@@ -40,13 +47,15 @@ const SEARCH_CLASS =
     'w-full min-h-[44px] rounded-lg border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-10 pr-4 text-base text-white placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none md:text-sm';
 
 const SELECT_CLASS =
-    'min-h-[44px] w-full rounded-lg border border-neutral-800 bg-[#1a1a1a] px-3 py-2.5 text-base text-white outline-none focus:ring-2 focus:ring-yellow-500 md:w-auto md:min-w-[120px] md:text-sm';
+    'min-h-[44px] w-full rounded-lg border border-neutral-800 bg-[#1a1a1a] px-3 py-2.5 text-base text-white outline-none focus:ring-2 focus:ring-yellow-500 md:text-sm';
 
 const MODE_OPTIONS = [
     { value: '', label: 'Type' },
     { value: 'Online', label: 'Online' },
     { value: 'Onsite', label: 'Onsite' },
 ];
+
+const EMPTY_REGISTRATION_EXPORT_CAMPUSES = [];
 
 const SECTION_TITLES = {
     requests: 'Tournament Requests',
@@ -62,6 +71,8 @@ const SECTION_TITLES = {
 export default function RaView({
     approvalRequests: initialRequests = INITIAL_SL_TOURNAMENT_REQUESTS,
     tournaments: initialTournaments = INITIAL_RA_MANAGED_TOURNAMENTS,
+    canExportRegistrations = false,
+    registrationExportCampuses = EMPTY_REGISTRATION_EXPORT_CAMPUSES,
 }) {
     const [requests, setRequests] = useState(initialRequests);
     const [tournaments, setTournaments] = useState(() =>
@@ -81,6 +92,7 @@ export default function RaView({
     const [month, setMonth] = useState('');
     const [year, setYear] = useState('');
     const [modeFilter, setModeFilter] = useState('');
+    const [filtersOpen, setFiltersOpen] = useState(false);
     const [requestPage, setRequestPage] = useState(1);
     const [tournamentPage, setTournamentPage] = useState(1);
     const tournamentTotalPages = 10;
@@ -103,17 +115,16 @@ export default function RaView({
     const [successDescription, setSuccessDescription] = useState('');
 
     const [reportOpen, setReportOpen] = useState(false);
+    const [reportProcessing, setReportProcessing] = useState(false);
+    const [reportError, setReportError] = useState('');
     const [viewTournament, setViewTournament] = useState(null);
 
     const reportSchools = useMemo(() => {
-        const names = [
-            ...new Set(tournaments.map((item) => item.schoolName).filter(Boolean)),
-        ];
         return [
             { value: 'all', label: 'All School' },
-            ...names.map((name) => ({ value: name, label: name })),
+            ...registrationExportCampuses,
         ];
-    }, [tournaments]);
+    }, [registrationExportCampuses]);
 
     const tabCounts = useMemo(
         () => ({
@@ -124,6 +135,95 @@ export default function RaView({
         }),
         [requests, tournaments],
     );
+    const activeFilterCount = [month, year, modeFilter].filter(Boolean).length;
+
+    const changeStatusTab = (tabId) => {
+        setStatusTab(tabId);
+        setTournamentPage(1);
+        setRequestPage(1);
+    };
+
+    const handleRegistrationExport = async ({
+        campusId,
+        startDate,
+        endDate,
+    }) => {
+        setReportProcessing(true);
+        setReportError('');
+
+        try {
+            const query = new URLSearchParams({
+                campus_id: campusId,
+                start_date: startDate,
+                end_date: endDate,
+            });
+            const response = await fetch(
+                `/campus-tournaments/registrations/export?${query.toString()}`,
+                {
+                    credentials: 'same-origin',
+                    headers: {
+                        Accept: 'application/json, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    },
+                },
+            );
+
+            if (!response.ok) {
+                const payload = await response.json().catch(() => null);
+                const firstValidationError = Object.values(
+                    payload?.errors ?? {},
+                )
+                    .flat()
+                    .find(Boolean);
+                throw new Error(
+                    firstValidationError ||
+                        payload?.message ||
+                        'Unable to generate the registration report.',
+                );
+            }
+
+            const contentType = response.headers.get('content-type') ?? '';
+            if (
+                response.redirected ||
+                !contentType.includes(
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                )
+            ) {
+                throw new Error(
+                    'Your session may have expired. Refresh the page and try again.',
+                );
+            }
+
+            const blob = await response.blob();
+            const disposition = response.headers.get('content-disposition') ?? '';
+            const utf8Filename = disposition.match(/filename\*=UTF-8''([^;]+)/i)?.[1];
+            const basicFilename = disposition.match(/filename="?([^";]+)"?/i)?.[1];
+            const filename = decodeURIComponent(
+                utf8Filename || basicFilename || 'PreReg_Report.xlsx',
+            );
+            const objectUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = objectUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
+
+            setReportOpen(false);
+            showSuccess(
+                'Report downloaded',
+                'The regional registration roster was exported successfully.',
+            );
+        } catch (error) {
+            setReportError(
+                error instanceof Error
+                    ? error.message
+                    : 'Unable to generate the registration report.',
+            );
+        } finally {
+            setReportProcessing(false);
+        }
+    };
 
     const filteredRequests = useMemo(() => {
         const query = search.trim().toLowerCase();
@@ -386,8 +486,31 @@ export default function RaView({
                     <CampusTournamentPageHeader />
 
                     <div className="space-y-4 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-5">
-                        <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-                            <div className="inline-flex w-full flex-wrap gap-1 rounded-xl bg-[#0a0a0a] p-1 sm:w-auto">
+                        <div className="flex flex-col gap-4">
+                            <div className="sm:hidden">
+                                <label
+                                    htmlFor="ra-tournament-view"
+                                    className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-gray-400"
+                                >
+                                    Tournament view
+                                </label>
+                                <select
+                                    id="ra-tournament-view"
+                                    value={statusTab}
+                                    onChange={(event) =>
+                                        changeStatusTab(event.target.value)
+                                    }
+                                    className={SELECT_CLASS}
+                                >
+                                    {SL_MANAGEMENT_TABS.map((tab) => (
+                                        <option key={tab.id} value={tab.id}>
+                                            {tab.label} ({tabCounts[tab.id] ?? 0})
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="hidden w-full grid-cols-4 gap-1 rounded-xl bg-[#0a0a0a] p-1 sm:grid">
                                 {SL_MANAGEMENT_TABS.map((tab) => {
                                     const isActive = statusTab === tab.id;
                                     const count = tabCounts[tab.id] ?? 0;
@@ -396,12 +519,8 @@ export default function RaView({
                                         <button
                                             key={tab.id}
                                             type="button"
-                                            onClick={() => {
-                                                setStatusTab(tab.id);
-                                                setTournamentPage(1);
-                                                setRequestPage(1);
-                                            }}
-                                            className={`inline-flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition-colors sm:flex-none sm:px-4 ${
+                                            onClick={() => changeStatusTab(tab.id)}
+                                            className={`inline-flex min-h-[44px] min-w-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg px-2 py-2 text-sm font-semibold transition-colors lg:px-4 ${
                                                 isActive
                                                     ? 'bg-yellow-500 text-black'
                                                     : 'text-gray-300 hover:text-white'
@@ -422,8 +541,47 @@ export default function RaView({
                                 })}
                             </div>
 
-                            <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center xl:w-auto xl:justify-end">
-                                <div className="relative w-full sm:min-w-[200px] sm:flex-1 xl:w-56 xl:flex-none">
+                            <div className="flex items-center gap-2 sm:hidden">
+                                <div className="relative min-w-0 flex-1">
+                                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                                    <input
+                                        type="search"
+                                        value={search}
+                                        onChange={(event) =>
+                                            setSearch(event.target.value)
+                                        }
+                                        placeholder="Search School"
+                                        className={SEARCH_CLASS}
+                                    />
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setFiltersOpen((open) => !open)}
+                                    aria-expanded={filtersOpen}
+                                    aria-controls="ra-mobile-filters"
+                                    className={`relative inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-lg border px-3 text-sm font-semibold transition-colors ${
+                                        filtersOpen || activeFilterCount > 0
+                                            ? 'border-yellow-500 bg-yellow-500/10 text-yellow-500'
+                                            : 'border-neutral-800 bg-[#1a1a1a] text-gray-300'
+                                    }`}
+                                >
+                                    <SlidersHorizontal className="h-4 w-4" />
+                                    <span className="hidden min-[380px]:inline">Filters</span>
+                                    {activeFilterCount > 0 ? (
+                                        <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-yellow-500 px-1 text-xs font-bold text-black">
+                                            {activeFilterCount}
+                                        </span>
+                                    ) : null}
+                                </button>
+                            </div>
+
+                            <div
+                                id="ra-mobile-filters"
+                                className={`${
+                                    filtersOpen ? 'grid' : 'hidden'
+                                } grid-cols-1 gap-3 sm:grid sm:grid-cols-2 lg:grid-cols-4`}
+                            >
+                                <div className="relative hidden min-w-0 sm:block">
                                     <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
                                     <input
                                         type="search"
@@ -515,14 +673,19 @@ export default function RaView({
                                             the Campus Tournament Page.
                                         </p>
                                     </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => setReportOpen(true)}
-                                        className="inline-flex min-h-[44px] w-full shrink-0 items-center justify-center gap-2 self-start rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:w-auto"
-                                    >
-                                        <FileSpreadsheet className="h-4 w-4" />
-                                        Export to Excel
-                                    </button>
+                                    {canExportRegistrations ? (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setReportError('');
+                                                setReportOpen(true);
+                                            }}
+                                            className="inline-flex min-h-[44px] w-full shrink-0 items-center justify-center gap-2 self-start rounded-lg bg-yellow-500 px-4 text-sm font-bold text-black transition-colors hover:bg-yellow-400 sm:w-auto"
+                                        >
+                                            <FileSpreadsheet className="h-4 w-4" />
+                                            Export to Excel
+                                        </button>
+                                    ) : null}
                                 </div>
 
                                 {filteredRequests.length > 0 ? (
@@ -558,6 +721,11 @@ export default function RaView({
                                                     key={tournament.id}
                                                     tournament={tournament}
                                                     onView={setViewTournament}
+                                                    onExport={(item) =>
+                                                        window.location.assign(
+                                                            `/campus-tournaments/${item.id}/results/export`,
+                                                        )
+                                                    }
                                                     onReschedule={
                                                         setRescheduleTarget
                                                     }
@@ -651,13 +819,13 @@ export default function RaView({
             <GenerateReportModal
                 isOpen={reportOpen}
                 schools={reportSchools}
-                onClose={() => setReportOpen(false)}
-                onDownload={() => {
-                    showSuccess(
-                        'Report downloaded',
-                        'Tournament results export has been prepared.',
-                    );
+                processing={reportProcessing}
+                error={reportError}
+                onClose={() => {
+                    setReportError('');
+                    setReportOpen(false);
                 }}
+                onDownload={handleRegistrationExport}
             />
 
             <ViewTournamentModal
