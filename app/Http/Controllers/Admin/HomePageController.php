@@ -17,24 +17,38 @@ use Inertia\Response;
 
 class HomePageController extends Controller
 {
+    public static function getLiveStatistics(): array
+    {
+        $studentsCount = User::where('user_type', 'Student')->count();
+        $campusesCount = class_exists(Institution::class) ? Institution::count() : 0;
+        $eventsCount = (class_exists(\App\Models\Event::class) ? \App\Models\Event::count() : 0)
+            + (class_exists(\App\Models\CampusTournament::class) ? \App\Models\CampusTournament::count() : 0)
+            + (class_exists(MslEvent::class) ? MslEvent::count() : 0);
+        $leadersCount = User::where('user_type', 'Student Leader')->count();
+
+        return [
+            'student_gamers' => $studentsCount > 0 ? ($studentsCount . '+') : '0',
+            'campus_communities' => $campusesCount > 0 ? (number_format($campusesCount) . '+') : '0',
+            'events_sponsored' => $eventsCount > 0 ? ($eventsCount . '+') : '0',
+            'student_leaders' => $leadersCount > 0 ? ($leadersCount . '+') : '0',
+        ];
+    }
+
     public function index(): Response
     {
-        $statistics = [
-            'student_gamers' => Setting::getValue('homepage_stat_student_gamers', '22K+'),
-            'student_gamers_label' => Setting::getValue('homepage_stat_student_gamers_label', 'STUDENT GAMERS'),
-            'campus_communities' => Setting::getValue('homepage_stat_campus_communities', '150+'),
-            'campus_communities_label' => Setting::getValue('homepage_stat_campus_communities_label', 'CAMPUS COMMUNITIES'),
-            'events_sponsored' => Setting::getValue('homepage_stat_events_sponsored', '110+'),
-            'events_sponsored_label' => Setting::getValue('homepage_stat_events_sponsored_label', 'EVENTS SPONSORED'),
-            'student_leaders' => Setting::getValue('homepage_stat_student_leaders', '240+'),
-            'student_leaders_label' => Setting::getValue('homepage_stat_student_leaders_label', 'STUDENT LEADERS'),
-        ];
+        $liveCounts = self::getLiveStatistics();
+        $mode = Setting::getValue('homepage_stat_mode', 'live');
 
-        $liveCounts = [
-            'student_gamers' => User::where('user_type', 'Student')->count(),
-            'campus_communities' => class_exists(Institution::class) ? Institution::count() : 0,
-            'events_sponsored' => class_exists(MslEvent::class) ? MslEvent::count() : 0,
-            'student_leaders' => User::where('user_type', 'Student Leader')->count(),
+        $statistics = [
+            'mode' => $mode,
+            'student_gamers' => Setting::getValue('homepage_stat_student_gamers', $liveCounts['student_gamers']),
+            'student_gamers_label' => Setting::getValue('homepage_stat_student_gamers_label', 'STUDENT GAMERS'),
+            'campus_communities' => Setting::getValue('homepage_stat_campus_communities', $liveCounts['campus_communities']),
+            'campus_communities_label' => Setting::getValue('homepage_stat_campus_communities_label', 'CAMPUS COMMUNITIES'),
+            'events_sponsored' => Setting::getValue('homepage_stat_events_sponsored', $liveCounts['events_sponsored']),
+            'events_sponsored_label' => Setting::getValue('homepage_stat_events_sponsored_label', 'EVENTS SPONSORED'),
+            'student_leaders' => Setting::getValue('homepage_stat_student_leaders', $liveCounts['student_leaders']),
+            'student_leaders_label' => Setting::getValue('homepage_stat_student_leaders_label', 'STUDENT LEADERS'),
         ];
 
         return Inertia::render('Admin/HomePage', [
@@ -59,6 +73,7 @@ class HomePageController extends Controller
     public function updateStatistics(Request $request): RedirectResponse
     {
         $validated = $request->validate([
+            'mode' => ['nullable', 'string', 'in:live,custom'],
             'student_gamers' => ['required', 'string', 'max:50'],
             'student_gamers_label' => ['required', 'string', 'max:100'],
             'campus_communities' => ['required', 'string', 'max:50'],
@@ -69,6 +84,7 @@ class HomePageController extends Controller
             'student_leaders_label' => ['required', 'string', 'max:100'],
         ]);
 
+        Setting::setValue('homepage_stat_mode', $validated['mode'] ?? 'live', 'string');
         Setting::setValue('homepage_stat_student_gamers', $validated['student_gamers'], 'string');
         Setting::setValue('homepage_stat_student_gamers_label', $validated['student_gamers_label'], 'string');
         Setting::setValue('homepage_stat_campus_communities', $validated['campus_communities'], 'string');

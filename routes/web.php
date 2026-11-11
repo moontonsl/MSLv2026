@@ -74,28 +74,56 @@ Route::get('/', function () {
         ->orderBy('order')
         ->get();
 
-    $statistics = [
-        [
-            'icon' => 'user',
-            'value' => \App\Models\Setting::getValue('homepage_stat_student_gamers', '22K+'),
-            'label' => \App\Models\Setting::getValue('homepage_stat_student_gamers_label', 'STUDENT GAMERS'),
-        ],
-        [
-            'icon' => 'building',
-            'value' => \App\Models\Setting::getValue('homepage_stat_campus_communities', '150+'),
-            'label' => \App\Models\Setting::getValue('homepage_stat_campus_communities_label', 'CAMPUS COMMUNITIES'),
-        ],
-        [
-            'icon' => 'trophy',
-            'value' => \App\Models\Setting::getValue('homepage_stat_events_sponsored', '110+'),
-            'label' => \App\Models\Setting::getValue('homepage_stat_events_sponsored_label', 'EVENTS SPONSORED'),
-        ],
-        [
-            'icon' => 'users',
-            'value' => \App\Models\Setting::getValue('homepage_stat_student_leaders', '240+'),
-            'label' => \App\Models\Setting::getValue('homepage_stat_student_leaders_label', 'STUDENT LEADERS'),
-        ],
-    ];
+    $statMode = \App\Models\Setting::getValue('homepage_stat_mode', 'live');
+    $liveStats = \App\Http\Controllers\Admin\HomePageController::getLiveStatistics();
+
+    if ($statMode === 'custom') {
+        $statistics = [
+            [
+                'icon' => 'user',
+                'value' => \App\Models\Setting::getValue('homepage_stat_student_gamers', $liveStats['student_gamers']),
+                'label' => \App\Models\Setting::getValue('homepage_stat_student_gamers_label', 'STUDENT GAMERS'),
+            ],
+            [
+                'icon' => 'building',
+                'value' => \App\Models\Setting::getValue('homepage_stat_campus_communities', $liveStats['campus_communities']),
+                'label' => \App\Models\Setting::getValue('homepage_stat_campus_communities_label', 'CAMPUS COMMUNITIES'),
+            ],
+            [
+                'icon' => 'trophy',
+                'value' => \App\Models\Setting::getValue('homepage_stat_events_sponsored', $liveStats['events_sponsored']),
+                'label' => \App\Models\Setting::getValue('homepage_stat_events_sponsored_label', 'EVENTS SPONSORED'),
+            ],
+            [
+                'icon' => 'users',
+                'value' => \App\Models\Setting::getValue('homepage_stat_student_leaders', $liveStats['student_leaders']),
+                'label' => \App\Models\Setting::getValue('homepage_stat_student_leaders_label', 'STUDENT LEADERS'),
+            ],
+        ];
+    } else {
+        $statistics = [
+            [
+                'icon' => 'user',
+                'value' => $liveStats['student_gamers'],
+                'label' => \App\Models\Setting::getValue('homepage_stat_student_gamers_label', 'STUDENT GAMERS'),
+            ],
+            [
+                'icon' => 'building',
+                'value' => $liveStats['campus_communities'],
+                'label' => \App\Models\Setting::getValue('homepage_stat_campus_communities_label', 'CAMPUS COMMUNITIES'),
+            ],
+            [
+                'icon' => 'trophy',
+                'value' => $liveStats['events_sponsored'],
+                'label' => \App\Models\Setting::getValue('homepage_stat_events_sponsored_label', 'EVENTS SPONSORED'),
+            ],
+            [
+                'icon' => 'users',
+                'value' => $liveStats['student_leaders'],
+                'label' => \App\Models\Setting::getValue('homepage_stat_student_leaders_label', 'STUDENT LEADERS'),
+            ],
+        ];
+    }
 
     return Inertia::render('Home/Index', [
         'pinnedFaqs' => Faq::query()

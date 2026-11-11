@@ -27,22 +27,21 @@ class AdminHomePageStatisticsTest extends TestCase
         return $admin;
     }
 
-    public function test_public_homepage_renders_default_statistics_when_no_settings_stored(): void
+    public function test_public_homepage_renders_live_statistics_when_in_live_mode(): void
     {
+        User::factory()->create([
+            'user_type' => 'Student',
+            'status' => 'active',
+        ]);
+
         $response = $this->get('/');
 
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
             ->component('Home/Index')
             ->has('statistics', 4)
-            ->where('statistics.0.value', '22K+')
+            ->where('statistics.0.value', '1+')
             ->where('statistics.0.label', 'STUDENT GAMERS')
-            ->where('statistics.1.value', '150+')
-            ->where('statistics.1.label', 'CAMPUS COMMUNITIES')
-            ->where('statistics.2.value', '110+')
-            ->where('statistics.2.label', 'EVENTS SPONSORED')
-            ->where('statistics.3.value', '240+')
-            ->where('statistics.3.label', 'STUDENT LEADERS')
         );
     }
 
@@ -61,17 +60,18 @@ class AdminHomePageStatisticsTest extends TestCase
         $response->assertInertia(fn ($page) => $page
             ->component('Admin/HomePage')
             ->has('statistics')
-            ->where('statistics.student_gamers', '22K+')
+            ->where('statistics.mode', 'live')
             ->has('liveCounts')
-            ->where('liveCounts.student_gamers', 1)
+            ->where('liveCounts.student_gamers', '1+')
         );
     }
 
-    public function test_admin_can_update_homepage_statistics(): void
+    public function test_admin_can_update_homepage_statistics_to_custom(): void
     {
         $this->signInSuperAdmin();
 
         $payload = [
+            'mode' => 'custom',
             'student_gamers' => '30K+',
             'student_gamers_label' => 'ACTIVE GAMERS',
             'campus_communities' => '200+',
@@ -87,10 +87,11 @@ class AdminHomePageStatisticsTest extends TestCase
         $response->assertRedirect();
         $response->assertSessionHas('success', 'Homepage statistics updated successfully.');
 
+        $this->assertEquals('custom', Setting::getValue('homepage_stat_mode'));
         $this->assertEquals('30K+', Setting::getValue('homepage_stat_student_gamers'));
         $this->assertEquals('ACTIVE GAMERS', Setting::getValue('homepage_stat_student_gamers_label'));
 
-        // Public homepage now reflects the updated settings
+        // Public homepage now reflects the updated settings in custom mode
         $publicResponse = $this->get('/');
         $publicResponse->assertOk();
         $publicResponse->assertInertia(fn ($page) => $page
@@ -122,3 +123,4 @@ class AdminHomePageStatisticsTest extends TestCase
         $response->assertRedirect(route('admin.login'));
     }
 }
+

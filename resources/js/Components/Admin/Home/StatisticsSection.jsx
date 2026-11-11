@@ -50,20 +50,27 @@ const STAT_CONFIG = [
 ];
 
 export default function StatisticsSection({ initialStatistics = {}, liveCounts = {} }) {
+    const [mode, setMode] = useState(initialStatistics.mode ?? 'live');
     const [values, setValues] = useState({
-        student_gamers: initialStatistics.student_gamers ?? '22K+',
+        mode: initialStatistics.mode ?? 'live',
+        student_gamers: initialStatistics.student_gamers ?? (liveCounts.student_gamers ?? '20+'),
         student_gamers_label: initialStatistics.student_gamers_label ?? 'STUDENT GAMERS',
-        campus_communities: initialStatistics.campus_communities ?? '150+',
+        campus_communities: initialStatistics.campus_communities ?? (liveCounts.campus_communities ?? '3,137+'),
         campus_communities_label: initialStatistics.campus_communities_label ?? 'CAMPUS COMMUNITIES',
-        events_sponsored: initialStatistics.events_sponsored ?? '110+',
+        events_sponsored: initialStatistics.events_sponsored ?? (liveCounts.events_sponsored ?? '0'),
         events_sponsored_label: initialStatistics.events_sponsored_label ?? 'EVENTS SPONSORED',
-        student_leaders: initialStatistics.student_leaders ?? '240+',
+        student_leaders: initialStatistics.student_leaders ?? (liveCounts.student_leaders ?? '2+'),
         student_leaders_label: initialStatistics.student_leaders_label ?? 'STUDENT LEADERS',
     });
 
     const [saving, setSaving] = useState(false);
     const [successOpen, setSuccessOpen] = useState(false);
     const [errors, setErrors] = useState({});
+
+    const handleModeChange = (newMode) => {
+        setMode(newMode);
+        setValues((prev) => ({ ...prev, mode: newMode }));
+    };
 
     const handleChange = (field, val) => {
         setValues((prev) => ({ ...prev, [field]: val }));
@@ -72,7 +79,7 @@ export default function StatisticsSection({ initialStatistics = {}, liveCounts =
     const handleUseLive = (stat) => {
         const live = liveCounts[stat.liveKey];
         if (live !== undefined && live !== null) {
-            handleChange(stat.key, `${live}+`);
+            handleChange(stat.key, String(live));
         }
     };
 
@@ -98,9 +105,44 @@ export default function StatisticsSection({ initialStatistics = {}, liveCounts =
         <>
             <SectionCard
                 title="About Section Statistics Counters"
-                description="Configure the 4 key dynamic counters shown in the 'About MSL Philippines' section of the homepage. Supports dynamic counting animation (e.g. 22K+, 150+, 1,000+)."
+                description="Manage the 4 key community metrics displayed on the About MSL section. Currently configured to directly query and count live data from the database."
             >
                 <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Mode Selector */}
+                    <div className="flex flex-col gap-3 rounded-xl border border-neutral-800 bg-[#161616] p-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <span className="text-sm font-semibold text-white">Counting Data Source</span>
+                            <p className="text-xs text-gray-400">
+                                {mode === 'live'
+                                    ? 'Currently using real-time database counts (automatically increments as users and campuses register).'
+                                    : 'Using custom manual values entered below.'}
+                            </p>
+                        </div>
+                        <div className="inline-flex rounded-lg border border-neutral-700 bg-neutral-900 p-1">
+                            <button
+                                type="button"
+                                onClick={() => handleModeChange('live')}
+                                className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
+                                    mode === 'live'
+                                        ? 'bg-[#FBBF24] text-black shadow'
+                                        : 'text-gray-400 hover:text-white'
+                                }`}
+                            >
+                                Live Database Counts
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => handleModeChange('custom')}
+                                className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
+                                    mode === 'custom'
+                                        ? 'bg-[#FBBF24] text-black shadow'
+                                        : 'text-gray-400 hover:text-white'
+                                }`}
+                            >
+                                Custom Marketing Values
+                            </button>
+                        </div>
+                    </div>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         {STAT_CONFIG.map((stat) => {
                             const Icon = stat.icon;
@@ -215,3 +257,4 @@ export default function StatisticsSection({ initialStatistics = {}, liveCounts =
         </>
     );
 }
+
