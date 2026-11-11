@@ -111,19 +111,42 @@ export default function NetworkSection({ data }) {
                         aria-hidden={copy === 1 ? true : undefined}
                         className="flex shrink-0 items-center gap-10 pr-10 md:gap-20 md:pr-20"
                     >
-                        {data.logos.map((logo) => (
-                            <div
-                                key={logo.src}
-                                className="grid h-[110px] w-[150px] shrink-0 place-items-center md:h-[150px] md:w-[220px]"
-                            >
+                        {data.logos.map((logo, index) => {
+                            const logoImg = (
                                 <img
                                     src={logo.src}
-                                    alt={copy === 0 ? logo.alt : ""}
+                                    alt={copy === 0 ? (logo.alt || logo.name || "") : ""}
                                     loading="lazy"
-                                    className="max-h-[110px] max-w-full object-contain md:max-h-[150px]"
+                                    className="max-h-[110px] max-w-full object-contain transition-transform duration-300 group-hover:scale-110 md:max-h-[150px]"
                                 />
-                            </div>
-                        ))}
+                            );
+
+                            if (logo.link) {
+                                const isExternal = /^https?:\/\//i.test(logo.link);
+                                return (
+                                    <a
+                                        key={`${logo.src}-${copy}-${index}`}
+                                        href={logo.link}
+                                        target={isExternal ? "_blank" : undefined}
+                                        rel={isExternal ? "noopener noreferrer" : undefined}
+                                        title={logo.alt || logo.name || "Visit organization"}
+                                        tabIndex={copy === 1 ? -1 : 0}
+                                        className="group grid h-[110px] w-[150px] shrink-0 place-items-center rounded-xl p-2 transition-all duration-200 hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2C21A] md:h-[150px] md:w-[220px]"
+                                    >
+                                        {logoImg}
+                                    </a>
+                                );
+                            }
+
+                            return (
+                                <div
+                                    key={`${logo.src}-${copy}-${index}`}
+                                    className="grid h-[110px] w-[150px] shrink-0 place-items-center md:h-[150px] md:w-[220px]"
+                                >
+                                    {logoImg}
+                                </div>
+                            );
+                        })}
                     </div>
                 ))}
             </div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Carousel;
 use App\Models\Institution;
 use App\Models\MslEvent;
+use App\Models\NetworkOrganization;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -67,6 +68,15 @@ class HomePageController extends Controller
             ])->values(),
             'statistics' => $statistics,
             'liveCounts' => $liveCounts,
+            'networkOrganizations' => NetworkOrganization::orderBy('order')->get()->map(fn (NetworkOrganization $org) => [
+                'id' => $org->id,
+                'name' => $org->name,
+                'link' => $org->link,
+                'order' => $org->order,
+                'is_active' => $org->is_active,
+                'logo_path' => $org->logo_path,
+                'logo_url' => $org->logo_url,
+            ])->values(),
         ]);
     }
 
@@ -95,6 +105,65 @@ class HomePageController extends Controller
         Setting::setValue('homepage_stat_student_leaders_label', $validated['student_leaders_label'], 'string');
 
         return back()->with('success', 'Homepage statistics updated successfully.');
+    }
+
+    public function storeNetworkOrganization(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'link' => ['nullable', 'string', 'max:500'],
+            'logo' => ['required', 'image', 'mimes:jpeg,jpg,png,gif,webp,svg', 'max:5120'],
+            'order' => ['nullable', 'integer', 'min:0'],
+            'is_active' => ['nullable', 'boolean'],
+        ]);
+
+        $data['logo_path'] = basename($request->file('logo')->store('network_organizations', 'public'));
+        $maxOrder = NetworkOrganization::max('order');
+        $data['order'] ??= $maxOrder === null ? 0 : ((int) $maxOrder) + 1;
+        $data['is_active'] = $request->boolean('is_active', true);
+        unset($data['logo']);
+
+        NetworkOrganization::create($data);
+
+        return back()->with('success', 'Network organization added successfully.');
+    }
+
+    public function updateNetworkOrganization(Request $request, NetworkOrganization $networkOrganization): RedirectResponse
+    {
+        $data = $request->validate([
+            'name' => ['sometimes', 'required', 'string', 'max:255'],
+            'link' => ['sometimes', 'nullable', 'string', 'max:500'],
+            'logo' => ['sometimes', 'nullable', 'image', 'mimes:jpeg,jpg,png,gif,webp,svg', 'max:5120'],
+            'order' => ['sometimes', 'integer', 'min:0'],
+            'is_active' => ['sometimes', 'boolean'],
+        ]);
+
+        if ($request->hasFile('logo')) {
+            if ($networkOrganization->logo_path && !Str::startsWith($networkOrganization->logo_path, ['/'])) {
+                Storage::disk('public')->delete('network_organizations/' . $networkOrganization->logo_path);
+            }
+            $data['logo_path'] = basename($request->file('logo')->store('network_organizations', 'public'));
+            unset($data['logo']);
+        }
+
+        if ($request->has('is_active')) {
+            $data['is_active'] = $request->boolean('is_active');
+        }
+
+        $networkOrganization->update($data);
+
+        return back()->with('success', 'Network organization updated successfully.');
+    }
+
+    public function deleteNetworkOrganization(NetworkOrganization $networkOrganization): RedirectResponse
+    {
+        if ($networkOrganization->logo_path && !Str::startsWith($networkOrganization->logo_path, ['/'])) {
+            Storage::disk('public')->delete('network_organizations/' . $networkOrganization->logo_path);
+        }
+
+        $networkOrganization->delete();
+
+        return back()->with('success', 'Network organization deleted successfully.');
     }
 
     private function imageUrl(?string $image): ?string

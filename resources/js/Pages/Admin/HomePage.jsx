@@ -1,12 +1,18 @@
 import CarouselSection from '@/Components/Admin/Home/CarouselSection';
 import CommunityVoiceSection from '@/Components/Admin/Home/CommunityVoiceSection';
 import HighlightLinkSection from '@/Components/Admin/Home/HighlightLinkSection';
+import NetworkOrganizationsSection from '@/Components/Admin/Home/NetworkOrganizationsSection';
 import ProgramsSection from '@/Components/Admin/Home/ProgramsSection';
 import StatisticsSection from '@/Components/Admin/Home/StatisticsSection';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
 
-export default function HomePage({ carousels = [], statistics = {}, liveCounts = {} }) {
+export default function HomePage({
+    carousels = [],
+    statistics = {},
+    liveCounts = {},
+    networkOrganizations = [],
+}) {
     return (
         <AdminLayout activeNavId="home-page">
             <Head title="Home Page" />
@@ -20,6 +26,7 @@ export default function HomePage({ carousels = [], statistics = {}, liveCounts =
             <HighlightLinkSection />
             <CarouselSection initialItems={carousels} />
             <StatisticsSection initialStatistics={statistics} liveCounts={liveCounts} />
+            <NetworkOrganizationsSection initialItems={networkOrganizations} />
             <ProgramsSection />
             <CommunityVoiceSection />
         </AdminLayout>

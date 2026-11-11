@@ -142,6 +142,16 @@ Route::get('/', function () {
             'image' => $slide->image_path ? (\Illuminate\Support\Str::startsWith($slide->image_path, '/') ? $slide->image_path : \Illuminate\Support\Facades\Storage::disk('public')->url('carousel/' . $slide->image_path)) : '/champ poster.jpg',
         ])->values(),
         'statistics' => $statistics,
+        'networkLogos' => \App\Models\NetworkOrganization::where('is_active', true)
+            ->orderBy('order')
+            ->get()
+            ->map(fn (\App\Models\NetworkOrganization $org) => [
+                'id' => $org->id,
+                'src' => $org->logo_url,
+                'alt' => $org->name,
+                'link' => $org->link,
+            ])
+            ->values(),
     ]);
 });
 
@@ -346,6 +356,12 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->middleware('admin.permission:manage_homepage')->name('admin.home-page');
     Route::post('/admin/home-page/statistics', [HomePageController::class, 'updateStatistics'])
         ->middleware('admin.permission:manage_homepage')->name('admin.home-page.statistics');
+    Route::post('/admin/home-page/network-organizations', [HomePageController::class, 'storeNetworkOrganization'])
+        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.network-organizations.store');
+    Route::post('/admin/home-page/network-organizations/{networkOrganization}', [HomePageController::class, 'updateNetworkOrganization'])
+        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.network-organizations.update');
+    Route::delete('/admin/home-page/network-organizations/{networkOrganization}', [HomePageController::class, 'deleteNetworkOrganization'])
+        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.network-organizations.delete');
 
     Route::get('/admin/faq', [FaqController::class, 'index'])
         ->middleware('admin.permission:manage_faq')->name('admin.faq');

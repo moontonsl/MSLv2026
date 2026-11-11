@@ -11,7 +11,7 @@ import CommunityVoicesSection from "./Components/CommunityVoicesSection";
 import ChooseYourPathSection from "./Components/ChooseYourPathSection";
 import FAQSection from "./Components/FAQSection";
 
-export default function Home({ pinnedFaqs = [], heroSlides = [], statistics = [] }) {
+export default function Home({ pinnedFaqs = [], heroSlides = [], statistics = [], networkLogos = [] }) {
     const faqData = {
         ...homeData.faq,
         items: (pinnedFaqs.length > 0 ? pinnedFaqs : homeData.faq.items).slice(0, 5),
@@ -27,6 +27,11 @@ export default function Home({ pinnedFaqs = [], heroSlides = [], statistics = []
         statistics: statistics.length > 0 ? statistics : homeData.about.statistics,
     };
 
+    const networkData = {
+        ...homeData.network,
+        logos: networkLogos.length > 0 ? networkLogos : homeData.network.logos,
+    };
+
     return (
         <MainLayout fullWidth>
             <Head title="Home" />
@@ -35,7 +40,7 @@ export default function Home({ pinnedFaqs = [], heroSlides = [], statistics = []
                 <HomeAnnouncement data={homeData.announcement} />
                 <HomeHero data={heroData} />
                 <AboutSection data={aboutData} />
-                <NetworkSection data={homeData.network} />
+                <NetworkSection data={networkData} />
                 <ProgramsSection data={homeData.programs} />
                 {homeData.community.visible !== false && (
                     <CommunityVoicesSection data={homeData.community} />
