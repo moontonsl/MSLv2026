@@ -36,7 +36,6 @@ const NAV_SECTIONS = [
         title: "Content & CMS",
         items: [
             { id: 'news', label: 'News & Updates', href: '/admin/news-updates', icon: Megaphone, permission: 'manage_news' },
-            { id: 'carousel', label: 'Carousel Banners', href: '/admin/carousel', icon: Image, permission: 'manage_carousel' },
             { id: 'faq', label: 'FAQ Manager', href: '/admin/faq', icon: MessageSquare, permission: 'manage_faq' },
             { id: 'footer', label: 'Footer Links', href: '/admin/footer', icon: LayoutGrid, permission: 'manage_footer' },
             { id: 'home-page', label: 'Landing Settings', href: '/admin/home-page', icon: LayoutGrid, permission: 'manage_homepage' },

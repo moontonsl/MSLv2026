@@ -1,18 +1,10 @@
-import AdminFilterSelect from '@/Components/Admin/AdminFilterSelect';
 import CarouselModal from '@/Components/Admin/CarouselModal';
 import DeleteConfirmationModal from '@/Components/Admin/DeleteConfirmationModal';
 import SuccessModal from '@/Components/Admin/SuccessModal';
-import AdminFieldLabel from '@/Components/Admin/AdminFieldLabel';
 import ContentCard from '@/Components/Admin/ContentCard';
-import ImageDropzone from '@/Components/Admin/ImageDropzone';
 import SectionCard from '@/Components/Admin/SectionCard';
-import {
-    ADMIN_GOLD_BUTTON_CLASS,
-    ADMIN_INPUT_CLASS,
-    ADMIN_SELECT_CLASS,
-} from '@/Components/Admin/adminFormStyles';
-import { CAROUSEL_ITEMS, CAROUSEL_LABEL_OPTIONS } from '@/data/adminHomeData';
-import { Plus } from 'lucide-react';
+import { ADMIN_GOLD_BUTTON_CLASS } from '@/Components/Admin/adminFormStyles';
+import { Plus, ImagePlus } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
@@ -20,9 +12,17 @@ export default function CarouselSection({ initialItems = [] }) {
     const mappedItems = initialItems.map((item) => ({
         id: item.id,
         title: item.title || 'Untitled',
-        image: item.image_path?.startsWith('/') ? item.image_path : `/storage/carousel/${item.image_path}`,
-        meta: `Order: ${item.order} | ${item.is_active ? 'Active' : 'Inactive'}`,
+        label: item.label || '',
+        subtitle: item.subtitle || '',
+        link: item.link || '',
+        startDate: item.start_date || '',
+        endDate: item.end_date || '',
+        order: item.order,
+        is_active: item.is_active,
+        image: item.image_url || (item.image_path?.startsWith('/') ? item.image_path : `/storage/carousel/${item.image_path}`),
+        meta: `Order: ${item.order} | ${item.is_active ? 'Active' : 'Inactive'}${item.start_date ? ` | ${item.start_date}` : ''}`,
     }));
+
     const [items, setItems] = useState(mappedItems);
     const [modalOpen, setModalOpen] = useState(false);
     const [successOpen, setSuccessOpen] = useState(false);
@@ -45,12 +45,12 @@ export default function CarouselSection({ initialItems = [] }) {
         setEditingItem({
             id: item.id,
             order: item.order ?? items.indexOf(item),
-            label: '',
-            title: item.title,
-            subtitle: '',
-            link: '',
-            startDate: '',
-            endDate: '',
+            label: item.label || '',
+            title: item.title || '',
+            subtitle: item.subtitle || '',
+            link: item.link || '',
+            startDate: item.startDate || '',
+            endDate: item.endDate || '',
             featuredImage: item.image,
         });
         setModalOpen(true);
@@ -63,20 +63,28 @@ export default function CarouselSection({ initialItems = [] }) {
 
     const handleSubmit = (values) => {
         const payload = {
-            title: values.title,
-            image: values.featuredImage,
+            title: values.title || '',
+            label: values.label || '',
+            subtitle: values.subtitle || '',
+            link: values.link || '',
+            start_date: values.startDate || null,
+            end_date: values.endDate || null,
             order: editingItem?.order ?? items.length,
             is_active: true,
         };
+
+        if (values.featuredImage instanceof File) {
+            payload.image = values.featuredImage;
+        }
+
         const options = { forceFormData: true, preserveScroll: true };
+
         if (editingItem) {
             router.post(route('admin.carousel.update', editingItem.id), { ...payload, _method: 'PUT' }, options);
         } else {
             router.post(route('admin.carousel.store'), payload, options);
         }
-        setItems((prev) => editingItem
-            ? prev.map((item) => item.id === editingItem.id ? { ...item, title: values.title } : item)
-            : [...prev, { id: Date.now(), title: values.title || 'Untitled', image: values.featuredImage ? URL.createObjectURL(values.featuredImage) : '/most used hero.png', meta: `Order: ${prev.length} | Active` }]);
+
         setWasEditSubmit(editingItem != null);
         setWasDeleteSubmit(false);
         setModalOpen(false);
@@ -103,7 +111,6 @@ export default function CarouselSection({ initialItems = [] }) {
     const confirmDelete = () => {
         if (pendingDeleteId == null) return;
         router.delete(route('admin.carousel.delete', pendingDeleteId), { preserveScroll: true });
-        setItems((prev) => prev.filter((item) => item.id !== pendingDeleteId));
         setDeleteOpen(false);
         setPendingDeleteId(null);
         setWasEditSubmit(false);
@@ -113,89 +120,28 @@ export default function CarouselSection({ initialItems = [] }) {
 
     return (
         <>
-            <SectionCard title="Carousel">
+            <SectionCard title="Hero Carousel (Happening Now)">
                 <div className="space-y-6">
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <AdminFieldLabel htmlFor="carousel-label" required>
-                                Label
-                            </AdminFieldLabel>
-                            <AdminFilterSelect id="carousel-label" className={ADMIN_SELECT_CLASS} defaultValue="">
-                                <option value="" disabled>
-                                    Select label
-                                </option>
-                                {CAROUSEL_LABEL_OPTIONS.map((option) => (
-                                    <option key={option} value={option}>
-                                        {option}
-                                    </option>
-                                ))}
-                            </AdminFilterSelect>
+                            <h3 className="text-sm font-semibold text-white">Carousel Slides</h3>
+                            <p className="text-xs text-gray-400">
+                                Manage slides displayed in the "HAPPENING NOW" hero section of the homepage.
+                            </p>
                         </div>
-                        <div>
-                            <AdminFieldLabel htmlFor="carousel-title" required>
-                                Title
-                            </AdminFieldLabel>
-                            <input
-                                id="carousel-title"
-                                type="text"
-                                placeholder="e.g. MSL Network Awards"
-                                className={ADMIN_INPUT_CLASS}
-                            />
-                        </div>
-                        <div>
-                            <AdminFieldLabel htmlFor="carousel-description" required>
-                                Description
-                            </AdminFieldLabel>
-                            <input
-                                id="carousel-description"
-                                type="text"
-                                placeholder="Short description"
-                                className={ADMIN_INPUT_CLASS}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        <div>
-                            <AdminFieldLabel htmlFor="carousel-link" required>
-                                Link
-                            </AdminFieldLabel>
-                            <input
-                                id="carousel-link"
-                                type="url"
-                                placeholder="https://example.com"
-                                className={ADMIN_INPUT_CLASS}
-                            />
-                        </div>
-                        <div>
-                            <AdminFieldLabel htmlFor="carousel-start" required>
-                                Start Date
-                            </AdminFieldLabel>
-                            <input id="carousel-start" type="date" className={ADMIN_INPUT_CLASS} />
-                        </div>
-                        <div>
-                            <AdminFieldLabel htmlFor="carousel-end" required>
-                                End Date
-                            </AdminFieldLabel>
-                            <input id="carousel-end" type="date" className={ADMIN_INPUT_CLASS} />
-                        </div>
-                    </div>
-
-                    <ImageDropzone hint="PNG, JPG, JPEG (Max. 5MB). Must be 1920x1080 pixels." />
-
-                    <div className="flex justify-end">
                         <button type="button" className={ADMIN_GOLD_BUTTON_CLASS} onClick={openAddModal}>
                             <Plus className="h-4 w-4" />
-                            Add New Carousel
+                            Add Slide
                         </button>
                     </div>
 
-                    <div className="border-t border-neutral-800 pt-8">
-                        <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                            <h3 className="text-sm font-semibold text-white">Current Carousel Images</h3>
-                            <p className="text-xs text-gray-500">Drag the grip lines to reorder</p>
+                    {items.length === 0 ? (
+                        <div className="rounded-xl border border-dashed border-neutral-800 p-8 text-center">
+                            <ImagePlus className="mx-auto mb-3 h-10 w-10 text-gray-600" />
+                            <p className="text-sm text-gray-400">No slides yet. Click "Add Slide" to create the first one.</p>
                         </div>
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    ) : (
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                             {items.map((item) => (
                                 <ContentCard
                                     key={item.id}
@@ -204,12 +150,22 @@ export default function CarouselSection({ initialItems = [] }) {
                                     onEdit={() => openEditModal(item)}
                                     onDelete={() => requestDelete(item.id)}
                                 >
-                                    <p className="font-semibold text-white">{item.title}</p>
-                                    <p className="mt-1 text-xs text-gray-500">{item.meta}</p>
+                                    <div className="space-y-1">
+                                        {item.label && (
+                                            <span className="inline-block rounded bg-red-600/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                                                {item.label}
+                                            </span>
+                                        )}
+                                        <p className="font-semibold text-white truncate" title={item.title}>{item.title}</p>
+                                        {item.subtitle && (
+                                            <p className="line-clamp-2 text-xs text-gray-400">{item.subtitle}</p>
+                                        )}
+                                        <p className="text-[11px] text-yellow-500/80">{item.meta}</p>
+                                    </div>
                                 </ContentCard>
                             ))}
                         </div>
-                    </div>
+                    )}
                 </div>
             </SectionCard>
 
@@ -231,10 +187,10 @@ export default function CarouselSection({ initialItems = [] }) {
                 onClose={closeSuccess}
                 message={
                     wasDeleteSubmit
-                        ? 'Data has been deleted!'
+                        ? 'Slide has been deleted!'
                         : wasEditSubmit
-                          ? 'Updated Successfully!'
-                          : 'Successfully Added!'
+                          ? 'Slide updated successfully!'
+                          : 'Slide added successfully!'
                 }
             />
         </>

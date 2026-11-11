@@ -14,25 +14,21 @@ use Inertia\Response;
 
 class CarouselController extends Controller
 {
-    public function index(): Response
+    public function index(): Response|RedirectResponse
     {
-        return Inertia::render('Admin/Carousel', [
-            'carousels' => Carousel::ordered()->get()->map(fn (Carousel $carousel) => [
-                'id' => $carousel->id,
-                'title' => $carousel->title,
-                'image_path' => $carousel->image_path,
-                'image_url' => $this->imageUrl($carousel->image_path),
-                'order' => $carousel->order,
-                'is_active' => $carousel->is_active,
-            ])->values(),
-        ]);
+        return redirect()->route('admin.homepage');
     }
 
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
             'title' => ['nullable', 'string', 'max:255'],
-            'image' => ['required', 'image', 'mimes:jpeg,jpg,png,gif', 'max:5120'],
+            'label' => ['nullable', 'string', 'max:255'],
+            'subtitle' => ['nullable', 'string', 'max:1000'],
+            'link' => ['nullable', 'string', 'max:500'],
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date'],
+            'image' => ['required', 'image', 'mimes:jpeg,jpg,png,gif,webp', 'max:5120'],
             'order' => ['nullable', 'integer', 'min:0'],
             'is_active' => ['nullable', 'boolean'],
         ]);
@@ -52,7 +48,12 @@ class CarouselController extends Controller
     {
         $data = $request->validate([
             'title' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'image' => ['sometimes', 'nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:5120'],
+            'label' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'subtitle' => ['sometimes', 'nullable', 'string', 'max:1000'],
+            'link' => ['sometimes', 'nullable', 'string', 'max:500'],
+            'start_date' => ['sometimes', 'nullable', 'date'],
+            'end_date' => ['sometimes', 'nullable', 'date'],
+            'image' => ['sometimes', 'nullable', 'image', 'mimes:jpeg,jpg,png,gif,webp', 'max:5120'],
             'order' => ['sometimes', 'integer', 'min:0'],
             'is_active' => ['sometimes', 'boolean'],
         ]);

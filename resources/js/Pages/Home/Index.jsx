@@ -11,10 +11,15 @@ import CommunityVoicesSection from "./Components/CommunityVoicesSection";
 import ChooseYourPathSection from "./Components/ChooseYourPathSection";
 import FAQSection from "./Components/FAQSection";
 
-export default function Home({ pinnedFaqs = [] }) {
+export default function Home({ pinnedFaqs = [], heroSlides = [] }) {
     const faqData = {
         ...homeData.faq,
         items: pinnedFaqs.length > 0 ? pinnedFaqs : homeData.faq.items,
+    };
+
+    const heroData = {
+        ...homeData.hero,
+        slides: heroSlides.length > 0 ? heroSlides : homeData.hero.slides,
     };
 
     return (
@@ -23,7 +28,7 @@ export default function Home({ pinnedFaqs = [] }) {
 
             <div className="overflow-x-clip bg-[#050505] font-sans text-white">
                 <HomeAnnouncement data={homeData.announcement} />
-                <HomeHero data={homeData.hero} />
+                <HomeHero data={heroData} />
                 <AboutSection data={homeData.about} />
                 <NetworkSection data={homeData.network} />
                 <ProgramsSection data={homeData.programs} />

@@ -69,12 +69,26 @@ if (!empty($adminDomain)) {
 }
 
 Route::get('/', function () {
+    $heroSlides = \App\Models\Carousel::query()
+        ->where('is_active', true)
+        ->orderBy('order')
+        ->get();
+
     return Inertia::render('Home/Index', [
         'pinnedFaqs' => Faq::query()
             ->where('is_active', true)
             ->where('is_pinned', true)
             ->orderBy('id')
             ->get(['id', 'question', 'answer']),
+        'heroSlides' => $heroSlides->map(fn (\App\Models\Carousel $slide) => [
+            'id' => (string) $slide->id,
+            'badge' => $slide->label ?: 'FEATURED',
+            'title' => $slide->title ?: 'MSL Event',
+            'description' => $slide->subtitle ?: '',
+            'date' => $slide->start_date ? $slide->start_date->format('M d, Y') : '',
+            'href' => $slide->link ?: '/events',
+            'image' => $slide->image_path ? (\Illuminate\Support\Str::startsWith($slide->image_path, '/') ? $slide->image_path : \Illuminate\Support\Facades\Storage::disk('public')->url('carousel/' . $slide->image_path)) : '/champ poster.jpg',
+        ])->values(),
     ]);
 });
 
@@ -577,18 +591,15 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
     Route::delete('/admin/legacy-news/{news}', [LegacyContentController::class, 'deleteNews'])
         ->middleware('admin.permission:manage_news')->name('admin.news.delete');
 
-    Route::get('/admin/carousel', [CarouselController::class, 'index'])
-        ->middleware('admin.permission:manage_carousel')->name('admin.carousel');
-    Route::get('/admin/carousel/create', [LegacyContentController::class, 'createCarousel'])
-        ->middleware('admin.permission:manage_carousel')->name('admin.carousel.create');
+    Route::get('/admin/carousel', fn () => redirect()->route('admin.home-page'))->name('admin.carousel');
     Route::post('/admin/carousel', [CarouselController::class, 'store'])
-        ->middleware('admin.permission:manage_carousel')->name('admin.carousel.store');
+        ->middleware('admin.permission:manage_homepage')->name('admin.carousel.store');
     Route::put('/admin/carousel/{carousel}', [CarouselController::class, 'update'])
-        ->middleware('admin.permission:manage_carousel')->name('admin.carousel.update');
+        ->middleware('admin.permission:manage_homepage')->name('admin.carousel.update');
     Route::delete('/admin/carousel/{carousel}', [CarouselController::class, 'destroy'])
-        ->middleware('admin.permission:manage_carousel')->name('admin.carousel.delete');
+        ->middleware('admin.permission:manage_homepage')->name('admin.carousel.delete');
     Route::post('/admin/carousel/reorder', [CarouselController::class, 'reorder'])
-        ->middleware('admin.permission:manage_carousel')->name('admin.carousel.reorder');
+        ->middleware('admin.permission:manage_homepage')->name('admin.carousel.reorder');
 
     Route::get('/admin/event-photos', [EventPhotoController::class, 'index'])
         ->middleware('admin.permission:manage_event_photos')->name('admin.event-photos');
