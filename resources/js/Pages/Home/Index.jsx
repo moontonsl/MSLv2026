@@ -14,7 +14,7 @@ import FAQSection from "./Components/FAQSection";
 export default function Home({ pinnedFaqs = [], heroSlides = [], statistics = [] }) {
     const faqData = {
         ...homeData.faq,
-        items: pinnedFaqs.length > 0 ? pinnedFaqs : homeData.faq.items,
+        items: (pinnedFaqs.length > 0 ? pinnedFaqs : homeData.faq.items).slice(0, 5),
     };
 
     const heroData = {

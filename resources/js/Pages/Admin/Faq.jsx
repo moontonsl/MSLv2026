@@ -23,10 +23,13 @@ export default function Faq({ faqs: initialFaqs = [] }) {
     const [faqs, setFaqs] = useState(initialFaqs);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
+    const [limitWarning, setLimitWarning] = useState('');
 
     useEffect(() => {
         setFaqs(initialFaqs);
     }, [initialFaqs]);
+
+    const pinnedCount = useMemo(() => faqs.filter((item) => item.is_pinned).length, [faqs]);
 
     const openAddModal = useCallback(() => {
         setEditingItem(null);
@@ -43,12 +46,17 @@ export default function Faq({ faqs: initialFaqs = [] }) {
     }, []);
 
     const togglePin = useCallback((item) => {
+        if (!item.is_pinned && faqs.filter((f) => f.is_pinned).length >= 5) {
+            setLimitWarning('Maximum of 5 FAQs can be active on the homepage. Please unpin an active one first.');
+            return;
+        }
+        setLimitWarning('');
         router.patch(
             route('admin.faq.pin', item.id),
             { is_pinned: !item.is_pinned },
             { preserveScroll: true },
         );
-    }, []);
+    }, [faqs]);
 
     const closeModal = useCallback(() => {
         setModalOpen(false);
@@ -150,6 +158,40 @@ export default function Faq({ faqs: initialFaqs = [] }) {
             </div>
 
             <section className="rounded-xl border-0 bg-transparent p-0 sm:border sm:border-neutral-800 sm:bg-[#111111] sm:p-6 lg:p-11">
+                {/* Homepage Active Counter Header */}
+                <div className="mb-6 flex flex-col gap-3 rounded-xl border border-neutral-800 bg-[#161616] p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm font-semibold text-white">Homepage Active Questions</span>
+                            <span
+                                className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
+                                    pinnedCount === 5
+                                        ? 'border border-yellow-500/30 bg-yellow-500/20 text-yellow-400'
+                                        : 'bg-neutral-800 text-gray-300'
+                                }`}
+                            >
+                                {pinnedCount} / 5 Selected
+                            </span>
+                        </div>
+                        <p className="mt-1 text-xs text-gray-400">
+                            A maximum of 5 active FAQs can be displayed on the public landing page. Click the bookmark icon to activate or deactivate questions for the homepage.
+                        </p>
+                    </div>
+                </div>
+
+                {limitWarning && (
+                    <div className="mb-4 flex items-center justify-between rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+                        <span>{limitWarning}</span>
+                        <button
+                            type="button"
+                            onClick={() => setLimitWarning('')}
+                            className="ml-4 text-xs font-semibold text-amber-200 underline hover:text-white"
+                        >
+                            Dismiss
+                        </button>
+                    </div>
+                )}
+
                 <div className="mb-5 flex flex-col gap-5 sm:mb-8 sm:flex-row sm:items-start sm:justify-between">
                     <h2 className="hidden text-xl font-bold text-white sm:block">
                         Frequently Asked Questions
@@ -233,15 +275,22 @@ export default function Faq({ faqs: initialFaqs = [] }) {
                                         </button>
 
                                         <div className="min-w-0 flex-1">
-                                            <h3 className="text-base font-bold leading-5 text-white md:text-[28px] md:leading-8">
-                                                <span className="block min-w-0 overflow-hidden text-ellipsis whitespace-nowrap md:overflow-visible md:text-clip md:whitespace-normal">
-                                                    {item.question}
-                                                </span>
-                                            </h3>
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <h3 className="text-base font-bold leading-5 text-white md:text-[22px] md:leading-7">
+                                                    <span className="block min-w-0 overflow-hidden text-ellipsis whitespace-nowrap md:overflow-visible md:text-clip md:whitespace-normal">
+                                                        {item.question}
+                                                    </span>
+                                                </h3>
+                                                {item.is_pinned ? (
+                                                    <span className="inline-flex shrink-0 items-center rounded-full border border-yellow-500/30 bg-yellow-500/15 px-2.5 py-0.5 text-[11px] font-semibold text-yellow-400">
+                                                        Active on Homepage
+                                                    </span>
+                                                ) : null}
+                                            </div>
                                             <p
                                                 id={answerId}
                                                 hidden={!isExpanded}
-                                                className="mt-1 text-xs leading-4 text-gray-400 md:text-lg md:leading-6"
+                                                className="mt-2 text-xs leading-4 text-gray-400 md:text-base md:leading-6"
                                             >
                                                 {item.answer}
                                             </p>

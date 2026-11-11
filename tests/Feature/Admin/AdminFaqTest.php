@@ -131,4 +131,42 @@ class AdminFaqTest extends TestCase
         $this->patch(route('admin.faq.pin', $faq), ['is_pinned' => true])
             ->assertForbidden();
     }
+
+    public function test_admin_cannot_pin_more_than_5_faqs_for_homepage(): void
+    {
+        $this->signInSuperAdmin();
+
+        // Create 5 pinned FAQs
+        for ($i = 1; $i <= 5; $i++) {
+            Faq::create([
+                'category' => 'General',
+                'question' => "Question {$i}",
+                'answer' => "Answer {$i}",
+                'is_pinned' => true,
+                'is_active' => true,
+            ]);
+        }
+
+        // Create 6th unpinned FAQ
+        $sixth = Faq::create([
+            'category' => 'General',
+            'question' => 'Question 6',
+            'answer' => 'Answer 6',
+            'is_pinned' => false,
+            'is_active' => true,
+        ]);
+
+        // Attempting to pin the 6th should be rejected
+        $response = $this->patch(route('admin.faq.pin', $sixth), ['is_pinned' => true]);
+        $response->assertSessionHas('error');
+
+        $this->assertFalse($sixth->fresh()->is_pinned);
+
+        // Homepage only receives maximum 5
+        $this->get('/')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Home/Index')
+                ->has('pinnedFaqs', 5));
+    }
 }

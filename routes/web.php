@@ -130,6 +130,7 @@ Route::get('/', function () {
             ->where('is_active', true)
             ->where('is_pinned', true)
             ->orderBy('id')
+            ->take(5)
             ->get(['id', 'question', 'answer']),
         'heroSlides' => $heroSlides->map(fn (\App\Models\Carousel $slide) => [
             'id' => (string) $slide->id,

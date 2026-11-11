@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             FilipinoStudentSeeder::class,
             BasicEducationInstitutionSeeder::class,
             CollegeInstitutionSeeder::class,
+            FaqSeeder::class,
         ]);
     }
 }

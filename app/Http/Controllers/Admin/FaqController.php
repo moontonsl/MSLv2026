@@ -13,7 +13,11 @@ class FaqController extends Controller
 {
     public function index(): Response
     {
-        return Inertia::render('Admin/Faq', ['faqs' => Faq::query()->latest()->get()]);
+        return Inertia::render('Admin/Faq', [
+            'faqs' => Faq::query()->orderBy('id')->get(),
+            'pinnedCount' => Faq::where('is_pinned', true)->count(),
+            'maxPinned' => 5,
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -44,13 +48,17 @@ class FaqController extends Controller
             'is_pinned' => ['required', 'boolean'],
         ]);
 
+        if ($validated['is_pinned'] && Faq::where('is_pinned', true)->where('id', '!=', $faq->id)->count() >= 5) {
+            return back()->with('error', 'Maximum of 5 FAQs can be active/pinned for the homepage. Please unpin an active one first.');
+        }
+
         $faq->update(['is_pinned' => $validated['is_pinned']]);
 
         return back()->with(
             'success',
             $validated['is_pinned']
-                ? 'FAQ added to the public FAQ section.'
-                : 'FAQ removed from the public FAQ section.',
+                ? 'FAQ is now active on the public homepage (max 5).'
+                : 'FAQ removed from the public homepage.',
         );
     }
 
