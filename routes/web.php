@@ -110,6 +110,66 @@ Route::get('/Buffs&Support', function () {
 })->name('buffs.support');
 Route::redirect('/programs/buffs-support', '/Buffs&Support');
 
+Route::get('/NetworkAwards', function () {
+    return Inertia::render('Programs/NetworkAwards/Index');
+})->name('network.awards');
+
+Route::get('/NetworkAwards/Individual', function () {
+    return Inertia::render('Programs/NetworkAwards/IndividualNominations');
+})->name('network.awards.individual');
+
+Route::get('/NetworkAwards/Organization', function () {
+    return Inertia::render('Programs/NetworkAwards/OrganizationNominations');
+})->name('network.awards.organization');
+
+Route::get('/NetworkAwards/Nominate/{category?}', function (?string $category = null) {
+    $allowed = [
+        'esports-advocate-of-the-year',
+        'student-talent-of-the-year',
+        'student-creator-of-the-year',
+        'organization-of-the-year',
+        'best-event-of-the-year',
+        'rising-organization-award',
+        'student-community-impact-award',
+        'collaboration-of-the-year',
+        'service-through-esports-award',
+        'organization-partner-of-the-year',
+    ];
+
+    $resolved = in_array($category, $allowed, true)
+        ? $category
+        : 'student-talent-of-the-year';
+
+    return Inertia::render('Programs/NetworkAwards/Nominate', [
+        'category' => $resolved,
+    ]);
+})->name('network.awards.nominate');
+
+/*
+|--------------------------------------------------------------------------
+| Network Awards voting — direct category pages (no voting landing).
+| Friendly URLs; legacy /Vote/... slugs redirect here.
+|--------------------------------------------------------------------------
+*/
+Route::get('/NetworkAwards/Voting/OrganizationOfTheYear', function () {
+    return Inertia::render('Programs/NetworkAwards/Voting', [
+        'category' => 'organization-of-the-year',
+    ]);
+})->name('network.awards.voting.organization');
+
+Route::get('/NetworkAwards/Voting/StudentTalentOfTheYear', function () {
+    return Inertia::render('Programs/NetworkAwards/Voting', [
+        'category' => 'student-talent-of-the-year',
+    ]);
+})->name('network.awards.voting.student-talent');
+
+Route::redirect('/NetworkAwards/Voting', '/NetworkAwards/Voting/OrganizationOfTheYear');
+Route::redirect('/NetworkAwards/Vote', '/NetworkAwards/Voting/OrganizationOfTheYear');
+Route::redirect('/NetworkAwards/Vote/organization-of-the-year', '/NetworkAwards/Voting/OrganizationOfTheYear');
+Route::redirect('/NetworkAwards/Vote/student-talent-of-the-year', '/NetworkAwards/Voting/StudentTalentOfTheYear');
+Route::redirect('/programs/network-awards', '/NetworkAwards');
+Route::redirect('/programs/network-awards/vote', '/NetworkAwards/Voting/OrganizationOfTheYear');
+
 Route::get('/Campus', function () {
     return Inertia::render('Campus/Index');
 })->name('campus');
