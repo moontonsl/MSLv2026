@@ -15,7 +15,7 @@ import { ChevronLeft } from 'lucide-react';
 export default function AwardsShell({
     children,
     showBack = false,
-    backHref = '/NetworkAwards',
+    backHref = '/Awards',
     className = '',
 }) {
     const handleBack = () => {

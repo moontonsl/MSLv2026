@@ -33,8 +33,8 @@ export default function Nominate({
 
     const backHref =
         form.track === 'organization'
-            ? '/NetworkAwards/Organization'
-            : '/NetworkAwards/Individual';
+            ? '/Awards/Organization'
+            : '/Awards/Individual';
 
     const setField = (name, value) => {
         setValues((prev) => ({ ...prev, [name]: value }));
@@ -47,12 +47,12 @@ export default function Nominate({
 
     const handleNominateAgain = () => {
         setSubmittedOpen(false);
-        router.visit('/NetworkAwards#nominations');
+        router.visit('/Awards#nominations');
     };
 
     const handleDone = () => {
         setSubmittedOpen(false);
-        router.visit('/NetworkAwards');
+        router.visit('/Awards');
     };
 
     return (

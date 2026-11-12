@@ -49,22 +49,19 @@ export default function Voting({
     const handleNominateAgain = () => {
         setSubmittedOpen(false);
         setSelectedId(null);
-        const other =
-            category.id === 'organization-of-the-year'
-                ? '/NetworkAwards/Voting/StudentTalentOfTheYear'
-                : '/NetworkAwards/Voting/OrganizationOfTheYear';
-        router.visit(other);
+        router.visit('/MNA');
     };
 
     const handleDone = () => {
         setSubmittedOpen(false);
+        router.visit('/MNA');
     };
 
     return (
         <MainLayout fullWidth>
             <Head title={`MSL Network Awards — ${category.title}`} />
 
-            <AwardsShell showBack backHref="/NetworkAwards">
+            <AwardsShell showBack backHref="/MNA">
                 <h1 className="mt-6 text-center text-xl font-semibold text-white sm:mt-8 sm:text-2xl lg:text-3xl">
                     {category.title}
                 </h1>
