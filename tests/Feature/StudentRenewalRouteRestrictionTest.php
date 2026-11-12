@@ -31,7 +31,7 @@ class StudentRenewalRouteRestrictionTest extends TestCase
         ]);
 
         $this->actingAs($student)
-            ->get('/studentportal')
+            ->get('/StudentPortal')
             ->assertOk();
     }
 

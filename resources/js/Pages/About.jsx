@@ -6,6 +6,7 @@ import {
 import MainLayout from '@/Layouts/MainLayout';
 import { Head, Link } from '@inertiajs/react';
 import { ArrowRight, ChevronLeft } from 'lucide-react';
+import { MSL_NETWORK_HREF } from '@/data/siteNavigation';
 
 export default function About() {
     return (
@@ -191,7 +192,7 @@ export default function About() {
                                 Contact Us
                             </Link>
                             <Link
-                                href="/programs/msl-network"
+                                href={MSL_NETWORK_HREF}
                                 className="flex min-h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-md border border-gray-300 bg-white/5 px-2 py-2 text-body-xs font-bold text-white transition-colors hover:bg-white/10 sm:px-6 sm:py-3 sm:text-body-sm"
                             >
                                 View Programs

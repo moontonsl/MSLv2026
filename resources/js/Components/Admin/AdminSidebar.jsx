@@ -11,16 +11,16 @@ const NAV_SECTIONS = [
     {
         title: "Overview",
         items: [
-            { id: 'dashboard', label: 'Dashboard', href: '/admin/dashboard', icon: Gauge, permission: 'access_admin_dashboard' },
+            { id: 'dashboard', label: 'Dashboard', href: '/Admin/Dashboard', icon: Gauge, permission: 'access_admin_dashboard' },
         ]
     },
     {
         title: "Community & Students",
         items: [
-            { id: 'pending-users', label: 'Pending Verification', href: '/admin/users/pending', icon: ClipboardCheck, permission: 'manage_accounts' },
+            { id: 'pending-users', label: 'Pending Verification', href: '/Admin/Users/Pending', icon: ClipboardCheck, permission: 'manage_accounts' },
             { id: 'sl-management', label: 'Student Leaders', href: '/admin/sl-management', icon: UserCog, permission: 'manage_sl' },
             { id: 'regional-admins', label: 'Regional Admins', href: '/admin/regional-admin-management', icon: MapPin, permission: 'manage_regional_admins' },
-            { id: 'school-management', label: 'School Management', href: '/admin/school-management', icon: School, permission: 'manage_schools' },
+            { id: 'school-management', label: 'School Management', href: '/Admin/SchoolManagement', icon: School, permission: 'manage_schools' },
         ]
     },
     {
@@ -36,9 +36,9 @@ const NAV_SECTIONS = [
         title: "Content & CMS",
         items: [
             { id: 'news', label: 'News & Updates', href: '/admin/news-updates', icon: Megaphone, permission: 'manage_news' },
-            { id: 'faq', label: 'FAQ Manager', href: '/admin/faq', icon: MessageSquare, permission: 'manage_faq' },
+            { id: 'faq', label: 'FAQ Manager', href: '/Admin/FAQs', icon: MessageSquare, permission: 'manage_faq' },
             { id: 'footer', label: 'Footer Links', href: '/admin/footer', icon: LayoutGrid, permission: 'manage_footer' },
-            { id: 'home-page', label: 'Landing Settings', href: '/admin/home-page', icon: LayoutGrid, permission: 'manage_homepage' },
+            { id: 'home-page', label: 'Landing Settings', href: '/Admin/HomePage', icon: LayoutGrid, permission: 'manage_homepage' },
         ]
     },
     {
@@ -48,7 +48,7 @@ const NAV_SECTIONS = [
             { id: 'management', label: 'Permissions & Roles', href: '/admin/management', icon: Shield, permission: 'access_admin_management' },
             { id: 'audit-logs', label: 'Audit Trail', href: '/admin/audit-logs', icon: ClipboardList, permission: 'manage_audit_logs' },
             { id: 'violations', label: 'Violation Reports', href: '/admin/violation-reports', icon: AlertTriangle, permission: 'manage_violation_reports' },
-            { id: 'share-links', label: 'Short Links', href: '/admin/share-links', icon: Link2, permission: 'manage_share_links' },
+            { id: 'share-links', label: 'Short Links', href: '/Admin/ShareLinks', icon: Link2, permission: 'manage_share_links' },
             { id: 'settings', label: 'System Settings', href: '/admin/settings', icon: Settings, permission: 'manage_settings' },
         ]
     }

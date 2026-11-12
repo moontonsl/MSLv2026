@@ -30,7 +30,7 @@ export const homeData = {
         actions: [
             {
                 label: "Be A Member",
-                originalHref: "/register",
+                originalHref: "/Register",
                 href: comingSoonHref('membership'),
                 comingSoon: true,
                 variant: "primary",
@@ -156,7 +156,7 @@ export const homeData = {
                     "Gain official tournaments, grants, and mentorship for your campus community.",
                 image: "/Images/Home/campus-tournament.png",
                 imagePosition: "20% 50%",
-                href: "/campus-tournament",
+                href: PUBLIC_ROUTES.tournaments,
             },
             {
                 id: "msl-network",
@@ -289,7 +289,7 @@ export const homeData = {
                 description:
                     "Establish an MSL community in your school. Gain access to official tournaments, leadership grants, and mentorship programs.",
                 buttonLabel: "Be A Member",
-                originalHref: "/register",
+                originalHref: "/Register",
                 href: comingSoonHref('membership'),
                 comingSoon: true,
             },

@@ -2,7 +2,7 @@ import { comingSoonHref, PUBLIC_ROUTES } from './siteNavigation.js';
 
 export const NETWORK_LINKS = {
     membership: comingSoonHref('membership'),
-    partner: '/login',
+    partner: '/Login',
     support: PUBLIC_ROUTES.buffsSupport,
     tournamentLobby: `${PUBLIC_ROUTES.buffsSupport}#tournament-lobby`,
     nomination: comingSoonHref('msl'),
