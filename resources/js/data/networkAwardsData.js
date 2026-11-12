@@ -7,17 +7,42 @@ export const NETWORK_AWARDS_ABOUT =
 
 export const NETWORK_AWARDS_FAQS = homeData.faq.items;
 
+export const AWARDS_PATHS = {
+    home: '/Awards',
+    individual: '/Awards/Individual',
+    organization: '/Awards/Organization',
+    nominate: (slug) => `/Awards/Nominate/${slug}`,
+    voteHome: '/MNA',
+    voteOrg: '/MNA/v/Org',
+    voteStudent: '/MNA/v/Student',
+};
+
 export const NOMINATION_TRACKS = [
     {
         id: 'individual',
         label: 'INDIVIDUAL AWARDS',
-        href: '/NetworkAwards/Individual',
+        href: AWARDS_PATHS.individual,
         image: '/Images/NetworkAwards/categories/individual-awards.png',
     },
     {
         id: 'organization',
         label: 'ORGANIZATION AWARDS',
-        href: '/NetworkAwards/Organization',
+        href: AWARDS_PATHS.organization,
+        image: '/Images/NetworkAwards/categories/organization-awards.png',
+    },
+];
+
+export const VOTING_TRACKS = [
+    {
+        id: 'individual',
+        label: 'INDIVIDUAL AWARDS',
+        href: AWARDS_PATHS.voteStudent,
+        image: '/Images/NetworkAwards/categories/individual-awards.png',
+    },
+    {
+        id: 'organization',
+        label: 'ORGANIZATION AWARDS',
+        href: AWARDS_PATHS.voteOrg,
         image: '/Images/NetworkAwards/categories/organization-awards.png',
     },
 ];
@@ -27,19 +52,19 @@ export const INDIVIDUAL_AWARD_CATEGORIES = [
         id: 'esports-advocate-of-the-year',
         label: 'ESPORTS ADVOCATE OF THE YEAR',
         image: '/Images/NetworkAwards/categories/esports-advocate.png',
-        formId: 'esports-advocate-of-the-year',
+        formId: 'advocate',
     },
     {
         id: 'student-talent-of-the-year',
         label: 'STUDENT TALENT OF THE YEAR',
         image: '/Images/NetworkAwards/categories/student-talent.png',
-        formId: 'student-talent-of-the-year',
+        formId: 'talent',
     },
     {
         id: 'student-creator-of-the-year',
         label: 'STUDENT CREATOR OF THE YEAR',
         image: '/Images/NetworkAwards/categories/student-creator.png',
-        formId: 'student-creator-of-the-year',
+        formId: 'creator',
     },
 ];
 
@@ -48,43 +73,43 @@ export const ORGANIZATION_AWARD_CATEGORIES = [
         id: 'organization-of-the-year',
         label: 'ORGANIZATION OF THE YEAR',
         image: '/Images/NetworkAwards/categories/organization-of-the-year.png',
-        formId: 'organization-of-the-year',
+        formId: 'org',
     },
     {
         id: 'best-event-of-the-year',
         label: 'BEST EVENT OF THE YEAR',
         image: '/Images/NetworkAwards/categories/best-event.png',
-        formId: 'best-event-of-the-year',
+        formId: 'event',
     },
     {
         id: 'rising-organization-award',
         label: 'RISING ORGANIZATION AWARD',
         image: '/Images/NetworkAwards/categories/rising-organization.png',
-        formId: 'rising-organization-award',
+        formId: 'rising',
     },
     {
         id: 'student-community-impact-award',
         label: 'STUDENT COMMUNITY IMPACT AWARD',
         image: '/Images/NetworkAwards/categories/community-impact.png',
-        formId: 'student-community-impact-award',
+        formId: 'impact',
     },
     {
         id: 'collaboration-of-the-year',
         label: 'COLLABORATION OF THE YEAR',
         image: '/Images/NetworkAwards/categories/collaboration.png',
-        formId: 'collaboration-of-the-year',
+        formId: 'collab',
     },
     {
         id: 'service-through-esports-award',
         label: 'SERVICE THROUGH ESPORTS AWARD',
         image: '/Images/NetworkAwards/categories/service-esports.png',
-        formId: 'service-through-esports-award',
+        formId: 'service',
     },
     {
         id: 'organization-partner-of-the-year',
         label: 'ORGANIZATION PARTNER OF THE YEAR',
         image: '/Images/NetworkAwards/categories/org-partner.png',
-        formId: 'organization-partner-of-the-year',
+        formId: 'partner',
     },
 ];
 
@@ -262,7 +287,7 @@ export const NETWORK_AWARDS_CATEGORIES = {
         id: 'organization-of-the-year',
         title: 'Organization of the Year',
         type: 'organization',
-        votePath: '/NetworkAwards/Voting/OrganizationOfTheYear',
+        votePath: AWARDS_PATHS.voteOrg,
         nominees: [
             {
                 id: 'org-1',
@@ -289,7 +314,7 @@ export const NETWORK_AWARDS_CATEGORIES = {
         id: 'student-talent-of-the-year',
         title: 'Student Talent of the Year',
         type: 'individual',
-        votePath: '/NetworkAwards/Voting/StudentTalentOfTheYear',
+        votePath: AWARDS_PATHS.voteStudent,
         nominees: [
             {
                 id: 'talent-1',

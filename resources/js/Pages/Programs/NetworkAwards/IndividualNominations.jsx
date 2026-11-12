@@ -14,7 +14,7 @@ export default function IndividualNominations() {
         <MainLayout fullWidth>
             <Head title="MSL Network Student Awards Nomination" />
 
-            <AwardsShell showBack backHref="/NetworkAwards">
+            <AwardsShell showBack backHref="/Awards">
                 <h1 className="mt-6 text-center text-xl font-semibold text-white sm:mt-8 sm:text-2xl lg:text-3xl">
                     MSL Network Student Awards Nomination
                 </h1>
@@ -36,7 +36,7 @@ export default function IndividualNominations() {
                                 }
                                 onClick={() =>
                                     router.visit(
-                                        `/NetworkAwards/Nominate/${category.formId}`,
+                                        `/Awards/Nominate/${category.formId}`,
                                     )
                                 }
                             />
