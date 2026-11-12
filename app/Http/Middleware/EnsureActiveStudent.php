@@ -18,7 +18,7 @@ class EnsureActiveStudent
     {
         // Student status restrictions must never intercept the separate website
         // controller session or its admin routes.
-        if (Auth::guard('admin')->check() || $request->is('admin/*') || $request->is('Oppo-settings')) {
+        if (Auth::guard('admin')->check() || ($request->is('admin/*') || $request->is('Admin/*')) || $request->is('Oppo-settings')) {
             return $next($request);
         }
 
@@ -30,7 +30,7 @@ class EnsureActiveStudent
         if (
             $user?->user_type === 'Student'
             && $user->status === 'renewal-required'
-            && !$request->is('studentportal')
+            && !$request->is('StudentPortal')
             && !$request->is('studentportal/*')
             && !$request->is('logout')
         ) {
@@ -42,7 +42,7 @@ class EnsureActiveStudent
         if (
             $user?->user_type === 'Student'
             && $user->status === 'pending-review'
-            && !$request->is('renewal-review')
+            && !$request->is('RenewalReview')
             && !$request->is('logout')
         ) {
             return redirect()->route('renewal.review');
@@ -61,7 +61,7 @@ class EnsureActiveStudent
 
             if (
                 $user->status === 'pending'
-                && !$request->is('pending-verification')
+                && !$request->is('PendingVerification')
                 && !$request->is('logout')
             ) {
                 return redirect()->route('pending.verification');
@@ -69,7 +69,7 @@ class EnsureActiveStudent
 
             if (
                 $user->status === 'pending-review'
-                && !$request->is('renewal-review')
+                && !$request->is('RenewalReview')
                 && !$request->is('logout')
             ) {
                 return redirect()->route('renewal.review');
@@ -77,7 +77,7 @@ class EnsureActiveStudent
 
             if (
                 $user->status === 'rejected'
-                && !$request->is('rejected-verification')
+                && !$request->is('RejectedVerification')
                 && !$request->is('reapply')
                 && !$request->is('logout')
             ) {

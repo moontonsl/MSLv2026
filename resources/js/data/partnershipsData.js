@@ -7,7 +7,7 @@ export const PARTNERSHIP_LINKS = {
     cup: comingSoonHref('collegiate-cup'),
     events: comingSoonHref('events'),
     summit: comingSoonHref('leadership-summit'),
-    tournaments: '/campus-tournament',
+    tournaments: PUBLIC_ROUTES.tournaments,
     contact: 'mailto:contact@moontonslph.org?subject=Partnership%20Enquiry',
 };
 

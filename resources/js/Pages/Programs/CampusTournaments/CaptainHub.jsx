@@ -9,7 +9,7 @@ const DESKTOP_OPTIONS = [
         id: 'create',
         title: 'Create a New Team',
         description: 'Start fresh and build your roster.',
-        href: '/Tournament/CampusTournamentReg',
+        href: '/Tournament/CaptainRegistration',
         icon: UserPlus,
         highlight: true,
     },
@@ -37,7 +37,7 @@ const MOBILE_OPTIONS = [
         id: 'create',
         title: 'Create a New Team',
         description: 'Start fresh and build your roster.',
-        href: '/Tournament/CampusTournamentReg',
+        href: '/Tournament/CaptainRegistration',
         icon: Users,
         highlight: true,
     },
@@ -181,7 +181,7 @@ export default function CaptainHub({
             ? 'View and manage your current roster.'
             : 'View your current team and roster.',
         href: hasCaptainTeam
-            ? '/Tournament/CampusTournamentTeam'
+            ? '/Tournament/CaptainTeam'
             : hasMemberTeam
               ? '/Tournament/MemberTeam'
               : '/Tournament/SoloPlayer',

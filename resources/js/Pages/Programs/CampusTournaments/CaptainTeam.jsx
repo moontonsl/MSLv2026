@@ -176,7 +176,7 @@ export default function CaptainTeam({ team }) {
                 <div className="mx-auto max-w-6xl space-y-6">
                     <CampusTournamentPageHeader>
                         <Link
-                            href="/Tournament/CampusTournament"
+                            href="/Tournament/Captain"
                             className="text-sm text-gray-400 transition-colors hover:text-white"
                         >
                             ← Back to registration hub

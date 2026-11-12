@@ -1309,7 +1309,7 @@ export default function Schools({
 
                             <div className="flex items-center gap-2">
                                 <Link
-                                    href="/admin/users/pending"
+                                    href="/Admin/Users/Pending"
                                     className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-white/10 text-xs font-bold text-zinc-300 hover:text-white hover:bg-white/5 transition-all"
                                 >
                                     <span>Open Verification Queue</span>

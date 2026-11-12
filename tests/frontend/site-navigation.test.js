@@ -31,7 +31,7 @@ test('unavailable links keep their original destinations and use a recognized fe
     for (const item of [...ABOUT_ITEMS, ...PROGRAMS_ITEMS, ...MAIN_LINKS].filter((item) => item.comingSoon)) {
         assert.ok(item.originalHref);
         assert.notEqual(item.href, item.originalHref);
-        assert.ok(COMING_SOON_FEATURES[item.href.split('/').at(-1)]);
+        assert.ok(COMING_SOON_FEATURES[new URL(item.href, 'https://msl.local').searchParams.get('feature')]);
     }
 });
 
@@ -44,7 +44,7 @@ test('Programs remains active for program destinations reached from the footer',
 test('membership and partnership calls to action have consistent destinations', () => {
     const member = homeData.hero.actions.find((action) => action.label === 'Be A Member');
     const partner = homeData.hero.actions.find((action) => action.label === 'Partner With Us');
-    assert.equal(member.href, '/coming-soon/membership');
+    assert.equal(member.href, '/ComingSoon?feature=membership');
     assert.equal(member.comingSoon, true);
     assert.equal(partner.href, MSL_NETWORK_HREF);
     assert.equal(homeData.paths.items.find((path) => path.id === 'students').href, member.href);
@@ -82,10 +82,39 @@ test('nested About pages select only their own submenu item and keep About activ
     assert.equal(isNavigationGroupActive('/MSLNetAdmin', 'programs', PROGRAMS_ITEMS), false);
 });
 
-test('homepage destinations use canonical public routes and its existing programs anchor', () => {
-    assert.equal(homeData.about.href, '/about');
-    assert.equal(homeData.programs.href, '/#home-programs');
-    assert.equal(homeData.programs.items.find((item) => item.id === 'buffs-support').href, '/programs/buffs-support');
+test('homepage destinations use canonical public routes and the dedicated Programs page', () => {
+    assert.equal(homeData.about.href, '/About');
+    assert.equal(homeData.programs.href, '/Programs');
+    assert.equal(homeData.programs.items.find((item) => item.id === 'buffs-support').href, '/BuffsAndSupport');
     assert.equal(homeData.programs.items.find((item) => item.id === 'msl-network').href, MSL_NETWORK_HREF);
-    assert.equal(isPathActive(homeData.programs.href, '/'), true);
+    assert.equal(isPathActive(homeData.programs.href, '/'), false);
+    assert.equal(isNavigationGroupActive('/Programs', 'programs', PROGRAMS_ITEMS), true);
+});
+
+test('public page destinations use flat PascalCase URLs and retain their parent navigation', () => {
+    for (const [key, href] of Object.entries(PUBLIC_ROUTES)) {
+        if (key === 'home' || key === 'programs') continue;
+        assert.match(href, /^\/[A-Z][A-Za-z]*$/);
+    }
+    for (const item of [...ABOUT_ITEMS, ...PROGRAMS_ITEMS].filter((item) => !item.comingSoon)) {
+        const group = ABOUT_ITEMS.includes(item) ? 'about' : 'programs';
+        const items = group === 'about' ? ABOUT_ITEMS : PROGRAMS_ITEMS;
+        assert.equal(isNavigationGroupActive(item.href, group, items), true);
+        for (const alias of item.activePaths || []) {
+            assert.equal(isNavigationItemActive(alias, item), true);
+        }
+    }
+    assert.equal(MSL_NETWORK_HREF, '/MSLNetwork');
+});
+
+test('Coming Soon active states distinguish features while ignoring unrelated query parameters', () => {
+    const news = MAIN_LINKS.find((item) => item.label === 'News');
+    const events = MAIN_LINKS.find((item) => item.label === 'Events');
+    assert.equal(isNavigationItemActive('/ComingSoon?source=footer&feature=news#top', news), true);
+    assert.equal(isNavigationItemActive('/ComingSoon?feature=news', events), false);
+    assert.equal(isNavigationGroupActive('/ComingSoon?feature=news', 'about', ABOUT_ITEMS), false);
+    assert.equal(isNavigationGroupActive('/ComingSoon?feature=news', 'programs', PROGRAMS_ITEMS), false);
+    assert.equal(isNavigationGroupActive('/ComingSoon?feature=collegiate-cup', 'programs', PROGRAMS_ITEMS), true);
+    assert.equal(isNavigationGroupActive('/ComingSoon?feature=general-affairs', 'about', ABOUT_ITEMS), true);
+    assert.equal(isPathActive('/coming-soon/news', news.href), true);
 });

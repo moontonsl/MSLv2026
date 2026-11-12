@@ -57,7 +57,7 @@ class StudentVerificationLifecycleTest extends TestCase
     {
         $student = $this->createPendingStudent();
 
-        $response = $this->post('/login', [
+        $response = $this->post('/Login', [
             'username' => 'juanluna2026',
             'password' => 'password',
         ]);
@@ -71,7 +71,7 @@ class StudentVerificationLifecycleTest extends TestCase
         $student = $this->createPendingStudent();
 
         // Trying to access student portal
-        $this->actingAs($student)->get('/studentportal')
+        $this->actingAs($student)->get('/StudentPortal')
             ->assertRedirect(route('pending.verification'));
 
         // Trying to access home page while logged in as pending student
@@ -83,7 +83,7 @@ class StudentVerificationLifecycleTest extends TestCase
     {
         $student = $this->createPendingStudent();
 
-        $response = $this->actingAs($student)->get('/pending-verification');
+        $response = $this->actingAs($student)->get('/PendingVerification');
 
         $response->assertOk()
             ->assertInertia(fn ($page) => $page
@@ -112,11 +112,11 @@ class StudentVerificationLifecycleTest extends TestCase
         $student->update(['status' => 'active']);
 
         // Visiting /pending-verification redirects to student portal
-        $this->actingAs($student)->get('/pending-verification')
+        $this->actingAs($student)->get('/PendingVerification')
             ->assertRedirect(route('student.portal'));
 
         // Can access student portal directly
-        $response = $this->actingAs($student)->get('/studentportal');
+        $response = $this->actingAs($student)->get('/StudentPortal');
         $response->assertOk();
     }
 
@@ -148,11 +148,11 @@ class StudentVerificationLifecycleTest extends TestCase
         ]);
 
         // Student tries to browse or visit pending verification
-        $this->actingAs($student)->get('/pending-verification')
+        $this->actingAs($student)->get('/PendingVerification')
             ->assertRedirect(route('rejected.verification'));
 
         // Student can view rejected-verification page
-        $response = $this->actingAs($student)->get('/rejected-verification');
+        $response = $this->actingAs($student)->get('/RejectedVerification');
         $response->assertOk()
             ->assertInertia(fn ($page) => $page
                 ->component('Auth/RejectedVerification')
@@ -201,7 +201,7 @@ class StudentVerificationLifecycleTest extends TestCase
         ]);
 
         // Now student has pending-review, accessing portal redirects to renewal.review
-        $this->actingAs($student->fresh())->get('/studentportal')
+        $this->actingAs($student->fresh())->get('/StudentPortal')
             ->assertRedirect(route('renewal.review'));
     }
 }

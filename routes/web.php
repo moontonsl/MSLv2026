@@ -61,8 +61,8 @@ if (!empty($adminDomain)) {
         });
 
         Route::middleware('guest:admin')->group(function () {
-            Route::get('/login', [AdminAuthController::class, 'showLogin']);
-            Route::post('/login', [AdminAuthController::class, 'login'])
+            Route::get('/Login', [AdminAuthController::class, 'showLogin']);
+            Route::post('/Login', [AdminAuthController::class, 'login'])
                 ->middleware('throttle:10,1');
         });
     });
@@ -155,35 +155,44 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/s/{code}', [ShortLinkController::class, 'redirect'])->name('short-link.redirect');
+Route::get('/S/{code}', [ShortLinkController::class, 'redirect'])->name('short-link.redirect');
 
-Route::get('/coming-soon/{feature?}', ComingSoonController::class)->name('coming-soon');
+Route::get('/ComingSoon', ComingSoonController::class)->name('coming-soon');
+Route::get('/coming-soon/{feature?}', function (?string $feature = null) {
+    return redirect()->route('coming-soon', ['feature' => $feature], 301);
+});
+Route::inertia('/Careers', 'ComingSoon', ['feature' => 'careers'])->name('careers');
+Route::redirect('/careers', '/Careers', 301);
 
-Route::inertia('/privacy-policy', 'PrivacyPolicy')->name('privacy.policy');
-Route::inertia('/terms-of-service', 'TermsAndConditions')->name('terms.conditions');
-Route::redirect('/PrivacyPolicy', '/privacy-policy', 301);
-Route::redirect('/TermsAndConditions', '/terms-of-service', 301);
+Route::inertia('/PrivacyPolicy', 'PrivacyPolicy')->name('privacy.policy');
+Route::inertia('/TermsAndConditions', 'TermsAndConditions')->name('terms.conditions');
+Route::redirect('/privacy-policy', '/PrivacyPolicy', 301);
+Route::redirect('/terms-of-service', '/TermsAndConditions', 301);
+
 
 // Dedicated public Network page; Campus and admin routes remain separate.
-Route::get('/programs/msl-network', function () {
+Route::get('/MSLNetwork', function () {
     return Inertia::render('MSLNetwork');
 })->name('msl.network');
+Route::redirect('/programs/msl-network', '/MSLNetwork', 301);
 
-Route::get('/about', function () {
+Route::get('/About', function () {
     return Inertia::render('About');
 })->name('about');
-Route::redirect('/About', '/about', 301);
-Route::redirect('/Login', '/login');
+Route::redirect('/about', '/About', 301);
 
-Route::get('/report-violation', function () {
+
+Route::get('/ReportViolation', function () {
     return Inertia::render('SafeSpaces/ReportViolation');
 })->name('report.violation');
+Route::redirect('/report-violation', '/ReportViolation', 301);
 
-Route::get('/about/contents-social-media', function () {
+Route::get('/ContentsAndSocialMedia', function () {
     return Inertia::render('ContentMedia');
 })->name('contents.social.media');
-Route::redirect('/Contents&SocialMedia', '/about/contents-social-media', 301);
-Route::redirect('/content-media', '/about/contents-social-media', 301);
+Route::redirect('/about/contents-social-media', '/ContentsAndSocialMedia', 301);
+Route::redirect('/Contents&SocialMedia', '/ContentsAndSocialMedia', 301);
+Route::redirect('/content-media', '/ContentsAndSocialMedia', 301);
 
 Route::get('/News', [NewsController::class, 'index'])->name('news.index');
 Route::get('/News/{canonical}', [NewsController::class, 'show'])->name('news.show');
@@ -195,15 +204,16 @@ Route::get('/Event', function () {
 Route::redirect('/Events', '/Event');
 Route::redirect('/events', '/Event');
 
-Route::get('/programs/buffs-support', function () {
+Route::get('/BuffsAndSupport', function () {
     return Inertia::render('Buffs and Support/Index');
 })->name('buffs.support');
-Route::redirect('/Buffs&Support', '/programs/buffs-support', 301);
+Route::redirect('/programs/buffs-support', '/BuffsAndSupport', 301);
+Route::redirect('/Buffs&Support', '/BuffsAndSupport', 301);
 
-Route::get('/about/campus', function () {
+Route::get('/Campus', function () {
     return Inertia::render('Campus/Index');
 })->name('campus');
-Route::redirect('/Campus', '/about/campus', 301);
+Route::redirect('/about/campus', '/Campus', 301);
 
 /*
 |--------------------------------------------------------------------------
@@ -215,10 +225,10 @@ Route::get('/campus-tournament/public', function () {
 })->name('campus.tournament.public');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/campus-tournament', [CampusTournamentController::class, 'redirectByRole'])
+    Route::get('/CampusTournaments', [CampusTournamentController::class, 'redirectByRole'])
         ->name('campus.tournament');
 
-    Route::get('/Tournament/SL', [CampusTournamentController::class, 'indexSl'])
+    Route::get('/Tournament/StudentLeader', [CampusTournamentController::class, 'indexSl'])
         ->middleware('campus.tournament.page:student-leader')
         ->name('campus.tournament.sl');
 
@@ -240,15 +250,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/campus-tournaments/{tournament}/results/export', [CampusTournamentReportController::class, 'export'])
         ->name('campus-tournaments.results.export');
 
-    Route::get('/Tournament/CampusTournament', [TournamentRegistrationController::class, 'showCaptainHub'])
+    Route::get('/Tournament/Captain', [TournamentRegistrationController::class, 'showCaptainHub'])
         ->middleware('campus.tournament.page:player')
         ->name('campus.captainregistration');
 
-    Route::get('/Tournament/CampusTournamentReg', [TournamentRegistrationController::class, 'showCaptainRegistration'])
+    Route::get('/Tournament/CaptainRegistration', [TournamentRegistrationController::class, 'showCaptainRegistration'])
         ->middleware('campus.tournament.page:player')
         ->name('campus.teamregistration');
 
-    Route::get('/Tournament/CampusTournamentTeam', [TournamentRegistrationController::class, 'showCaptainTeam'])
+    Route::get('/Tournament/CaptainTeam', [TournamentRegistrationController::class, 'showCaptainTeam'])
         ->middleware('campus.tournament.page:player')
         ->name('campus.team');
 
@@ -272,17 +282,18 @@ Route::middleware(['auth'])->group(function () {
 });
 
 /** Compatibility redirects from earlier /programs/... CT paths */
-Route::redirect('/programs/campus-tournaments', '/campus-tournament');
-Route::redirect('/programs/campus-tournaments/sl', '/Tournament/SL');
-Route::redirect('/programs/campus-tournaments/captain', '/Tournament/CampusTournament');
-Route::redirect('/programs/campus-tournaments/captain/register', '/Tournament/CampusTournamentReg');
-Route::redirect('/programs/campus-tournaments/captain/team', '/Tournament/CampusTournamentTeam');
+Route::redirect('/campus-tournament', '/CampusTournaments', 301);
+Route::redirect('/programs/campus-tournaments', '/CampusTournaments', 301);
+Route::redirect('/programs/campus-tournaments/sl', '/Tournament/StudentLeader');
+Route::redirect('/programs/campus-tournaments/captain', '/Tournament/Captain');
+Route::redirect('/programs/campus-tournaments/captain/register', '/Tournament/CaptainRegistration');
+Route::redirect('/programs/campus-tournaments/captain/team', '/Tournament/CaptainTeam');
 Route::redirect('/programs/campus-tournaments/captain/join', '/Tournament/SoloPlayer');
 Route::redirect('/programs/campus-tournaments/solo', '/Tournament/SoloPlayer');
 Route::redirect('/programs/campus-tournaments/member', '/Tournament/MemberInvite');
 Route::redirect('/programs/campus-tournaments/member/join', '/Tournament/MemberJoin');
-Route::redirect('/sl/campus-tournament', '/Tournament/SL');
-Route::redirect('/captain/campus-tournament', '/Tournament/CampusTournament');
+Route::redirect('/sl/campus-tournament', '/Tournament/StudentLeader');
+Route::redirect('/captain/campus-tournament', '/Tournament/Captain');
 Route::redirect('/member/campus-tournament', '/Tournament/MemberInvite');
 
 /** Staging campus listing page (separate from CT product UI) */
@@ -290,14 +301,14 @@ Route::get('/CampusTournament', function () {
     return Inertia::render('Campus/Index');
 })->name('campus.tournament.listing');
 
-Route::redirect('/Programs', '/#home-programs', 301)->name('programs');
-Route::redirect('/programs', '/#home-programs', 301);
+Route::inertia('/Programs', 'Programs/Index')->name('programs');
+Route::redirect('/programs', '/Programs', 301);
 
-Route::get('/about/partnerships', function () {
+Route::get('/Partnerships', function () {
     return Inertia::render('Partnerships');
 })->name('partnerships');
-Route::redirect('/Partnerships', '/about/partnerships', 301);
-Route::redirect('/partner', '/about/partnerships', 301);
+Route::redirect('/about/partnerships', '/Partnerships', 301);
+Route::redirect('/partner', '/Partnerships', 301);
 
 Route::get('/GeneralAffairs', function () {
     return Inertia::render('About');
@@ -314,14 +325,14 @@ Route::get('/admin', function () {
 
 
 
-Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])
+Route::get('/Admin/Login', [AdminAuthController::class, 'showLogin'])
     ->name('admin.login');
 
 Route::get('/admin/custom-user-list/login', [AdminAuthController::class, 'showLogin'])
     ->name('admin.custom-user-list.login');
 
 Route::middleware('guest:admin')->group(function () {
-    Route::post('/admin/login', [AdminAuthController::class, 'login'])
+    Route::post('/Admin/Login', [AdminAuthController::class, 'login'])
         ->middleware('throttle:10,1')
         ->name('admin.login.submit');
 
@@ -333,7 +344,7 @@ Route::middleware('guest:admin')->group(function () {
 /** Admin CMS pages from Evren branch */
 Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
     Route::post('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
-    Route::get('/admin/campus-tournaments/reports', [CampusTournamentReportController::class, 'indexCore'])
+    Route::get('/Admin/CampusTournaments/Reports', [CampusTournamentReportController::class, 'indexCore'])
         ->name('admin.campus-tournaments.reports.index');
     Route::get('/admin/campus-tournaments/reports/{tournament}', [CampusTournamentReportController::class, 'show'])
         ->name('admin.campus-tournaments.reports.show');
@@ -341,18 +352,18 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->name('admin.campus-tournaments.reports.correct');
     Route::get('/admin/campus-tournaments/reports/{tournament}/export', [CampusTournamentReportController::class, 'export'])
         ->name('admin.campus-tournaments.reports.export');
-    Route::get('/admin/profile', [AdminProfileController::class, 'index'])->name('admin.profile');
-    Route::put('/admin/profile', [AdminProfileController::class, 'update'])->name('admin.profile.update');
+    Route::get('/Admin/Profile', [AdminProfileController::class, 'index'])->name('admin.profile');
+    Route::put('/Admin/Profile', [AdminProfileController::class, 'update'])->name('admin.profile.update');
     Route::put('/admin/profile/password', [AdminProfileController::class, 'updatePassword'])->name('admin.profile.password.update');
     Route::get('/admin/notifications', [AdminNotificationController::class, 'index'])->name('admin.notifications.index');
     Route::post('/admin/notifications/{id}/read', [AdminNotificationController::class, 'markRead'])->name('admin.notifications.read');
     Route::post('/admin/notifications/read-all', [AdminNotificationController::class, 'markAllRead'])->name('admin.notifications.read-all');
 
-    Route::get('/admin/schools', function () {
+    Route::get('/Admin/Schools', function () {
         return Inertia::render('Admin/AccountCreation');
     })->middleware('admin.permission:manage_accounts')->name('admin.account-creation');
 
-    Route::get('/admin/home-page', [HomePageController::class, 'index'])
+    Route::get('/Admin/HomePage', [HomePageController::class, 'index'])
         ->middleware('admin.permission:manage_homepage')->name('admin.home-page');
     Route::post('/admin/home-page/statistics', [HomePageController::class, 'updateStatistics'])
         ->middleware('admin.permission:manage_homepage')->name('admin.home-page.statistics');
@@ -363,9 +374,9 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
     Route::delete('/admin/home-page/network-organizations/{networkOrganization}', [HomePageController::class, 'deleteNetworkOrganization'])
         ->middleware('admin.permission:manage_homepage')->name('admin.home-page.network-organizations.delete');
 
-    Route::get('/admin/faq', [FaqController::class, 'index'])
+    Route::get('/Admin/FAQs', [FaqController::class, 'index'])
         ->middleware('admin.permission:manage_faq')->name('admin.faq');
-    Route::post('/admin/faq', [FaqController::class, 'store'])
+    Route::post('/Admin/FAQs', [FaqController::class, 'store'])
         ->middleware('admin.permission:manage_faq')->name('admin.faq.store');
     Route::put('/admin/faq/{faq}', [FaqController::class, 'update'])
         ->middleware('admin.permission:manage_faq')->name('admin.faq.update');
@@ -383,7 +394,7 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
     Route::delete('/admin/news-articles/{news}', [ModernNewsController::class, 'destroy'])
         ->middleware('admin.permission:manage_news')->name('admin.news-modern.delete');
 
-    Route::redirect('/admin/account-creation', '/admin/schools');
+    Route::redirect('/admin/account-creation', '/Admin/Schools');
     Route::redirect('/admin/news-updates', '/admin/news-articles');
 });
 
@@ -427,9 +438,9 @@ Route::get('/MSLNetAdmin', function () {
 Route::redirect('/dashboard', '/')->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/Profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/Profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/Profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::post('/campus-tournaments', [CampusTournamentController::class, 'store'])
         ->name('campus-tournaments.store');
@@ -463,7 +474,7 @@ Route::middleware('auth')->group(function () {
 
 // Protect the student portal with active student checks
 Route::middleware(['auth', 'active.student'])->group(function () {
-    Route::get('/studentportal', [StudentPortalController::class, 'index'])->name('student.portal');
+    Route::get('/StudentPortal', [StudentPortalController::class, 'index'])->name('student.portal');
     Route::post('/studentportal/profile', [StudentPortalController::class, 'updateProfile'])->name('student.profile.update');
     Route::post('/studentportal/renewal-approval/acknowledge', [StudentPortalController::class, 'acknowledgeRenewalApproval'])->name('student.renewal.approval.acknowledge');
 
@@ -528,7 +539,7 @@ Route::middleware(['auth', 'active.student'])->group(function () {
     })->name('student.portal.renew');
 });
 
-Route::get('/renewal-review', function () {
+Route::get('/RenewalReview', function () {
     $user = Auth::user();
 
     abort_unless($user?->user_type === 'Student', 404);
@@ -545,13 +556,13 @@ Route::get('/renewal-review', function () {
 // Verification status pages
 Route::middleware(['auth', 'redirect.status'])->group(function () {
 
-    Route::get('/pending-verification', function () {
+    Route::get('/PendingVerification', function () {
         return Inertia::render('Auth/PendingVerification', [
             'userData' => Auth::user(),
         ]);
     })->name('pending.verification');
 
-    Route::get('/rejected-verification', function () {
+    Route::get('/RejectedVerification', function () {
         return Inertia::render('Auth/RejectedVerification', [
             'rejectionReason' => Auth::user()->rejection_reason,
             'rejectionChecklist' => Auth::user()->rejection_checklist ?? [],
@@ -567,7 +578,7 @@ Route::post('/reapply', [RegisteredUserController::class, 'reapply'])
 
 // Admin actions (protected by auth and custom permissions)
 Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
-    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])
+    Route::get('/Admin/Dashboard', [AdminDashboardController::class, 'index'])
         ->middleware('admin.permission:access_admin_dashboard')
         ->name('admin.dashboard');
     Route::get('/api/analytics/real-time', function () {
@@ -595,7 +606,7 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->name('admin.users.promote');
 
     // Admin Management Page
-    Route::get('/admin/account-roles-permissions', [AdminManagementController::class, 'index'])
+    Route::get('/Admin/AccountRolesAndPermissions', [AdminManagementController::class, 'index'])
         ->middleware('admin.permission:access_admin_management')
         ->name('admin.management');
 
@@ -628,7 +639,7 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->middleware('admin.permission:manage_admin_accounts')
         ->name('admin.accounts.destroy');
 
-    Route::redirect('/admin/permissions', '/admin/account-roles-permissions')
+    Route::redirect('/admin/permissions', '/Admin/AccountRolesAndPermissions')
         ->middleware('admin.permission:access_admin_management')
         ->name('admin.permissions.index');
     Route::put('/admin/permissions/{id}', [AdminPermissionController::class, 'update'])
@@ -711,18 +722,18 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
     Route::delete('/admin/public-msl-events/{mslEvent}', [MslEventController::class, 'destroy'])
         ->middleware('admin.permission:manage_msl_events')->name('admin.msl-events.destroy');
 
-    Route::get('/admin/website-settings', [SettingsController::class, 'index'])
+    Route::get('/Admin/WebsiteSettings', [SettingsController::class, 'index'])
         ->middleware('admin.permission:manage_settings')->name('admin.settings');
-    Route::post('/admin/website-settings', [SettingsController::class, 'update'])
+    Route::post('/Admin/WebsiteSettings', [SettingsController::class, 'update'])
         ->middleware('admin.permission:manage_settings')->name('admin.settings.update');
     Route::get('/admin/footer-content', [FooterController::class, 'index'])
         ->middleware('admin.permission:manage_footer')->name('admin.footer');
     Route::post('/admin/footer-content', [FooterController::class, 'update'])
         ->middleware('admin.permission:manage_footer')->name('admin.footer.update');
 
-    Route::get('/admin/share-links', [ShareLinkController::class, 'index'])
+    Route::get('/Admin/ShareLinks', [ShareLinkController::class, 'index'])
         ->middleware('admin.permission:manage_share_links')->name('admin.share-links.index');
-    Route::post('/admin/share-links', [ShareLinkController::class, 'store'])
+    Route::post('/Admin/ShareLinks', [ShareLinkController::class, 'store'])
         ->middleware('admin.permission:manage_share_links')->name('admin.share-links.store');
     Route::put('/admin/share-links/{shortLink}', [ShareLinkController::class, 'update'])
         ->middleware('admin.permission:manage_share_links')->name('admin.share-links.update');
@@ -746,7 +757,7 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->middleware('admin.permission:manage_accounts')->name('admin.duplicate-usernames.form');
     Route::post('/Change-Username/{user_id}', [LegacyContentController::class, 'updateUsername'])
         ->middleware('admin.permission:manage_accounts')->name('admin.duplicate-usernames.update');
-    Route::get('/admin/user-regions', [LegacyContentController::class, 'userRegions'])
+    Route::get('/Admin/UserRegions', [LegacyContentController::class, 'userRegions'])
         ->middleware('admin.permission:manage_accounts')->name('admin.user-regions');
 
     Route::get('/admin/student-leaders', [StudentLeaderController::class, 'index'])
@@ -755,7 +766,7 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->middleware('admin.permission:manage_sl')->name('admin.users.promote-sl');
     Route::post('/admin/users/{user}/demote-sl', [StudentLeaderController::class, 'demote'])
         ->middleware('admin.permission:manage_sl')->name('admin.users.demote-sl');
-    Route::get('/admin/regional-admin-accounts', [RegionalAdminManagementController::class, 'index'])
+    Route::get('/Admin/RegionalAdminAccounts', [RegionalAdminManagementController::class, 'index'])
         ->middleware('admin.permission:manage_regional_admins')->name('admin.regional-admin-management');
     Route::get('/admin/regional-admin-accounts/search-students', [RegionalAdminManagementController::class, 'searchStudents'])
         ->middleware('admin.permission:manage_regional_admins')->name('admin.regional-admins.search-students');
@@ -767,9 +778,9 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->middleware('admin.permission:manage_regional_admins')->name('admin.users.demote-regional-admin');
 
     // School Management
-    Route::get('/admin/school-management', [SchoolManagementController::class, 'index'])
+    Route::get('/Admin/SchoolManagement', [SchoolManagementController::class, 'index'])
         ->middleware('admin.permission:manage_schools')->name('admin.school-management');
-    Route::post('/admin/school-management', [SchoolManagementController::class, 'store'])
+    Route::post('/Admin/SchoolManagement', [SchoolManagementController::class, 'store'])
         ->middleware('admin.permission:manage_schools')->name('admin.schools.store');
     Route::put('/admin/school-management/{id}', [SchoolManagementController::class, 'update'])
         ->middleware('admin.permission:manage_schools')->name('admin.schools.update');
@@ -808,9 +819,9 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->middleware('admin.permission:manage_mcc_seasons')->name('admin.mcc-seasons.delete-content');
 
     // Legacy URLs redirect to the renamed admin pages.
-    Route::redirect('/admin/management', '/admin/account-roles-permissions');
+    Route::redirect('/admin/management', '/Admin/AccountRolesAndPermissions');
     Route::redirect('/admin/accounts', '/admin/administrator-accounts');
-    Route::redirect('/admin/users/pending', '/admin/pending-account-approvals');
+    Route::redirect('/Admin/Users/Pending', '/admin/pending-account-approvals');
     Route::redirect('/admin/news', '/admin/legacy-news');
     Route::get('/admin/news/create', fn () => redirect()->route('admin.news.create'));
     Route::get('/admin/news/{news}/edit', fn ($news) => redirect()->route('admin.news.edit', $news))->whereNumber('news');
@@ -820,10 +831,10 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
     Route::redirect('/admin/msl-events', '/admin/public-msl-events');
     Route::get('/admin/msl-events/create', fn () => redirect()->route('admin.msl-events.create'));
     Route::get('/admin/msl-events/{mslEvent}/edit', fn ($mslEvent) => redirect()->route('admin.msl-events.edit', $mslEvent))->whereNumber('mslEvent');
-    Route::redirect('/admin/settings', '/admin/website-settings');
+    Route::redirect('/admin/settings', '/Admin/WebsiteSettings');
     Route::redirect('/admin/footer', '/admin/footer-content');
     Route::redirect('/admin/sl-management', '/admin/student-leaders');
-    Route::redirect('/admin/regional-admin-management', '/admin/regional-admin-accounts');
+    Route::redirect('/admin/regional-admin-management', '/Admin/RegionalAdminAccounts');
 
     Route::get('/Oppo-settings', [OppoSettingsController::class, 'index'])
         ->middleware('admin.permission:manage_oppo_settings')->name('admin.oppo-settings.index');
@@ -864,7 +875,7 @@ Route::get('/Testpage', function () {
 })->name('Testpage');
 
 // FORGOT PASSWORD / USERNAME + ACCOUNT CREATION (staging paths + Evren aliases)
-Route::redirect('/ForgotPassword', '/forgot-password');
+
 
 Route::get('/ForgotUsername', function () {
     return Inertia::render('Login/components/ForgotUsername');
@@ -890,3 +901,6 @@ Route::get('/api/news/related', [NewsController::class, 'getRelatedArticles']);
 Route::get('/api/schools/college', [\App\Http\Controllers\Api\SchoolSearchController::class, 'searchCollege'])->name('schools.search.college');
 Route::get('/api/schools/shs', [\App\Http\Controllers\Api\SchoolSearchController::class, 'searchSHS'])->name('schools.search.shs');
 
+
+// Register legacy page redirects after the canonical routes.
+require __DIR__.'/legacy-pages.php';
