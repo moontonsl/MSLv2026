@@ -435,7 +435,7 @@ export default function BuffsAndSupportIndex() {
                                     download="[PUBLIC] Buffs and Support Program - Quick Application Guide.pdf"
                                     className={`${styles.actionButton} ${styles.secondaryButton}`}
                                 >
-                                    Download Guidelines
+                                    View Quick Application Guide
                                 </a>
                             </div>
                         </div>
@@ -665,7 +665,7 @@ export default function BuffsAndSupportIndex() {
                             href={SPONSORSHIP_GUIDELINES_URL}
                             className={`${styles.actionButton} ${styles.secondaryButton}`}
                         >
-                            View Guidelines
+                            View Quick Application Guide
                         </a>
                     </div>
                 </div>
