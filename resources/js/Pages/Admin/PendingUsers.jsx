@@ -59,7 +59,7 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
 
     // Modal state
     const [selectedStudent, setSelectedStudent] = useState(null);
-    const [mobileTab, setMobileTab] = useState('dossier');
+    const [mobileTab, setMobileTab] = useState('info');
     const [docZoom, setDocZoom] = useState(100);
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [rejectionReason, setRejectionReason] = useState('');
@@ -100,7 +100,7 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
 
     const openReview = (student) => {
         setSelectedStudent(student);
-        setMobileTab('dossier');
+        setMobileTab('info');
         setDocZoom(100);
         setShowRejectModal(false);
         setRejectionReason('');
@@ -450,13 +450,13 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                 )}
             </section>
 
-            {/* FULL STUDENT VERIFICATION DOSSIER & DOCUMENT INSPECTOR MODAL */}
+            {/* FULL STUDENT VERIFICATION & DOCUMENT INSPECTOR MODAL */}
             {selectedStudent && typeof document !== 'undefined' && createPortal(
                 <div
                     className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-2 sm:p-4 lg:p-6 backdrop-blur-md transition-all duration-200"
                     role="dialog"
                     aria-modal="true"
-                    aria-labelledby="student-dossier-title"
+                    aria-labelledby="student-profile-title"
                     onClick={(e) => {
                         if (e.target === e.currentTarget) closeReview();
                     }}
@@ -470,7 +470,7 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-2">
-                                        <h2 id="student-dossier-title" className="text-lg font-bold text-white tracking-tight">
+                                        <h2 id="student-profile-title" className="text-lg font-bold text-white tracking-tight">
                                             {selectedStudent.name || 'Student Application'}
                                         </h2>
                                         <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
@@ -500,9 +500,9 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                         <div className="flex lg:hidden border-b border-white/10 bg-white/[0.02] p-1.5 gap-1 shrink-0">
                             <button
                                 type="button"
-                                onClick={() => setMobileTab('dossier')}
+                                onClick={() => setMobileTab('info')}
                                 className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
-                                    mobileTab === 'dossier'
+                                    mobileTab === 'info'
                                         ? 'bg-amber-400 text-black shadow'
                                         : 'text-gray-400 hover:text-white'
                                 }`}
@@ -522,11 +522,11 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                             </button>
                         </div>
 
-                        {/* Modal Body: Split Dossier (Left) + Document Inspector (Right) */}
+                        {/* Modal Body: Split Info (Left) + Document Inspector (Right) */}
                         <div className="grid flex-1 min-h-0 h-full lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-white/10 overflow-hidden">
-                            {/* Left Pane: Student Information Dossier (5 cols) */}
+                            {/* Left Pane: Student Information (5 cols) */}
                             <div className={`lg:col-span-5 flex-col h-full min-h-0 overflow-y-auto p-5 sm:p-6 space-y-4 scrollbar-thin ${
-                                mobileTab === 'dossier' ? 'flex' : 'hidden lg:flex'
+                                mobileTab === 'info' ? 'flex' : 'hidden lg:flex'
                             }`}>
                                 {/* Academic Information */}
                                 <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">

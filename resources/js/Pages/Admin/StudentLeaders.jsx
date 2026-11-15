@@ -585,7 +585,7 @@ export default function StudentLeaders({
                                                         className="inline-flex min-h-[36px] items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-semibold text-gray-300 transition-colors hover:bg-white/10 hover:text-white cursor-pointer"
                                                     >
                                                         <Eye className="h-3.5 w-3.5" />
-                                                        <span>Dossier</span>
+                                                        <span>View Profile</span>
                                                     </button>
 
                                                     {isLeader ? (
@@ -751,7 +751,7 @@ export default function StudentLeaders({
                                                         }}
                                                         className="rounded-lg border border-white/10 px-2.5 py-1 text-[11px] font-bold text-zinc-300 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
                                                     >
-                                                        Dossier
+                                                        View Profile
                                                     </button>
                                                 </td>
                                             </tr>
@@ -1238,14 +1238,14 @@ export default function StudentLeaders({
             )}
 
             {/* ========================================================================= */}
-            {/* STUDENT / LEADER DOSSIER MODAL (CENTERED)                                 */}
+            {/* STUDENT / LEADER PROFILE MODAL (CENTERED)                                 */}
             {/* ========================================================================= */}
             {inspectStudent && typeof document !== 'undefined' && createPortal(
                 <div
                     className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md transition-all duration-200"
                     role="dialog"
                     aria-modal="true"
-                    aria-labelledby="inspect-dossier-title"
+                    aria-labelledby="inspect-profile-title"
                     onMouseDown={(e) => {
                         if (e.target === e.currentTarget) setInspectStudent(null);
                     }}
@@ -1258,7 +1258,7 @@ export default function StudentLeaders({
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-2">
-                                        <h3 id="inspect-dossier-title" className="text-lg font-bold text-white">
+                                        <h3 id="inspect-profile-title" className="text-lg font-bold text-white">
                                             {inspectStudent.name}
                                         </h3>
                                         <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${
