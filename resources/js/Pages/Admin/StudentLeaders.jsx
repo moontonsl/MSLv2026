@@ -245,7 +245,7 @@ export default function StudentLeaders({
                         Student Leader <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-brand-400 to-amber-200">Management</span>
                     </h1>
                     <p className="mt-1 text-xs sm:text-sm text-zinc-400 max-w-xl">
-                        Appoint chapter officers, manage university jurisdictions, and monitor eligible student candidate pools.
+                        Appoint chapter officers, manage university jurisdictions, and promote active students to chapter leadership.
                     </p>
                 </div>
 
@@ -396,28 +396,28 @@ export default function StudentLeaders({
                     </div>
                 </button>
 
-                {/* 4. Candidate Pool Card */}
+                {/* 4. Active Students Card */}
                 <button
                     type="button"
-                    id="card-candidate-pool"
+                    id="card-active-students"
                     onClick={() => {
                         setActiveTab('students');
                         const tableElem = document.getElementById('sl-main-table');
                         if (tableElem) tableElem.scrollIntoView({ behavior: 'smooth' });
                     }}
-                    className="group relative overflow-hidden rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/[0.09] via-purple-500/[0.02] to-transparent p-4 sm:p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-purple-500/50 hover:shadow-[0_10px_25px_rgba(168,85,247,0.15)] cursor-pointer w-full focus:outline-none focus:ring-2 focus:ring-purple-500/40"
+                    className="group relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/[0.09] via-emerald-500/[0.02] to-transparent p-4 sm:p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/50 hover:shadow-[0_10px_25px_rgba(16,185,129,0.15)] cursor-pointer w-full focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
                 >
                     <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold uppercase tracking-wider text-purple-400">Candidate Pool</span>
-                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 group-hover:scale-110 transition-transform">
+                        <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Active Students</span>
+                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 group-hover:scale-110 transition-transform">
                             <Users className="h-4 w-4" />
                         </div>
                     </div>
                     <p className="mt-3 text-2xl font-black text-white sm:text-3xl">{stats.total_students ?? 0}</p>
-                    <div className="mt-2 flex items-center justify-between text-[11px] text-purple-300/80">
-                        <span>Active Eligible Students</span>
+                    <div className="mt-2 flex items-center justify-between text-[11px] text-emerald-300/80">
+                        <span>Active Regular Students</span>
                         <span className="inline-flex items-center gap-0.5 font-bold group-hover:translate-x-0.5 transition-transform">
-                            Switch Tab <ArrowRight className="h-3 w-3" />
+                            View & Promote <ArrowRight className="h-3 w-3" />
                         </span>
                     </div>
                 </button>
@@ -448,7 +448,7 @@ export default function StudentLeaders({
                         }`}
                     >
                         <UserRound className="h-4 w-4" />
-                        <span>Eligible Candidates ({students?.total ?? studentItems.length})</span>
+                        <span>Active Students ({students?.total ?? studentItems.length})</span>
                     </button>
                 </div>
             </div>
@@ -461,11 +461,11 @@ export default function StudentLeaders({
                             <GraduationCap className="h-8 w-8 text-amber-400" />
                         </div>
                         <h2 className="text-lg font-bold text-white">
-                            {activeTab === 'leaders' ? 'No Student Leaders Found' : 'No Eligible Candidates Found'}
+                            {activeTab === 'leaders' ? 'No Student Leaders Found' : 'No Active Students Found'}
                         </h2>
                         <p className="mt-1 text-sm text-gray-400 max-w-sm">
                             {activeTab === 'leaders'
-                                ? 'There are currently no active Student Leaders matching your criteria. Promote eligible students from the Candidates tab.'
+                                ? 'There are currently no active Student Leaders matching your criteria. Promote active students from the Active Students tab.'
                                 : 'There are no active regular students matching the current search.'}
                         </p>
                     </div>
@@ -474,7 +474,7 @@ export default function StudentLeaders({
                         <table className="w-full min-w-[920px] table-auto text-left text-sm">
                             <thead>
                                 <tr className="border-b border-white/10 bg-white/[0.02] text-xs font-bold uppercase tracking-wider text-gray-400">
-                                    <th className="px-5 py-4">Leader Profile</th>
+                                    <th className="px-5 py-4">{activeTab === 'leaders' ? 'Leader Profile' : 'Student Profile'}</th>
                                     <th className="px-5 py-4">University Chapter</th>
                                     <th className="px-5 py-4">MLBB Identity</th>
                                     <th className="px-5 py-4">Region Hub</th>
@@ -1081,7 +1081,7 @@ export default function StudentLeaders({
                             </button>
                         </div>
 
-                        {/* Candidate Summary Pill */}
+                        {/* Student Summary Pill */}
                         <div className="mt-4 flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] p-3">
                             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-800 font-bold text-amber-400">
                                 {promoteTarget.name ? promoteTarget.name.charAt(0).toUpperCase() : 'S'}
