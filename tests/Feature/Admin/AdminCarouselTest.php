@@ -35,17 +35,28 @@ class AdminCarouselTest extends TestCase
         Carousel::create(['title' => 'Second slide', 'label' => 'LIVE NOW', 'image_path' => 'second.jpg', 'order' => 1]);
 
         $this->get(route('admin.home-page'))
+            ->assertRedirect(route('admin.home-page.hero-carousel'));
+
+        $this->get(route('admin.home-page.hero-carousel'))
             ->assertOk()
             ->assertInertia(fn ($page) => $page
-                ->component('Admin/HomePage')
+                ->component('Admin/HomePage/HeroCarousel')
                 ->has('carousels', 2)
                 ->where('carousels.0.id', $first->id)
                 ->where('carousels.0.title', 'First slide')
                 ->where('carousels.0.label', 'FEATURED'));
 
-        // Legacy /admin/carousel route redirects to Landing Settings
+        $this->get(route('admin.home-page.programs'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page->component('Admin/HomePage/OurPrograms'));
+
+        $this->get(route('admin.home-page.community-voice'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page->component('Admin/HomePage/CommunityVoice'));
+
+        // Legacy /admin/carousel route redirects to Hero Carousel
         $this->get(route('admin.carousel'))
-            ->assertRedirect(route('admin.home-page'));
+            ->assertRedirect(route('admin.home-page.hero-carousel'));
     }
 
     public function test_super_admin_can_create_carousel_with_image_and_metadata(): void

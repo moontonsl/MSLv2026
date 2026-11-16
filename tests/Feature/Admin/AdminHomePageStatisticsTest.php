@@ -54,11 +54,11 @@ class AdminHomePageStatisticsTest extends TestCase
             'status' => 'active',
         ]);
 
-        $response = $this->get(route('admin.home-page'));
+        $response = $this->get(route('admin.home-page.statistics.index'));
 
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
-            ->component('Admin/HomePage')
+            ->component('Admin/HomePage/StatisticsCounters')
             ->has('statistics')
             ->where('statistics.mode', 'live')
             ->has('liveCounts')
