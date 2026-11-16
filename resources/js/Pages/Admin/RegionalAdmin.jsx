@@ -262,7 +262,7 @@ export default function RegionalAdmin({ regionalAdmins }) {
 
             <div className="min-w-0 w-full overflow-x-hidden">
                 <header className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
-                    <div>
+                    <div className="min-w-0">
                         <h1 className="text-2xl font-bold tracking-tight text-[#FFFBEB] sm:text-3xl">
                             Regional Admin Assignments
                         </h1>
@@ -270,7 +270,7 @@ export default function RegionalAdmin({ regionalAdmins }) {
                             Assign regional administrators to the regions and schools they oversee.
                         </p>
                     </div>
-                    <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
+                    <div className="flex w-full flex-col gap-2 sm:flex-row xl:w-auto">
                         <label className="relative block min-w-0 flex-1 sm:w-64 sm:flex-none">
                             <span className="sr-only">Search regional administrators</span>
                             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
@@ -294,7 +294,7 @@ export default function RegionalAdmin({ regionalAdmins }) {
                     </div>
                 </header>
 
-                <section className="max-w-full overflow-hidden bg-[#0B0B0B] md:rounded-xl md:border md:border-white/[0.08] md:px-11 md:py-11">
+                <section className="max-w-full overflow-hidden rounded-xl border border-white/[0.08] bg-[#0B0B0B] p-4 sm:p-6 md:p-8">
                     <div className="mb-6">
                         <h2 className="font-heading text-base font-bold text-[#FBBF24] sm:text-2xl">
                             Regional administrator list
@@ -304,6 +304,7 @@ export default function RegionalAdmin({ regionalAdmins }) {
                     <div className="flex min-h-[360px] flex-col md:min-h-[400px]">
                         <div className="flex-1">
                             <RegionalAdminPage
+                                isActive={true}
                                 regionalAdmins={visibleRegionalAdmins}
                                 expandedRegionalAdminId={
                                     expandedRegionalAdminId

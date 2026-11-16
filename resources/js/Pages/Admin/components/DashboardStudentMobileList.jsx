@@ -93,7 +93,7 @@ export default function DashboardStudentMobileList({
                             </div>
                         </div>
 
-                        <dl className="mt-4 grid grid-cols-2 gap-2">
+                        <dl className="mt-4 grid grid-cols-1 min-[380px]:grid-cols-2 gap-2">
                             <MobileDetail label="Division">
                                 {divisionLabel}
                             </MobileDetail>

@@ -134,20 +134,23 @@ export default function Events({ events, filters = {}, showForm: initialShowForm
     return (
         <AdminLayout activeNavId="events" showGlobalSearch>
             <Head title="Scheduled Events" />
-            <div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
-                <div>
+            <div className="mb-6 flex flex-col gap-4 sm:mb-8 2xl:flex-row 2xl:items-end 2xl:justify-between">
+                <div className="min-w-0">
                     <h1 className="mb-2 text-2xl font-bold text-white sm:text-3xl">Scheduled Events</h1>
                     <p className="text-sm text-gray-400">Manage event dates, locations, and schedules shown in the calendar.</p>
                 </div>
-                <div className="flex w-full flex-col gap-2 xl:flex-row xl:w-auto">
-                    <form onSubmit={submitFilters} className="grid w-full grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto] xl:w-[620px]">
+                <div className="flex w-full flex-col gap-2 xl:flex-row 2xl:w-auto">
+                    <form onSubmit={submitFilters} className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto] xl:flex-1 2xl:w-auto">
                         <label htmlFor="event-search" className="sr-only">Search events</label>
-                        <div className="relative min-w-0"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" /><input id="event-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search events" className="min-h-[44px] w-full rounded-md border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-9 pr-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" /></div>
+                        <div className="relative min-w-0 sm:col-span-2 lg:col-span-1 2xl:w-64">
+                            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                            <input id="event-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search events" className="min-h-[44px] w-full rounded-md border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-9 pr-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" />
+                        </div>
                         <AdminFilterSelect value={filter} onChange={(event) => setFilter(event.target.value)} aria-label="Filter events by date"><option value="all">All events</option><option value="upcoming">Upcoming</option><option value="past">Past</option></AdminFilterSelect>
                         <button type="submit" className="min-h-[44px] rounded-md bg-yellow-500 px-4 text-sm font-bold text-black hover:bg-yellow-400">Filter</button>
                         {(search || filter !== 'all') && <button type="button" onClick={clearFilters} className="min-h-[44px] rounded-md border border-neutral-700 px-4 text-sm text-gray-300 hover:border-neutral-500 hover:text-white">Clear</button>}
                     </form>
-                    <button type="button" onClick={openCreate} className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 py-2.5 text-sm font-bold text-black hover:bg-yellow-400"><Plus className="h-4 w-4" />Add Event</button>
+                    <button type="button" onClick={openCreate} className="inline-flex min-h-[44px] w-full xl:w-auto shrink-0 items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 py-2.5 text-sm font-bold text-black hover:bg-yellow-400"><Plus className="h-4 w-4 shrink-0" />Add Event</button>
                 </div>
             </div>
 
@@ -160,13 +163,13 @@ export default function Events({ events, filters = {}, showForm: initialShowForm
                         if (e.target === e.currentTarget) closeForm();
                     }}
                 >
-                    <div className="w-full max-w-2xl rounded-2xl border border-yellow-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
-                        <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                            <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
-                                    <CalendarDays className="h-5 w-5" />
+                    <div className="w-full max-w-2xl rounded-2xl border border-yellow-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-4 sm:p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 max-h-[90dvh] overflow-y-auto overscroll-contain">
+                        <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-4">
+                            <div className="flex items-center gap-3 min-w-0">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                                    <CalendarDays className="h-5 w-5 shrink-0" />
                                 </div>
-                                <div>
+                                <div className="min-w-0">
                                     <h2 className="text-base font-black text-white">{editingEvent ? 'Edit Event' : 'Add Event'}</h2>
                                     <p className="text-xs text-gray-400">Configure event schedule, venue location, and description</p>
                                 </div>
@@ -174,7 +177,7 @@ export default function Events({ events, filters = {}, showForm: initialShowForm
                             <button
                                 type="button"
                                 onClick={closeForm}
-                                className="rounded-lg p-1 text-gray-400 hover:text-white"
+                                className="shrink-0 rounded-lg p-1 text-gray-400 hover:text-white"
                             >
                                 <X className="h-5 w-5" />
                             </button>
@@ -198,7 +201,7 @@ export default function Events({ events, filters = {}, showForm: initialShowForm
                             </div>
 
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                <div>
+                                <div className="min-w-0">
                                     <label htmlFor="event-start" className="block text-xs font-semibold text-gray-300 mb-1.5">
                                         Start date and time *
                                     </label>
@@ -208,11 +211,11 @@ export default function Events({ events, filters = {}, showForm: initialShowForm
                                         required
                                         value={data.start_date}
                                         onChange={(event) => setData('start_date', event.target.value)}
-                                        className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white [color-scheme:dark] focus:border-yellow-400 focus:outline-none"
+                                        className="w-full min-w-0 rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white [color-scheme:dark] focus:border-yellow-400 focus:outline-none"
                                     />
                                     {errors.start_date && <p className="mt-1 text-xs text-red-400">{errors.start_date}</p>}
                                 </div>
-                                <div>
+                                <div className="min-w-0">
                                     <label htmlFor="event-end" className="block text-xs font-semibold text-gray-300 mb-1.5">
                                         End date and time *
                                     </label>
@@ -222,7 +225,7 @@ export default function Events({ events, filters = {}, showForm: initialShowForm
                                         required
                                         value={data.end_date}
                                         onChange={(event) => setData('end_date', event.target.value)}
-                                        className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white [color-scheme:dark] focus:border-yellow-400 focus:outline-none"
+                                        className="w-full min-w-0 rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white [color-scheme:dark] focus:border-yellow-400 focus:outline-none"
                                     />
                                     {errors.end_date && <p className="mt-1 text-xs text-red-400">{errors.end_date}</p>}
                                 </div>
@@ -258,18 +261,18 @@ export default function Events({ events, filters = {}, showForm: initialShowForm
                                 {errors.description && <p className="mt-1 text-xs text-red-400">{errors.description}</p>}
                             </div>
 
-                            <div className="flex items-center justify-end gap-3 border-t border-white/10 pt-4 mt-6">
+                            <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 border-t border-white/10 pt-4 mt-6">
                                 <button
                                     type="button"
                                     onClick={closeForm}
-                                    className="rounded-xl border border-white/10 px-4 py-2.5 text-xs font-bold text-gray-300 hover:bg-white/5"
+                                    className="min-h-[40px] w-full sm:w-auto rounded-xl border border-white/10 px-4 py-2.5 text-xs font-bold text-gray-300 hover:bg-white/5"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="inline-flex items-center gap-1.5 rounded-xl bg-yellow-400 px-5 py-2.5 text-xs font-bold text-black hover:bg-yellow-300 disabled:opacity-50 transition-all shadow-[0_0_15px_rgba(251,191,36,0.2)]"
+                                    className="min-h-[40px] w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-yellow-400 px-5 py-2.5 text-xs font-bold text-black hover:bg-yellow-300 disabled:opacity-50 transition-all shadow-[0_0_15px_rgba(251,191,36,0.2)]"
                                 >
                                     <span>{processing ? 'Saving...' : editingEvent ? 'Update Event' : 'Add Event'}</span>
                                 </button>
@@ -285,7 +288,90 @@ export default function Events({ events, filters = {}, showForm: initialShowForm
                     <h2 className="text-lg font-bold text-yellow-500 sm:text-xl">Scheduled Events</h2>
                     <p className="mt-1 text-sm text-gray-400">{events?.total ?? items.length} event{(events?.total ?? items.length) === 1 ? '' : 's'}</p>
                 </div>
-                {items.length === 0 ? <div className="py-14 text-center"><CalendarDays className="mx-auto mb-4 h-10 w-10 text-gray-600" /><p className="text-sm text-gray-400">No events found. Add your first event above.</p></div> : <div className="overflow-x-auto"><table className="w-full min-w-[980px] table-auto"><thead><tr className="border-b border-neutral-800 text-left text-xs uppercase tracking-wide text-gray-500"><th className="px-3 pb-4">Event</th><th className="px-3 pb-4">Schedule</th><th className="px-3 pb-4">Location</th><th className="px-3 pb-4">Status</th><th className="px-3 pb-4 text-right">Actions</th></tr></thead><tbody>{items.map((event) => <EventRow key={event.id} event={event} onEdit={openEdit} onDelete={deleteEvent} />)}</tbody></table></div>}
+                {items.length === 0 ? (
+                    <div className="py-14 text-center">
+                        <CalendarDays className="mx-auto mb-4 h-10 w-10 text-gray-600" />
+                        <p className="text-sm text-gray-400">No events found. Add your first event above.</p>
+                    </div>
+                ) : (
+                    <>
+                        {/* Mobile / Tablet Card List (< 1280px) */}
+                        <div className="divide-y divide-neutral-800 xl:hidden">
+                            {items.map((event) => {
+                                const isPast = event.end_date && new Date(event.end_date) < new Date();
+                                return (
+                                    <div key={event.id} className="py-4 first:pt-0 last:pb-0 space-y-3">
+                                        <div className="flex flex-wrap items-start justify-between gap-2">
+                                            <div className="min-w-0 flex-1">
+                                                <h3 className="font-semibold text-white break-words">{event.title}</h3>
+                                                {event.description && (
+                                                    <p className="mt-1 text-xs text-gray-400 break-words">{event.description}</p>
+                                                )}
+                                            </div>
+                                            <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${isPast ? 'bg-neutral-800 text-gray-400' : 'bg-emerald-500/10 text-emerald-400'}`}>
+                                                {isPast ? 'Past' : 'Upcoming'}
+                                            </span>
+                                        </div>
+
+                                        <div className="space-y-1.5 text-xs text-gray-300">
+                                            <p className="flex items-center gap-2 text-white">
+                                                <CalendarDays className="h-4 w-4 shrink-0 text-yellow-400" />
+                                                <span className="break-words">{formatDateTime(event.start_date)}</span>
+                                            </p>
+                                            <p className="flex items-center gap-2 text-gray-500">
+                                                <Clock3 className="h-3.5 w-3.5 shrink-0" />
+                                                <span className="break-words">Until {formatDateTime(event.end_date)}</span>
+                                            </p>
+                                            {event.location && (
+                                                <p className="flex items-center gap-2 text-gray-300">
+                                                    <MapPin className="h-4 w-4 shrink-0 text-gray-500" />
+                                                    <span className="break-words">{event.location}</span>
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        <div className="flex flex-wrap gap-2 pt-1">
+                                            <button
+                                                type="button"
+                                                onClick={() => openEdit(event)}
+                                                className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-neutral-700 px-3 text-sm text-blue-400 hover:border-blue-400"
+                                                aria-label={`Edit ${event.title}`}
+                                            >
+                                                <Pencil className="h-4 w-4 shrink-0" />Edit
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => deleteEvent(event)}
+                                                className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-red-900 px-3 text-sm text-red-400 hover:bg-red-950"
+                                                aria-label={`Delete ${event.title}`}
+                                            >
+                                                <Trash2 className="h-4 w-4 shrink-0" />Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* Desktop Table (1280px+) */}
+                        <div className="hidden xl:block overflow-x-auto">
+                            <table className="w-full table-auto">
+                                <thead>
+                                    <tr className="border-b border-neutral-800 text-left text-xs uppercase tracking-wide text-gray-500">
+                                        <th className="px-3 pb-4">Event</th>
+                                        <th className="px-3 pb-4">Schedule</th>
+                                        <th className="px-3 pb-4">Location</th>
+                                        <th className="px-3 pb-4">Status</th>
+                                        <th className="px-3 pb-4 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {items.map((event) => <EventRow key={event.id} event={event} onEdit={openEdit} onDelete={deleteEvent} />)}
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
+                )}
                 <Pagination paginator={events} />
             </section>
         </AdminLayout>

@@ -71,7 +71,7 @@ export default function FeaturedImageUpload({
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                className={`flex min-h-[120px] w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-md border-2 border-dashed p-4 text-gray-400 transition-colors sm:min-h-[150px] sm:p-8 ${
+                className={`flex min-h-[120px] w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-md border-2 border-dashed p-4 text-gray-400 transition-colors sm:min-h-[140px] sm:p-6 ${
                     isDragging
                         ? 'border-yellow-500 bg-yellow-500/5'
                         : 'border-gray-600 bg-[#1a1a1a] hover:border-gray-500'
@@ -81,15 +81,15 @@ export default function FeaturedImageUpload({
                     <img
                         src={previewUrl}
                         alt="Featured preview"
-                        className="mb-3 max-h-32 w-full rounded-md object-cover sm:max-h-40"
+                        className="mb-3 max-h-32 w-full rounded-md object-contain sm:max-h-36"
                     />
                 ) : (
-                    <CloudUpload className="mb-3 h-8 w-8 text-gray-400" />
+                    <CloudUpload className="mb-3 h-8 w-8 shrink-0 text-gray-400" />
                 )}
                 <span className="text-center text-sm text-gray-300 sm:text-sm">
                     Click to upload or drag and drop
                 </span>
-                <span className="mt-1 px-2 text-center text-xs text-gray-500">{hint}</span>
+                <span className="mt-1 break-words px-2 text-center text-xs text-gray-500">{hint}</span>
             </button>
         </div>
     );

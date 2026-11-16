@@ -231,10 +231,10 @@ export default function BaseModal({
                     } ${panelClassName}`}
                 >
                     {!hideHeader ? (
-                        <header className="relative shrink-0 px-6 pb-3 pt-6 sm:px-8 sm:pb-4 sm:pt-8">
+                        <header className="relative shrink-0 px-4 pb-3 pt-5 sm:px-8 sm:pb-4 sm:pt-8">
                             <h2
                                 id={titleId}
-                                className="max-w-[calc(100%-3rem)] font-heading text-lg font-bold text-[#FBBF24] sm:text-xl"
+                                className="max-w-[calc(100%-3rem)] break-words font-heading text-base font-bold text-[#FBBF24] sm:text-xl"
                             >
                                 {title}
                             </h2>
@@ -243,7 +243,7 @@ export default function BaseModal({
                                 <button
                                     type="button"
                                     onClick={onClose}
-                                    className={`absolute right-3 top-3 sm:right-4 sm:top-4 ${MODAL_CLOSE_BUTTON_CLASS}`}
+                                    className={`absolute right-2.5 top-2.5 sm:right-4 sm:top-4 ${MODAL_CLOSE_BUTTON_CLASS}`}
                                     aria-label="Close modal"
                                 >
                                     <X className="h-5 w-5" />
@@ -256,7 +256,7 @@ export default function BaseModal({
                         <button
                             type="button"
                             onClick={onClose}
-                            className={`absolute right-3 top-3 z-10 sm:right-4 sm:top-4 ${MODAL_CLOSE_BUTTON_CLASS}`}
+                            className={`absolute right-2.5 top-2.5 z-10 sm:right-4 sm:top-4 ${MODAL_CLOSE_BUTTON_CLASS}`}
                             aria-label="Close modal"
                         >
                             <X className="h-5 w-5" />
@@ -264,7 +264,7 @@ export default function BaseModal({
                     ) : null}
 
                     <div
-                        className={`min-h-0 flex-1 px-6 py-5 sm:px-8 sm:py-7 ${
+                        className={`min-h-0 flex-1 px-4 py-4 sm:px-8 sm:py-7 ${
                             scrollable
                                 ? "overflow-y-auto overscroll-contain"
                                 : ""
@@ -274,7 +274,7 @@ export default function BaseModal({
                     </div>
 
                     {footer ? (
-                        <footer className="shrink-0 px-6 pb-6 pt-0 sm:px-8 sm:pb-8">
+                        <footer className="shrink-0 px-4 pb-4 pt-0 sm:px-8 sm:pb-8">
                             {footer}
                         </footer>
                     ) : null}
@@ -282,24 +282,24 @@ export default function BaseModal({
 
                 {pendingSubmission ? (
                     <div
-                        className={`${PANEL_CLASS} h-[465px] max-h-[calc(100dvh-1.5rem)] w-[calc(100vw-1.5rem)] max-w-[330px] sm:max-h-[calc(100dvh-3rem)] sm:w-[calc(100vw-3rem)] sm:max-w-[526px]`}
+                        className={`${PANEL_CLASS} min-h-[min(360px,88dvh)] max-h-[calc(100dvh-1.5rem)] w-[calc(100vw-1.5rem)] max-w-md sm:max-h-[calc(100dvh-3rem)] sm:w-[calc(100vw-3rem)] sm:max-w-[526px]`}
                     >
                         <button
                             type="button"
                             onClick={handleCancelConfirmation}
-                            className={`absolute right-3 top-3 z-10 sm:right-4 sm:top-4 ${MODAL_CLOSE_BUTTON_CLASS}`}
+                            className={`absolute right-2.5 top-2.5 z-10 sm:right-4 sm:top-4 ${MODAL_CLOSE_BUTTON_CLASS}`}
                             aria-label="Cancel confirmation"
                         >
                             <X className="h-5 w-5" />
                         </button>
 
-                        <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto px-8 py-14 sm:px-16 sm:py-16">
+                        <div className="flex min-h-0 flex-1 items-center justify-center overflow-y-auto overscroll-contain px-5 py-12 sm:px-16 sm:py-16">
                             <div className="w-full">
-                                <p className="mx-auto mb-10 max-w-[400px] break-words text-left font-heading text-lg font-bold leading-[1.5] text-[#F5F1E6] sm:text-center sm:text-2xl sm:leading-[1.35]">
+                                <p className="mx-auto mb-8 sm:mb-10 max-w-[400px] break-words text-center font-heading text-lg font-bold leading-[1.45] text-[#F5F1E6] sm:text-2xl sm:leading-[1.35]">
                                     {pendingSubmission.message}
                                 </p>
 
-                                <div className="mx-auto grid w-full max-w-[400px] grid-cols-2 gap-2.5 sm:gap-3">
+                                <div className="mx-auto grid w-full max-w-[400px] grid-cols-1 gap-2.5 min-[360px]:grid-cols-2 sm:gap-3">
                                     <button
                                         type="button"
                                         onClick={handleCancelConfirmation}

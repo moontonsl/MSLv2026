@@ -2,6 +2,7 @@ import { ChevronDown } from 'lucide-react';
 
 export default function AdminFilterSelect({
     className = '',
+    wrapperClassName = '',
     compact = false,
     children,
     ...props
@@ -10,11 +11,14 @@ export default function AdminFilterSelect({
         ? 'min-h-10 px-2 py-2 text-xs'
         : 'min-h-[44px] px-3 py-2.5 text-sm';
 
+    const isFullWidth = /\bw-full\b/.test(className);
+    const resolvedWrapperWidth = wrapperClassName || (isFullWidth ? 'w-full' : 'w-full sm:w-auto');
+
     return (
-        <div className="relative w-full min-w-0 sm:w-auto">
+        <div className={`relative min-w-0 max-w-full ${resolvedWrapperWidth}`}>
             <select
                 {...props}
-                className={`w-full appearance-none rounded-md border border-neutral-800 bg-[#1a1a1a] ${sizeClasses} text-white outline-none focus:ring-2 focus:ring-yellow-500 ${className} !pr-10`}
+                className={`w-full max-w-full truncate appearance-none rounded-md border border-neutral-800 bg-[#1a1a1a] ${sizeClasses} text-white outline-none focus:ring-2 focus:ring-yellow-500 ${className} !pr-10`}
             >
                 {children}
             </select>

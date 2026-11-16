@@ -26,12 +26,12 @@ function PhotoCard({ photo, onEdit, onDelete }) {
                         {new Date(photo.created_at).toLocaleDateString()}
                     </p>
                 )}
-                <div className="mt-4 flex gap-2">
+                <div className="mt-4 flex flex-wrap gap-2">
                     <button type="button" onClick={() => onEdit(photo)} className="flex min-h-10 items-center gap-1.5 rounded-md border border-neutral-700 px-3 text-sm text-blue-400 hover:border-blue-400" aria-label={`Edit ${photo.event_name || 'event photo'}`}>
-                        <Pencil className="h-4 w-4" />Edit
+                        <Pencil className="h-4 w-4 shrink-0" />Edit
                     </button>
                     <button type="button" onClick={() => onDelete(photo)} className="flex min-h-10 items-center gap-1.5 rounded-md border border-red-900 px-3 text-sm text-red-400 hover:bg-red-950" aria-label={`Delete ${photo.event_name || 'event photo'}`}>
-                        <Trash2 className="h-4 w-4" />Delete
+                        <Trash2 className="h-4 w-4 shrink-0" />Delete
                     </button>
                 </div>
             </div>
@@ -89,18 +89,18 @@ export default function EventPhotos({ eventPhotos: initialEventPhotos = [] }) {
         <AdminLayout activeNavId="event-photos" showGlobalSearch>
             <Head title="Event Photos" />
             <div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
-                <div>
+                <div className="min-w-0">
                     <h1 className="mb-2 text-2xl font-bold text-white sm:text-3xl">Event Photos</h1>
                     <p className="text-sm leading-6 text-gray-400">Manage photos displayed on the Buffs and Support page.</p>
                 </div>
-                <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
+                <div className="flex w-full flex-col gap-2 sm:flex-row xl:w-auto">
                     <label className="relative block min-w-0 flex-1 sm:w-64 sm:flex-none">
                         <span className="sr-only">Search event photos</span>
                         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
                         <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search event or school" aria-label="Search event photos" className="min-h-[44px] w-full rounded-md border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-9 pr-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-yellow-500" />
                     </label>
                     <button type="button" onClick={openCreate} className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 py-2.5 text-sm font-bold text-black hover:bg-yellow-400">
-                        <Plus className="h-4 w-4" />Add Event Photo
+                        <Plus className="h-4 w-4 shrink-0" />Add Event Photo
                     </button>
                 </div>
             </div>
@@ -114,13 +114,13 @@ export default function EventPhotos({ eventPhotos: initialEventPhotos = [] }) {
                         if (e.target === e.currentTarget) closeForm();
                     }}
                 >
-                    <div className="w-full max-w-xl rounded-2xl border border-yellow-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
-                        <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                            <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
-                                    <ImagePlus className="h-5 w-5" />
+                    <div className="w-full max-w-xl rounded-2xl border border-yellow-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-4 sm:p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 max-h-[90dvh] overflow-y-auto overscroll-contain">
+                        <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-4">
+                            <div className="flex items-center gap-3 min-w-0">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                                    <ImagePlus className="h-5 w-5 shrink-0" />
                                 </div>
-                                <div>
+                                <div className="min-w-0">
                                     <h2 className="text-base font-black text-white">{editingPhoto ? 'Edit Event Photo' : 'Add Event Photo'}</h2>
                                     <p className="text-xs text-gray-400">Upload school event highlights and gallery photos</p>
                                 </div>
@@ -128,7 +128,7 @@ export default function EventPhotos({ eventPhotos: initialEventPhotos = [] }) {
                             <button
                                 type="button"
                                 onClick={closeForm}
-                                className="rounded-lg p-1 text-gray-400 hover:text-white"
+                                className="shrink-0 rounded-lg p-1 text-gray-400 hover:text-white"
                             >
                                 <X className="h-5 w-5" />
                             </button>
@@ -154,9 +154,9 @@ export default function EventPhotos({ eventPhotos: initialEventPhotos = [] }) {
                                 {errors.picture && <p className="mt-1 text-xs text-red-400">{errors.picture}</p>}
                             </div>
 
-                            <div className="flex items-center justify-end gap-3 border-t border-white/10 pt-4 mt-6">
-                                <button type="button" onClick={closeForm} className="rounded-xl border border-white/10 px-4 py-2.5 text-xs font-bold text-gray-300 hover:bg-white/5">Cancel</button>
-                                <button type="submit" disabled={processing} className="inline-flex items-center gap-1.5 rounded-xl bg-yellow-400 px-5 py-2.5 text-xs font-bold text-black hover:bg-yellow-300 disabled:opacity-50 transition-all shadow-[0_0_15px_rgba(251,191,36,0.2)]">
+                            <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 border-t border-white/10 pt-4 mt-6">
+                                <button type="button" onClick={closeForm} className="min-h-[40px] w-full sm:w-auto rounded-xl border border-white/10 px-4 py-2.5 text-xs font-bold text-gray-300 hover:bg-white/5">Cancel</button>
+                                <button type="submit" disabled={processing} className="min-h-[40px] w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-yellow-400 px-5 py-2.5 text-xs font-bold text-black hover:bg-yellow-300 disabled:opacity-50 transition-all shadow-[0_0_15px_rgba(251,191,36,0.2)]">
                                     <span>{processing ? 'Saving...' : editingPhoto ? 'Update Photo' : 'Add Photo'}</span>
                                 </button>
                             </div>

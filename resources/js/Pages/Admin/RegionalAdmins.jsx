@@ -307,13 +307,13 @@ export default function RegionalAdmins({
             <Head title="Regional Admins | Command Center | MSL Philippines" />
 
             {/* Header Section */}
-            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20 shadow-[0_0_15px_rgba(251,191,36,0.15)]">
-                            <ShieldCheck className="h-5 w-5" />
+            <div className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+                <div className="min-w-0">
+                    <div className="flex items-center gap-3 min-w-0">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20 shadow-[0_0_15px_rgba(251,191,36,0.15)]">
+                            <ShieldCheck className="h-5 w-5 shrink-0" />
                         </div>
-                        <div>
+                        <div className="min-w-0">
                             <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white">
                                 Regional Admins
                             </h1>
@@ -325,22 +325,22 @@ export default function RegionalAdmins({
                 </div>
 
                 {/* Top Action Bar */}
-                <div className="flex flex-wrap items-center gap-2.5">
+                <div className="flex w-full flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center xl:w-auto">
                     {/* Search Regional Admins Input */}
-                    <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
-                        <div className="relative">
+                    <form onSubmit={handleSearchSubmit} className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:flex-nowrap">
+                        <div className="relative min-w-0 flex-1 sm:w-64 sm:flex-none">
                             <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-500" />
                             <input
                                 type="search"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Search admin, region, IGN..."
-                                className="min-h-[40px] w-52 sm:w-64 rounded-xl border border-white/10 bg-black/40 pl-9 pr-3 text-xs text-white placeholder:text-gray-500 focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 focus:outline-none"
+                                className="min-h-[40px] w-full min-w-0 rounded-xl border border-white/10 bg-black/40 pl-9 pr-3 text-xs text-white placeholder:text-gray-500 focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 focus:outline-none"
                             />
                         </div>
                         <button
                             type="submit"
-                            className="min-h-[40px] rounded-xl border border-white/10 bg-white/5 px-3.5 text-xs font-semibold text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
+                            className="min-h-[40px] shrink-0 rounded-xl border border-white/10 bg-white/5 px-3.5 text-xs font-semibold text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
                         >
                             Filter
                         </button>
@@ -355,21 +355,21 @@ export default function RegionalAdmins({
                             setHasSearchedStudents(false);
                             setIsSearchStudentModalOpen(true);
                         }}
-                        className="min-h-[40px] flex items-center gap-2 rounded-xl bg-amber-400 px-4 text-xs font-bold text-black transition-all hover:bg-amber-300 shadow-[0_0_20px_rgba(251,191,36,0.25)] hover:scale-[1.02]"
+                        className="min-h-[40px] w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-amber-400 px-4 text-xs font-bold text-black transition-all hover:bg-amber-300 shadow-[0_0_20px_rgba(251,191,36,0.25)] hover:scale-[1.02]"
                     >
-                        <UserPlus className="h-4 w-4" />
+                        <UserPlus className="h-4 w-4 shrink-0" />
                         <span>Appoint Regional Admin</span>
                     </button>
                 </div>
             </div>
 
             {/* Metric Summary Cards */}
-            <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4">
+            <div className="mb-6 grid grid-cols-1 min-[440px]:grid-cols-2 gap-3 xl:grid-cols-4 lg:gap-4">
                 {/* Active Regional Admins */}
                 <div className="rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-500/[0.08] to-transparent p-4 sm:p-5">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                         <span className="text-xs font-bold uppercase tracking-wider text-amber-400">Regional Admins</span>
-                        <ShieldCheck className="h-5 w-5 text-amber-400" />
+                        <ShieldCheck className="h-5 w-5 shrink-0 text-amber-400" />
                     </div>
                     <p className="mt-3 text-2xl font-black text-white sm:text-3xl">{stats.total_admins ?? 0}</p>
                     <p className="mt-1 text-xs text-gray-400">Territory controllers</p>
@@ -377,9 +377,9 @@ export default function RegionalAdmins({
 
                 {/* Covered Regions */}
                 <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/[0.08] to-transparent p-4 sm:p-5">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                         <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Covered Hubs</span>
-                        <MapPin className="h-5 w-5 text-emerald-400" />
+                        <MapPin className="h-5 w-5 shrink-0 text-emerald-400" />
                     </div>
                     <p className="mt-3 text-2xl font-black text-white sm:text-3xl">{stats.covered_regions ?? 0}</p>
                     <p className="mt-1 text-xs text-gray-400">Active regional territories</p>
@@ -387,9 +387,9 @@ export default function RegionalAdmins({
 
                 {/* Covered Campuses */}
                 <div className="rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-500/[0.08] to-transparent p-4 sm:p-5">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                         <span className="text-xs font-bold uppercase tracking-wider text-blue-400">Campuses</span>
-                        <Building2 className="h-5 w-5 text-blue-400" />
+                        <Building2 className="h-5 w-5 shrink-0 text-blue-400" />
                     </div>
                     <p className="mt-3 text-2xl font-black text-white sm:text-3xl">{stats.total_campuses ?? 0}</p>
                     <p className="mt-1 text-xs text-gray-400">Affiliated institutions</p>
@@ -397,9 +397,9 @@ export default function RegionalAdmins({
 
                 {/* Verified Pool */}
                 <div className="rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/[0.08] to-transparent p-4 sm:p-5">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                         <span className="text-xs font-bold uppercase tracking-wider text-purple-400">Verified Pool</span>
-                        <Users className="h-5 w-5 text-purple-400" />
+                        <Users className="h-5 w-5 shrink-0 text-purple-400" />
                     </div>
                     <p className="mt-3 text-2xl font-black text-white sm:text-3xl">{stats.total_eligible ?? 0}</p>
                     <p className="mt-1 text-xs text-gray-400">Active students & leaders</p>
@@ -408,7 +408,7 @@ export default function RegionalAdmins({
 
             {/* Filter Controls Row */}
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                     <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
                         Active Appointees ({regionalAdmins?.total ?? adminItems.length})
                     </span>
@@ -416,7 +416,7 @@ export default function RegionalAdmins({
                         <button
                             type="button"
                             onClick={handleClearFilters}
-                            className="rounded-lg border border-white/10 px-2.5 py-1 text-[11px] font-medium text-amber-400 hover:bg-white/5"
+                            className="min-h-[40px] rounded-lg border border-white/10 px-3 py-1.5 text-[11px] font-medium text-amber-400 hover:bg-white/5"
                         >
                             Reset Filter
                         </button>
@@ -424,12 +424,12 @@ export default function RegionalAdmins({
                 </div>
 
                 {/* Region Filter */}
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                     <span className="text-xs text-gray-400 font-medium">Jurisdiction:</span>
                     <select
                         value={selectedRegion}
                         onChange={(e) => handleRegionFilter(e.target.value)}
-                        className="rounded-xl border border-white/10 bg-black/50 px-3 py-2 text-xs font-semibold text-white focus:border-amber-400/50 focus:outline-none"
+                        className="min-h-[40px] rounded-xl border border-white/10 bg-black/50 px-3 py-2 text-xs font-semibold text-white focus:border-amber-400/50 focus:outline-none"
                     >
                         <option value="">All Regions</option>
                         {availableRegions.map((reg) => (
@@ -444,7 +444,7 @@ export default function RegionalAdmins({
             {/* Table Container */}
             <div className="rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl overflow-hidden shadow-2xl">
                 {adminItems.length === 0 ? (
-                    <div className="p-12 text-center">
+                    <div className="p-6 sm:p-12 text-center">
                         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-gray-500">
                             <ShieldCheck className="h-6 w-6" />
                         </div>
@@ -454,12 +454,12 @@ export default function RegionalAdmins({
                         <p className="mt-1 text-xs text-gray-400 max-w-sm mx-auto">
                             No regional website controllers matched your filter criteria. Click "Appoint Regional Admin" to search and assign a student.
                         </p>
-                        <div className="mt-5 flex items-center justify-center gap-3">
+                        <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
                             {(search || selectedRegion) && (
                                 <button
                                     type="button"
                                     onClick={handleClearFilters}
-                                    className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold text-gray-300 hover:bg-white/10"
+                                    className="min-h-[40px] rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold text-gray-300 hover:bg-white/10"
                                 >
                                     Clear Filters
                                 </button>
@@ -472,196 +472,352 @@ export default function RegionalAdmins({
                                     setHasSearchedStudents(false);
                                     setIsSearchStudentModalOpen(true);
                                 }}
-                                className="rounded-xl bg-amber-400 px-4 py-2 text-xs font-bold text-black hover:bg-amber-300 flex items-center gap-1.5"
+                                className="min-h-[40px] rounded-xl bg-amber-400 px-4 py-2 text-xs font-bold text-black hover:bg-amber-300 inline-flex items-center justify-center gap-1.5"
                             >
-                                <UserPlus className="h-3.5 w-3.5" />
+                                <UserPlus className="h-3.5 w-3.5 shrink-0" />
                                 <span>Appoint Regional Admin</span>
                             </button>
                         </div>
                     </div>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="border-b border-white/10 bg-white/[0.02] text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                                    <th className="px-5 py-4">Admin Profile</th>
-                                    <th className="px-5 py-4">Assigned Schools</th>
-                                    <th className="px-5 py-4">Jurisdiction</th>
-                                    <th className="px-5 py-4">Designation & Role</th>
-                                    <th className="px-5 py-4">Base Campus</th>
-                                    <th className="px-5 py-4">MLBB Identity</th>
-                                    <th className="px-5 py-4 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-white/5 text-xs text-gray-300">
-                                {adminItems.map((user) => {
-                                    const assignedCount = user.assigned_schools?.length ?? 0;
-                                    return (
-                                        <tr
-                                            key={user.id}
-                                            className="transition-colors hover:bg-white/[0.02] group"
-                                        >
-                                            {/* Profile */}
-                                            <td className="px-5 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 font-bold text-white uppercase group-hover:border-amber-400/30 group-hover:bg-amber-400/10 transition-colors">
-                                                        {user.name?.charAt(0) || 'U'}
-                                                    </div>
-                                                    <div>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="font-bold text-white group-hover:text-amber-400 transition-colors">
-                                                                {user.name || 'Unnamed User'}
-                                                            </span>
-                                                            <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wide text-amber-400">
-                                                                RA
-                                                            </span>
-                                                        </div>
-                                                        <div className="flex items-center gap-1.5 text-gray-400 mt-0.5">
-                                                            <Mail className="h-3 w-3 text-gray-500" />
-                                                            <span>{user.email || '—'}</span>
-                                                        </div>
-                                                    </div>
+                    <>
+                        {/* Mobile / Tablet Card List (< 1280px) */}
+                        <div className="divide-y divide-white/10 xl:hidden">
+                            {adminItems.map((user) => {
+                                const assignedCount = user.assigned_schools?.length ?? 0;
+                                return (
+                                    <div
+                                        key={user.id}
+                                        className="p-4 sm:p-5 space-y-3.5 transition-colors hover:bg-white/[0.02]"
+                                    >
+                                        {/* Top Row: Profile + Jurisdiction */}
+                                        <div className="flex flex-wrap items-start justify-between gap-3">
+                                            <div className="flex items-center gap-3 min-w-0 flex-1">
+                                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 font-bold text-white uppercase">
+                                                    {user.name?.charAt(0) || 'U'}
                                                 </div>
-                                            </td>
-
-                                            {/* Assigned Schools */}
-                                            <td className="px-5 py-4">
-                                                <div className="space-y-1.5">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => openManageSchoolsModal(user)}
-                                                        className={`group/btn inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-bold transition-all hover:scale-105 ${
-                                                            assignedCount > 0
-                                                                ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:border-emerald-500/50 hover:bg-emerald-500/20'
-                                                                : 'border-white/10 bg-white/5 text-gray-400 hover:border-amber-400/40 hover:text-amber-400'
-                                                        }`}
-                                                        title="Click to manage assigned campuses & schools"
-                                                    >
-                                                        <Building2 className="h-3 w-3 shrink-0" />
-                                                        <span>
-                                                            {assignedCount > 0
-                                                                ? `${assignedCount} Campus${assignedCount > 1 ? 'es' : ''}`
-                                                                : 'Assign Schools'}
+                                                <div className="min-w-0 flex-1">
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <span className="font-bold text-sm text-white break-words">
+                                                            {user.name || 'Unnamed User'}
                                                         </span>
-                                                        <Plus className="h-3 w-3 ml-0.5 opacity-70 group-hover/btn:rotate-90 transition-transform" />
-                                                    </button>
-
-                                                    {user.assigned_schools && user.assigned_schools.length > 0 && (
-                                                        <div
-                                                            className="text-[11px] text-gray-400 max-w-[210px] leading-tight truncate"
-                                                            title={user.assigned_schools.map(s => s.name).join(', ')}
-                                                        >
-                                                            <span className="text-gray-300 font-medium">
-                                                                {user.assigned_schools.slice(0, 2).map(s => s.acronym || s.name).join(', ')}
-                                                            </span>
-                                                            {user.assigned_schools.length > 2 && (
-                                                                <span className="text-amber-400 font-bold ml-1">
-                                                                    +{user.assigned_schools.length - 2} more
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    )}
+                                                        <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wide text-amber-400">
+                                                            RA
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-1.5 text-xs text-gray-400 mt-0.5 min-w-0">
+                                                        <Mail className="h-3 w-3 shrink-0 text-gray-500" />
+                                                        <span className="truncate">{user.email || '—'}</span>
+                                                    </div>
                                                 </div>
-                                            </td>
+                                            </div>
 
-                                            {/* Jurisdiction */}
-                                            <td className="px-5 py-4">
-                                                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-400">
-                                                    <MapPin className="h-3 w-3" />
-                                                    <span>{user.region || 'Unassigned'}</span>
+                                            <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-400">
+                                                <MapPin className="h-3 w-3 shrink-0" />
+                                                <span>{user.region || 'Unassigned'}</span>
+                                            </span>
+                                        </div>
+
+                                        {/* Info Grid: Designation, Base Campus, MLBB Identity */}
+                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 rounded-xl border border-white/5 bg-white/[0.02] p-3 text-xs">
+                                            <div className="min-w-0">
+                                                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block">
+                                                    Designation
                                                 </span>
-                                            </td>
+                                                <div className="mt-0.5 flex items-center gap-1.5 font-bold text-amber-300">
+                                                    <Shield className="h-3 w-3 shrink-0 text-amber-400" />
+                                                    <span className="break-words">{user.division || 'Regional Director'}</span>
+                                                </div>
+                                                <p className="text-[11px] text-gray-500 mt-0.5">
+                                                    Appointed {timeAgo(user.updated_at)}
+                                                </p>
+                                            </div>
 
-                                            {/* Designation */}
-                                            <td className="px-5 py-4">
-                                                <div className="space-y-0.5">
-                                                    <span className="inline-flex items-center gap-1.5 font-bold text-amber-300">
-                                                        <Shield className="h-3 w-3 text-amber-400" />
-                                                        {user.division || 'Regional Director'}
+                                            <div className="min-w-0">
+                                                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block">
+                                                    Base Campus
+                                                </span>
+                                                <div className="mt-0.5 flex items-start gap-1.5 font-medium text-gray-200">
+                                                    <Building2 className="h-3.5 w-3.5 shrink-0 text-amber-400 mt-0.5" />
+                                                    <span className="break-words">
+                                                        {user.university || 'Unassigned Campus'}
                                                     </span>
-                                                    <p className="text-[11px] text-gray-500">
-                                                        Appointed {timeAgo(user.updated_at)}
-                                                    </p>
                                                 </div>
-                                            </td>
+                                                {user.course && (
+                                                    <span className="block text-[11px] text-gray-400 mt-0.5 break-words">
+                                                        {user.course} {user.year_level ? `• ${user.year_level}` : ''}
+                                                    </span>
+                                                )}
+                                            </div>
 
-                                            {/* Campus */}
-                                            <td className="px-5 py-4">
-                                                <div className="space-y-0.5">
-                                                    <div className="flex items-center gap-1.5 font-medium text-gray-200">
-                                                        <Building2 className="h-3.5 w-3.5 text-amber-400 shrink-0" />
-                                                        <span className="truncate max-w-[180px]" title={user.university}>
-                                                            {user.university || 'Unassigned Campus'}
+                                            <div className="min-w-0">
+                                                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block">
+                                                    MLBB Identity
+                                                </span>
+                                                <div className="mt-0.5 flex items-center gap-1.5 font-bold text-white">
+                                                    <Gamepad2 className="h-3.5 w-3.5 shrink-0 text-purple-400" />
+                                                    <span className="break-words">{user.ml_ign || '—'}</span>
+                                                </div>
+                                                <div className="text-[11px] text-gray-400 font-mono mt-0.5 break-all">
+                                                    ID: {user.ml_id || '—'} {user.ml_server ? `(${user.ml_server})` : ''}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Assigned Schools & Actions Row */}
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-0.5">
+                                            <div className="min-w-0 space-y-1">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => openManageSchoolsModal(user)}
+                                                    className={`group/btn inline-flex min-h-[34px] items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold transition-all ${
+                                                        assignedCount > 0
+                                                            ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:border-emerald-500/50 hover:bg-emerald-500/20'
+                                                            : 'border-white/10 bg-white/5 text-gray-400 hover:border-amber-400/40 hover:text-amber-400'
+                                                    }`}
+                                                >
+                                                    <Building2 className="h-3 w-3 shrink-0" />
+                                                    <span>
+                                                        {assignedCount > 0
+                                                            ? `${assignedCount} Campus${assignedCount > 1 ? 'es' : ''}`
+                                                            : 'Assign Schools'}
+                                                    </span>
+                                                    <Plus className="h-3 w-3 shrink-0 ml-0.5 opacity-70" />
+                                                </button>
+
+                                                {user.assigned_schools && user.assigned_schools.length > 0 && (
+                                                    <div className="text-[11px] text-gray-400 leading-tight break-words">
+                                                        <span className="text-gray-300 font-medium">
+                                                            {user.assigned_schools.slice(0, 2).map(s => s.acronym || s.name).join(', ')}
                                                         </span>
+                                                        {user.assigned_schools.length > 2 && (
+                                                            <span className="text-amber-400 font-bold ml-1">
+                                                                +{user.assigned_schools.length - 2} more
+                                                            </span>
+                                                        )}
                                                     </div>
-                                                    {user.course && (
-                                                        <span className="text-[11px] text-gray-400">
-                                                            {user.course} {user.year_level ? `• ${user.year_level}` : ''}
+                                                )}
+                                            </div>
+
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => openManageSchoolsModal(user)}
+                                                    className="inline-flex min-h-[38px] items-center gap-1.5 rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-1.5 text-xs font-bold text-amber-400 hover:bg-amber-400 hover:text-black transition-all"
+                                                    title="Manage Assigned Schools"
+                                                >
+                                                    <Building2 className="h-3.5 w-3.5 shrink-0" />
+                                                    <span>Schools</span>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setInspectAdmin(user)}
+                                                    className="inline-flex min-h-[38px] items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
+                                                    title="View Details"
+                                                >
+                                                    <Eye className="h-3.5 w-3.5 shrink-0" />
+                                                    <span>Details</span>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => openDemoteModal(user)}
+                                                    className="inline-flex min-h-[38px] items-center gap-1 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/20 transition-colors"
+                                                    title="Revoke Regional Admin"
+                                                >
+                                                    <ArrowDown className="h-3.5 w-3.5 shrink-0" />
+                                                    <span>Demote</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* Desktop Table (1280px+) */}
+                        <div className="hidden xl:block overflow-x-auto">
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="border-b border-white/10 bg-white/[0.02] text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                                        <th className="px-5 py-4">Admin Profile</th>
+                                        <th className="px-5 py-4">Assigned Schools</th>
+                                        <th className="px-5 py-4">Jurisdiction</th>
+                                        <th className="px-5 py-4">Designation & Role</th>
+                                        <th className="px-5 py-4">Base Campus</th>
+                                        <th className="px-5 py-4">MLBB Identity</th>
+                                        <th className="px-5 py-4 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5 text-xs text-gray-300">
+                                    {adminItems.map((user) => {
+                                        const assignedCount = user.assigned_schools?.length ?? 0;
+                                        return (
+                                            <tr
+                                                key={user.id}
+                                                className="transition-colors hover:bg-white/[0.02] group"
+                                            >
+                                                {/* Profile */}
+                                                <td className="px-5 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 font-bold text-white uppercase group-hover:border-amber-400/30 group-hover:bg-amber-400/10 transition-colors">
+                                                            {user.name?.charAt(0) || 'U'}
+                                                        </div>
+                                                        <div className="min-w-0">
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="font-bold text-white group-hover:text-amber-400 transition-colors">
+                                                                    {user.name || 'Unnamed User'}
+                                                                </span>
+                                                                <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wide text-amber-400">
+                                                                    RA
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex items-center gap-1.5 text-gray-400 mt-0.5">
+                                                                <Mail className="h-3 w-3 shrink-0 text-gray-500" />
+                                                                <span>{user.email || '—'}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                {/* Assigned Schools */}
+                                                <td className="px-5 py-4">
+                                                    <div className="space-y-1.5">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => openManageSchoolsModal(user)}
+                                                            className={`group/btn inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-bold transition-all hover:scale-105 ${
+                                                                assignedCount > 0
+                                                                    ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400 hover:border-emerald-500/50 hover:bg-emerald-500/20'
+                                                                    : 'border-white/10 bg-white/5 text-gray-400 hover:border-amber-400/40 hover:text-amber-400'
+                                                            }`}
+                                                            title="Click to manage assigned campuses & schools"
+                                                        >
+                                                            <Building2 className="h-3 w-3 shrink-0" />
+                                                            <span>
+                                                                {assignedCount > 0
+                                                                    ? `${assignedCount} Campus${assignedCount > 1 ? 'es' : ''}`
+                                                                    : 'Assign Schools'}
+                                                            </span>
+                                                            <Plus className="h-3 w-3 ml-0.5 opacity-70 group-hover/btn:rotate-90 transition-transform" />
+                                                        </button>
+
+                                                        {user.assigned_schools && user.assigned_schools.length > 0 && (
+                                                            <div
+                                                                className="text-[11px] text-gray-400 max-w-[210px] leading-tight truncate"
+                                                                title={user.assigned_schools.map(s => s.name).join(', ')}
+                                                            >
+                                                                <span className="text-gray-300 font-medium">
+                                                                    {user.assigned_schools.slice(0, 2).map(s => s.acronym || s.name).join(', ')}
+                                                                </span>
+                                                                {user.assigned_schools.length > 2 && (
+                                                                    <span className="text-amber-400 font-bold ml-1">
+                                                                        +{user.assigned_schools.length - 2} more
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </td>
+
+                                                {/* Jurisdiction */}
+                                                <td className="px-5 py-4">
+                                                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-400">
+                                                        <MapPin className="h-3 w-3 shrink-0" />
+                                                        <span>{user.region || 'Unassigned'}</span>
+                                                    </span>
+                                                </td>
+
+                                                {/* Designation */}
+                                                <td className="px-5 py-4">
+                                                    <div className="space-y-0.5">
+                                                        <span className="inline-flex items-center gap-1.5 font-bold text-amber-300">
+                                                            <Shield className="h-3 w-3 shrink-0 text-amber-400" />
+                                                            {user.division || 'Regional Director'}
                                                         </span>
-                                                    )}
-                                                </div>
-                                            </td>
-
-                                            {/* MLBB Identity */}
-                                            <td className="px-5 py-4">
-                                                <div className="space-y-0.5">
-                                                    <div className="flex items-center gap-1.5 font-bold text-white">
-                                                        <Gamepad2 className="h-3.5 w-3.5 text-purple-400 shrink-0" />
-                                                        <span>{user.ml_ign || '—'}</span>
+                                                        <p className="text-[11px] text-gray-500">
+                                                            Appointed {timeAgo(user.updated_at)}
+                                                        </p>
                                                     </div>
-                                                    <div className="text-[11px] text-gray-400 font-mono">
-                                                        ID: {user.ml_id || '—'} {user.ml_server ? `(${user.ml_server})` : ''}
-                                                    </div>
-                                                </div>
-                                            </td>
+                                                </td>
 
-                                            {/* Actions */}
-                                            <td className="px-5 py-4 text-right">
-                                                <div className="flex items-center justify-end gap-1.5">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => openManageSchoolsModal(user)}
-                                                        className="inline-flex items-center gap-1.5 rounded-lg border border-amber-400/30 bg-amber-400/10 px-2.5 py-1.5 text-xs font-bold text-amber-400 hover:bg-amber-400 hover:text-black transition-all"
-                                                        title="Manage Assigned Schools"
-                                                    >
-                                                        <Building2 className="h-3.5 w-3.5" />
-                                                        <span>Schools</span>
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setInspectAdmin(user)}
-                                                        className="inline-flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
-                                                        title="View Details"
-                                                    >
-                                                        <Eye className="h-3.5 w-3.5" />
-                                                        <span>Details</span>
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => openDemoteModal(user)}
-                                                        className="inline-flex items-center gap-1 rounded-lg border border-red-500/20 bg-red-500/10 px-2 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/20 transition-colors"
-                                                        title="Revoke Regional Admin"
-                                                    >
-                                                        <ArrowDown className="h-3.5 w-3.5" />
-                                                        <span>Demote</span>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
+                                                {/* Campus */}
+                                                <td className="px-5 py-4">
+                                                    <div className="space-y-0.5">
+                                                        <div className="flex items-center gap-1.5 font-medium text-gray-200">
+                                                            <Building2 className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+                                                            <span className="truncate max-w-[180px]" title={user.university}>
+                                                                {user.university || 'Unassigned Campus'}
+                                                            </span>
+                                                        </div>
+                                                        {user.course && (
+                                                            <span className="text-[11px] text-gray-400">
+                                                                {user.course} {user.year_level ? `• ${user.year_level}` : ''}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </td>
+
+                                                {/* MLBB Identity */}
+                                                <td className="px-5 py-4">
+                                                    <div className="space-y-0.5">
+                                                        <div className="flex items-center gap-1.5 font-bold text-white">
+                                                            <Gamepad2 className="h-3.5 w-3.5 text-purple-400 shrink-0" />
+                                                            <span>{user.ml_ign || '—'}</span>
+                                                        </div>
+                                                        <div className="text-[11px] text-gray-400 font-mono">
+                                                            ID: {user.ml_id || '—'} {user.ml_server ? `(${user.ml_server})` : ''}
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                {/* Actions */}
+                                                <td className="px-5 py-4 text-right">
+                                                    <div className="flex items-center justify-end gap-1.5">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => openManageSchoolsModal(user)}
+                                                            className="inline-flex items-center gap-1.5 rounded-lg border border-amber-400/30 bg-amber-400/10 px-2.5 py-1.5 text-xs font-bold text-amber-400 hover:bg-amber-400 hover:text-black transition-all"
+                                                            title="Manage Assigned Schools"
+                                                        >
+                                                            <Building2 className="h-3.5 w-3.5 shrink-0" />
+                                                            <span>Schools</span>
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setInspectAdmin(user)}
+                                                            className="inline-flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs font-semibold text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
+                                                            title="View Details"
+                                                        >
+                                                            <Eye className="h-3.5 w-3.5 shrink-0" />
+                                                            <span>Details</span>
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => openDemoteModal(user)}
+                                                            className="inline-flex items-center gap-1 rounded-lg border border-red-500/20 bg-red-500/10 px-2 py-1.5 text-xs font-semibold text-red-400 hover:bg-red-500/20 transition-colors"
+                                                            title="Revoke Regional Admin"
+                                                        >
+                                                            <ArrowDown className="h-3.5 w-3.5 shrink-0" />
+                                                            <span>Demote</span>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
                 )}
 
                 {/* Pagination */}
                 {regionalAdmins?.links && regionalAdmins.links.length > 3 && (
-                    <div className="flex items-center justify-between border-t border-white/10 px-5 py-3 text-xs text-gray-400">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/10 px-4 sm:px-5 py-3 text-xs text-gray-400">
                         <span>
                             Showing {regionalAdmins.from || 0} to {regionalAdmins.to || 0} of {regionalAdmins.total || 0} regional administrators
                         </span>
-                        <div className="flex gap-1">
+                        <div className="flex flex-wrap gap-2">
                             {regionalAdmins.links.map((link, idx) => (
                                 <Link
                                     key={idx}
@@ -689,14 +845,14 @@ export default function RegionalAdmins({
                     aria-modal="true"
                     onClick={(e) => { if (e.target === e.currentTarget) setIsSearchStudentModalOpen(false); }}
                 >
-                    <div className="w-full max-w-2xl rounded-2xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-150 flex flex-col max-h-[90vh]">
+                    <div className="w-full max-w-2xl rounded-2xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-4 sm:p-6 shadow-[0_20px_70px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-150 flex flex-col max-h-[90dvh] overflow-y-auto overscroll-contain">
                         {/* Modal Header */}
-                        <div className="flex items-center justify-between border-b border-white/10 pb-4 shrink-0">
-                            <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20">
-                                    <UserPlus className="h-5 w-5" />
+                        <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-4 shrink-0">
+                            <div className="flex items-center gap-3 min-w-0">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20">
+                                    <UserPlus className="h-5 w-5 shrink-0" />
                                 </div>
-                                <div>
+                                <div className="min-w-0">
                                     <h3 className="text-base sm:text-lg font-bold text-white">
                                         Find Student to Appoint as Regional Admin
                                     </h3>
@@ -708,15 +864,15 @@ export default function RegionalAdmins({
                             <button
                                 type="button"
                                 onClick={() => setIsSearchStudentModalOpen(false)}
-                                className="rounded-lg p-1 text-gray-400 hover:bg-white/10 hover:text-white"
+                                className="shrink-0 rounded-lg p-1 text-gray-400 hover:bg-white/10 hover:text-white"
                             >
                                 <X className="h-5 w-5" />
                             </button>
                         </div>
 
                         {/* Search Input Bar */}
-                        <form onSubmit={handleSearchStudents} className="mt-4 flex gap-2 shrink-0">
-                            <div className="relative flex-1">
+                        <form onSubmit={handleSearchStudents} className="mt-4 flex flex-col sm:flex-row gap-2 shrink-0">
+                            <div className="relative min-w-0 flex-1">
                                 <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
                                 <input
                                     type="text"
@@ -724,25 +880,25 @@ export default function RegionalAdmins({
                                     value={studentSearchQuery}
                                     onChange={(e) => setStudentSearchQuery(e.target.value)}
                                     placeholder="Search by student Name, Student ID, Email, Username, or MLBB IGN..."
-                                    className="w-full rounded-xl border border-white/10 bg-black/60 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-white placeholder:text-gray-500 focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 focus:outline-none"
+                                    className="min-h-[42px] w-full rounded-xl border border-white/10 bg-black/60 pl-10 pr-4 py-2.5 text-xs sm:text-sm text-white placeholder:text-gray-500 focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 focus:outline-none"
                                 />
                             </div>
                             <button
                                 type="submit"
                                 disabled={isSearchingStudents || !studentSearchQuery.trim()}
-                                className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-5 text-xs font-bold text-black transition-colors hover:bg-amber-300 disabled:opacity-50"
+                                className="min-h-[42px] inline-flex items-center justify-center gap-2 rounded-xl bg-amber-400 px-5 text-xs font-bold text-black transition-colors hover:bg-amber-300 disabled:opacity-50 shrink-0"
                             >
                                 {isSearchingStudents ? (
-                                    <LoaderCircle className="h-4 w-4 animate-spin" />
+                                    <LoaderCircle className="h-4 w-4 animate-spin shrink-0" />
                                 ) : (
-                                    <Search className="h-4 w-4" />
+                                    <Search className="h-4 w-4 shrink-0" />
                                 )}
                                 <span>Search</span>
                             </button>
                         </form>
 
                         {/* Search Results Area */}
-                        <div className="mt-4 flex-1 overflow-y-auto space-y-2.5 pr-1 min-h-[220px]">
+                        <div className="mt-4 flex-1 overflow-y-auto overscroll-contain space-y-2.5 pr-1 min-h-[180px]">
                             {isSearchingStudents ? (
                                 <div className="py-12 text-center">
                                     <LoaderCircle className="h-8 w-8 animate-spin text-amber-400 mx-auto" />
@@ -752,7 +908,7 @@ export default function RegionalAdmins({
                                 studentSearchResults.map((student) => (
                                     <div
                                         key={student.id}
-                                        className="rounded-xl border border-white/10 bg-white/[0.02] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-amber-400/30 hover:bg-white/[0.04] transition-all"
+                                        className="rounded-xl border border-white/10 bg-white/[0.02] p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-amber-400/30 hover:bg-white/[0.04] transition-all"
                                     >
                                         <div className="flex items-start gap-3 min-w-0">
                                             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400/10 font-bold text-amber-400 uppercase border border-amber-400/20">
@@ -779,32 +935,32 @@ export default function RegionalAdmins({
                                                 <p className="text-xs text-gray-400 truncate mt-0.5">
                                                     {student.email} • ID: <span className="font-mono text-gray-300">{student.studentId || '—'}</span>
                                                 </p>
-                                                <p className="text-xs text-gray-400 truncate mt-0.5 flex items-center gap-1.5">
+                                                <p className="text-xs text-gray-400 mt-0.5 flex flex-wrap items-center gap-1.5">
                                                     <Building2 className="h-3 w-3 text-amber-400 shrink-0" />
-                                                    <span className="text-gray-300">{student.university || 'No campus specified'}</span>
+                                                    <span className="text-gray-300 truncate">{student.university || 'No campus specified'}</span>
                                                     {student.ml_ign && (
-                                                        <span className="text-purple-400 ml-1">• MLBB: {student.ml_ign}</span>
+                                                        <span className="text-purple-400">• MLBB: {student.ml_ign}</span>
                                                     )}
                                                 </p>
                                             </div>
                                         </div>
 
                                         {/* Action buttons on card */}
-                                        <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                                        <div className="flex flex-wrap items-center gap-2 shrink-0 self-end sm:self-center">
                                             <button
                                                 type="button"
                                                 onClick={() => setInspectAdmin(student)}
-                                                className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
+                                                className="inline-flex min-h-[36px] items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
                                             >
-                                                <Eye className="h-3.5 w-3.5" />
+                                                <Eye className="h-3.5 w-3.5 shrink-0" />
                                                 <span>View Details</span>
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={() => openPromoteModal(student)}
-                                                className="inline-flex items-center gap-1.5 rounded-lg bg-amber-400 px-3 py-1.5 text-xs font-bold text-black hover:bg-amber-300 transition-colors shadow-[0_0_10px_rgba(251,191,36,0.2)]"
+                                                className="inline-flex min-h-[36px] items-center gap-1.5 rounded-lg bg-amber-400 px-3 py-1.5 text-xs font-bold text-black hover:bg-amber-300 transition-colors shadow-[0_0_10px_rgba(251,191,36,0.2)]"
                                             >
-                                                <ShieldCheck className="h-3.5 w-3.5" />
+                                                <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
                                                 <span>Promote</span>
                                             </button>
                                         </div>
@@ -834,11 +990,11 @@ export default function RegionalAdmins({
                         </div>
 
                         {/* Modal Footer */}
-                        <div className="mt-4 pt-3 border-t border-white/10 flex justify-end shrink-0">
+                        <div className="mt-4 pt-3 border-t border-white/10 flex flex-col-reverse sm:flex-row sm:justify-end gap-2 shrink-0">
                             <button
                                 type="button"
                                 onClick={() => setIsSearchStudentModalOpen(false)}
-                                className="rounded-xl border border-white/10 px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white"
+                                className="min-h-[40px] w-full sm:w-auto rounded-xl border border-white/10 px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white"
                             >
                                 Close
                             </button>
@@ -859,13 +1015,13 @@ export default function RegionalAdmins({
                     aria-labelledby="appoint-ra-modal-title"
                     onClick={(e) => { if (e.target === e.currentTarget) setPromoteTarget(null); }}
                 >
-                    <div className="w-full max-w-lg rounded-2xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-150">
-                        <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                            <div className="flex items-center gap-2.5">
-                                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20">
-                                    <ShieldCheck className="h-5 w-5" />
+                    <div className="w-full max-w-lg max-h-[90dvh] overflow-y-auto overscroll-contain rounded-2xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-4 sm:p-6 shadow-[0_20px_70px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-150">
+                        <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-4">
+                            <div className="flex items-center gap-2.5 min-w-0">
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20">
+                                    <ShieldCheck className="h-5 w-5 shrink-0" />
                                 </div>
-                                <div>
+                                <div className="min-w-0">
                                     <h3 id="appoint-ra-modal-title" className="text-base font-bold text-white">
                                         Appoint Regional Admin
                                     </h3>
@@ -875,7 +1031,7 @@ export default function RegionalAdmins({
                             <button
                                 type="button"
                                 onClick={() => setPromoteTarget(null)}
-                                className="rounded-lg p-1 text-gray-400 hover:bg-white/10 hover:text-white"
+                                className="shrink-0 rounded-lg p-1 text-gray-400 hover:bg-white/10 hover:text-white"
                             >
                                 <X className="h-5 w-5" />
                             </button>
@@ -883,7 +1039,7 @@ export default function RegionalAdmins({
 
                         {/* Candidate Summary Card */}
                         <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-3.5 flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/20 font-bold text-amber-400 uppercase">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400/20 font-bold text-amber-400 uppercase">
                                 {promoteTarget.name?.charAt(0) || 'U'}
                             </div>
                             <div className="min-w-0 flex-1">
@@ -946,23 +1102,23 @@ export default function RegionalAdmins({
                                 />
                             </div>
 
-                            <div className="flex items-center justify-end gap-3 pt-2">
+                            <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 pt-2">
                                 <button
                                     type="button"
                                     onClick={() => setPromoteTarget(null)}
-                                    className="rounded-xl px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white"
+                                    className="min-h-[40px] w-full sm:w-auto rounded-xl border border-white/10 px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={isSubmitting || !assignedRegion}
-                                    className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-5 py-2.5 text-xs font-bold text-black transition-colors hover:bg-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.2)] disabled:opacity-50"
+                                    className="min-h-[40px] w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-amber-400 px-5 py-2.5 text-xs font-bold text-black transition-colors hover:bg-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.2)] disabled:opacity-50"
                                 >
                                     {isSubmitting ? (
-                                        <LoaderCircle className="h-4 w-4 animate-spin" />
+                                        <LoaderCircle className="h-4 w-4 animate-spin shrink-0" />
                                     ) : (
-                                        <ShieldCheck className="h-4 w-4" />
+                                        <ShieldCheck className="h-4 w-4 shrink-0" />
                                     )}
                                     <span>Confirm & Appoint</span>
                                 </button>
@@ -983,12 +1139,12 @@ export default function RegionalAdmins({
                     aria-modal="true"
                     onClick={(e) => { if (e.target === e.currentTarget) setDemoteTarget(null); }}
                 >
-                    <div className="w-full max-w-md rounded-2xl border border-red-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-150">
-                        <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-400 border border-red-500/20">
-                                <AlertTriangle className="h-5 w-5" />
+                    <div className="w-full max-w-md max-h-[90dvh] overflow-y-auto overscroll-contain rounded-2xl border border-red-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-4 sm:p-6 shadow-[0_20px_70px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-150">
+                        <div className="flex items-center gap-3 min-w-0">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-500/10 text-red-400 border border-red-500/20">
+                                <AlertTriangle className="h-5 w-5 shrink-0" />
                             </div>
-                            <div>
+                            <div className="min-w-0">
                                 <h3 className="text-base font-bold text-white">
                                     Revoke Regional Admin Rights
                                 </h3>
@@ -997,7 +1153,7 @@ export default function RegionalAdmins({
                         </div>
 
                         <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-3 flex items-center gap-3">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-500/20 font-bold text-red-400 uppercase">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-500/20 font-bold text-red-400 uppercase">
                                 {demoteTarget.name?.charAt(0) || 'U'}
                             </div>
                             <div className="min-w-0 flex-1">
@@ -1025,11 +1181,11 @@ export default function RegionalAdmins({
                             </select>
                         </div>
 
-                        <div className="mt-6 flex items-center justify-end gap-3">
+                        <div className="mt-6 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5">
                             <button
                                 type="button"
                                 onClick={() => setDemoteTarget(null)}
-                                className="rounded-xl px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white"
+                                className="min-h-[40px] w-full sm:w-auto rounded-xl border border-white/10 px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white"
                             >
                                 Cancel
                             </button>
@@ -1037,12 +1193,12 @@ export default function RegionalAdmins({
                                 type="button"
                                 disabled={isSubmitting}
                                 onClick={handleDemoteSubmit}
-                                className="inline-flex items-center gap-2 rounded-xl bg-red-500 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-red-400 disabled:opacity-50"
+                                className="min-h-[40px] w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-red-500 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-red-400 disabled:opacity-50"
                             >
                                 {isSubmitting ? (
-                                    <LoaderCircle className="h-4 w-4 animate-spin" />
+                                    <LoaderCircle className="h-4 w-4 animate-spin shrink-0" />
                                 ) : (
-                                    <ArrowDown className="h-4 w-4" />
+                                    <ArrowDown className="h-4 w-4 shrink-0" />
                                 )}
                                 <span>Confirm Demotion</span>
                             </button>
@@ -1062,13 +1218,13 @@ export default function RegionalAdmins({
                     aria-modal="true"
                     onClick={(e) => { if (e.target === e.currentTarget) setInspectAdmin(null); }}
                 >
-                    <div className="w-full max-w-2xl rounded-2xl border border-white/10 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
-                        <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                            <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20">
-                                    <UserRound className="h-5 w-5" />
+                    <div className="w-full max-w-2xl rounded-2xl border border-white/10 bg-[#0f0f11]/95 backdrop-blur-2xl p-4 sm:p-6 shadow-[0_20px_70px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-150 max-h-[90dvh] overflow-y-auto overscroll-contain">
+                        <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-4">
+                            <div className="flex items-center gap-3 min-w-0">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20">
+                                    <UserRound className="h-5 w-5 shrink-0" />
                                 </div>
-                                <div>
+                                <div className="min-w-0">
                                     <h3 className="text-base font-bold text-white">
                                         {inspectAdmin.user_type === 'Regional Admin' ? 'Regional Admin Profile' : 'Candidate Details'}
                                     </h3>
@@ -1078,34 +1234,34 @@ export default function RegionalAdmins({
                             <button
                                 type="button"
                                 onClick={() => setInspectAdmin(null)}
-                                className="rounded-lg p-1 text-gray-400 hover:bg-white/10 hover:text-white"
+                                className="shrink-0 rounded-lg p-1 text-gray-400 hover:bg-white/10 hover:text-white"
                             >
                                 <X className="h-5 w-5" />
                             </button>
                         </div>
 
                         {/* Top Identity Card */}
-                        <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+                        <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.02] p-4 sm:p-5">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                <div className="flex items-center gap-4">
-                                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-400/20 text-xl font-black text-amber-400 uppercase border border-amber-400/30">
+                                <div className="flex items-center gap-3.5 min-w-0">
+                                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-amber-400/20 text-xl font-black text-amber-400 uppercase border border-amber-400/30">
                                         {inspectAdmin.name?.charAt(0) || 'U'}
                                     </div>
-                                    <div>
+                                    <div className="min-w-0 flex-1">
                                         <div className="flex items-center gap-2 flex-wrap">
-                                            <h3 className="text-lg font-bold text-white">{inspectAdmin.name}</h3>
+                                            <h3 className="text-base sm:text-lg font-bold text-white break-words">{inspectAdmin.name}</h3>
                                             <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-xs font-bold text-amber-400">
                                                 {inspectAdmin.user_type}
                                             </span>
                                         </div>
-                                        <p className="text-xs text-gray-400 mt-0.5">
+                                        <p className="text-xs text-gray-400 mt-0.5 break-all sm:break-words">
                                             @{inspectAdmin.username || 'username'} • {inspectAdmin.email}
                                         </p>
                                     </div>
                                 </div>
 
                                 {inspectAdmin.user_type === 'Regional Admin' && (
-                                    <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-3 text-right">
+                                    <div className="shrink-0 self-start sm:self-auto rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-3 text-left sm:text-right">
                                         <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block">Territory</span>
                                         <span className="text-xs font-bold text-white">{inspectAdmin.region || 'Unassigned'}</span>
                                     </div>
@@ -1116,9 +1272,9 @@ export default function RegionalAdmins({
                         {/* Assigned Campuses & Schools for Regional Admin */}
                         {inspectAdmin.user_type === 'Regional Admin' && (
                             <div className="mt-5 rounded-2xl border border-amber-400/20 bg-amber-400/[0.03] p-4">
-                                <div className="flex items-center justify-between mb-3">
-                                    <div className="flex items-center gap-2">
-                                        <Building2 className="h-4 w-4 text-amber-400" />
+                                <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                                    <div className="flex items-center gap-2 min-w-0">
+                                        <Building2 className="h-4 w-4 shrink-0 text-amber-400" />
                                         <h4 className="font-bold uppercase tracking-wider text-amber-400 text-xs">
                                             Assigned Campuses & Schools ({(inspectAdmin.assigned_schools?.length ?? 0)})
                                         </h4>
@@ -1130,9 +1286,9 @@ export default function RegionalAdmins({
                                             setInspectAdmin(null);
                                             openManageSchoolsModal(target);
                                         }}
-                                        className="inline-flex items-center gap-1.5 rounded-lg bg-amber-400/15 border border-amber-400/30 px-2.5 py-1 text-xs font-bold text-amber-400 hover:bg-amber-400 hover:text-black transition-all"
+                                        className="inline-flex min-h-[34px] items-center gap-1.5 rounded-lg bg-amber-400/15 border border-amber-400/30 px-2.5 py-1 text-xs font-bold text-amber-400 hover:bg-amber-400 hover:text-black transition-all"
                                     >
-                                        <Building2 className="h-3 w-3" />
+                                        <Building2 className="h-3 w-3 shrink-0" />
                                         <span>Manage Assignments</span>
                                     </button>
                                 </div>
@@ -1148,7 +1304,7 @@ export default function RegionalAdmins({
                                                     <p className="text-xs font-semibold text-white truncate" title={school.name}>
                                                         {school.name}
                                                     </p>
-                                                    <div className="flex items-center gap-1.5 mt-0.5">
+                                                    <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
                                                         {school.acronym && (
                                                             <span className="text-[10px] font-mono text-amber-300">
                                                                 {school.acronym}
@@ -1174,23 +1330,23 @@ export default function RegionalAdmins({
 
                         <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                             {/* Academic Credentials */}
-                            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 space-y-2.5">
+                            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 space-y-2.5 min-w-0">
                                 <h4 className="flex items-center gap-2 font-bold uppercase tracking-wider text-amber-400">
-                                    <Building2 className="h-4 w-4" /> Academic Credentials
+                                    <Building2 className="h-4 w-4 shrink-0" /> Academic Credentials
                                 </h4>
                                 <div>
                                     <span className="text-gray-500">School / University:</span>
-                                    <p className="font-semibold text-white mt-0.5">{inspectAdmin.university || 'Unspecified'}</p>
+                                    <p className="font-semibold text-white mt-0.5 break-words">{inspectAdmin.university || 'Unspecified'}</p>
                                 </div>
                                 <div>
                                     <span className="text-gray-500">Course & Year Level:</span>
-                                    <p className="font-medium text-gray-300 mt-0.5">
+                                    <p className="font-medium text-gray-300 mt-0.5 break-words">
                                         {inspectAdmin.course || '—'} {inspectAdmin.year_level ? `(${inspectAdmin.year_level})` : ''}
                                     </p>
                                 </div>
                                 <div>
                                     <span className="text-gray-500">Student ID Number:</span>
-                                    <p className="font-mono text-amber-300 mt-0.5">{inspectAdmin.studentId || '—'}</p>
+                                    <p className="font-mono text-amber-300 mt-0.5 break-all">{inspectAdmin.studentId || '—'}</p>
                                 </div>
                                 <div>
                                     <span className="text-gray-500">Regional Location:</span>
@@ -1199,17 +1355,17 @@ export default function RegionalAdmins({
                             </div>
 
                             {/* MLBB Identity */}
-                            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 space-y-2.5">
+                            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 space-y-2.5 min-w-0">
                                 <h4 className="flex items-center gap-2 font-bold uppercase tracking-wider text-purple-400">
-                                    <Gamepad2 className="h-4 w-4" /> MLBB Credentials
+                                    <Gamepad2 className="h-4 w-4 shrink-0" /> MLBB Credentials
                                 </h4>
                                 <div>
                                     <span className="text-gray-500">In-Game Name (IGN):</span>
-                                    <p className="font-bold text-white mt-0.5">{inspectAdmin.ml_ign || '—'}</p>
+                                    <p className="font-bold text-white mt-0.5 break-words">{inspectAdmin.ml_ign || '—'}</p>
                                 </div>
                                 <div>
                                     <span className="text-gray-500">User ID & Server:</span>
-                                    <p className="font-mono text-gray-200 mt-0.5">
+                                    <p className="font-mono text-gray-200 mt-0.5 break-all">
                                         {inspectAdmin.ml_id || '—'} {inspectAdmin.ml_server ? `(${inspectAdmin.ml_server})` : ''}
                                     </p>
                                 </div>
@@ -1220,13 +1376,13 @@ export default function RegionalAdmins({
                             </div>
 
                             {/* Contact Details */}
-                            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 space-y-2.5">
+                            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 space-y-2.5 min-w-0">
                                 <h4 className="flex items-center gap-2 font-bold uppercase tracking-wider text-gray-400">
-                                    <Phone className="h-4 w-4" /> Contact Information
+                                    <Phone className="h-4 w-4 shrink-0" /> Contact Information
                                 </h4>
                                 <div>
                                     <span className="text-gray-500">Mobile Phone:</span>
-                                    <p className="font-semibold text-white mt-0.5">{inspectAdmin.contact_number || '—'}</p>
+                                    <p className="font-semibold text-white mt-0.5 break-all">{inspectAdmin.contact_number || '—'}</p>
                                 </div>
                                 {inspectAdmin.facebook_link && (
                                     <div>
@@ -1239,7 +1395,7 @@ export default function RegionalAdmins({
                                                 className="inline-flex items-center gap-1 text-amber-400 hover:underline"
                                             >
                                                 <span>View Facebook</span>
-                                                <ExternalLink className="h-3 w-3" />
+                                                <ExternalLink className="h-3 w-3 shrink-0" />
                                             </a>
                                         </p>
                                     </div>
@@ -1247,9 +1403,9 @@ export default function RegionalAdmins({
                             </div>
 
                             {/* Proof of Enrollment */}
-                            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 space-y-2.5">
+                            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 space-y-2.5 min-w-0">
                                 <h4 className="flex items-center gap-2 font-bold uppercase tracking-wider text-blue-400">
-                                    <FileText className="h-4 w-4" /> Proof of Enrollment
+                                    <FileText className="h-4 w-4 shrink-0" /> Proof of Enrollment
                                 </h4>
                                 <div>
                                     <span className="text-gray-500">Enrollment Document:</span>
@@ -1262,7 +1418,7 @@ export default function RegionalAdmins({
                                                 className="inline-flex items-center gap-1 text-xs font-bold text-amber-400 hover:underline"
                                             >
                                                 <span>View Uploaded Proof</span>
-                                                <ExternalLink className="h-3 w-3" />
+                                                <ExternalLink className="h-3 w-3 shrink-0" />
                                             </a>
                                         </div>
                                     ) : (
@@ -1273,11 +1429,11 @@ export default function RegionalAdmins({
                         </div>
 
                         {/* Modal Footer Actions */}
-                        <div className="mt-6 flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+                        <div className="mt-6 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 pt-3 border-t border-white/10">
                             <button
                                 type="button"
                                 onClick={() => setInspectAdmin(null)}
-                                className="rounded-xl border border-white/10 px-5 py-2.5 text-xs font-bold text-gray-300 hover:bg-white/10 hover:text-white"
+                                className="min-h-[40px] w-full sm:w-auto rounded-xl border border-white/10 px-5 py-2.5 text-xs font-bold text-gray-300 hover:bg-white/10 hover:text-white"
                             >
                                 Close
                             </button>
@@ -1288,9 +1444,9 @@ export default function RegionalAdmins({
                                     onClick={() => {
                                         openPromoteModal(inspectAdmin);
                                     }}
-                                    className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-5 py-2.5 text-xs font-bold text-black transition-colors hover:bg-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.3)]"
+                                    className="min-h-[40px] w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-amber-400 px-5 py-2.5 text-xs font-bold text-black transition-colors hover:bg-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.3)]"
                                 >
-                                    <ShieldCheck className="h-4 w-4" />
+                                    <ShieldCheck className="h-4 w-4 shrink-0" />
                                     <span>Appoint as Regional Admin</span>
                                 </button>
                             )}
@@ -1315,18 +1471,18 @@ export default function RegionalAdmins({
                         }
                     }}
                 >
-                    <div className="w-full max-w-2xl rounded-2xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] flex flex-col">
+                    <div className="w-full max-w-2xl rounded-2xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-4 sm:p-6 shadow-[0_20px_70px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-150 max-h-[90dvh] overflow-y-auto overscroll-contain flex flex-col">
                         {/* Header */}
-                        <div className="flex items-center justify-between border-b border-white/10 pb-4 shrink-0">
-                            <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20 shadow-[0_0_15px_rgba(251,191,36,0.15)]">
-                                    <Building2 className="h-5 w-5" />
+                        <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-4 shrink-0">
+                            <div className="flex items-center gap-3 min-w-0">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20 shadow-[0_0_15px_rgba(251,191,36,0.15)]">
+                                    <Building2 className="h-5 w-5 shrink-0" />
                                 </div>
-                                <div>
+                                <div className="min-w-0">
                                     <h3 id="assign-schools-modal-title" className="text-base font-bold text-white">
                                         Assign Schools & Campuses
                                     </h3>
-                                    <p className="text-xs text-gray-400">
+                                    <p className="text-xs text-gray-400 break-words">
                                         Managing territory for <strong className="text-amber-400">{manageSchoolsAdmin.name}</strong> ({manageSchoolsAdmin.region || 'Regional Admin'})
                                     </p>
                                 </div>
@@ -1335,14 +1491,14 @@ export default function RegionalAdmins({
                                 type="button"
                                 disabled={isSavingSchools}
                                 onClick={() => setManageSchoolsAdmin(null)}
-                                className="rounded-lg p-1 text-gray-400 hover:bg-white/10 hover:text-white"
+                                className="shrink-0 rounded-lg p-1 text-gray-400 hover:bg-white/10 hover:text-white"
                             >
                                 <X className="h-5 w-5" />
                             </button>
                         </div>
 
                         {/* Modal Body */}
-                        <div className="flex-1 overflow-y-auto py-4 space-y-5 pr-1">
+                        <div className="flex-1 overflow-y-auto overscroll-contain py-4 space-y-5 pr-1">
                             {/* Search Bar for Schools */}
                             <div>
                                 <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1.5">
@@ -1370,7 +1526,7 @@ export default function RegionalAdmins({
                                             return (
                                                 <div
                                                     key={school.id}
-                                                    className={`flex items-center justify-between gap-3 rounded-lg p-2.5 transition-colors ${
+                                                    className={`flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 rounded-lg p-2.5 transition-colors ${
                                                         isAlreadyAdded
                                                             ? 'bg-white/[0.02] opacity-60'
                                                             : 'hover:bg-amber-400/10 hover:border-amber-400/30'
@@ -1378,7 +1534,7 @@ export default function RegionalAdmins({
                                                 >
                                                     <div className="min-w-0 flex-1">
                                                         <div className="flex items-center gap-2 flex-wrap">
-                                                            <span className="font-semibold text-white text-xs truncate">
+                                                            <span className="font-semibold text-white text-xs break-words">
                                                                 {school.name}
                                                             </span>
                                                             {school.acronym && (
@@ -1387,16 +1543,16 @@ export default function RegionalAdmins({
                                                                 </span>
                                                             )}
                                                             {school.region && (
-                                                                <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.2 text-[10px] font-bold text-emerald-400">
+                                                                <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-400">
                                                                     {school.region}
                                                                 </span>
                                                             )}
                                                         </div>
                                                     </div>
-                                                    <div>
+                                                    <div className="shrink-0">
                                                         {isAlreadyAdded ? (
                                                             <span className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-1 text-[11px] font-semibold text-gray-400">
-                                                                <Check className="h-3 w-3 text-emerald-400" /> Added
+                                                                <Check className="h-3 w-3 shrink-0 text-emerald-400" /> Added
                                                             </span>
                                                         ) : (
                                                             <button
@@ -1404,7 +1560,7 @@ export default function RegionalAdmins({
                                                                 onClick={() => handleAddSchool(school)}
                                                                 className="inline-flex items-center gap-1 rounded-md bg-amber-400 px-2.5 py-1 text-[11px] font-bold text-black hover:bg-amber-300 transition-colors shadow-sm"
                                                             >
-                                                                <Plus className="h-3 w-3" /> Assign
+                                                                <Plus className="h-3 w-3 shrink-0" /> Assign
                                                             </button>
                                                         )}
                                                     </div>
@@ -1422,8 +1578,8 @@ export default function RegionalAdmins({
 
                             {/* Assigned Campuses Section */}
                             <div>
-                                <div className="flex items-center justify-between mb-2">
-                                    <label className="text-xs font-bold uppercase tracking-wider text-gray-300 flex items-center gap-2">
+                                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                    <label className="text-xs font-bold uppercase tracking-wider text-gray-300 flex flex-wrap items-center gap-1.5">
                                         <span>Assigned Campuses ({assignedSchoolsList.length})</span>
                                         <span className="text-[11px] font-normal normal-case text-gray-400">
                                             (Institutions under this admin)
@@ -1457,7 +1613,7 @@ export default function RegionalAdmins({
                                             >
                                                 <div className="min-w-0 flex-1">
                                                     <div className="flex items-center gap-2 flex-wrap">
-                                                        <span className="font-semibold text-white text-xs">
+                                                        <span className="font-semibold text-white text-xs break-words">
                                                             {school.name}
                                                         </span>
                                                         {school.acronym && (
@@ -1466,7 +1622,7 @@ export default function RegionalAdmins({
                                                             </span>
                                                         )}
                                                         {school.region && (
-                                                            <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.2 text-[10px] font-bold text-emerald-400">
+                                                            <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-400">
                                                                 {school.region}
                                                             </span>
                                                         )}
@@ -1475,7 +1631,7 @@ export default function RegionalAdmins({
                                                 <button
                                                     type="button"
                                                     onClick={() => handleRemoveSchool(school.id)}
-                                                    className="rounded-lg p-1.5 text-gray-400 hover:bg-red-500/20 hover:text-red-400 transition-colors"
+                                                    className="shrink-0 rounded-lg p-1.5 text-gray-400 hover:bg-red-500/20 hover:text-red-400 transition-colors"
                                                     title="Remove campus assignment"
                                                 >
                                                     <Trash2 className="h-3.5 w-3.5" />
@@ -1488,16 +1644,16 @@ export default function RegionalAdmins({
                         </div>
 
                         {/* Footer */}
-                        <div className="border-t border-white/10 pt-4 flex items-center justify-between shrink-0">
+                        <div className="border-t border-white/10 pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
                             <span className="text-[11px] text-gray-400">
                                 {assignedSchoolsList.length} total institution{assignedSchoolsList.length === 1 ? '' : 's'} assigned
                             </span>
-                            <div className="flex items-center gap-3">
+                            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto">
                                 <button
                                     type="button"
                                     disabled={isSavingSchools}
                                     onClick={() => setManageSchoolsAdmin(null)}
-                                    className="rounded-xl border border-white/10 px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white"
+                                    className="min-h-[40px] w-full sm:w-auto rounded-xl border border-white/10 px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white"
                                 >
                                     Cancel
                                 </button>
@@ -1505,12 +1661,12 @@ export default function RegionalAdmins({
                                     type="button"
                                     disabled={isSavingSchools}
                                     onClick={handleSaveAssignedSchools}
-                                    className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-5 py-2.5 text-xs font-bold text-black hover:bg-amber-300 transition-colors shadow-[0_0_15px_rgba(251,191,36,0.25)] disabled:opacity-50"
+                                    className="min-h-[40px] w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-amber-400 px-5 py-2.5 text-xs font-bold text-black hover:bg-amber-300 transition-colors shadow-[0_0_15px_rgba(251,191,36,0.25)] disabled:opacity-50"
                                 >
                                     {isSavingSchools ? (
-                                        <LoaderCircle className="h-4 w-4 animate-spin" />
+                                        <LoaderCircle className="h-4 w-4 animate-spin shrink-0" />
                                     ) : (
-                                        <Check className="h-4 w-4" />
+                                        <Check className="h-4 w-4 shrink-0" />
                                     )}
                                     <span>Save School Assignments</span>
                                 </button>

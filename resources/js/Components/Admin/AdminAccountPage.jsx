@@ -10,7 +10,7 @@ export default function AdminAccountPage({
 }) {
     return (
         <div>
-            <div className="md:hidden">
+            <div className="xl:hidden">
                 <AdminAccountMobileList
                     accounts={accounts}
                     expandedAccountId={expandedAccountId}
@@ -20,7 +20,7 @@ export default function AdminAccountPage({
                 />
             </div>
 
-            <div className="hidden md:block">
+            <div className="hidden xl:block">
                 <AdminAccountDesktopTable
                     accounts={accounts}
                     onEdit={onEdit}

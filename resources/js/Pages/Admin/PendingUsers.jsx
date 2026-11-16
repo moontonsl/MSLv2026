@@ -184,23 +184,23 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
             <Head title="Pending Verification | Student Verification" />
 
             {/* Header Section */}
-            <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                    <div className="flex items-center gap-2.5">
-                        <h1 className="text-2xl font-black tracking-tight text-white sm:text-3xl">Pending Verification</h1>
+            <div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
+                <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2.5">
+                        <h1 className="text-2xl font-black tracking-tight text-white sm:text-3xl [text-wrap:balance]">Pending Verification</h1>
                         <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-2.5 py-0.5 text-xs font-bold text-amber-400">
                             {stats.all ?? items.length} awaiting review
                         </span>
                     </div>
-                    <p className="mt-1.5 text-sm text-gray-400">
+                    <p className="mt-1.5 text-xs sm:text-sm text-gray-400">
                         Inspect submitted student credentials, audit proof of enrollment documents, and verify registrations.
                     </p>
                 </div>
 
                 {/* Search Bar */}
-                <form onSubmit={submitSearch} className="flex w-full gap-2 sm:w-auto">
+                <form onSubmit={submitSearch} className="flex flex-wrap sm:flex-nowrap w-full gap-2 xl:w-auto">
                     <label htmlFor="pending-users-search" className="sr-only">Search pending users</label>
-                    <div className="relative flex-1 sm:w-72">
+                    <div className="relative min-w-0 flex-1 basis-48 xl:w-72">
                         <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                         <input
                             id="pending-users-search"
@@ -208,12 +208,12 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                             value={search}
                             onChange={(event) => setSearch(event.target.value)}
                             placeholder="Search name, school, ML-ID..."
-                            className="min-h-[44px] w-full rounded-xl border border-white/10 bg-white/[0.04] py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-gray-500 transition-all focus:border-amber-400/50 focus:bg-black/80 focus:ring-2 focus:ring-amber-400/20 focus:outline-none"
+                            className="min-h-[44px] w-full rounded-xl border border-white/10 bg-white/[0.04] py-2.5 pl-10 pr-4 text-xs sm:text-sm text-white placeholder:text-gray-500 transition-all focus:border-amber-400/50 focus:bg-black/80 focus:ring-2 focus:ring-amber-400/20 focus:outline-none"
                         />
                     </div>
                     <button
                         type="submit"
-                        className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-amber-400 px-5 text-sm font-bold text-black transition-all hover:bg-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.15)]"
+                        className="inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-xl bg-amber-400 px-4 sm:px-5 text-xs sm:text-sm font-bold text-black transition-all hover:bg-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.15)]"
                     >
                         Search
                     </button>
@@ -221,7 +221,7 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                         <button
                             type="button"
                             onClick={clearSearch}
-                            className="min-h-[44px] rounded-xl border border-white/10 px-3.5 text-sm font-semibold text-gray-400 hover:border-white/20 hover:text-white"
+                            className="min-h-[44px] shrink-0 rounded-xl border border-white/10 px-3.5 text-xs sm:text-sm font-semibold text-gray-400 hover:border-white/20 hover:text-white"
                         >
                             Clear
                         </button>
@@ -231,11 +231,11 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
 
             {/* Filter Tabs & Stat Counters */}
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex flex-wrap items-center gap-1.5 rounded-xl border border-white/10 bg-black/40 p-1">
+                <div className="grid w-full grid-cols-1 gap-1 min-[440px]:grid-cols-2 md:inline-flex md:w-auto rounded-xl border border-white/10 bg-black/40 p-1">
                     <button
                         type="button"
                         onClick={() => handleTabChange('all')}
-                        className={`rounded-lg px-4 py-2 text-xs font-bold transition-all ${
+                        className={`min-h-[38px] rounded-lg px-3.5 sm:px-4 py-2 text-xs font-bold transition-all ${
                             activeTab === 'all'
                                 ? 'bg-amber-400 text-black shadow-sm'
                                 : 'text-gray-400 hover:text-white'
@@ -246,7 +246,7 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                     <button
                         type="button"
                         onClick={() => handleTabChange('pending')}
-                        className={`rounded-lg px-4 py-2 text-xs font-bold transition-all ${
+                        className={`min-h-[38px] rounded-lg px-3.5 sm:px-4 py-2 text-xs font-bold transition-all ${
                             activeTab === 'pending'
                                 ? 'bg-amber-400 text-black shadow-sm'
                                 : 'text-gray-400 hover:text-white'
@@ -257,7 +257,7 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                     <button
                         type="button"
                         onClick={() => handleTabChange('renewal')}
-                        className={`rounded-lg px-4 py-2 text-xs font-bold transition-all ${
+                        className={`min-h-[38px] rounded-lg px-3.5 sm:px-4 py-2 text-xs font-bold transition-all ${
                             activeTab === 'renewal'
                                 ? 'bg-amber-400 text-black shadow-sm'
                                 : 'text-gray-400 hover:text-white'
@@ -268,7 +268,7 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                     <button
                         type="button"
                         onClick={() => handleTabChange('has-doc')}
-                        className={`rounded-lg px-4 py-2 text-xs font-bold transition-all ${
+                        className={`min-h-[38px] rounded-lg px-3.5 sm:px-4 py-2 text-xs font-bold transition-all ${
                             activeTab === 'has-doc'
                                 ? 'bg-amber-400 text-black shadow-sm'
                                 : 'text-gray-400 hover:text-white'
@@ -294,145 +294,260 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                         </p>
                     </div>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full min-w-[900px] table-auto text-left text-sm">
-                            <thead>
-                                <tr className="border-b border-white/10 bg-white/[0.02] text-xs font-bold uppercase tracking-wider text-gray-400">
-                                    <th className="px-5 py-4">Student Profile</th>
-                                    <th className="px-5 py-4">Academic Details</th>
-                                    <th className="px-5 py-4">MLBB Identity</th>
-                                    <th className="px-5 py-4">Proof of Enrollment</th>
-                                    <th className="px-5 py-4">Applied</th>
-                                    <th className="px-5 py-4 text-right">Verification Action</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-white/5 text-gray-300">
-                                {items.map((user) => {
-                                    const hasDoc = Boolean(user.proofOfEnrollment);
-                                    const isRenewal = user.status === 'pending-review';
+                    <>
+                        {/* Mobile & Tablet Card List (< 1280px) */}
+                        <div className="divide-y divide-white/10 xl:hidden">
+                            {items.map((user) => {
+                                const hasDoc = Boolean(user.proofOfEnrollment);
+                                const isRenewal = user.status === 'pending-review';
 
-                                    return (
-                                        <tr
-                                            key={user.id}
-                                            className="transition-colors hover:bg-white/[0.02] group"
-                                        >
-                                            {/* Profile */}
-                                            <td className="px-5 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber-400/20 bg-neutral-900 font-bold text-amber-400">
-                                                        {user.name ? user.name.charAt(0).toUpperCase() : 'S'}
-                                                    </div>
-                                                    <div className="min-w-0">
-                                                        <div className="flex items-center gap-2">
-                                                            <p className="font-bold text-white group-hover:text-amber-300 transition-colors">
-                                                                {user.name || 'Unnamed Student'}
-                                                            </p>
-                                                            {isRenewal ? (
-                                                                <span className="rounded-full border border-purple-500/30 bg-purple-500/10 px-2 py-0.5 text-[10px] font-bold text-purple-400">
-                                                                    Renewal
-                                                                </span>
-                                                            ) : (
-                                                                <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold text-amber-400">
-                                                                    New Reg
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                        <p className="mt-0.5 flex items-center gap-1 text-xs text-gray-400">
-                                                            <Mail className="h-3 w-3 shrink-0" />
-                                                            <span className="truncate">{user.email || '—'}</span>
+                                return (
+                                    <article key={user.id} className="p-4 sm:p-5 space-y-3.5 transition-colors hover:bg-white/[0.02]">
+                                        <div className="flex flex-wrap items-start justify-between gap-3">
+                                            <div className="flex min-w-0 items-center gap-3">
+                                                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-amber-400/20 bg-neutral-900 font-bold text-amber-400">
+                                                    {user.name ? user.name.charAt(0).toUpperCase() : 'S'}
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <p className="font-bold text-white text-sm sm:text-base truncate">
+                                                            {user.name || 'Unnamed Student'}
                                                         </p>
+                                                        {isRenewal ? (
+                                                            <span className="rounded-full border border-purple-500/30 bg-purple-500/10 px-2 py-0.5 text-[10px] font-bold text-purple-400">
+                                                                Renewal
+                                                            </span>
+                                                        ) : (
+                                                            <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold text-amber-400">
+                                                                New Reg
+                                                            </span>
+                                                        )}
                                                     </div>
-                                                </div>
-                                            </td>
-
-                                            {/* Academic */}
-                                            <td className="px-5 py-4">
-                                                <div className="min-w-0">
-                                                    <p className="flex items-center gap-1.5 font-semibold text-white">
-                                                        <Building2 className="h-3.5 w-3.5 shrink-0 text-amber-400" />
-                                                        <span className="truncate">{user.university || 'No campus recorded'}</span>
-                                                    </p>
-                                                    <p className="mt-1 flex items-center gap-1 text-xs text-gray-400">
-                                                        <GraduationCap className="h-3 w-3 shrink-0 text-gray-500" />
-                                                        <span>{user.course || 'Unspecified course'}</span>
-                                                        {user.year_level && <span>• {user.year_level}</span>}
-                                                    </p>
-                                                    <p className="mt-0.5 text-[11px] text-gray-500 font-mono">
-                                                        ID: {user.studentId || '—'}
+                                                    <p className="mt-0.5 flex items-center gap-1 text-xs text-gray-400 min-w-0">
+                                                        <Mail className="h-3 w-3 shrink-0" />
+                                                        <span className="truncate">{user.email || '—'}</span>
                                                     </p>
                                                 </div>
-                                            </td>
+                                            </div>
 
-                                            {/* MLBB */}
-                                            <td className="px-5 py-4">
-                                                <div className="min-w-0">
+                                            <div className="text-xs text-gray-400 sm:text-right">
+                                                <p className="font-medium text-gray-300">{timeAgo(user.created_at)}</p>
+                                                <p className="text-[11px] text-gray-500">{formatDate(user.created_at)}</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 rounded-xl border border-white/5 bg-white/[0.02] p-3 text-xs">
+                                            <div className="min-w-0">
+                                                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 block mb-1">
+                                                    Academic Details
+                                                </span>
+                                                <p className="flex items-center gap-1.5 font-semibold text-white">
+                                                    <Building2 className="h-3.5 w-3.5 shrink-0 text-amber-400" />
+                                                    <span className="truncate">{user.university || 'No campus recorded'}</span>
+                                                </p>
+                                                <p className="mt-1 flex flex-wrap items-center gap-1 text-gray-400">
+                                                    <GraduationCap className="h-3 w-3 shrink-0 text-gray-500" />
+                                                    <span>{user.course || 'Unspecified course'}</span>
+                                                    {user.year_level && <span>• {user.year_level}</span>}
+                                                </p>
+                                                <p className="mt-0.5 text-[11px] text-gray-500 font-mono">
+                                                    ID: {user.studentId || '—'}
+                                                </p>
+                                            </div>
+
+                                            <div className="min-w-0 border-t border-white/5 pt-2.5 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-3">
+                                                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 block mb-1">
+                                                    MLBB Identity
+                                                </span>
+                                                <div className="flex flex-wrap items-center gap-2">
                                                     <p className="flex items-center gap-1.5 font-bold text-white">
                                                         <Gamepad2 className="h-3.5 w-3.5 shrink-0 text-blue-400" />
                                                         <span>{user.ml_ign || 'No IGN'}</span>
                                                     </p>
-                                                    <p className="mt-0.5 text-xs text-gray-400 font-mono">
-                                                        UID: {user.ml_id || '—'} {user.ml_server ? `(${user.ml_server})` : ''}
-                                                    </p>
                                                     {user.ml_rank && (
-                                                        <span className="mt-1 inline-block rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-gray-300">
+                                                        <span className="rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-gray-300">
                                                             {user.ml_rank}
                                                         </span>
                                                     )}
                                                 </div>
-                                            </td>
+                                                <p className="mt-1 text-gray-400 font-mono">
+                                                    UID: {user.ml_id || '—'} {user.ml_server ? `(${user.ml_server})` : ''}
+                                                </p>
+                                            </div>
+                                        </div>
 
-                                            {/* Proof Document */}
-                                            <td className="px-5 py-4">
-                                                {hasDoc ? (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => openReview(user)}
-                                                        className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1.5 text-xs font-semibold text-emerald-400 transition-colors hover:bg-emerald-500/20"
-                                                    >
-                                                        <FileCheck2 className="h-3.5 w-3.5" />
-                                                        <span>{isPdf(user.proofOfEnrollment) ? 'View PDF Proof' : 'View ID Photo'}</span>
-                                                    </button>
-                                                ) : (
-                                                    <span className="inline-flex items-center gap-1 text-xs text-amber-500/90 font-medium">
-                                                        <AlertTriangle className="h-3.5 w-3.5" />
-                                                        <span>No doc uploaded</span>
-                                                    </span>
-                                                )}
-                                            </td>
-
-                                            {/* Registered */}
-                                            <td className="px-5 py-4 text-xs text-gray-400 whitespace-nowrap">
-                                                <p className="font-medium text-gray-300">{timeAgo(user.created_at)}</p>
-                                                <p className="mt-0.5 text-[11px] text-gray-500">{formatDate(user.created_at)}</p>
-                                            </td>
-
-                                            {/* Action Button */}
-                                            <td className="px-5 py-4 text-right whitespace-nowrap">
+                                        <div className="flex flex-wrap items-center justify-between gap-2.5 pt-0.5">
+                                            {hasDoc ? (
                                                 <button
                                                     type="button"
-                                                    id={`review-student-btn-${user.id}`}
                                                     onClick={() => openReview(user)}
-                                                    className="inline-flex min-h-[38px] items-center gap-2 rounded-xl bg-amber-400 px-4 py-2 text-xs font-bold text-black transition-all hover:bg-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.15)]"
+                                                    className="inline-flex min-h-[38px] items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-400 transition-colors hover:bg-emerald-500/20"
                                                 >
-                                                    <Eye className="h-3.5 w-3.5" />
-                                                    <span>Review Application</span>
+                                                    <FileCheck2 className="h-3.5 w-3.5 shrink-0" />
+                                                    <span>{isPdf(user.proofOfEnrollment) ? 'View PDF Proof' : 'View ID Photo'}</span>
                                                 </button>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
+                                            ) : (
+                                                <span className="inline-flex items-center gap-1 text-xs text-amber-500/90 font-medium">
+                                                    <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                                                    <span>No doc uploaded</span>
+                                                </span>
+                                            )}
+
+                                            <button
+                                                type="button"
+                                                onClick={() => openReview(user)}
+                                                className="inline-flex min-h-[40px] w-full min-[440px]:w-auto min-[440px]:ml-auto items-center justify-center gap-2 rounded-xl bg-amber-400 px-4 py-2 text-xs font-bold text-black transition-all hover:bg-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.15)]"
+                                            >
+                                                <Eye className="h-3.5 w-3.5 shrink-0" />
+                                                <span>Review Application</span>
+                                            </button>
+                                        </div>
+                                    </article>
+                                );
+                            })}
+                        </div>
+
+                        {/* Desktop Full Table (>= 1280px) */}
+                        <div className="hidden xl:block overflow-x-auto" tabIndex={0} role="region" aria-label="Pending student applications">
+                            <table className="w-full table-auto text-left text-sm">
+                                <thead>
+                                    <tr className="border-b border-white/10 bg-white/[0.02] text-xs font-bold uppercase tracking-wider text-gray-400">
+                                        <th className="px-5 py-4">Student Profile</th>
+                                        <th className="px-5 py-4">Academic Details</th>
+                                        <th className="px-5 py-4">MLBB Identity</th>
+                                        <th className="px-5 py-4">Proof of Enrollment</th>
+                                        <th className="px-5 py-4">Applied</th>
+                                        <th className="px-5 py-4 text-right">Verification Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5 text-gray-300">
+                                    {items.map((user) => {
+                                        const hasDoc = Boolean(user.proofOfEnrollment);
+                                        const isRenewal = user.status === 'pending-review';
+
+                                        return (
+                                            <tr
+                                                key={user.id}
+                                                className="transition-colors hover:bg-white/[0.02] group"
+                                            >
+                                                {/* Profile */}
+                                                <td className="px-5 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber-400/20 bg-neutral-900 font-bold text-amber-400">
+                                                            {user.name ? user.name.charAt(0).toUpperCase() : 'S'}
+                                                        </div>
+                                                        <div className="min-w-0 max-w-[200px] 2xl:max-w-xs">
+                                                            <div className="flex items-center gap-2">
+                                                                <p className="truncate font-bold text-white group-hover:text-amber-300 transition-colors">
+                                                                    {user.name || 'Unnamed Student'}
+                                                                </p>
+                                                                {isRenewal ? (
+                                                                    <span className="shrink-0 rounded-full border border-purple-500/30 bg-purple-500/10 px-2 py-0.5 text-[10px] font-bold text-purple-400">
+                                                                        Renewal
+                                                                    </span>
+                                                                ) : (
+                                                                    <span className="shrink-0 rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold text-amber-400">
+                                                                        New Reg
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <p className="mt-0.5 flex items-center gap-1 text-xs text-gray-400">
+                                                                <Mail className="h-3 w-3 shrink-0" />
+                                                                <span className="truncate">{user.email || '—'}</span>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                {/* Academic */}
+                                                <td className="px-5 py-4">
+                                                    <div className="min-w-0 max-w-[230px] 2xl:max-w-sm">
+                                                        <p className="flex items-center gap-1.5 font-semibold text-white">
+                                                            <Building2 className="h-3.5 w-3.5 shrink-0 text-amber-400" />
+                                                            <span className="truncate">{user.university || 'No campus recorded'}</span>
+                                                        </p>
+                                                        <p className="mt-1 flex items-center gap-1 text-xs text-gray-400">
+                                                            <GraduationCap className="h-3 w-3 shrink-0 text-gray-500" />
+                                                            <span className="truncate">{user.course || 'Unspecified course'}</span>
+                                                            {user.year_level && <span className="shrink-0">• {user.year_level}</span>}
+                                                        </p>
+                                                        <p className="mt-0.5 text-[11px] text-gray-500 font-mono">
+                                                            ID: {user.studentId || '—'}
+                                                        </p>
+                                                    </div>
+                                                </td>
+
+                                                {/* MLBB */}
+                                                <td className="px-5 py-4 whitespace-nowrap">
+                                                    <div className="min-w-0">
+                                                        <p className="flex items-center gap-1.5 font-bold text-white">
+                                                            <Gamepad2 className="h-3.5 w-3.5 shrink-0 text-blue-400" />
+                                                            <span>{user.ml_ign || 'No IGN'}</span>
+                                                        </p>
+                                                        <p className="mt-0.5 text-xs text-gray-400 font-mono">
+                                                            UID: {user.ml_id || '—'} {user.ml_server ? `(${user.ml_server})` : ''}
+                                                        </p>
+                                                        {user.ml_rank && (
+                                                            <span className="mt-1 inline-block rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-gray-300">
+                                                                {user.ml_rank}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </td>
+
+                                                {/* Proof Document */}
+                                                <td className="px-5 py-4 whitespace-nowrap">
+                                                    {hasDoc ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => openReview(user)}
+                                                            className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1.5 text-xs font-semibold text-emerald-400 transition-colors hover:bg-emerald-500/20"
+                                                        >
+                                                            <FileCheck2 className="h-3.5 w-3.5" />
+                                                            <span>{isPdf(user.proofOfEnrollment) ? 'View PDF Proof' : 'View ID Photo'}</span>
+                                                        </button>
+                                                    ) : (
+                                                        <span className="inline-flex items-center gap-1 text-xs text-amber-500/90 font-medium">
+                                                            <AlertTriangle className="h-3.5 w-3.5" />
+                                                            <span>No doc uploaded</span>
+                                                        </span>
+                                                    )}
+                                                </td>
+
+                                                {/* Registered */}
+                                                <td className="px-5 py-4 text-xs text-gray-400 whitespace-nowrap">
+                                                    <p className="font-medium text-gray-300">{timeAgo(user.created_at)}</p>
+                                                    <p className="mt-0.5 text-[11px] text-gray-500">{formatDate(user.created_at)}</p>
+                                                </td>
+
+                                                {/* Action Button */}
+                                                <td className="px-5 py-4 text-right whitespace-nowrap">
+                                                    <button
+                                                        type="button"
+                                                        id={`review-student-btn-${user.id}`}
+                                                        onClick={() => openReview(user)}
+                                                        className="inline-flex min-h-[38px] items-center gap-2 rounded-xl bg-amber-400 px-4 py-2 text-xs font-bold text-black transition-all hover:bg-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.15)]"
+                                                    >
+                                                        <Eye className="h-3.5 w-3.5" />
+                                                        <span>Review Application</span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
                 )}
 
                 {/* Pagination */}
                 {users?.links?.length > 3 && (
-                    <nav className="flex flex-wrap items-center justify-between border-t border-white/10 bg-white/[0.01] px-5 py-3 text-xs" aria-label="Pagination">
+                    <nav className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 bg-white/[0.01] px-4 sm:px-5 py-3 text-xs" aria-label="Pagination">
                         <span className="text-gray-400">
                             Showing page {users.current_page} of {users.last_page}
                         </span>
-                        <div className="flex gap-1.5">
+                        <div className="flex flex-wrap gap-1.5">
                             {users.links.map((link, index) => (
                                 <Link
                                     key={`${index}-${link.label}`}
@@ -461,16 +576,16 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                         if (e.target === e.currentTarget) closeReview();
                     }}
                 >
-                    <div className="relative flex flex-col h-[90vh] max-h-[94vh] min-h-[580px] w-full max-w-7xl overflow-hidden rounded-3xl border border-white/15 bg-[#0f0f11]/95 backdrop-blur-2xl shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
+                    <div className="relative flex flex-col h-[92dvh] max-h-[92dvh] w-full max-w-7xl overflow-hidden rounded-2xl sm:rounded-3xl border border-white/15 bg-[#0f0f11]/95 backdrop-blur-2xl shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
                         {/* Modal Header */}
-                        <header className="flex shrink-0 items-center justify-between border-b border-white/10 bg-white/[0.02] px-6 py-4">
-                            <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-amber-400/30 bg-amber-400/10 text-amber-400">
+                        <header className="flex shrink-0 items-start sm:items-center justify-between gap-3 border-b border-white/10 bg-white/[0.02] px-4 sm:px-6 py-3.5 sm:py-4">
+                            <div className="flex min-w-0 items-center gap-3">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-amber-400/30 bg-amber-400/10 text-amber-400">
                                     <ShieldCheck className="h-5 w-5" />
                                 </div>
-                                <div>
-                                    <div className="flex items-center gap-2">
-                                        <h2 id="student-profile-title" className="text-lg font-bold text-white tracking-tight">
+                                <div className="min-w-0">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <h2 id="student-profile-title" className="text-base sm:text-lg font-bold text-white tracking-tight truncate">
                                             {selectedStudent.name || 'Student Application'}
                                         </h2>
                                         <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
@@ -490,7 +605,7 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                                 type="button"
                                 onClick={closeReview}
                                 aria-label="Close modal"
-                                className="rounded-xl border border-white/10 bg-white/[0.03] p-2 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
+                                className="shrink-0 rounded-xl border border-white/10 bg-white/[0.03] p-2 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
                             >
                                 <X className="h-5 w-5" />
                             </button>
@@ -606,11 +721,11 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                                         Contact Information
                                     </h3>
                                     <dl className="space-y-2 text-xs">
-                                        <div className="flex items-center justify-between">
+                                        <div className="flex flex-wrap items-center justify-between gap-2">
                                             <dt className="text-gray-500">Email Address</dt>
-                                            <dd className="font-semibold text-white">{selectedStudent.email || '—'}</dd>
+                                            <dd className="font-semibold text-white break-all">{selectedStudent.email || '—'}</dd>
                                         </div>
-                                        <div className="flex items-center justify-between">
+                                        <div className="flex flex-wrap items-center justify-between gap-2">
                                             <dt className="text-gray-500">Phone Number</dt>
                                             <dd className="font-semibold text-white">{selectedStudent.contact_number || '—'}</dd>
                                         </div>
@@ -687,7 +802,7 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                                 mobileTab === 'document' ? 'flex' : 'hidden lg:flex'
                             }`}>
                                 {/* Document Toolbar */}
-                                <div className="flex shrink-0 items-center justify-between border-b border-white/10 bg-black/40 px-5 py-3">
+                                <div className="flex flex-wrap shrink-0 items-center justify-between gap-2 border-b border-white/10 bg-black/40 px-4 sm:px-5 py-3">
                                     <div className="flex items-center gap-2">
                                         <FileCheck2 className="h-4 w-4 text-emerald-400" />
                                         <span className="text-xs font-bold text-white">Proof of Enrollment</span>
@@ -782,24 +897,24 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                         </div>
 
                         {/* Modal Action Footer */}
-                        <footer className="flex shrink-0 items-center justify-between border-t border-white/10 bg-[#0c0c0e] px-6 py-4">
+                        <footer className="flex flex-col-reverse sm:flex-row shrink-0 sm:items-center sm:justify-between gap-2.5 border-t border-white/10 bg-[#0c0c0e] px-4 sm:px-6 py-3.5 sm:py-4">
                             <button
                                 type="button"
                                 onClick={closeReview}
-                                className="rounded-xl border border-white/10 px-4 py-2.5 text-xs font-semibold text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
+                                className="min-h-[40px] rounded-xl border border-white/10 px-4 py-2 text-xs font-semibold text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
                             >
                                 Cancel
                             </button>
 
-                            <div className="flex items-center gap-3">
+                            <div className="flex flex-col min-[420px]:flex-row items-stretch min-[420px]:items-center gap-2.5 sm:gap-3">
                                 <button
                                     type="button"
                                     id="open-reject-modal-btn"
                                     onClick={() => setShowRejectModal(true)}
                                     disabled={isProcessing}
-                                    className="inline-flex items-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2.5 text-xs font-bold text-red-400 transition-colors hover:bg-red-500/20 disabled:opacity-50"
+                                    className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-2.5 text-xs font-bold text-red-400 transition-colors hover:bg-red-500/20 disabled:opacity-50"
                                 >
-                                    <XCircle className="h-4 w-4" />
+                                    <XCircle className="h-4 w-4 shrink-0" />
                                     <span>Reject Application</span>
                                 </button>
 
@@ -808,12 +923,12 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
                                     id="approve-student-btn"
                                     onClick={() => handleApprove(selectedStudent)}
                                     disabled={isProcessing}
-                                    className="inline-flex min-h-[42px] items-center gap-2 rounded-xl bg-emerald-500 px-6 py-2.5 text-xs font-extrabold text-black transition-all hover:bg-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)] disabled:opacity-50"
+                                    className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-xl bg-emerald-500 px-5 sm:px-6 py-2.5 text-xs font-extrabold text-black transition-all hover:bg-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)] disabled:opacity-50"
                                 >
                                     {isProcessing ? (
-                                        <LoaderCircle className="h-4 w-4 animate-spin" />
+                                        <LoaderCircle className="h-4 w-4 animate-spin shrink-0" />
                                     ) : (
-                                        <Check className="h-4 w-4 stroke-[3]" />
+                                        <Check className="h-4 w-4 stroke-[3] shrink-0" />
                                     )}
                                     <span>Approve & Verify Student</span>
                                 </button>
@@ -822,8 +937,8 @@ export default function PendingUsers({ users, filters = {}, stats = {} }) {
 
                         {/* REJECTION REASON PROMPT OVERLAY */}
                         {showRejectModal && (
-                            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 p-4 backdrop-blur-md animate-in fade-in duration-100">
-                                <div className="w-full max-w-lg rounded-2xl border border-red-500/30 bg-[#141416] p-6 shadow-2xl">
+                            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-md animate-in fade-in duration-100">
+                                <div className="w-full max-w-lg max-h-[86dvh] overflow-y-auto overscroll-contain rounded-2xl border border-red-500/30 bg-[#141416] p-4 sm:p-6 shadow-2xl">
                                     <div className="flex items-center justify-between border-b border-white/10 pb-4">
                                         <div className="flex items-center gap-2.5">
                                             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-500/10 text-red-400 border border-red-500/20">

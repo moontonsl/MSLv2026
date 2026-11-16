@@ -66,7 +66,7 @@ export default function CommunityVoiceModal({
         <BaseModal
             isOpen={isOpen}
             onClose={onClose}
-            title={isEditing ? "Edit Community Voice" : "Add Community Voice"}
+            title={isEditing ? "Edit MSL Campus Community" : "Add MSL Campus Community"}
             footer={
                 <button
                     type="submit"

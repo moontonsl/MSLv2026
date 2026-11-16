@@ -345,7 +345,7 @@ export default function RegionalAdminModal({
                 title={modalTitle}
                 hideHeader
                 showCloseButton
-                maxWidth="max-w-[330px] sm:max-w-[1128px]"
+                maxWidth="max-w-lg sm:max-w-[1128px]"
                 panelClassName={REGIONAL_MODAL_PANEL_CLASS}
                 bodyClassName={REGIONAL_MODAL_BODY_CLASS}
                 confirmSubmitMessage={
@@ -500,7 +500,7 @@ export default function RegionalAdminModal({
                             <button
                                 type="button"
                                 onClick={handleAddSchoolRequest}
-                                className="min-h-[42px] shrink-0 self-end rounded-[10px] bg-[#4ADE80] px-7 py-2.5 text-sm font-bold text-black outline-none transition hover:bg-[#86EFAC] focus-visible:ring-2 focus-visible:ring-[#86EFAC] sm:min-h-[52px] sm:text-base"
+                                className="min-h-[42px] w-full shrink-0 rounded-[10px] bg-[#4ADE80] px-7 py-2.5 text-sm font-bold text-black outline-none transition hover:bg-[#86EFAC] focus-visible:ring-2 focus-visible:ring-[#86EFAC] sm:min-h-[52px] sm:w-auto sm:self-end sm:text-base"
                             >
                                 Add School
                             </button>

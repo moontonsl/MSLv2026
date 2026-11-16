@@ -17,7 +17,7 @@ export default function RegistrationTable({
 }) {
     return (
         <div className="w-full min-w-0">
-            <div className="hidden md:block">
+            <div className="hidden xl:block">
                 <RegistrationDesktopTable
                     registrations={registrations}
                     showDates={showDates}
@@ -30,7 +30,7 @@ export default function RegistrationTable({
                 />
             </div>
 
-            <div className="md:hidden">
+            <div className="xl:hidden">
                 <RegistrationMobileList
                     registrations={registrations}
                     showDates={showDates}

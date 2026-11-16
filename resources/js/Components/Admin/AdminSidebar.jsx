@@ -35,19 +35,11 @@ const NAV_SECTIONS = [
     {
         title: "Content & CMS",
         items: [
-            {
-                id: 'home-page',
-                label: 'Home Page',
-                icon: Home,
-                permission: 'manage_homepage',
-                children: [
-                    { id: 'home-hero-carousel', label: 'Hero Carousel', href: '/admin/home-page/hero-carousel', icon: Images },
-                    { id: 'home-statistics', label: 'About Section Statistics Counters', href: '/admin/home-page/statistics', icon: BarChart3 },
-                    { id: 'home-network-organizations', label: 'MSL Network Organizations', href: '/admin/home-page/network-organizations', icon: Building2 },
-                    { id: 'home-programs', label: 'Our Programs', href: '/admin/home-page/programs', icon: Layers },
-                    { id: 'home-community-voice', label: 'Community Voice', href: '/admin/home-page/community-voice', icon: Quote },
-                ],
-            },
+            { id: 'home-hero-carousel', label: 'Hero Carousel', href: '/admin/home-page/hero-carousel', icon: Images, permission: 'manage_homepage' },
+            { id: 'home-statistics', label: 'About Section Statistics Counters', href: '/admin/home-page/statistics', icon: BarChart3, permission: 'manage_homepage' },
+            { id: 'home-network-organizations', label: 'MSL Network Organizations', href: '/admin/home-page/network-organizations', icon: Building2, permission: 'manage_homepage' },
+            { id: 'home-programs', label: 'Our Programs', href: '/admin/home-page/programs', icon: Layers, permission: 'manage_homepage' },
+            { id: 'home-community-voice', label: 'MSL Campus Community', href: '/admin/home-page/community-voice', icon: Quote, permission: 'manage_homepage' },
             { id: 'news', label: 'News & Updates', href: '/admin/news-updates', icon: Megaphone, permission: 'manage_news' },
             { id: 'faq', label: 'FAQ Manager', href: '/Admin/FAQs', icon: MessageSquare, permission: 'manage_faq' },
             { id: 'footer', label: 'Footer Links', href: '/admin/footer', icon: LayoutGrid, permission: 'manage_footer' },
@@ -99,6 +91,15 @@ export default function AdminSidebar({ activeId = 'dashboard', isOpen = false, o
         });
     }, [activeId]);
 
+    useEffect(() => {
+        if (!isOpen) return undefined;
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') onClose();
+        };
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [isOpen, onClose]);
+
     const toggleGroup = (groupId) => {
         setExpandedGroups((prev) => ({ ...prev, [groupId]: !prev[groupId] }));
     };
@@ -119,13 +120,13 @@ export default function AdminSidebar({ activeId = 'dashboard', isOpen = false, o
 
             {/* Sidebar Aside */}
             <aside
-                className={`fixed left-0 top-0 z-50 flex h-screen w-64 shrink-0 flex-col border-r border-white/10 bg-[#0e0e12] transition-transform duration-200 ease-in-out lg:translate-x-0 ${
+                className={`fixed left-0 top-0 z-50 flex h-dvh w-[min(16rem,85vw)] lg:w-64 shrink-0 flex-col border-r border-white/10 bg-[#0e0e12] transition-transform duration-200 ease-in-out lg:translate-x-0 ${
                     isOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}
             >
                 {/* Brand Header */}
-                <div className="flex items-center gap-3 border-b border-white/10 px-5 py-5 bg-[#0a0a0d]">
-                    <div className="relative flex items-center justify-center">
+                <div className="flex items-center gap-3 border-b border-white/10 px-4 py-4 sm:px-5 sm:py-5 bg-[#0a0a0d]">
+                    <div className="relative flex shrink-0 items-center justify-center">
                         <img
                             src="/MSL_LOGO.png"
                             alt="MSL"
@@ -140,14 +141,14 @@ export default function AdminSidebar({ activeId = 'dashboard', isOpen = false, o
                         <span className="text-sm font-extrabold tracking-wide text-white uppercase truncate">
                             MSL <span className="text-brand-400">Admin</span>
                         </span>
-                        <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest">
+                        <span className="text-[10px] font-semibold text-zinc-500 uppercase tracking-widest truncate">
                             Control Panel
                         </span>
                     </div>
                     <button
                         type="button"
                         aria-label="Close admin navigation"
-                        className="ml-auto rounded-lg p-1.5 text-zinc-400 hover:bg-white/10 hover:text-white transition-colors lg:hidden"
+                        className="ml-auto inline-flex min-h-9 min-w-9 shrink-0 items-center justify-center rounded-lg p-1.5 text-zinc-400 hover:bg-white/10 hover:text-white transition-colors lg:hidden"
                         onClick={onClose}
                     >
                         <X className="h-5 w-5" />
@@ -157,7 +158,7 @@ export default function AdminSidebar({ activeId = 'dashboard', isOpen = false, o
                 {/* Grouped Navigation Links */}
                 <nav
                     aria-label="Admin navigation"
-                    className="flex flex-1 flex-col gap-5 overflow-y-auto px-3 py-4 text-xs font-medium scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent"
+                    className="flex flex-1 flex-col gap-5 overflow-y-auto overscroll-contain px-3 py-4 text-xs font-medium scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent"
                 >
                     {NAV_SECTIONS.map((section) => {
                         const visibleItems = section.items.filter((item) => isPermitted(item.permission));
@@ -286,7 +287,10 @@ export default function AdminSidebar({ activeId = 'dashboard', isOpen = false, o
                 </nav>
 
                 {/* Footer Brand Tag */}
-                <div className="border-t border-white/5 p-3 text-center bg-[#0a0a0d]/60">
+                <div
+                    className="border-t border-white/5 px-3 pt-3 text-center bg-[#0a0a0d]/60"
+                    style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))' }}
+                >
                     <p className="text-[10px] text-zinc-400 font-medium">
                         MSL Philippines &copy; {new Date().getFullYear()}
                     </p>

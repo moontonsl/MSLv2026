@@ -7,7 +7,6 @@ import {
     MODAL_SUBMIT_FOOTER_CLASS,
 } from "@/Components/Admin/adminModalFormStyles";
 
-import { ChevronDown } from "lucide-react";
 import { useEffect, useId, useState } from "react";
 
 const INITIAL_FORM = {
@@ -113,7 +112,7 @@ export default function EditAdminModal({ account, isOpen, onClose, onSubmit }) {
             onClose={closeModal}
             title="Edit Admin Account"
             showCloseButton
-            maxWidth="max-w-[330px] sm:max-w-[600px]"
+            maxWidth="max-w-lg sm:max-w-[600px]"
             footer={
                 <button
                     type="submit"
@@ -220,33 +219,20 @@ export default function EditAdminModal({ account, isOpen, onClose, onSubmit }) {
                         Role Description
                     </label>
 
-                    <div className="relative">
-                        <AdminFilterSelect
-                            id={`${formId}-role`}
-                            value={form.role}
-                            onChange={(event) =>
-                                updateField("role", event.target.value)
-                            }
-                            className={`${MODAL_INPUT_CLASS} cursor-pointer appearance-none bg-none pr-10 [background-image:none] [&::-ms-expand]:hidden`}
-                            style={{
-                                WebkitAppearance: "none",
-                                MozAppearance: "none",
-                                appearance: "none",
-                                backgroundImage: "none",
-                            }}
-                        >
-                            {ROLE_OPTIONS.map((role) => (
-                                <option key={role} value={role}>
-                                    {role}
-                                </option>
-                            ))}
-                        </AdminFilterSelect>
-
-                        <ChevronDown
-                            aria-hidden="true"
-                            className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#555560]"
-                        />
-                    </div>
+                    <AdminFilterSelect
+                        id={`${formId}-role`}
+                        value={form.role}
+                        onChange={(event) =>
+                            updateField("role", event.target.value)
+                        }
+                        className={`${MODAL_INPUT_CLASS} cursor-pointer`}
+                    >
+                        {ROLE_OPTIONS.map((role) => (
+                            <option key={role} value={role}>
+                                {role}
+                            </option>
+                        ))}
+                    </AdminFilterSelect>
                 </div>
 
                 {error ? (

@@ -10,7 +10,7 @@ function CopyButton({ value, copiedValue, onCopy }) {
         <button
             type="button"
             onClick={() => onCopy(value)}
-            className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md text-gray-500 transition hover:bg-white/10 hover:text-white"
+            className="inline-flex shrink-0 min-h-9 min-w-9 items-center justify-center rounded-md text-gray-500 transition hover:bg-white/10 hover:text-white"
             aria-label={copied ? `${value} copied` : `Copy ${value}`}
         >
             {copied ? (
@@ -57,22 +57,22 @@ export default function RegistrationDesktopTable({
         <div className="overflow-x-auto">
             <table
                 className={`w-full table-fixed border-collapse ${
-                    showDates ? "min-w-[980px]" : "min-w-[620px]"
+                    showDates ? "min-w-[820px]" : "min-w-[580px]"
                 }`}
             >
                 <thead>
                     <tr className="border-b border-white/[0.06]">
                         <th
-                            className={`pb-4 text-left text-sm font-bold text-white lg:text-base ${
-                                showDates ? "w-[15%]" : "w-[24%]"
+                            className={`pb-4 pr-3 text-left text-sm font-bold text-white lg:text-base ${
+                                showDates ? "w-[18%]" : "w-[24%]"
                             }`}
                         >
                             Attendance Code
                         </th>
 
                         <th
-                            className={`pb-4 text-left text-sm font-bold text-white lg:text-base ${
-                                showDates ? "w-[29%]" : "w-[56%]"
+                            className={`pb-4 pr-3 text-left text-sm font-bold text-white lg:text-base ${
+                                showDates ? "w-[25%]" : "w-[56%]"
                             }`}
                         >
                             Activity Name
@@ -80,26 +80,26 @@ export default function RegistrationDesktopTable({
 
                         {showDates ? (
                             <>
-                                <th className="w-[19%] pb-4 text-left text-sm font-bold text-white lg:text-base">
+                                <th className="w-[19%] pb-4 pr-3 text-left text-sm font-bold text-white lg:text-base">
                                     Start Date
                                 </th>
 
-                                <th className="w-[19%] pb-4 text-left text-sm font-bold text-white lg:text-base">
+                                <th className="w-[19%] pb-4 pr-3 text-left text-sm font-bold text-white lg:text-base">
                                     End Date
                                 </th>
                             </>
                         ) : null}
 
                         <th
-                            className={`pb-4 text-left text-sm font-bold text-white lg:text-base ${
-                                showDates ? "w-[11%]" : "w-[20%]"
+                            className={`pb-4 pr-3 text-left text-sm font-bold text-white lg:text-base ${
+                                showDates ? "w-[10%]" : "w-[20%]"
                             }`}
                         >
                             Response
                         </th>
 
                         {showActions ? (
-                            <th className="w-[7%] pb-4 text-right text-sm font-bold text-white lg:text-base">
+                            <th className="w-[96px] pb-4 text-right text-sm font-bold text-white lg:text-base">
                                 Actions
                             </th>
                         ) : null}
@@ -122,9 +122,9 @@ export default function RegistrationDesktopTable({
                                 key={registration.id}
                                 className="border-b border-white/[0.04] transition-colors last:border-0 hover:bg-white/[0.025]"
                             >
-                                <td className="max-w-0 py-5 text-sm font-semibold text-gray-400 lg:text-base">
-                                    <div className="flex items-center gap-2">
-                                        <span className="truncate">
+                                <td className="max-w-0 py-5 pr-3 text-sm font-semibold text-gray-400 lg:text-base">
+                                    <div className="flex min-w-0 items-center gap-1.5">
+                                        <span className="min-w-0 truncate">
                                             {registration.attendanceCode}
                                         </span>
 
@@ -136,7 +136,7 @@ export default function RegistrationDesktopTable({
                                     </div>
                                 </td>
 
-                                <td className="max-w-0 py-5 text-sm font-semibold text-gray-400 lg:text-base">
+                                <td className="max-w-0 py-5 pr-3 text-sm font-semibold text-gray-400 lg:text-base">
                                     <span className="block truncate">
                                         {registration.activityName}
                                     </span>
@@ -144,7 +144,7 @@ export default function RegistrationDesktopTable({
 
                                 {showDates ? (
                                     <>
-                                        <td className="max-w-0 py-5 text-sm font-semibold text-gray-400 lg:text-base">
+                                        <td className="max-w-0 py-5 pr-3 text-sm font-semibold text-gray-400 lg:text-base">
                                             <span className="block truncate whitespace-nowrap">
                                                 {formatRegistrationDate(
                                                     registration.startDate,
@@ -152,7 +152,7 @@ export default function RegistrationDesktopTable({
                                             </span>
                                         </td>
 
-                                        <td className="max-w-0 py-5 text-sm font-semibold text-gray-400 lg:text-base">
+                                        <td className="max-w-0 py-5 pr-3 text-sm font-semibold text-gray-400 lg:text-base">
                                             <span className="block truncate whitespace-nowrap">
                                                 {formatRegistrationDate(
                                                     registration.endDate,
@@ -162,14 +162,14 @@ export default function RegistrationDesktopTable({
                                     </>
                                 ) : null}
 
-                                <td className="py-5 text-sm font-semibold">
+                                <td className="py-5 pr-3 text-sm font-semibold">
                                     <ResponseLink
                                         url={registration.responseUrl}
                                     />
                                 </td>
 
                                 {showActions ? (
-                                    <td className="py-5">
+                                    <td className="w-[96px] py-5">
                                         <div className="flex justify-end gap-1">
                                             <button
                                                 type="button"

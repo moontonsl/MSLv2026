@@ -10,10 +10,10 @@ export default function ContentCard({
     onDelete,
 }) {
     return (
-        <article className="overflow-hidden rounded-xl border border-neutral-800 bg-[#1A1A1A]">
+        <article className="flex flex-col overflow-hidden rounded-xl border border-neutral-800 bg-[#1A1A1A]">
             <img src={imageSrc} alt={imageAlt} className={imageClassName} />
-            <div className="p-4">{children}</div>
-            <footer className="flex items-center justify-end gap-2 border-t border-neutral-800 px-4 py-3">
+            <div className="min-w-0 flex-1 break-words p-4">{children}</div>
+            <footer className="flex flex-wrap items-center justify-end gap-2 border-t border-neutral-800 px-4 py-3">
                 <button
                     type="button"
                     onClick={onEdit}

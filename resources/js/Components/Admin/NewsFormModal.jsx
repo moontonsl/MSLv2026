@@ -129,8 +129,8 @@ export default function NewsFormModal({
                     />
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div className="min-w-0">
                         <label
                             htmlFor="news-author"
                             className={MODAL_LABEL_CLASS}
@@ -146,7 +146,7 @@ export default function NewsFormModal({
                             className={MODAL_INPUT_CLASS}
                         />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                         <label
                             htmlFor="news-published-date"
                             className={MODAL_LABEL_CLASS}
@@ -159,7 +159,7 @@ export default function NewsFormModal({
                             type="date"
                             value={form.publishedDate}
                             onChange={handleChange}
-                            className={MODAL_INPUT_CLASS}
+                            className={`${MODAL_INPUT_CLASS} min-w-0`}
                         />
                     </div>
                 </div>

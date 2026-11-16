@@ -11,7 +11,7 @@ import { router } from '@inertiajs/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const ADD_BUTTON_CLASS =
-    'inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 py-2.5 text-base font-bold text-black transition-all hover:bg-yellow-400 active:scale-[0.98] md:w-auto md:text-sm';
+    'inline-flex min-h-[44px] w-full shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-yellow-500 px-4 py-2.5 text-base font-bold text-black transition-all hover:bg-yellow-400 active:scale-[0.98] sm:w-auto md:text-sm';
 
 const SEARCH_CLASS =
     'w-full min-h-[44px] rounded-md border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-10 pr-4 text-base text-white placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none md:text-sm';
@@ -185,7 +185,7 @@ export default function NewsManagement({ initialNews = [] }) {
     return (
         <>
             <div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
-                <div>
+                <div className="min-w-0">
                     <h1 className="mb-2 text-2xl font-bold text-white sm:text-3xl">
                         News Articles
                     </h1>
@@ -193,7 +193,7 @@ export default function NewsManagement({ initialNews = [] }) {
                         Create and manage articles and announcements shown on the public news page.
                     </p>
                 </div>
-                <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
+                <div className="flex w-full min-w-0 flex-col gap-2 sm:flex-row xl:w-auto">
                     <label className="relative block min-w-0 flex-1 sm:w-64 sm:flex-none">
                         <span className="sr-only">Search news articles</span>
                         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
@@ -211,7 +211,7 @@ export default function NewsManagement({ initialNews = [] }) {
                         onClick={openAddModal}
                         className={ADD_BUTTON_CLASS}
                     >
-                        <Plus className="h-4 w-4" />
+                        <Plus className="h-4 w-4 shrink-0" />
                         Create Article
                     </button>
                 </div>
@@ -230,20 +230,20 @@ export default function NewsManagement({ initialNews = [] }) {
                     </p>
                 ) : (
                     <>
-                        <div className="hidden overflow-x-auto md:block">
-                            <table className="w-full min-w-[800px] table-auto border-collapse">
+                        <div className="hidden overflow-x-auto xl:block">
+                            <table className="w-full table-auto border-collapse">
                                 <thead>
                                     <tr>
-                                        <th className="pb-4 text-left text-sm font-semibold text-white">
+                                        <th className="pb-4 pr-4 text-left text-sm font-semibold text-white">
                                             Title
                                         </th>
-                                        <th className="pb-4 text-left text-sm font-semibold text-white">
+                                        <th className="pb-4 pr-4 text-left text-sm font-semibold text-white">
                                             Writer
                                         </th>
-                                        <th className="pb-4 text-left text-sm font-semibold text-white">
+                                        <th className="pb-4 pr-4 text-left text-sm font-semibold text-white whitespace-nowrap">
                                             Published Date
                                         </th>
-                                        <th className="pb-4 pr-4 text-right text-sm font-semibold text-white">
+                                        <th className="pb-4 pr-4 text-right text-sm font-semibold text-white whitespace-nowrap">
                                             Actions
                                         </th>
                                     </tr>
@@ -252,17 +252,17 @@ export default function NewsManagement({ initialNews = [] }) {
                                     {filteredNews.map((item) => (
                                         <tr key={item.id}>
                                             <td className="border-b border-neutral-800/50 py-4 pr-4 align-top">
-                                                <p className="max-w-xl text-base font-bold text-white">
+                                                <p className="max-w-xl break-words text-base font-bold text-white">
                                                     {item.title}
                                                 </p>
                                             </td>
-                                            <td className="border-b border-neutral-800/50 py-4 align-top text-sm text-gray-300">
+                                            <td className="border-b border-neutral-800/50 py-4 pr-4 align-top text-sm text-gray-300">
                                                 {item.writer}
                                             </td>
-                                            <td className="border-b border-neutral-800/50 py-4 align-top text-sm text-gray-300">
+                                            <td className="border-b border-neutral-800/50 py-4 pr-4 align-top text-sm text-gray-300 whitespace-nowrap">
                                                 {formatNewsDisplayDate(item.publishedDate)}
                                             </td>
-                                            <td className="border-b border-neutral-800/50 py-4 pr-4 text-right align-top">
+                                            <td className="border-b border-neutral-800/50 py-4 pr-4 text-right align-top whitespace-nowrap">
                                                 <div className="inline-flex justify-end">
                                                     {renderActions(item)}
                                                 </div>
@@ -273,7 +273,7 @@ export default function NewsManagement({ initialNews = [] }) {
                             </table>
                         </div>
 
-                        <div className="space-y-3 md:hidden">
+                        <div className="space-y-3 xl:hidden">
                             {filteredNews.map((item) => (
                                 <article
                                     key={item.id}
@@ -283,7 +283,7 @@ export default function NewsManagement({ initialNews = [] }) {
                                         <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                                             Title
                                         </p>
-                                        <p className="mt-1 text-base font-bold text-white">
+                                        <p className="mt-1 break-words text-base font-bold text-white">
                                             {item.title}
                                         </p>
                                     </div>
@@ -291,7 +291,7 @@ export default function NewsManagement({ initialNews = [] }) {
                                         <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                                             Writer
                                         </p>
-                                        <p className="mt-1 text-sm text-gray-300">{item.writer}</p>
+                                        <p className="mt-1 break-words text-sm text-gray-300">{item.writer}</p>
                                     </div>
                                     <div className="mb-4">
                                         <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
@@ -301,7 +301,7 @@ export default function NewsManagement({ initialNews = [] }) {
                                             {formatNewsDisplayDate(item.publishedDate)}
                                         </p>
                                     </div>
-                                    <div className="flex items-center justify-between border-t border-neutral-800 pt-3">
+                                    <div className="flex items-center justify-between gap-2 border-t border-neutral-800 pt-3">
                                         <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
                                             Actions
                                         </span>
@@ -313,9 +313,9 @@ export default function NewsManagement({ initialNews = [] }) {
                     </>
                 )}
 
-                <div className="mt-6 flex justify-end">
+                <div className="mt-6 flex justify-center sm:justify-end">
                     <nav
-                        className="flex flex-wrap items-center gap-2 text-sm text-gray-400"
+                        className="flex flex-wrap items-center justify-center gap-1.5 text-sm text-gray-400 sm:justify-end sm:gap-2"
                         aria-label="News pagination"
                     >
                         <button type="button" className="min-h-[44px] px-2 transition-colors hover:text-white">

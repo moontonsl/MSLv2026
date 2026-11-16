@@ -236,12 +236,12 @@ export default function StudentLeaders({
 
             {/* Header & Live Telemetry Badge */}
             <div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
-                <div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-400 text-xs font-bold tracking-wider uppercase mb-3">
-                        <Crown className="w-3.5 h-3.5" />
-                        Moonton Student Leaders • Executive Operations
+                <div className="min-w-0">
+                    <div className="inline-flex max-w-full items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-400 text-[11px] sm:text-xs font-bold tracking-wider uppercase mb-3">
+                        <Crown className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">Moonton Student Leaders • Executive Operations</span>
                     </div>
-                    <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight uppercase">
+                    <h1 className="text-2xl sm:text-3xl xl:text-4xl font-black text-white tracking-tight uppercase [text-wrap:balance]">
                         Student Leader <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-brand-400 to-amber-200">Management</span>
                     </h1>
                     <p className="mt-1 text-xs sm:text-sm text-zinc-400 max-w-xl">
@@ -251,8 +251,8 @@ export default function StudentLeaders({
 
                 {/* Status Telemetry & Quick Action */}
                 <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex items-center gap-2.5 bg-white/[0.03] border border-white/10 rounded-2xl px-4 py-2.5 backdrop-blur-xl shadow-xl shadow-black/40 text-xs">
-                        <span className="relative flex h-2 w-2">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 bg-white/[0.03] border border-white/10 rounded-2xl px-3.5 sm:px-4 py-2.5 backdrop-blur-xl shadow-xl shadow-black/40 text-xs">
+                        <span className="relative flex h-2 w-2 shrink-0">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]"></span>
                         </span>
@@ -268,9 +268,9 @@ export default function StudentLeaders({
             </div>
 
             {/* Search and Filter Form */}
-            <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <form onSubmit={handleSearchSubmit} className="flex w-full gap-2 sm:max-w-md">
-                    <div className="relative flex-1">
+            <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <form onSubmit={handleSearchSubmit} className="flex flex-wrap sm:flex-nowrap w-full gap-2 md:max-w-md">
+                    <div className="relative min-w-0 flex-1 basis-48">
                         <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                         <input
                             type="search"
@@ -282,7 +282,7 @@ export default function StudentLeaders({
                     </div>
                     <button
                         type="submit"
-                        className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-amber-400 px-5 text-xs sm:text-sm font-bold text-black transition-all hover:bg-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.2)] cursor-pointer"
+                        className="inline-flex min-h-[44px] shrink-0 items-center justify-center rounded-xl bg-amber-400 px-4 sm:px-5 text-xs sm:text-sm font-bold text-black transition-all hover:bg-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.2)] cursor-pointer"
                     >
                         Search
                     </button>
@@ -290,7 +290,7 @@ export default function StudentLeaders({
                         <button
                             type="button"
                             onClick={handleClearFilters}
-                            className="min-h-[44px] rounded-xl border border-white/10 px-3.5 text-xs sm:text-sm font-semibold text-gray-400 hover:border-white/20 hover:text-white cursor-pointer"
+                            className="min-h-[44px] shrink-0 rounded-xl border border-white/10 px-3.5 text-xs sm:text-sm font-semibold text-gray-400 hover:border-white/20 hover:text-white cursor-pointer"
                         >
                             Clear
                         </button>
@@ -298,14 +298,14 @@ export default function StudentLeaders({
                 </form>
 
                 {/* Region Selector */}
-                <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+                <div className="flex items-center gap-2 w-full md:w-auto">
+                    <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider flex shrink-0 items-center gap-1.5">
                         <MapPin className="h-3.5 w-3.5 text-amber-400" /> Hub:
                     </span>
                     <select
                         value={selectedRegion}
                         onChange={(e) => handleRegionFilter(e.target.value)}
-                        className="min-h-[42px] rounded-xl border border-white/10 bg-neutral-900 px-3.5 py-2 text-xs font-semibold text-white focus:border-amber-400 focus:outline-none cursor-pointer"
+                        className="min-h-[44px] min-w-0 flex-1 md:flex-none rounded-xl border border-white/10 bg-neutral-900 px-3.5 py-2 text-xs font-semibold text-white focus:border-amber-400 focus:outline-none cursor-pointer"
                     >
                         <option value="">All Regions ({regionsList.length})</option>
                         {regionsList.map((reg) => (
@@ -318,7 +318,7 @@ export default function StudentLeaders({
             </div>
 
             {/* Clickable Stat Cards (Justification Modals) */}
-            <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+            <div className="mb-8 grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 xl:grid-cols-4 sm:gap-4">
                 {/* 1. Active Leaders Card */}
                 <button
                     type="button"
@@ -330,16 +330,16 @@ export default function StudentLeaders({
                     }}
                     className="group relative overflow-hidden rounded-2xl border border-amber-400/20 bg-gradient-to-br from-amber-400/[0.09] via-amber-400/[0.02] to-transparent p-4 sm:p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-amber-400/50 hover:shadow-[0_10px_25px_rgba(251,191,36,0.15)] cursor-pointer w-full focus:outline-none focus:ring-2 focus:ring-amber-400/40"
                 >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                         <span className="text-xs font-bold uppercase tracking-wider text-amber-400">Active Leaders</span>
-                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 group-hover:scale-110 transition-transform">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 group-hover:scale-110 transition-transform">
                             <Crown className="h-4 w-4" />
                         </div>
                     </div>
                     <p className="mt-3 text-2xl font-black text-white sm:text-3xl">{stats.total_leaders ?? 0}</p>
-                    <div className="mt-2 flex items-center justify-between text-[11px] text-amber-300/80">
+                    <div className="mt-2 flex flex-wrap items-center justify-between gap-1.5 text-[11px] text-amber-300/80">
                         <span>Official Chapter Heads</span>
-                        <span className="inline-flex items-center gap-0.5 font-bold group-hover:translate-x-0.5 transition-transform">
+                        <span className="inline-flex shrink-0 items-center gap-0.5 font-bold whitespace-nowrap group-hover:translate-x-0.5 transition-transform">
                             View <ArrowRight className="h-3 w-3" />
                         </span>
                     </div>
@@ -356,16 +356,16 @@ export default function StudentLeaders({
                     }}
                     className="group relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/[0.09] via-emerald-500/[0.02] to-transparent p-4 sm:p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/50 hover:shadow-[0_10px_25px_rgba(16,185,129,0.15)] cursor-pointer w-full focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
                 >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                         <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Campuses</span>
-                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 group-hover:scale-110 transition-transform">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 group-hover:scale-110 transition-transform">
                             <Building2 className="h-4 w-4" />
                         </div>
                     </div>
                     <p className="mt-3 text-2xl font-black text-white sm:text-3xl">{stats.total_campuses ?? 0}</p>
-                    <div className="mt-2 flex items-center justify-between text-[11px] text-emerald-300/80">
+                    <div className="mt-2 flex flex-wrap items-center justify-between gap-1.5 text-[11px] text-emerald-300/80">
                         <span>Affiliated University Chapters</span>
-                        <span className="inline-flex items-center gap-0.5 font-bold group-hover:translate-x-0.5 transition-transform">
+                        <span className="inline-flex shrink-0 items-center gap-0.5 font-bold whitespace-nowrap group-hover:translate-x-0.5 transition-transform">
                             View <ArrowRight className="h-3 w-3" />
                         </span>
                     </div>
@@ -381,16 +381,16 @@ export default function StudentLeaders({
                     }}
                     className="group relative overflow-hidden rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-500/[0.09] via-blue-500/[0.02] to-transparent p-4 sm:p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/50 hover:shadow-[0_10px_25px_rgba(59,130,246,0.15)] cursor-pointer w-full focus:outline-none focus:ring-2 focus:ring-blue-500/40"
                 >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                         <span className="text-xs font-bold uppercase tracking-wider text-blue-400">Regional Hubs</span>
-                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 group-hover:scale-110 transition-transform">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 group-hover:scale-110 transition-transform">
                             <MapPin className="h-4 w-4" />
                         </div>
                     </div>
                     <p className="mt-3 text-2xl font-black text-white sm:text-3xl">{stats.total_regions ?? 0}</p>
-                    <div className="mt-2 flex items-center justify-between text-[11px] text-blue-300/80">
+                    <div className="mt-2 flex flex-wrap items-center justify-between gap-1.5 text-[11px] text-blue-300/80">
                         <span>Regional Jurisdiction Hubs</span>
-                        <span className="inline-flex items-center gap-0.5 font-bold group-hover:translate-x-0.5 transition-transform">
+                        <span className="inline-flex shrink-0 items-center gap-0.5 font-bold whitespace-nowrap group-hover:translate-x-0.5 transition-transform">
                             View <ArrowRight className="h-3 w-3" />
                         </span>
                     </div>
@@ -407,16 +407,16 @@ export default function StudentLeaders({
                     }}
                     className="group relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/[0.09] via-emerald-500/[0.02] to-transparent p-4 sm:p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/50 hover:shadow-[0_10px_25px_rgba(16,185,129,0.15)] cursor-pointer w-full focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
                 >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                         <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Active Students</span>
-                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 group-hover:scale-110 transition-transform">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 group-hover:scale-110 transition-transform">
                             <Users className="h-4 w-4" />
                         </div>
                     </div>
                     <p className="mt-3 text-2xl font-black text-white sm:text-3xl">{stats.total_students ?? 0}</p>
-                    <div className="mt-2 flex items-center justify-between text-[11px] text-emerald-300/80">
+                    <div className="mt-2 flex flex-wrap items-center justify-between gap-1.5 text-[11px] text-emerald-300/80">
                         <span>Active Regular Students</span>
-                        <span className="inline-flex items-center gap-0.5 font-bold group-hover:translate-x-0.5 transition-transform">
+                        <span className="inline-flex shrink-0 items-center gap-0.5 font-bold whitespace-nowrap group-hover:translate-x-0.5 transition-transform">
                             View & Promote <ArrowRight className="h-3 w-3" />
                         </span>
                     </div>
@@ -425,30 +425,30 @@ export default function StudentLeaders({
 
             {/* View Tabs */}
             <div className="mb-4 flex items-center justify-between gap-3">
-                <div className="flex rounded-xl border border-white/10 bg-black/40 p-1">
+                <div className="grid w-full grid-cols-1 gap-1 min-[440px]:grid-cols-2 sm:inline-flex sm:w-auto rounded-xl border border-white/10 bg-black/40 p-1">
                     <button
                         type="button"
                         onClick={() => setActiveTab('leaders')}
-                        className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
+                        className={`inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg px-3.5 sm:px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
                             activeTab === 'leaders'
                                 ? 'bg-amber-400 text-black shadow-lg shadow-amber-500/20'
                                 : 'text-gray-400 hover:text-white hover:bg-white/[0.03]'
                         }`}
                     >
-                        <Crown className="h-4 w-4" />
-                        <span>Active Student Leaders ({slUsers?.total ?? slItems.length})</span>
+                        <Crown className="h-4 w-4 shrink-0" />
+                        <span className="truncate">Active Student Leaders ({slUsers?.total ?? slItems.length})</span>
                     </button>
                     <button
                         type="button"
                         onClick={() => setActiveTab('students')}
-                        className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
+                        className={`inline-flex min-h-[40px] items-center justify-center gap-2 rounded-lg px-3.5 sm:px-4 py-2 text-xs font-bold transition-all cursor-pointer ${
                             activeTab === 'students'
                                 ? 'bg-amber-400 text-black shadow-lg shadow-amber-500/20'
                                 : 'text-gray-400 hover:text-white hover:bg-white/[0.03]'
                         }`}
                     >
-                        <UserRound className="h-4 w-4" />
-                        <span>Active Students ({students?.total ?? studentItems.length})</span>
+                        <UserRound className="h-4 w-4 shrink-0" />
+                        <span className="truncate">Active Students ({students?.total ?? studentItems.length})</span>
                     </button>
                 </div>
             </div>
@@ -470,162 +470,302 @@ export default function StudentLeaders({
                         </p>
                     </div>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full min-w-[920px] table-auto text-left text-sm">
-                            <thead>
-                                <tr className="border-b border-white/10 bg-white/[0.02] text-xs font-bold uppercase tracking-wider text-gray-400">
-                                    <th className="px-5 py-4">{activeTab === 'leaders' ? 'Leader Profile' : 'Student Profile'}</th>
-                                    <th className="px-5 py-4">University Chapter</th>
-                                    <th className="px-5 py-4">MLBB Identity</th>
-                                    <th className="px-5 py-4">Region Hub</th>
-                                    <th className="px-5 py-4">Status & Role</th>
-                                    <th className="px-5 py-4 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-white/5 text-gray-300">
-                                {currentItems.map((user) => {
-                                    const isLeader = user.user_type === 'Student Leader';
+                    <>
+                        {/* Mobile & Tablet Card List (< 1280px, including iPad Portrait & Landscape) */}
+                        <div className="divide-y divide-white/10 xl:hidden">
+                            {currentItems.map((user) => {
+                                const isLeader = user.user_type === 'Student Leader';
+                                const leaderRole = LEADERSHIP_POSITIONS.includes(user.division)
+                                    ? user.division
+                                    : (user.division && !['college', 'shs'].includes(user.division.toLowerCase())
+                                        ? user.division
+                                        : 'Chapter Lead / President');
 
-                                    return (
-                                        <tr key={user.id} className="transition-colors hover:bg-white/[0.02] group">
-                                            {/* Profile */}
-                                            <td className="px-5 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border font-black ${
-                                                        isLeader
-                                                            ? 'border-amber-400/40 bg-neutral-900 text-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.2)]'
-                                                            : 'border-white/10 bg-neutral-900 text-gray-300'
-                                                    }`}>
-                                                        {user.name ? user.name.charAt(0).toUpperCase() : 'S'}
-                                                    </div>
-                                                    <div className="min-w-0">
-                                                        <div className="flex items-center gap-2">
-                                                            <p className="font-bold text-white group-hover:text-amber-300 transition-colors">
-                                                                {user.name || 'Unnamed Student'}
-                                                            </p>
-                                                            {isLeader && (
-                                                                <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold text-amber-400">
-                                                                    SL
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                        <p className="mt-0.5 flex items-center gap-1 text-xs text-gray-400">
-                                                            <Mail className="h-3 w-3 shrink-0" />
-                                                            <span className="truncate">{user.email || '—'}</span>
+                                return (
+                                    <article key={user.id} className="p-4 sm:p-5 space-y-3.5 transition-colors hover:bg-white/[0.02]">
+                                        <div className="flex flex-wrap items-start justify-between gap-3">
+                                            <div className="flex min-w-0 items-center gap-3">
+                                                <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border font-black ${
+                                                    isLeader
+                                                        ? 'border-amber-400/40 bg-neutral-900 text-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.2)]'
+                                                        : 'border-white/10 bg-neutral-900 text-gray-300'
+                                                }`}>
+                                                    {user.name ? user.name.charAt(0).toUpperCase() : 'S'}
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <p className="font-bold text-white text-sm sm:text-base truncate">
+                                                            {user.name || 'Unnamed Student'}
                                                         </p>
+                                                        {isLeader && (
+                                                            <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold text-amber-400">
+                                                                SL
+                                                            </span>
+                                                        )}
                                                     </div>
-                                                </div>
-                                            </td>
-
-                                            {/* Chapter / University */}
-                                            <td className="px-5 py-4">
-                                                <div className="min-w-0">
-                                                    <p className="flex items-center gap-1.5 font-semibold text-white">
-                                                        <Building2 className="h-3.5 w-3.5 shrink-0 text-amber-400" />
-                                                        <span className="truncate">{user.university || 'Unassigned Campus'}</span>
-                                                    </p>
-                                                    <p className="mt-1 flex items-center gap-1 text-xs text-gray-400">
-                                                        <GraduationCap className="h-3 w-3 shrink-0 text-gray-500" />
-                                                        <span>{user.course || 'Unspecified course'}</span>
-                                                        {user.year_level && <span>• {user.year_level}</span>}
+                                                    <p className="mt-0.5 flex items-center gap-1 text-xs text-gray-400 min-w-0">
+                                                        <Mail className="h-3 w-3 shrink-0" />
+                                                        <span className="truncate">{user.email || '—'}</span>
                                                     </p>
                                                 </div>
-                                            </td>
+                                            </div>
 
-                                            {/* MLBB Identity */}
-                                            <td className="px-5 py-4">
-                                                <div className="min-w-0">
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <span className="inline-flex items-center gap-1 rounded-full border border-blue-400/20 bg-blue-400/10 px-2.5 py-1 text-xs font-semibold text-blue-300">
+                                                    <MapPin className="h-3 w-3 shrink-0" />
+                                                    <span>{user.region || 'Unassigned'}</span>
+                                                </span>
+                                                {isLeader ? (
+                                                    <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-xs font-bold text-amber-300">
+                                                        {leaderRole}
+                                                    </span>
+                                                ) : (
+                                                    <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-400">
+                                                        Active Student
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 rounded-xl border border-white/5 bg-white/[0.02] p-3 text-xs">
+                                            <div className="min-w-0">
+                                                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 block mb-1">
+                                                    University Chapter
+                                                </span>
+                                                <p className="flex items-center gap-1.5 font-semibold text-white">
+                                                    <Building2 className="h-3.5 w-3.5 shrink-0 text-amber-400" />
+                                                    <span className="truncate">{user.university || 'Unassigned Campus'}</span>
+                                                </p>
+                                                <p className="mt-1 flex flex-wrap items-center gap-1 text-gray-400">
+                                                    <GraduationCap className="h-3 w-3 shrink-0 text-gray-500" />
+                                                    <span>{user.course || 'Unspecified course'}</span>
+                                                    {user.year_level && <span>• {user.year_level}</span>}
+                                                </p>
+                                            </div>
+
+                                            <div className="min-w-0 border-t border-white/5 pt-2.5 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-3">
+                                                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 block mb-1">
+                                                    MLBB Identity
+                                                </span>
+                                                <div className="flex flex-wrap items-center gap-2">
                                                     <p className="flex items-center gap-1.5 font-bold text-white">
                                                         <Gamepad2 className="h-3.5 w-3.5 shrink-0 text-blue-400" />
                                                         <span>{user.ml_ign || 'No IGN'}</span>
                                                     </p>
-                                                    <p className="mt-0.5 text-xs text-gray-400 font-mono">
-                                                        UID: {user.ml_id || '—'} {user.ml_server ? `(${user.ml_server})` : ''}
-                                                    </p>
                                                     {user.ml_rank && (
-                                                        <span className="mt-1 inline-block rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-gray-300">
+                                                        <span className="rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-gray-300">
                                                             {user.ml_rank}
                                                         </span>
                                                     )}
                                                 </div>
-                                            </td>
+                                                <p className="mt-1 text-gray-400 font-mono">
+                                                    UID: {user.ml_id || '—'} {user.ml_server ? `(${user.ml_server})` : ''}
+                                                </p>
+                                            </div>
+                                        </div>
 
-                                            {/* Region */}
-                                            <td className="px-5 py-4">
-                                                <span className="inline-flex items-center gap-1 rounded-full border border-blue-400/20 bg-blue-400/10 px-2.5 py-1 text-xs font-semibold text-blue-300">
-                                                    <MapPin className="h-3 w-3" />
-                                                    <span>{user.region || 'Unassigned'}</span>
+                                        <div className="flex flex-wrap items-center justify-between gap-2 pt-0.5">
+                                            {isLeader ? (
+                                                <span className="text-[11px] text-gray-500">
+                                                    Appointed {timeAgo(user.updated_at)}
                                                 </span>
-                                            </td>
+                                            ) : (
+                                                <span className="hidden sm:inline" />
+                                            )}
+                                            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto sm:ml-auto">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setInspectStudent(user)}
+                                                    className="inline-flex min-h-[40px] flex-1 sm:flex-none items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs font-semibold text-gray-300 transition-colors hover:bg-white/10 hover:text-white cursor-pointer"
+                                                >
+                                                    <Eye className="h-3.5 w-3.5 shrink-0" />
+                                                    <span>View Profile</span>
+                                                </button>
 
-                                            {/* Role / Position */}
-                                            <td className="px-5 py-4 text-xs">
                                                 {isLeader ? (
-                                                    <div>
-                                                        <p className="font-bold text-amber-400">
-                                                            {LEADERSHIP_POSITIONS.includes(user.division) ? user.division : (user.division && !['college', 'shs'].includes(user.division.toLowerCase()) ? user.division : 'Chapter Lead / President')}
-                                                        </p>
-                                                        <p className="mt-0.5 text-gray-500">
-                                                            Appointed {timeAgo(user.updated_at)}
-                                                        </p>
-                                                    </div>
-                                                ) : (
-                                                    <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 font-semibold text-emerald-400">
-                                                        Active Student
-                                                    </span>
-                                                )}
-                                            </td>
-
-                                            {/* Actions */}
-                                            <td className="px-5 py-4 text-right whitespace-nowrap">
-                                                <div className="flex items-center justify-end gap-2">
                                                     <button
                                                         type="button"
-                                                        onClick={() => setInspectStudent(user)}
-                                                        className="inline-flex min-h-[36px] items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-semibold text-gray-300 transition-colors hover:bg-white/10 hover:text-white cursor-pointer"
+                                                        onClick={() => setDemoteTarget(user)}
+                                                        className="inline-flex min-h-[40px] flex-1 sm:flex-none items-center justify-center gap-1.5 rounded-xl border border-red-500/30 bg-red-500/10 px-3.5 py-2 text-xs font-bold text-red-400 transition-colors hover:bg-red-500/20 cursor-pointer"
                                                     >
-                                                        <Eye className="h-3.5 w-3.5" />
-                                                        <span>View Profile</span>
+                                                        <ArrowDown className="h-3.5 w-3.5 shrink-0" />
+                                                        <span>Demote</span>
                                                     </button>
+                                                ) : (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => openPromoteModal(user)}
+                                                        className="inline-flex min-h-[40px] flex-1 sm:flex-none items-center justify-center gap-1.5 rounded-xl bg-amber-400 px-4 py-2 text-xs font-bold text-black transition-all hover:bg-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.15)] cursor-pointer"
+                                                    >
+                                                        <ArrowUp className="h-3.5 w-3.5 shrink-0" />
+                                                        <span>Promote to SL</span>
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </article>
+                                );
+                            })}
+                        </div>
 
+                        {/* Desktop Full Table (>= 1280px) */}
+                        <div className="hidden xl:block overflow-x-auto" tabIndex={0} role="region" aria-label="Student leaders directory">
+                            <table className="w-full table-auto text-left text-sm">
+                                <thead>
+                                    <tr className="border-b border-white/10 bg-white/[0.02] text-xs font-bold uppercase tracking-wider text-gray-400">
+                                        <th className="px-5 py-4">{activeTab === 'leaders' ? 'Leader Profile' : 'Student Profile'}</th>
+                                        <th className="px-5 py-4">University Chapter</th>
+                                        <th className="px-5 py-4">MLBB Identity</th>
+                                        <th className="px-5 py-4">Region Hub</th>
+                                        <th className="px-5 py-4">Status & Role</th>
+                                        <th className="px-5 py-4 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5 text-gray-300">
+                                    {currentItems.map((user) => {
+                                        const isLeader = user.user_type === 'Student Leader';
+
+                                        return (
+                                            <tr key={user.id} className="transition-colors hover:bg-white/[0.02] group">
+                                                {/* Profile */}
+                                                <td className="px-5 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border font-black ${
+                                                            isLeader
+                                                                ? 'border-amber-400/40 bg-neutral-900 text-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.2)]'
+                                                                : 'border-white/10 bg-neutral-900 text-gray-300'
+                                                        }`}>
+                                                            {user.name ? user.name.charAt(0).toUpperCase() : 'S'}
+                                                        </div>
+                                                        <div className="min-w-0 max-w-[200px] 2xl:max-w-xs">
+                                                            <div className="flex items-center gap-2">
+                                                                <p className="truncate font-bold text-white group-hover:text-amber-300 transition-colors">
+                                                                    {user.name || 'Unnamed Student'}
+                                                                </p>
+                                                                {isLeader && (
+                                                                    <span className="shrink-0 rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold text-amber-400">
+                                                                        SL
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <p className="mt-0.5 flex items-center gap-1 text-xs text-gray-400">
+                                                                <Mail className="h-3 w-3 shrink-0" />
+                                                                <span className="truncate">{user.email || '—'}</span>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                {/* Chapter / University */}
+                                                <td className="px-5 py-4">
+                                                    <div className="min-w-0 max-w-[240px] 2xl:max-w-sm">
+                                                        <p className="flex items-center gap-1.5 font-semibold text-white">
+                                                            <Building2 className="h-3.5 w-3.5 shrink-0 text-amber-400" />
+                                                            <span className="truncate">{user.university || 'Unassigned Campus'}</span>
+                                                        </p>
+                                                        <p className="mt-1 flex items-center gap-1 text-xs text-gray-400">
+                                                            <GraduationCap className="h-3 w-3 shrink-0 text-gray-500" />
+                                                            <span className="truncate">{user.course || 'Unspecified course'}</span>
+                                                            {user.year_level && <span className="shrink-0">• {user.year_level}</span>}
+                                                        </p>
+                                                    </div>
+                                                </td>
+
+                                                {/* MLBB Identity */}
+                                                <td className="px-5 py-4 whitespace-nowrap">
+                                                    <div className="min-w-0">
+                                                        <p className="flex items-center gap-1.5 font-bold text-white">
+                                                            <Gamepad2 className="h-3.5 w-3.5 shrink-0 text-blue-400" />
+                                                            <span>{user.ml_ign || 'No IGN'}</span>
+                                                        </p>
+                                                        <p className="mt-0.5 text-xs text-gray-400 font-mono">
+                                                            UID: {user.ml_id || '—'} {user.ml_server ? `(${user.ml_server})` : ''}
+                                                        </p>
+                                                        {user.ml_rank && (
+                                                            <span className="mt-1 inline-block rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] text-gray-300">
+                                                                {user.ml_rank}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </td>
+
+                                                {/* Region */}
+                                                <td className="px-5 py-4 whitespace-nowrap">
+                                                    <span className="inline-flex items-center gap-1 rounded-full border border-blue-400/20 bg-blue-400/10 px-2.5 py-1 text-xs font-semibold text-blue-300">
+                                                        <MapPin className="h-3 w-3 shrink-0" />
+                                                        <span>{user.region || 'Unassigned'}</span>
+                                                    </span>
+                                                </td>
+
+                                                {/* Role / Position */}
+                                                <td className="px-5 py-4 text-xs whitespace-nowrap">
                                                     {isLeader ? (
-                                                        <button
-                                                            type="button"
-                                                            id={`demote-leader-btn-${user.id}`}
-                                                            onClick={() => setDemoteTarget(user)}
-                                                            className="inline-flex min-h-[36px] items-center gap-1.5 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-400 transition-colors hover:bg-red-500/20 cursor-pointer"
-                                                        >
-                                                            <ArrowDown className="h-3.5 w-3.5" />
-                                                            <span>Demote</span>
-                                                        </button>
+                                                        <div>
+                                                            <p className="font-bold text-amber-400">
+                                                                {LEADERSHIP_POSITIONS.includes(user.division) ? user.division : (user.division && !['college', 'shs'].includes(user.division.toLowerCase()) ? user.division : 'Chapter Lead / President')}
+                                                            </p>
+                                                            <p className="mt-0.5 text-gray-500">
+                                                                Appointed {timeAgo(user.updated_at)}
+                                                            </p>
+                                                        </div>
                                                     ) : (
+                                                        <span className="inline-block rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 font-semibold text-emerald-400">
+                                                            Active Student
+                                                        </span>
+                                                    )}
+                                                </td>
+
+                                                {/* Actions */}
+                                                <td className="px-5 py-4 text-right whitespace-nowrap">
+                                                    <div className="flex items-center justify-end gap-2">
                                                         <button
                                                             type="button"
-                                                            id={`promote-leader-btn-${user.id}`}
-                                                            onClick={() => openPromoteModal(user)}
-                                                            className="inline-flex min-h-[36px] items-center gap-1.5 rounded-xl bg-amber-400 px-3.5 py-1.5 text-xs font-bold text-black transition-all hover:bg-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.15)] cursor-pointer"
+                                                            onClick={() => setInspectStudent(user)}
+                                                            className="inline-flex min-h-[36px] items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-semibold text-gray-300 transition-colors hover:bg-white/10 hover:text-white cursor-pointer"
                                                         >
-                                                            <ArrowUp className="h-3.5 w-3.5" />
-                                                            <span>Promote to SL</span>
+                                                            <Eye className="h-3.5 w-3.5" />
+                                                            <span>View Profile</span>
                                                         </button>
-                                                    )}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
+
+                                                        {isLeader ? (
+                                                            <button
+                                                                type="button"
+                                                                id={`demote-leader-btn-${user.id}`}
+                                                                onClick={() => setDemoteTarget(user)}
+                                                                className="inline-flex min-h-[36px] items-center gap-1.5 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-400 transition-colors hover:bg-red-500/20 cursor-pointer"
+                                                            >
+                                                                <ArrowDown className="h-3.5 w-3.5" />
+                                                                <span>Demote</span>
+                                                            </button>
+                                                        ) : (
+                                                            <button
+                                                                type="button"
+                                                                id={`promote-leader-btn-${user.id}`}
+                                                                onClick={() => openPromoteModal(user)}
+                                                                className="inline-flex min-h-[36px] items-center gap-1.5 rounded-xl bg-amber-400 px-3.5 py-1.5 text-xs font-bold text-black transition-all hover:bg-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.15)] cursor-pointer"
+                                                            >
+                                                                <ArrowUp className="h-3.5 w-3.5" />
+                                                                <span>Promote to SL</span>
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
                 )}
 
                 {/* Pagination */}
                 {currentPaginator?.links?.length > 3 && (
-                    <nav className="flex flex-wrap items-center justify-between border-t border-white/10 bg-white/[0.01] px-5 py-3 text-xs" aria-label="Pagination">
+                    <nav className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 bg-white/[0.01] px-4 sm:px-5 py-3 text-xs" aria-label="Pagination">
                         <span className="text-gray-400">
                             Showing page {currentPaginator.current_page} of {currentPaginator.last_page} ({currentPaginator.total} total)
                         </span>
-                        <div className="flex gap-1.5">
+                        <div className="flex flex-wrap gap-1.5">
                             {currentPaginator.links.map((link, index) => (
                                 <Link
                                     key={`${index}-${link.label}`}
@@ -656,15 +796,15 @@ export default function StudentLeaders({
                         if (e.target === e.currentTarget) setIsLeadersModalOpen(false);
                     }}
                 >
-                    <div className="w-full max-w-4xl max-h-[90vh] flex flex-col rounded-3xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
+                    <div className="w-full max-w-4xl max-h-[90dvh] flex flex-col rounded-3xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
                         {/* Header */}
-                        <div className="shrink-0 flex items-center justify-between border-b border-white/10 p-5 sm:p-6 bg-gradient-to-r from-amber-400/10 to-transparent">
-                            <div className="flex items-center gap-3">
-                                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-amber-400/10 border border-amber-400/30 text-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.2)]">
-                                    <Crown className="h-6 w-6" />
+                        <div className="shrink-0 flex items-start sm:items-center justify-between gap-3 border-b border-white/10 p-4 sm:p-6 bg-gradient-to-r from-amber-400/10 to-transparent">
+                            <div className="flex min-w-0 items-center gap-3">
+                                <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-amber-400/10 border border-amber-400/30 text-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.2)]">
+                                    <Crown className="h-5 w-5 sm:h-6 sm:w-6" />
                                 </div>
-                                <div>
-                                    <h3 id="active-leaders-modal-title" className="text-lg font-black text-white uppercase tracking-tight">
+                                <div className="min-w-0">
+                                    <h3 id="active-leaders-modal-title" className="text-base sm:text-lg font-black text-white uppercase tracking-tight">
                                         Active Student Leaders Directory
                                     </h3>
                                     <p className="text-xs text-zinc-400">
@@ -674,8 +814,9 @@ export default function StudentLeaders({
                             </div>
                             <button
                                 type="button"
+                                aria-label="Close modal"
                                 onClick={() => setIsLeadersModalOpen(false)}
-                                className="rounded-xl p-2 text-zinc-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+                                className="shrink-0 rounded-xl p-2 text-zinc-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
                             >
                                 <X className="h-5 w-5" />
                             </button>
@@ -693,76 +834,119 @@ export default function StudentLeaders({
                                         setLeadersModalPage(1);
                                     }}
                                     placeholder="Filter by leader name, campus, IGN, or region..."
-                                    className="w-full rounded-xl border border-white/10 bg-black/50 py-2 pl-10 pr-4 text-xs text-white placeholder:text-zinc-500 focus:border-amber-400/50 focus:outline-none"
+                                    className="w-full rounded-xl border border-white/10 bg-black/50 py-2.5 pl-10 pr-4 text-xs text-white placeholder:text-zinc-500 focus:border-amber-400/50 focus:outline-none"
                                 />
                             </div>
                         </div>
 
-                        {/* Table (Strict Limit 10) */}
-                        <div className="flex-1 overflow-y-auto min-h-[300px] p-4 sm:p-6">
+                        {/* Table / Cards (Strict Limit 10) */}
+                        <div className="flex-1 overflow-y-auto overscroll-contain min-h-0 p-4 sm:p-6">
                             {paginatedModalLeaders.length === 0 ? (
                                 <div className="py-12 text-center text-xs text-zinc-400">
                                     No student leaders match your query.
                                 </div>
                             ) : (
-                                <table className="w-full text-left text-xs">
-                                    <thead>
-                                        <tr className="border-b border-white/10 bg-white/[0.02] uppercase font-bold text-zinc-400">
-                                            <th className="pb-3 px-3">Leader</th>
-                                            <th className="pb-3 px-3">Campus Chapter</th>
-                                            <th className="pb-3 px-3">Role</th>
-                                            <th className="pb-3 px-3">Region</th>
-                                            <th className="pb-3 px-3 text-right">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-white/5 text-zinc-300">
+                                <>
+                                    <div className="space-y-3 md:hidden">
                                         {paginatedModalLeaders.map((leader) => (
-                                            <tr key={leader.id} className="hover:bg-white/[0.02] transition-colors">
-                                                <td className="py-3 px-3">
-                                                    <div className="flex items-center gap-2.5">
-                                                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-400/10 border border-amber-400/20 text-amber-400 font-bold text-xs">
+                                            <div key={leader.id} className="rounded-2xl border border-white/10 bg-white/[0.02] p-3.5 space-y-2.5 text-xs">
+                                                <div className="flex items-start justify-between gap-2">
+                                                    <div className="flex min-w-0 items-center gap-2.5">
+                                                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-400/10 border border-amber-400/20 text-amber-400 font-bold text-xs">
                                                             {leader.name ? leader.name.charAt(0).toUpperCase() : 'S'}
                                                         </div>
-                                                        <div>
-                                                            <div className="font-bold text-white">{leader.name}</div>
-                                                            <div className="text-[11px] text-zinc-500">{leader.email}</div>
+                                                        <div className="min-w-0">
+                                                            <div className="font-bold text-white truncate">{leader.name}</div>
+                                                            <div className="text-[11px] text-zinc-500 truncate">{leader.email}</div>
                                                         </div>
                                                     </div>
-                                                </td>
-                                                <td className="py-3 px-3 font-semibold text-zinc-200">
-                                                    {leader.university || 'Unassigned'}
-                                                </td>
-                                                <td className="py-3 px-3">
+                                                    <span className="shrink-0 inline-flex items-center gap-1 rounded-full border border-blue-400/20 bg-blue-400/10 px-2 py-0.5 text-[11px] font-medium text-blue-300">
+                                                        {leader.region || 'NCR'}
+                                                    </span>
+                                                </div>
+                                                <div className="text-zinc-300">
+                                                    <span className="text-zinc-500">Campus: </span>
+                                                    <span className="font-semibold text-white">{leader.university || 'Unassigned'}</span>
+                                                </div>
+                                                <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-white/5">
                                                     <span className="font-semibold text-amber-400">
                                                         {leader.division || 'Chapter Lead / President'}
                                                     </span>
-                                                </td>
-                                                <td className="py-3 px-3">
-                                                    <span className="inline-flex items-center gap-1 rounded-full border border-blue-400/20 bg-blue-400/10 px-2 py-0.5 text-[11px] font-medium text-blue-300">
-                                                        {leader.region || 'NCR'}
-                                                    </span>
-                                                </td>
-                                                <td className="py-3 px-3 text-right">
                                                     <button
                                                         type="button"
                                                         onClick={() => {
                                                             setIsLeadersModalOpen(false);
                                                             setInspectStudent(leader);
                                                         }}
-                                                        className="rounded-lg border border-white/10 px-2.5 py-1 text-[11px] font-bold text-zinc-300 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+                                                        className="rounded-lg border border-white/10 px-2.5 py-1.5 text-[11px] font-bold text-zinc-300 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
                                                     >
                                                         View Profile
                                                     </button>
-                                                </td>
-                                            </tr>
+                                                </div>
+                                            </div>
                                         ))}
-                                    </tbody>
-                                </table>
+                                    </div>
+                                    <div className="hidden md:block overflow-x-auto">
+                                        <table className="w-full text-left text-xs">
+                                            <thead>
+                                                <tr className="border-b border-white/10 bg-white/[0.02] uppercase font-bold text-zinc-400">
+                                                    <th className="pb-3 px-3">Leader</th>
+                                                    <th className="pb-3 px-3">Campus Chapter</th>
+                                                    <th className="pb-3 px-3">Role</th>
+                                                    <th className="pb-3 px-3">Region</th>
+                                                    <th className="pb-3 px-3 text-right">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-white/5 text-zinc-300">
+                                                {paginatedModalLeaders.map((leader) => (
+                                                    <tr key={leader.id} className="hover:bg-white/[0.02] transition-colors">
+                                                        <td className="py-3 px-3">
+                                                            <div className="flex items-center gap-2.5">
+                                                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-400/10 border border-amber-400/20 text-amber-400 font-bold text-xs">
+                                                                    {leader.name ? leader.name.charAt(0).toUpperCase() : 'S'}
+                                                                </div>
+                                                                <div className="min-w-0">
+                                                                    <div className="font-bold text-white truncate">{leader.name}</div>
+                                                                    <div className="text-[11px] text-zinc-500 truncate">{leader.email}</div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="py-3 px-3 font-semibold text-zinc-200">
+                                                            {leader.university || 'Unassigned'}
+                                                        </td>
+                                                        <td className="py-3 px-3">
+                                                            <span className="font-semibold text-amber-400">
+                                                                {leader.division || 'Chapter Lead / President'}
+                                                            </span>
+                                                        </td>
+                                                        <td className="py-3 px-3 whitespace-nowrap">
+                                                            <span className="inline-flex items-center gap-1 rounded-full border border-blue-400/20 bg-blue-400/10 px-2 py-0.5 text-[11px] font-medium text-blue-300">
+                                                                {leader.region || 'NCR'}
+                                                            </span>
+                                                        </td>
+                                                        <td className="py-3 px-3 text-right whitespace-nowrap">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    setIsLeadersModalOpen(false);
+                                                                    setInspectStudent(leader);
+                                                                }}
+                                                                className="rounded-lg border border-white/10 px-2.5 py-1 text-[11px] font-bold text-zinc-300 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+                                                            >
+                                                                View Profile
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </>
                             )}
                         </div>
 
                         {/* Footer with Limit 10 Pagination */}
-                        <div className="shrink-0 flex items-center justify-between border-t border-white/10 p-4 sm:px-6 bg-white/[0.02] text-xs">
+                        <div className="shrink-0 flex flex-wrap items-center justify-between gap-2 border-t border-white/10 p-4 sm:px-6 bg-white/[0.02] text-xs">
                             <span className="text-zinc-400">
                                 Page {leadersModalPage} of {totalModalLeaderPages} ({filteredModalLeaders.length} leaders)
                             </span>
@@ -803,15 +987,15 @@ export default function StudentLeaders({
                         if (e.target === e.currentTarget) setIsCampusesModalOpen(false);
                     }}
                 >
-                    <div className="w-full max-w-3xl max-h-[90vh] flex flex-col rounded-3xl border border-emerald-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
+                    <div className="w-full max-w-3xl max-h-[90dvh] flex flex-col rounded-3xl border border-emerald-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
                         {/* Header */}
-                        <div className="shrink-0 flex items-center justify-between border-b border-white/10 p-5 sm:p-6 bg-gradient-to-r from-emerald-500/10 to-transparent">
-                            <div className="flex items-center gap-3">
-                                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-                                    <Building2 className="h-6 w-6" />
+                        <div className="shrink-0 flex items-start sm:items-center justify-between gap-3 border-b border-white/10 p-4 sm:p-6 bg-gradient-to-r from-emerald-500/10 to-transparent">
+                            <div className="flex min-w-0 items-center gap-3">
+                                <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                                    <Building2 className="h-5 w-5 sm:h-6 sm:w-6" />
                                 </div>
-                                <div>
-                                    <h3 id="campuses-modal-title" className="text-lg font-black text-white uppercase tracking-tight">
+                                <div className="min-w-0">
+                                    <h3 id="campuses-modal-title" className="text-base sm:text-lg font-black text-white uppercase tracking-tight">
                                         Affiliated University Chapters
                                     </h3>
                                     <p className="text-xs text-zinc-400">
@@ -821,8 +1005,9 @@ export default function StudentLeaders({
                             </div>
                             <button
                                 type="button"
+                                aria-label="Close modal"
                                 onClick={() => setIsCampusesModalOpen(false)}
-                                className="rounded-xl p-2 text-zinc-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+                                className="shrink-0 rounded-xl p-2 text-zinc-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
                             >
                                 <X className="h-5 w-5" />
                             </button>
@@ -840,45 +1025,35 @@ export default function StudentLeaders({
                                         setCampusesModalPage(1);
                                     }}
                                     placeholder="Filter by university or region..."
-                                    className="w-full rounded-xl border border-white/10 bg-black/50 py-2 pl-10 pr-4 text-xs text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:outline-none"
+                                    className="w-full rounded-xl border border-white/10 bg-black/50 py-2.5 pl-10 pr-4 text-xs text-white placeholder:text-zinc-500 focus:border-emerald-500/50 focus:outline-none"
                                 />
                             </div>
                         </div>
 
-                        {/* Table (Strict Limit 10) */}
-                        <div className="flex-1 overflow-y-auto min-h-[300px] p-4 sm:p-6">
+                        {/* Table / Cards (Strict Limit 10) */}
+                        <div className="flex-1 overflow-y-auto overscroll-contain min-h-0 p-4 sm:p-6">
                             {paginatedModalCampuses.length === 0 ? (
                                 <div className="py-12 text-center text-xs text-zinc-400">
                                     No campus chapters found matching your filter.
                                 </div>
                             ) : (
-                                <table className="w-full text-left text-xs">
-                                    <thead>
-                                        <tr className="border-b border-white/10 bg-white/[0.02] uppercase font-bold text-zinc-400">
-                                            <th className="pb-3 px-3">University / Campus Name</th>
-                                            <th className="pb-3 px-3">Region Hub</th>
-                                            <th className="pb-3 px-3">Appointed Leaders</th>
-                                            <th className="pb-3 px-3 text-right">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-white/5 text-zinc-300">
+                                <>
+                                    <div className="space-y-3 sm:hidden">
                                         {paginatedModalCampuses.map((camp, idx) => (
-                                             <tr key={`${camp.university}-${idx}`} className="hover:bg-white/[0.02] transition-colors">
-                                                <td className="py-3 px-3 font-bold text-white">
+                                            <div key={`${camp.university}-${idx}`} className="rounded-2xl border border-white/10 bg-white/[0.02] p-3.5 space-y-2.5 text-xs">
+                                                <div className="flex items-start gap-2 font-bold text-white">
+                                                    <Building2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                                                    <span>{camp.university}</span>
+                                                </div>
+                                                <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-white/5">
                                                     <div className="flex items-center gap-2">
-                                                        <Building2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                                                        <span>{camp.university}</span>
+                                                        <span className="inline-flex items-center gap-1 rounded-full border border-blue-400/20 bg-blue-400/10 px-2 py-0.5 text-[11px] font-medium text-blue-300">
+                                                            {camp.region || 'NCR'}
+                                                        </span>
+                                                        <span className="font-semibold text-emerald-400">
+                                                            {camp.leaders_count} Leader{camp.leaders_count > 1 ? 's' : ''}
+                                                        </span>
                                                     </div>
-                                                </td>
-                                                <td className="py-3 px-3">
-                                                    <span className="inline-flex items-center gap-1 rounded-full border border-blue-400/20 bg-blue-400/10 px-2 py-0.5 text-[11px] font-medium text-blue-300">
-                                                        {camp.region || 'NCR'}
-                                                    </span>
-                                                </td>
-                                                <td className="py-3 px-3 font-semibold text-emerald-400">
-                                                    {camp.leaders_count} Leader{camp.leaders_count > 1 ? 's' : ''}
-                                                </td>
-                                                <td className="py-3 px-3 text-right">
                                                     <button
                                                         type="button"
                                                         onClick={() => {
@@ -890,21 +1065,71 @@ export default function StudentLeaders({
                                                                 tab: 'leaders',
                                                             }, { preserveState: true, preserveScroll: true });
                                                         }}
-                                                        className="inline-flex items-center gap-1 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[11px] font-bold text-emerald-300 hover:bg-emerald-500/20 transition-colors cursor-pointer"
+                                                        className="inline-flex items-center gap-1 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-bold text-emerald-300 hover:bg-emerald-500/20 transition-colors cursor-pointer"
                                                     >
                                                         <span>Filter Table</span>
                                                         <ArrowRight className="h-3 w-3" />
                                                     </button>
-                                                </td>
-                                            </tr>
+                                                </div>
+                                            </div>
                                         ))}
-                                    </tbody>
-                                </table>
+                                    </div>
+                                    <div className="hidden sm:block overflow-x-auto">
+                                        <table className="w-full text-left text-xs">
+                                            <thead>
+                                                <tr className="border-b border-white/10 bg-white/[0.02] uppercase font-bold text-zinc-400">
+                                                    <th className="pb-3 px-3">University / Campus Name</th>
+                                                    <th className="pb-3 px-3">Region Hub</th>
+                                                    <th className="pb-3 px-3">Appointed Leaders</th>
+                                                    <th className="pb-3 px-3 text-right">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-white/5 text-zinc-300">
+                                                {paginatedModalCampuses.map((camp, idx) => (
+                                                     <tr key={`${camp.university}-${idx}`} className="hover:bg-white/[0.02] transition-colors">
+                                                        <td className="py-3 px-3 font-bold text-white">
+                                                            <div className="flex items-center gap-2">
+                                                                <Building2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                                                                <span>{camp.university}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td className="py-3 px-3 whitespace-nowrap">
+                                                            <span className="inline-flex items-center gap-1 rounded-full border border-blue-400/20 bg-blue-400/10 px-2 py-0.5 text-[11px] font-medium text-blue-300">
+                                                                {camp.region || 'NCR'}
+                                                            </span>
+                                                        </td>
+                                                        <td className="py-3 px-3 font-semibold text-emerald-400 whitespace-nowrap">
+                                                            {camp.leaders_count} Leader{camp.leaders_count > 1 ? 's' : ''}
+                                                        </td>
+                                                        <td className="py-3 px-3 text-right whitespace-nowrap">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    setIsCampusesModalOpen(false);
+                                                                    setSearch(camp.university);
+                                                                    setActiveTab('leaders');
+                                                                    router.get(route('admin.sl-management'), {
+                                                                        search: camp.university,
+                                                                        tab: 'leaders',
+                                                                    }, { preserveState: true, preserveScroll: true });
+                                                                }}
+                                                                className="inline-flex items-center gap-1 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[11px] font-bold text-emerald-300 hover:bg-emerald-500/20 transition-colors cursor-pointer"
+                                                            >
+                                                                <span>Filter Table</span>
+                                                                <ArrowRight className="h-3 w-3" />
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </>
                             )}
                         </div>
 
                         {/* Footer with Limit 10 Pagination */}
-                        <div className="shrink-0 flex items-center justify-between border-t border-white/10 p-4 sm:px-6 bg-white/[0.02] text-xs">
+                        <div className="shrink-0 flex flex-wrap items-center justify-between gap-2 border-t border-white/10 p-4 sm:px-6 bg-white/[0.02] text-xs">
                             <span className="text-zinc-400">
                                 Page {campusesModalPage} of {totalModalCampusPages} ({filteredModalCampuses.length} campuses)
                             </span>
@@ -945,15 +1170,15 @@ export default function StudentLeaders({
                         if (e.target === e.currentTarget) setIsRegionsModalOpen(false);
                     }}
                 >
-                    <div className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl border border-blue-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
+                    <div className="w-full max-w-2xl max-h-[90dvh] flex flex-col rounded-3xl border border-blue-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
                         {/* Header */}
-                        <div className="shrink-0 flex items-center justify-between border-b border-white/10 p-5 sm:p-6 bg-gradient-to-r from-blue-500/10 to-transparent">
-                            <div className="flex items-center gap-3">
-                                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-500/10 border border-blue-500/30 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
-                                    <MapPin className="h-6 w-6" />
+                        <div className="shrink-0 flex items-start sm:items-center justify-between gap-3 border-b border-white/10 p-4 sm:p-6 bg-gradient-to-r from-blue-500/10 to-transparent">
+                            <div className="flex min-w-0 items-center gap-3">
+                                <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 border border-blue-500/30 text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+                                    <MapPin className="h-5 w-5 sm:h-6 sm:w-6" />
                                 </div>
-                                <div>
-                                    <h3 id="regions-modal-title" className="text-lg font-black text-white uppercase tracking-tight">
+                                <div className="min-w-0">
+                                    <h3 id="regions-modal-title" className="text-base sm:text-lg font-black text-white uppercase tracking-tight">
                                         Regional Hubs Breakdown
                                     </h3>
                                     <p className="text-xs text-zinc-400">
@@ -963,62 +1188,65 @@ export default function StudentLeaders({
                             </div>
                             <button
                                 type="button"
+                                aria-label="Close modal"
                                 onClick={() => setIsRegionsModalOpen(false)}
-                                className="rounded-xl p-2 text-zinc-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+                                className="shrink-0 rounded-xl p-2 text-zinc-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
                             >
                                 <X className="h-5 w-5" />
                             </button>
                         </div>
 
                         {/* Table (Strict Limit 10) */}
-                        <div className="flex-1 overflow-y-auto min-h-[300px] p-4 sm:p-6">
+                        <div className="flex-1 overflow-y-auto overscroll-contain min-h-0 p-4 sm:p-6">
                             {paginatedModalRegions.length === 0 ? (
                                 <div className="py-12 text-center text-xs text-zinc-400">
                                     No regional leaders assigned yet.
                                 </div>
                             ) : (
-                                <table className="w-full text-left text-xs">
-                                    <thead>
-                                        <tr className="border-b border-white/10 bg-white/[0.02] uppercase font-bold text-zinc-400">
-                                            <th className="pb-3 px-3">Regional Hub</th>
-                                            <th className="pb-3 px-3">Assigned Leaders</th>
-                                            <th className="pb-3 px-3 text-right">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-white/5 text-zinc-300">
-                                        {paginatedModalRegions.map((reg) => (
-                                            <tr key={reg.region} className="hover:bg-white/[0.02] transition-colors">
-                                                <td className="py-3 px-3 font-bold text-white">
-                                                    <span className="inline-flex items-center gap-1.5">
-                                                        <MapPin className="h-3.5 w-3.5 text-blue-400" />
-                                                        {reg.region}
-                                                    </span>
-                                                </td>
-                                                <td className="py-3 px-3 font-semibold text-blue-400">
-                                                    {reg.leaders_count} Leader{reg.leaders_count > 1 ? 's' : ''}
-                                                </td>
-                                                <td className="py-3 px-3 text-right">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                            setIsRegionsModalOpen(false);
-                                                            handleRegionFilter(reg.region);
-                                                        }}
-                                                        className="inline-flex items-center gap-1 rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-[11px] font-bold text-blue-300 hover:bg-blue-500/20 transition-colors cursor-pointer"
-                                                    >
-                                                        <span>Filter By Region</span>
-                                                        <ArrowRight className="h-3 w-3" />
-                                                    </button>
-                                                </td>
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left text-xs">
+                                        <thead>
+                                            <tr className="border-b border-white/10 bg-white/[0.02] uppercase font-bold text-zinc-400">
+                                                <th className="pb-3 px-2.5 sm:px-3">Regional Hub</th>
+                                                <th className="pb-3 px-2.5 sm:px-3">Assigned Leaders</th>
+                                                <th className="pb-3 px-2.5 sm:px-3 text-right">Action</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody className="divide-y divide-white/5 text-zinc-300">
+                                            {paginatedModalRegions.map((reg) => (
+                                                <tr key={reg.region} className="hover:bg-white/[0.02] transition-colors">
+                                                    <td className="py-3 px-2.5 sm:px-3 font-bold text-white">
+                                                        <span className="inline-flex items-center gap-1.5">
+                                                            <MapPin className="h-3.5 w-3.5 shrink-0 text-blue-400" />
+                                                            <span>{reg.region}</span>
+                                                        </span>
+                                                    </td>
+                                                    <td className="py-3 px-2.5 sm:px-3 font-semibold text-blue-400 whitespace-nowrap">
+                                                        {reg.leaders_count} Leader{reg.leaders_count > 1 ? 's' : ''}
+                                                    </td>
+                                                    <td className="py-3 px-2.5 sm:px-3 text-right whitespace-nowrap">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setIsRegionsModalOpen(false);
+                                                                handleRegionFilter(reg.region);
+                                                            }}
+                                                            className="inline-flex items-center gap-1 rounded-lg border border-blue-500/30 bg-blue-500/10 px-2.5 sm:px-3 py-1 text-[11px] font-bold text-blue-300 hover:bg-blue-500/20 transition-colors cursor-pointer"
+                                                        >
+                                                            <span>Filter</span>
+                                                            <ArrowRight className="h-3 w-3" />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             )}
                         </div>
 
                         {/* Footer with Limit 10 Pagination */}
-                        <div className="shrink-0 flex items-center justify-between border-t border-white/10 p-4 sm:px-6 bg-white/[0.02] text-xs">
+                        <div className="shrink-0 flex flex-wrap items-center justify-between gap-2 border-t border-white/10 p-4 sm:px-6 bg-white/[0.02] text-xs">
                             <span className="text-zinc-400">
                                 Page {regionsModalPage} of {totalModalRegionPages} ({regionBreakdown.length} regions)
                             </span>
@@ -1059,7 +1287,7 @@ export default function StudentLeaders({
                         if (e.target === e.currentTarget) setPromoteTarget(null);
                     }}
                 >
-                    <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
+                    <div className="w-full max-w-lg max-h-[90dvh] overflow-y-auto overscroll-contain rounded-2xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-4 sm:p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
                         <div className="flex items-center justify-between border-b border-white/10 pb-4">
                             <div className="flex items-center gap-3">
                                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20">
@@ -1150,18 +1378,18 @@ export default function StudentLeaders({
                                 />
                             </div>
 
-                            <div className="flex items-center justify-end gap-3 pt-2">
+                            <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 sm:gap-3 pt-2">
                                 <button
                                     type="button"
                                     onClick={() => setPromoteTarget(null)}
-                                    className="rounded-xl px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white cursor-pointer"
+                                    className="min-h-[40px] rounded-xl border border-white/10 sm:border-transparent px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white cursor-pointer"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={isSubmitting || !assignedCampus.trim()}
-                                    className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-5 py-2.5 text-xs font-bold text-black transition-colors hover:bg-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.2)] disabled:opacity-50 cursor-pointer"
+                                    className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-xl bg-amber-400 px-5 py-2.5 text-xs font-bold text-black transition-colors hover:bg-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.2)] disabled:opacity-50 cursor-pointer"
                                 >
                                     {isSubmitting ? (
                                         <LoaderCircle className="h-4 w-4 animate-spin" />
@@ -1190,7 +1418,7 @@ export default function StudentLeaders({
                         if (e.target === e.currentTarget) setDemoteTarget(null);
                     }}
                 >
-                    <div className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-2xl border border-red-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
+                    <div className="w-full max-w-md max-h-[90dvh] overflow-y-auto overscroll-contain rounded-2xl border border-red-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-4 sm:p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
                         <div className="flex items-center gap-3 border-b border-white/10 pb-4">
                             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-400 border border-red-500/20">
                                 <AlertTriangle className="h-5 w-5" />
@@ -1210,11 +1438,11 @@ export default function StudentLeaders({
                             </p>
                         </div>
 
-                        <div className="flex items-center justify-end gap-3 pt-2">
+                        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 sm:gap-3 pt-2">
                             <button
                                 type="button"
                                 onClick={() => setDemoteTarget(null)}
-                                className="rounded-xl px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white cursor-pointer"
+                                className="min-h-[40px] rounded-xl border border-white/10 sm:border-transparent px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white cursor-pointer"
                             >
                                 Cancel
                             </button>
@@ -1222,7 +1450,7 @@ export default function StudentLeaders({
                                 type="button"
                                 disabled={isSubmitting}
                                 onClick={handleDemoteSubmit}
-                                className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-red-500 disabled:opacity-50 cursor-pointer"
+                                className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-red-500 disabled:opacity-50 cursor-pointer"
                             >
                                 {isSubmitting ? (
                                     <LoaderCircle className="h-4 w-4 animate-spin" />
@@ -1250,15 +1478,15 @@ export default function StudentLeaders({
                         if (e.target === e.currentTarget) setInspectStudent(null);
                     }}
                 >
-                    <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/15 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
-                        <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                            <div className="flex items-center gap-3">
-                                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-amber-400/30 bg-amber-400/10 text-amber-400">
-                                    <UserRound className="h-6 w-6" />
+                    <div className="w-full max-w-2xl max-h-[90dvh] overflow-y-auto overscroll-contain rounded-3xl border border-white/15 bg-[#0f0f11]/95 backdrop-blur-2xl p-4 sm:p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
+                        <div className="flex items-start sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+                            <div className="flex min-w-0 items-center gap-3">
+                                <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl border border-amber-400/30 bg-amber-400/10 text-amber-400">
+                                    <UserRound className="h-5 w-5 sm:h-6 sm:w-6" />
                                 </div>
-                                <div>
-                                    <div className="flex items-center gap-2">
-                                        <h3 id="inspect-profile-title" className="text-lg font-bold text-white">
+                                <div className="min-w-0">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <h3 id="inspect-profile-title" className="text-base sm:text-lg font-bold text-white">
                                             {inspectStudent.name}
                                         </h3>
                                         <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${
@@ -1269,15 +1497,16 @@ export default function StudentLeaders({
                                             {inspectStudent.user_type}
                                         </span>
                                     </div>
-                                    <p className="text-xs text-gray-400">
+                                    <p className="text-xs text-gray-400 break-all">
                                         {inspectStudent.email} • ID: #{inspectStudent.id}
                                     </p>
                                 </div>
                             </div>
                             <button
                                 type="button"
+                                aria-label="Close modal"
                                 onClick={() => setInspectStudent(null)}
-                                className="rounded-xl p-2 text-gray-400 hover:bg-white/10 hover:text-white cursor-pointer"
+                                className="shrink-0 rounded-xl p-2 text-gray-400 hover:bg-white/10 hover:text-white cursor-pointer"
                             >
                                 <X className="h-5 w-5" />
                             </button>

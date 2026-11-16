@@ -23,10 +23,10 @@ export default function SuccessModal({
             ariaLabel={displayMessage}
             hideHeader
             showCloseButton
-            scrollable={false}
-            maxWidth="max-w-[330px] sm:max-w-[526px]"
-            panelClassName="min-h-[min(420px,90dvh)]"
-            bodyClassName="flex items-center justify-center !px-8 !py-12 sm:!px-16"
+            scrollable
+            maxWidth="max-w-md sm:max-w-[526px]"
+            panelClassName="min-h-[min(360px,88dvh)]"
+            bodyClassName="flex items-center justify-center !px-5 !py-10 sm:!px-16 sm:!py-12"
         >
             <div className="w-full text-center">
                 <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-[#FBBF24] bg-[#151515]">

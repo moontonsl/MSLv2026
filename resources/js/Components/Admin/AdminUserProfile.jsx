@@ -1,7 +1,7 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import { 
     Bell, User, CheckCheck, CheckCircle2, Shield, Users, 
-    AlertTriangle, Megaphone, Clock, ExternalLink, X 
+    AlertTriangle, Megaphone, Clock, ExternalLink, X, LogOut 
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
@@ -133,22 +133,22 @@ export default function AdminUserProfile({
     });
 
     return (
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
             {/* User Profile Pill */}
             <Link
                 href={route('admin.profile')}
-                className="group flex items-center gap-2 rounded-xl px-2.5 py-1.5 transition-colors hover:bg-white/5"
+                className="group hidden sm:flex min-w-0 items-center gap-2 rounded-xl px-2.5 py-1.5 transition-colors hover:bg-white/5"
             >
-                <div className="text-right">
-                    <p className="text-sm font-bold tracking-tight transition-colors group-hover:text-amber-300" style={{ color: ACCENT }}>
+                <div className="min-w-0 text-right">
+                    <p className="max-w-[160px] truncate text-sm font-bold tracking-tight transition-colors group-hover:text-amber-300" style={{ color: ACCENT }}>
                         {displayName}
                     </p>
-                    <p className="text-xs text-gray-400 capitalize">{displayRole}</p>
+                    <p className="max-w-[160px] truncate text-xs text-gray-400 capitalize">{displayRole}</p>
                 </div>
             </Link>
 
             {/* Notification Bell & Floating Dropdown */}
-            <div className="relative" ref={dropdownRef}>
+            <div className="relative shrink-0" ref={dropdownRef}>
                 <button
                     type="button"
                     id="admin-notification-bell-btn"
@@ -173,7 +173,7 @@ export default function AdminUserProfile({
                 {notificationsOpen && (
                     <div 
                         id="admin-notification-popover"
-                        className="absolute right-0 top-full mt-3 z-[100] w-[min(24rem,calc(100vw-1.5rem))] sm:w-[410px] origin-top-right rounded-2xl border border-white/15 bg-[#121214]/95 backdrop-blur-2xl shadow-2xl ring-1 ring-black/60 overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+                        className="fixed inset-x-3 top-16 sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-3 z-[100] sm:w-[410px] origin-top-right rounded-2xl border border-white/15 bg-[#121214]/95 backdrop-blur-2xl shadow-2xl ring-1 ring-black/60 overflow-hidden animate-in fade-in zoom-in-95 duration-150"
                     >
                         {/* Header */}
                         <div className="border-b border-white/10 bg-white/[0.02] p-4">
@@ -242,7 +242,7 @@ export default function AdminUserProfile({
                         </div>
 
                         {/* List Body */}
-                        <div className="max-h-[360px] overflow-y-auto divide-y divide-white/5">
+                        <div className="max-h-[min(360px,60dvh)] overflow-y-auto overscroll-contain divide-y divide-white/5">
                             {filteredNotifications.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center px-4 py-10 text-center">
                                     <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03]">
@@ -333,18 +333,24 @@ export default function AdminUserProfile({
             </div>
 
             {/* User Avatar Circle */}
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-amber-400/40 bg-neutral-900 shadow-[0_0_15px_rgba(251,191,36,0.15)]">
+            <Link
+                href={route('admin.profile')}
+                aria-label={`Profile (${displayName})`}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-amber-400/40 bg-neutral-900 shadow-[0_0_15px_rgba(251,191,36,0.15)] transition-colors hover:border-amber-300"
+            >
                 <User className="h-5 w-5 text-amber-400" />
-            </div>
+            </Link>
 
             {/* Logout Option */}
             {auth?.guard === 'admin' && (
                 <button
                     type="button"
-                    className="rounded-lg px-2 py-1 text-xs text-gray-400 transition-colors hover:bg-white/5 hover:text-white"
+                    aria-label="Logout"
+                    className="inline-flex min-h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-xs font-medium text-gray-300 transition-colors hover:bg-white/10 hover:text-white"
                     onClick={() => router.post(route('admin.logout'))}
                 >
-                    Logout
+                    <LogOut className="h-3.5 w-3.5 sm:hidden" />
+                    <span className="hidden sm:inline">Logout</span>
                 </button>
             )}
         </div>

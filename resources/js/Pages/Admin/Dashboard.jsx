@@ -130,9 +130,9 @@ export default function AdminDashboard({
             <div className="space-y-8 pb-12">
                 {/* 1. Header & Real-Time Telemetry Bar */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6 relative">
-                    <div>
+                    <div className="min-w-0">
                         <div className="flex items-center gap-2.5 mb-1.5">
-                            <span className="relative flex h-2 w-2">
+                            <span className="relative flex h-2 w-2 shrink-0">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400 shadow-[0_0_10px_#FBBF24]"></span>
                             </span>
@@ -140,7 +140,7 @@ export default function AdminDashboard({
                                 Command Telemetry • Live Operations
                             </span>
                         </div>
-                        <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight uppercase">
+                        <h1 className="text-2xl sm:text-3xl xl:text-4xl font-black text-white tracking-tight uppercase [text-wrap:balance]">
                             Command <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-brand-400 to-amber-200">Center</span>
                         </h1>
                         <p className="mt-1 text-xs sm:text-sm text-zinc-400 max-w-xl">
@@ -149,9 +149,9 @@ export default function AdminDashboard({
                     </div>
 
                     {/* Live Telemetry Status Pill */}
-                    <div className="flex items-center gap-3 bg-white/[0.03] border border-white/10 rounded-2xl px-4 py-2.5 backdrop-blur-xl shadow-xl shadow-black/40">
-                        <div className="flex items-center gap-2.5 text-xs">
-                            <span className="relative flex h-2 w-2">
+                    <div className="flex flex-wrap items-center justify-between sm:justify-start gap-3 self-start md:self-auto w-full sm:w-auto bg-white/[0.03] border border-white/10 rounded-2xl px-4 py-2.5 backdrop-blur-xl shadow-xl shadow-black/40">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 text-xs">
+                            <span className="relative flex h-2 w-2 shrink-0">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
                             </span>
@@ -166,8 +166,9 @@ export default function AdminDashboard({
                         <button
                             onClick={fetchRealTimeData}
                             disabled={isRefreshing}
+                            aria-label="Refresh Real-Time Data"
                             title="Refresh Real-Time Data"
-                            className="p-1.5 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95 disabled:opacity-50"
+                            className="inline-flex min-h-8 min-w-8 items-center justify-center p-1.5 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95 disabled:opacity-50"
                         >
                             <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? 'animate-spin text-amber-400' : ''}`} />
                         </button>
@@ -175,7 +176,7 @@ export default function AdminDashboard({
                 </div>
 
                 {/* 2. Top Stats Cards Grid (Taste Skill High-End Glassmorphic Cards - Clickable) */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
                     {stats.map((stat, idx) => {
                         const Icon = stat.icon;
                         return (
@@ -219,23 +220,23 @@ export default function AdminDashboard({
                 </div>
 
                 {/* 3. Website Analytics & User Engagement (Taste Skill Two-Column Console) */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                     {/* LEFT PANEL: Website Analytics */}
-                    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-[#0e0e14]/90 to-[#070709]/90 p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between">
+                    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-[#0e0e14]/90 to-[#070709]/90 p-4 sm:p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between">
                         <div className="absolute -top-24 -left-24 w-48 h-48 bg-blue-500/10 blur-[80px] pointer-events-none rounded-full" />
                         <div>
-                            <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400">
+                            <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+                                <div className="flex items-center gap-3 min-w-0">
+                                    <div className="p-2.5 shrink-0 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400">
                                         <BarChart3 className="h-4 w-4" />
                                     </div>
-                                    <div>
+                                    <div className="min-w-0">
                                         <h2 className="text-base font-bold text-white tracking-tight">Website Performance</h2>
                                         <p className="text-[11px] text-zinc-400">7-day traffic telemetry & visitor flow</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold font-mono">
-                                    <TrendingUp className="h-3.5 w-3.5" />
+                                    <TrendingUp className="h-3.5 w-3.5 shrink-0" />
                                     <span>{growth >= 0 ? `+${growth}%` : `${growth}%`} velocity</span>
                                 </div>
                             </div>
@@ -296,8 +297,8 @@ export default function AdminDashboard({
                             </div>
 
                             {/* Key Metrics Grid (Total Views & Unique Visitors) */}
-                            <div className="grid grid-cols-2 gap-3 mb-5">
-                                <div className="rounded-xl border border-white/5 bg-black/40 p-4 text-center">
+                            <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-3 mb-5">
+                                <div className="rounded-xl border border-white/5 bg-black/40 p-3.5 sm:p-4 text-center">
                                     <span className="text-2xl sm:text-3xl font-black text-white font-display block">
                                         {(analytics?.metrics?.totalViews ?? 0).toLocaleString()}
                                     </span>
@@ -305,7 +306,7 @@ export default function AdminDashboard({
                                         Total Impressions
                                     </span>
                                 </div>
-                                <div className="rounded-xl border border-white/5 bg-black/40 p-4 text-center">
+                                <div className="rounded-xl border border-white/5 bg-black/40 p-3.5 sm:p-4 text-center">
                                     <span className="text-2xl sm:text-3xl font-black text-amber-400 font-display block">
                                         {(analytics?.metrics?.uniqueVisitors ?? 0).toLocaleString()}
                                     </span>
@@ -319,17 +320,17 @@ export default function AdminDashboard({
                         {/* Real-time Activity Card */}
                         <div className="rounded-xl border border-blue-500/20 bg-gradient-to-r from-blue-950/40 to-black/40 p-4 backdrop-blur-sm">
                             <div className="flex items-center gap-2 mb-2.5">
-                                <Activity className="h-4 w-4 text-blue-400" />
+                                <Activity className="h-4 w-4 shrink-0 text-blue-400" />
                                 <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-blue-300">Live Traffic Pulse</h3>
                             </div>
-                            <div className="grid grid-cols-2 gap-4 text-xs">
-                                <div className="flex items-center justify-between border-r border-blue-500/20 pr-4">
+                            <div className="grid grid-cols-1 min-[440px]:grid-cols-2 gap-2.5 min-[440px]:gap-4 text-xs">
+                                <div className="flex items-center justify-between border-b border-blue-500/20 pb-2 min-[440px]:border-b-0 min-[440px]:border-r min-[440px]:pb-0 min-[440px]:pr-4">
                                     <span className="text-zinc-400">Active (Last 15m):</span>
                                     <span className="font-black text-white font-mono text-sm">
                                         {realTimeData?.activeUsers ?? 0}
                                     </span>
                                 </div>
-                                <div className="flex items-center justify-between pl-2">
+                                <div className="flex items-center justify-between min-[440px]:pl-2">
                                     <span className="text-zinc-400">New Today:</span>
                                     <span className="font-black text-emerald-400 font-mono text-sm">
                                         +{realTimeData?.recentRegistrations ?? 0}
@@ -340,15 +341,15 @@ export default function AdminDashboard({
                     </div>
 
                     {/* RIGHT PANEL: User Engagement */}
-                    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-[#0e0e14]/90 to-[#070709]/90 p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between">
+                    <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-[#0e0e14]/90 to-[#070709]/90 p-4 sm:p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between">
                         <div className="absolute -top-24 -right-24 w-48 h-48 bg-purple-500/10 blur-[80px] pointer-events-none rounded-full" />
                         <div>
-                            <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
+                            <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+                                <div className="flex items-center gap-3 min-w-0">
+                                    <div className="p-2.5 shrink-0 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
                                         <MousePointerClick className="h-4 w-4" />
                                     </div>
-                                    <div>
+                                    <div className="min-w-0">
                                         <h2 className="text-base font-bold text-white tracking-tight">User Engagement</h2>
                                         <p className="text-[11px] text-zinc-400">Retention, session depth & interactions</p>
                                     </div>

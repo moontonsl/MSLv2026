@@ -21,17 +21,17 @@ export default function ConfirmationModal({
             ariaLabel={message}
             hideHeader
             showCloseButton
-            scrollable={false}
-            maxWidth="max-w-[330px] sm:max-w-[526px]"
-            panelClassName="h-[min(465px,90dvh)]"
-            bodyClassName="flex items-center justify-center !px-8 !py-10 sm:!px-16 sm:!py-12"
+            scrollable
+            maxWidth="max-w-md sm:max-w-[526px]"
+            panelClassName="min-h-[min(360px,88dvh)]"
+            bodyClassName="flex items-center justify-center !px-5 !py-10 sm:!px-16 sm:!py-12"
         >
             <div className="w-full">
-                <p className="mx-auto mb-10 max-w-[400px] break-words text-left font-heading text-lg font-bold leading-[1.5] text-[#F5F1E6] sm:text-center sm:text-2xl sm:leading-[1.35]">
+                <p className="mx-auto mb-8 sm:mb-10 max-w-[400px] break-words text-center font-heading text-lg font-bold leading-[1.45] text-[#F5F1E6] sm:text-2xl sm:leading-[1.35]">
                     {message}
                 </p>
 
-                <div className="mx-auto grid w-full max-w-[400px] grid-cols-2 gap-2.5 sm:gap-3">
+                <div className="mx-auto grid w-full max-w-[400px] grid-cols-1 gap-2.5 min-[360px]:grid-cols-2 sm:gap-3">
                     <button
                         type="button"
                         onClick={onCancel}

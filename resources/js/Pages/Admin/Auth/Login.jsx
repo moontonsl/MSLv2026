@@ -53,7 +53,7 @@ export default function AdminLogin({ errors = {}, status, main_site_url }) {
     };
 
     return (
-        <div className="relative min-h-screen w-full flex items-center justify-center bg-[#070709] text-white selection:bg-brand-500 selection:text-black overflow-hidden px-4 py-8">
+        <div className="relative flex min-h-dvh w-full items-center justify-center overflow-x-hidden bg-[#070709] px-4 py-8 text-white selection:bg-brand-500 selection:text-black">
             <Head title="Admin Portal Login | MSL Philippines" />
 
             {/* Interactive Cursor Ambient Glow (Smooth spotlight without solid circle) */}
@@ -76,37 +76,37 @@ export default function AdminLogin({ errors = {}, status, main_site_url }) {
                 }}
             />
 
-            <div className="relative w-full max-w-[460px] z-10">
+            <div className="relative z-10 w-full max-w-[460px]">
                 {/* Back to Public Site Link */}
-                <div className="mb-6 flex items-center justify-between">
+                <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
                     <a
                         href={main_site_url || "/"}
-                        className="inline-flex items-center gap-2 text-xs font-medium text-zinc-400 hover:text-brand-400 transition-colors duration-200 group"
+                        className="group inline-flex items-center gap-2 text-xs font-medium text-zinc-400 transition-colors duration-200 hover:text-brand-400"
                     >
-                        <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
+                        <ArrowLeft className="h-3.5 w-3.5 shrink-0 transition-transform group-hover:-translate-x-1" />
                         <span>Back to MSL Website</span>
                     </a>
 
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-[11px] font-semibold text-amber-400">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                    <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-[11px] font-semibold text-amber-400">
+                        <span className="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-amber-400" />
                         Official Control Panel
                     </div>
                 </div>
 
                 {/* Login Glassmorphism Card */}
-                <div className="relative rounded-2xl bg-[#0e0e12]/90 backdrop-blur-2xl border border-white/10 p-8 sm:p-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden">
+                <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#0e0e12]/90 p-5 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] backdrop-blur-2xl sm:p-10">
                     {/* Top Accent Gradient Bar */}
-                    <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-amber-500 via-brand-500 to-amber-300" />
+                    <div className="absolute left-0 right-0 top-0 h-[3px] bg-gradient-to-r from-amber-500 via-brand-500 to-amber-300" />
 
                     {/* Logo & Header */}
-                    <div className="flex items-center justify-between gap-4 mb-8">
-                        <div>
-                            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-zinc-800/80 border border-white/5 text-[10px] font-bold uppercase tracking-widest text-zinc-300 mb-2">
-                                <ShieldCheck className="w-3.5 h-3.5 text-brand-400" />
+                    <div className="mb-8 flex items-center justify-between gap-3 sm:gap-4">
+                        <div className="min-w-0">
+                            <div className="mb-2 inline-flex items-center gap-1.5 rounded-md border border-white/5 bg-zinc-800/80 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-zinc-300">
+                                <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-brand-400" />
                                 Authorized Staff Only
                             </div>
 
-                            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white uppercase leading-none">
+                            <h1 className="text-2xl font-black uppercase leading-none tracking-tight text-white sm:text-3xl">
                                 Admin <span className="text-brand-400">Portal</span>
                             </h1>
                             <p className="mt-1.5 text-xs text-zinc-400">
@@ -114,12 +114,12 @@ export default function AdminLogin({ errors = {}, status, main_site_url }) {
                             </p>
                         </div>
 
-                        <div className="relative shrink-0 flex items-center justify-center">
-                            <div className="absolute inset-0 bg-brand-500/20 blur-xl rounded-full" />
+                        <div className="relative flex shrink-0 items-center justify-center">
+                            <div className="absolute inset-0 rounded-full bg-brand-500/20 blur-xl" />
                             <img
                                 src="/MSL_LOGO.png"
                                 alt="MSL Philippines Logo"
-                                className="relative h-16 w-auto object-contain drop-shadow-[0_4px_12px_rgba(242,194,26,0.35)]"
+                                className="relative h-12 w-auto object-contain drop-shadow-[0_4px_12px_rgba(242,194,26,0.35)] sm:h-16"
                                 onError={(e) => {
                                     e.currentTarget.onerror = null;
                                     e.currentTarget.src = '/msl-logo.png';
@@ -214,21 +214,22 @@ export default function AdminLogin({ errors = {}, status, main_site_url }) {
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
                                     tabIndex={-1}
-                                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-zinc-500 hover:text-zinc-300 transition-colors focus:outline-none"
+                                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                    className="absolute inset-y-0 right-0 flex min-h-10 min-w-10 items-center justify-center text-zinc-500 transition-colors hover:text-zinc-300 focus:outline-none"
                                 >
-                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                 </button>
                             </div>
                             {errors.password && (
-                                <p className="mt-1.5 text-xs text-rose-400 flex items-center gap-1">
-                                    <AlertCircle className="w-3.5 h-3.5" />
+                                <p className="mt-1.5 flex items-center gap-1 text-xs text-rose-400">
+                                    <AlertCircle className="h-3.5 w-3.5 shrink-0" />
                                     {errors.password}
                                 </p>
                             )}
                         </div>
 
                         {/* Remember Me */}
-                        <div className="flex items-center justify-between pt-1">
+                        <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
                             <label className="flex items-center gap-2 cursor-pointer select-none group">
                                 <input
                                     type="checkbox"

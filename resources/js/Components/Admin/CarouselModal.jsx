@@ -158,40 +158,42 @@ export default function CarouselModal({
                     />
                 </div>
 
-                <div>
-                    <label
-                        htmlFor="carousel-start-date"
-                        className={MODAL_LABEL_CLASS}
-                    >
-                        Start Date
-                    </label>
-                    <input
-                        id="carousel-start-date"
-                        name="startDate"
-                        type="date"
-                        value={form.startDate}
-                        onChange={handleChange}
-                        className={MODAL_INPUT_CLASS}
-                    />
-                    <p className={MODAL_DATE_HINT_CLASS}>mm/dd/yyyy</p>
-                </div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div className="min-w-0">
+                        <label
+                            htmlFor="carousel-start-date"
+                            className={MODAL_LABEL_CLASS}
+                        >
+                            Start Date
+                        </label>
+                        <input
+                            id="carousel-start-date"
+                            name="startDate"
+                            type="date"
+                            value={form.startDate}
+                            onChange={handleChange}
+                            className={`${MODAL_INPUT_CLASS} min-w-0`}
+                        />
+                        <p className={MODAL_DATE_HINT_CLASS}>mm/dd/yyyy</p>
+                    </div>
 
-                <div>
-                    <label
-                        htmlFor="carousel-end-date"
-                        className={MODAL_LABEL_CLASS}
-                    >
-                        End Date
-                    </label>
-                    <input
-                        id="carousel-end-date"
-                        name="endDate"
-                        type="date"
-                        value={form.endDate}
-                        onChange={handleChange}
-                        className={MODAL_INPUT_CLASS}
-                    />
-                    <p className={MODAL_DATE_HINT_CLASS}>mm/dd/yyyy</p>
+                    <div className="min-w-0">
+                        <label
+                            htmlFor="carousel-end-date"
+                            className={MODAL_LABEL_CLASS}
+                        >
+                            End Date
+                        </label>
+                        <input
+                            id="carousel-end-date"
+                            name="endDate"
+                            type="date"
+                            value={form.endDate}
+                            onChange={handleChange}
+                            className={`${MODAL_INPUT_CLASS} min-w-0`}
+                        />
+                        <p className={MODAL_DATE_HINT_CLASS}>mm/dd/yyyy</p>
+                    </div>
                 </div>
 
                 <div>

@@ -17,7 +17,7 @@ export default function EventTable({
 }) {
     return (
         <div className="w-full min-w-0">
-            <div className="hidden md:block">
+            <div className="hidden xl:block">
                 <EventDesktopTable
                     events={events}
                     showDates={showDates}
@@ -30,7 +30,7 @@ export default function EventTable({
                 />
             </div>
 
-            <div className="md:hidden">
+            <div className="xl:hidden">
                 <EventMobileList
                     events={events}
                     showDates={showDates}
