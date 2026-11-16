@@ -2,10 +2,10 @@ import { ChevronDown, ChevronUp, Pencil, Trash2 } from "lucide-react";
 
 function MobileDetail({ label, children }) {
     return (
-        <div className="grid min-w-0 grid-cols-[110px_minmax(0,1fr)] gap-3 text-sm">
+        <div className="grid min-w-0 grid-cols-1 gap-1 text-sm min-[380px]:grid-cols-[110px_minmax(0,1fr)] min-[380px]:gap-3">
             <span className="font-bold text-white">{label}</span>
 
-            <div className="min-w-0 text-gray-400">{children}</div>
+            <div className="min-w-0 break-words text-gray-400">{children}</div>
         </div>
     );
 }
@@ -44,12 +44,12 @@ export default function RegionalAdminMobileList({
                             aria-expanded={isExpanded}
                             aria-controls={detailsId}
                         >
-                            <div className="grid min-w-0 flex-1 grid-cols-[82px_minmax(0,1fr)] items-center gap-3">
-                                <span className="whitespace-nowrap text-sm font-bold text-white">
+                            <div className="flex min-w-0 flex-1 flex-col gap-0.5 min-[420px]:grid min-[420px]:grid-cols-[88px_minmax(0,1fr)] min-[420px]:items-center min-[420px]:gap-3">
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400 min-[420px]:text-sm min-[420px]:normal-case min-[420px]:tracking-normal min-[420px]:text-white">
                                     Fullname
                                 </span>
 
-                                <span className="min-w-0 truncate text-sm font-medium text-gray-400">
+                                <span className="min-w-0 break-words text-sm font-semibold text-white min-[420px]:truncate min-[420px]:font-medium min-[420px]:text-gray-300">
                                     {regionalAdmin.fullName}
                                 </span>
                             </div>
@@ -67,13 +67,13 @@ export default function RegionalAdminMobileList({
                                 className="space-y-4 border-t border-white/10 px-3 py-4"
                             >
                                 <MobileDetail label="Username">
-                                    <span className="block truncate">
+                                    <span className="block break-words">
                                         {regionalAdmin.username}
                                     </span>
                                 </MobileDetail>
 
                                 <MobileDetail label="MSL ID">
-                                    <span className="block truncate">
+                                    <span className="block break-words">
                                         {regionalAdmin.mslId}
                                     </span>
                                 </MobileDetail>

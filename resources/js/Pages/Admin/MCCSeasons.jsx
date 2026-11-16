@@ -22,7 +22,55 @@ function Pagination({ paginator }) {
 }
 
 function SeasonCard({ season, onEdit, onDelete, onToggle }) {
-    return <article className="rounded-xl border border-neutral-800 bg-[#1a1a1a] p-4"><div className="flex items-start justify-between gap-3"><div><p className="text-xs uppercase tracking-wide text-yellow-500">Season {season.season_number}</p><h3 className="mt-1 text-lg font-semibold text-white">{season.season_name}</h3><p className="mt-1 text-sm text-gray-500">/{season.route_slug}</p></div><div className="flex flex-col items-end gap-2">{season.is_active ? <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-400">Active</span> : <span className="rounded-full bg-neutral-800 px-2.5 py-1 text-xs text-gray-400">Inactive</span>}<span className="inline-flex items-center gap-1 text-xs text-gray-500"><ImagePlus className="h-3.5 w-3.5" />{season.content_count} content</span></div></div><p className="mt-4 line-clamp-2 text-sm text-gray-400">{season.description || 'No season description.'}</p><p className="mt-3 inline-flex items-center gap-1.5 text-xs text-gray-500"><CalendarDays className="h-3.5 w-3.5" />{season.start_date || 'No start date'}{season.end_date ? ` — ${season.end_date}` : ''}</p><div className="mt-4 flex flex-wrap gap-2"><button type="button" onClick={() => onEdit(season)} className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-neutral-700 px-3 text-sm text-blue-400 hover:border-blue-400"><Edit3 className="h-4 w-4" />Edit</button>{!season.is_active && <button type="button" onClick={() => onToggle(season)} className="min-h-10 rounded-md border border-emerald-900 px-3 text-sm text-emerald-400 hover:bg-emerald-950">Set active</button>}{season.is_active ? <button type="button" disabled className="min-h-10 rounded-md border border-neutral-800 px-3 text-sm text-gray-600">Active season</button> : <button type="button" onClick={() => onDelete(season)} className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-red-900 px-3 text-sm text-red-400 hover:bg-red-950"><Trash2 className="h-4 w-4" />Delete</button>}</div></article>;
+    return (
+        <article className="rounded-xl border border-neutral-800 bg-[#1a1a1a] p-4">
+            <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                    <p className="text-xs uppercase tracking-wide text-yellow-500">Season {season.season_number}</p>
+                    <h3 className="mt-1 break-words text-lg font-semibold text-white">{season.season_name}</h3>
+                    <p className="mt-1 truncate text-sm text-gray-500">/{season.route_slug}</p>
+                </div>
+                <div className="flex shrink-0 flex-col items-end gap-2">
+                    {season.is_active ? (
+                        <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-400">Active</span>
+                    ) : (
+                        <span className="rounded-full bg-neutral-800 px-2.5 py-1 text-xs text-gray-400">Inactive</span>
+                    )}
+                    <span className="inline-flex items-center gap-1 text-xs text-gray-500">
+                        <ImagePlus className="h-3.5 w-3.5 shrink-0" />
+                        {season.content_count} content
+                    </span>
+                </div>
+            </div>
+            <p className="mt-4 line-clamp-2 text-sm text-gray-400">{season.description || 'No season description.'}</p>
+            <p className="mt-3 inline-flex flex-wrap items-center gap-1.5 text-xs text-gray-500">
+                <CalendarDays className="h-3.5 w-3.5 shrink-0" />
+                <span>
+                    {season.start_date || 'No start date'}
+                    {season.end_date ? ` — ${season.end_date}` : ''}
+                </span>
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+                <button type="button" onClick={() => onEdit(season)} className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-neutral-700 px-3 text-sm text-blue-400 hover:border-blue-400">
+                    <Edit3 className="h-4 w-4 shrink-0" />Edit
+                </button>
+                {!season.is_active && (
+                    <button type="button" onClick={() => onToggle(season)} className="min-h-10 rounded-md border border-emerald-900 px-3 text-sm text-emerald-400 hover:bg-emerald-950">
+                        Set active
+                    </button>
+                )}
+                {season.is_active ? (
+                    <button type="button" disabled className="min-h-10 rounded-md border border-neutral-800 px-3 text-sm text-gray-600">
+                        Active season
+                    </button>
+                ) : (
+                    <button type="button" onClick={() => onDelete(season)} className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-red-900 px-3 text-sm text-red-400 hover:bg-red-950">
+                        <Trash2 className="h-4 w-4 shrink-0" />Delete
+                    </button>
+                )}
+            </div>
+        </article>
+    );
 }
 
 function ContentManager({ season, contentTypes }) {
@@ -82,7 +130,56 @@ function ContentManager({ season, contentTypes }) {
 
     if (!season) return null;
 
-    return <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6"><div className="mb-6"><h2 className="text-lg font-bold text-yellow-500">Season content</h2><p className="mt-1 text-sm text-gray-400">Upload standard season visuals or maintain additional content entries.</p></div><div className="grid grid-cols-1 gap-4 md:grid-cols-2">{IMAGE_SLOTS.map((slot) => { const item = getContent(slot.key); const image = item?.content_value?.url || item?.content_value?.path; return <div key={slot.key} className="rounded-lg border border-neutral-800 bg-[#1a1a1a] p-4"><p className="mb-3 text-sm font-medium text-gray-300">{slot.label}</p>{image && <img src={image} alt={slot.label} className="mb-3 h-28 w-full rounded-md object-cover" />}<label className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-md border border-neutral-700 px-3 text-sm text-gray-300 hover:border-yellow-500"><Upload className="h-4 w-4" />{uploading === slot.key ? 'Uploading...' : item ? 'Replace image' : 'Upload image'}<input type="file" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp" className="hidden" disabled={Boolean(uploading)} onChange={(event) => uploadImage(slot, event.target.files?.[0])} /></label></div>; })}</div><form onSubmit={saveContent} className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_2fr_auto]"><AdminFilterSelect value={contentForm.content_type} onChange={(event) => setContentForm({ ...contentForm, content_type: event.target.value })} className={FIELD_CLASS}>{(contentTypes ?? []).map((type) => <option key={type} value={type}>{type}</option>)}</AdminFilterSelect><input type="text" value={contentForm.content_key} onChange={(event) => setContentForm({ ...contentForm, content_key: event.target.value })} placeholder="Content key" className={FIELD_CLASS} /><input type="text" value={contentForm.content_value} onChange={(event) => setContentForm({ ...contentForm, content_value: event.target.value })} placeholder="Text or JSON content value" className={FIELD_CLASS} /><button type="submit" className="min-h-[44px] rounded-md bg-yellow-500 px-4 text-sm font-bold text-black hover:bg-yellow-400">Save content</button></form>{contentMessage && <p className="mt-3 text-sm text-gray-400">{contentMessage}</p>}<div className="mt-6 space-y-2">{content.filter((item) => !IMAGE_SLOTS.some((slot) => slot.key === item.content_key)).map((item) => <div key={item.id} className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-neutral-800 px-3 py-3 text-sm"><div><span className="text-yellow-400">{item.content_key}</span><span className="ml-3 text-gray-500">{item.content_type}</span><p className="mt-1 max-w-2xl truncate text-gray-400">{typeof item.content_value === 'string' ? item.content_value : JSON.stringify(item.content_value)}</p></div><button type="button" onClick={() => removeContent(item)} className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-red-900 px-3 text-red-400 hover:bg-red-950"><Trash2 className="h-4 w-4" />Delete</button></div>)}</div></section>;
+    return (
+        <section className="mt-6 rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
+            <div className="mb-6">
+                <h2 className="text-lg font-bold text-yellow-500">Season content</h2>
+                <p className="mt-1 text-sm text-gray-400">Upload standard season visuals or maintain additional content entries.</p>
+            </div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {IMAGE_SLOTS.map((slot) => {
+                    const item = getContent(slot.key);
+                    const image = item?.content_value?.url || item?.content_value?.path;
+                    return (
+                        <div key={slot.key} className="rounded-lg border border-neutral-800 bg-[#1a1a1a] p-4">
+                            <p className="mb-3 text-sm font-medium text-gray-300">{slot.label}</p>
+                            {image && <img src={image} alt={slot.label} className="mb-3 h-28 w-full rounded-md object-cover" />}
+                            <label className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-md border border-neutral-700 px-3 text-sm text-gray-300 hover:border-yellow-500">
+                                <Upload className="h-4 w-4 shrink-0" />
+                                {uploading === slot.key ? 'Uploading...' : item ? 'Replace image' : 'Upload image'}
+                                <input type="file" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp" className="hidden" disabled={Boolean(uploading)} onChange={(event) => uploadImage(slot, event.target.files?.[0])} />
+                            </label>
+                        </div>
+                    );
+                })}
+            </div>
+            <form onSubmit={saveContent} className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-[1fr_1fr_2fr_auto]">
+                <AdminFilterSelect value={contentForm.content_type} onChange={(event) => setContentForm({ ...contentForm, content_type: event.target.value })} className={FIELD_CLASS}>
+                    {(contentTypes ?? []).map((type) => <option key={type} value={type}>{type}</option>)}
+                </AdminFilterSelect>
+                <input type="text" value={contentForm.content_key} onChange={(event) => setContentForm({ ...contentForm, content_key: event.target.value })} placeholder="Content key" className={FIELD_CLASS} />
+                <input type="text" value={contentForm.content_value} onChange={(event) => setContentForm({ ...contentForm, content_value: event.target.value })} placeholder="Text or JSON content value" className={`${FIELD_CLASS} sm:col-span-2 xl:col-span-1`} />
+                <button type="submit" className="min-h-[44px] sm:col-span-2 xl:col-span-1 rounded-md bg-yellow-500 px-4 text-sm font-bold text-black hover:bg-yellow-400">Save content</button>
+            </form>
+            {contentMessage && <p className="mt-3 text-sm text-gray-400">{contentMessage}</p>}
+            <div className="mt-6 space-y-2">
+                {content.filter((item) => !IMAGE_SLOTS.some((slot) => slot.key === item.content_key)).map((item) => (
+                    <div key={item.id} className="flex flex-wrap items-start sm:items-center justify-between gap-3 rounded-md border border-neutral-800 px-3 py-3 text-sm">
+                        <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
+                                <span className="text-yellow-400 break-words">{item.content_key}</span>
+                                <span className="text-gray-500">{item.content_type}</span>
+                            </div>
+                            <p className="mt-1 break-words text-gray-400">{typeof item.content_value === 'string' ? item.content_value : JSON.stringify(item.content_value)}</p>
+                        </div>
+                        <button type="button" onClick={() => removeContent(item)} className="inline-flex shrink-0 min-h-9 items-center gap-1.5 rounded-md border border-red-900 px-3 text-red-400 hover:bg-red-950">
+                            <Trash2 className="h-4 w-4 shrink-0" />Delete
+                        </button>
+                    </div>
+                ))}
+            </div>
+        </section>
+    );
 }
 
 export default function MCCSeasons({ seasons, nextSeasonNumber = 1, filters = {}, showForm: initialShowForm = false, editingSeason: initialEditingSeason = null, contentTypes = [] }) {
@@ -104,7 +201,34 @@ export default function MCCSeasons({ seasons, nextSeasonNumber = 1, filters = {}
     const toggleActive = (season) => { if (window.confirm(`Set Season ${season.season_number} as active?`)) router.post(route('admin.mcc-seasons.toggle-active', season.id), {}, { preserveScroll: true }); };
     const deleteSeason = (season) => { if (window.confirm(`Delete Season ${season.season_number}?`)) router.delete(route('admin.mcc-seasons.destroy', season.id), { preserveScroll: true }); };
 
-    return <AdminLayout activeNavId="mcc-seasons" showGlobalSearch><Head title="MCC Seasons" /><div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between"><div><h1 className="mb-2 text-2xl font-bold text-white sm:text-3xl">MCC Seasons</h1><p className="text-sm leading-6 text-gray-400">Manage Pamantasang Lakas season metadata and content.</p></div><div className="flex w-full flex-col gap-2 xl:flex-row xl:w-auto"><form onSubmit={submitFilters} className="grid w-full grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto] xl:w-[620px]"><label htmlFor="mcc-season-search" className="sr-only">Search MCC seasons</label><div className="relative min-w-0"><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" /><input id="mcc-season-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search seasons" className={`${FIELD_CLASS} pl-9`} /></div><AdminFilterSelect value={status} onChange={(event) => setStatus(event.target.value)} aria-label="Filter seasons by status"><option value="all">All status</option><option value="active">Active</option><option value="inactive">Inactive</option></AdminFilterSelect><button type="submit" className="min-h-[44px] rounded-md bg-yellow-500 px-4 text-sm font-bold text-black hover:bg-yellow-400">Filter</button>{(search || status !== 'all') && <button type="button" onClick={clearFilters} className="min-h-[44px] rounded-md border border-neutral-700 px-4 text-sm text-gray-300 hover:border-neutral-500 hover:text-white">Clear</button>}</form><button type="button" onClick={openCreate} className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 py-2.5 text-sm font-bold text-black hover:bg-yellow-400"><Plus className="h-4 w-4" />Create Season</button></div></div>
+    return (
+        <AdminLayout activeNavId="mcc-seasons" showGlobalSearch>
+            <Head title="MCC Seasons" />
+            <div className="mb-6 flex flex-col gap-4 sm:mb-8 2xl:flex-row 2xl:items-end 2xl:justify-between">
+                <div className="min-w-0">
+                    <h1 className="mb-2 text-2xl font-bold text-white sm:text-3xl">MCC Seasons</h1>
+                    <p className="text-sm leading-6 text-gray-400">Manage Pamantasang Lakas season metadata and content.</p>
+                </div>
+                <div className="flex w-full flex-col gap-2 xl:flex-row xl:flex-wrap xl:items-center 2xl:w-auto">
+                    <form onSubmit={submitFilters} className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_auto_auto_auto] xl:flex-1 2xl:w-auto">
+                        <label htmlFor="mcc-season-search" className="sr-only">Search MCC seasons</label>
+                        <div className="relative min-w-0 sm:col-span-2 lg:col-span-1 2xl:w-60">
+                            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                            <input id="mcc-season-search" type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search seasons" className={`${FIELD_CLASS} pl-9`} />
+                        </div>
+                        <AdminFilterSelect value={status} onChange={(event) => setStatus(event.target.value)} aria-label="Filter seasons by status">
+                            <option value="all">All status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </AdminFilterSelect>
+                        <button type="submit" className="min-h-[44px] rounded-md bg-yellow-500 px-4 text-sm font-bold text-black hover:bg-yellow-400">Filter</button>
+                        {(search || status !== 'all') && <button type="button" onClick={clearFilters} className="min-h-[44px] rounded-md border border-neutral-700 px-4 text-sm text-gray-300 hover:border-neutral-500 hover:text-white">Clear</button>}
+                    </form>
+                    <button type="button" onClick={openCreate} className="inline-flex min-h-[44px] w-full xl:w-auto shrink-0 items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 py-2.5 text-sm font-bold text-black hover:bg-yellow-400">
+                        <Plus className="h-4 w-4 shrink-0" />Create Season
+                    </button>
+                </div>
+            </div>
         {formOpen && typeof document !== 'undefined' && createPortal(
             <div
                 className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4 backdrop-blur-md transition-all duration-200"
@@ -114,13 +238,13 @@ export default function MCCSeasons({ seasons, nextSeasonNumber = 1, filters = {}
                     if (e.target === e.currentTarget) closeForm();
                 }}
             >
-                <div className="w-full max-w-2xl rounded-2xl border border-yellow-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
-                    <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                        <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
-                                <Star className="h-5 w-5" />
+                <div className="w-full max-w-2xl rounded-2xl border border-yellow-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-4 sm:p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150 max-h-[90dvh] overflow-y-auto overscroll-contain">
+                    <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-4">
+                        <div className="flex items-center gap-3 min-w-0">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                                <Star className="h-5 w-5 shrink-0" />
                             </div>
-                            <div>
+                            <div className="min-w-0">
                                 <h2 className="text-base font-black text-white">
                                     {editingSeason ? `Edit Season ${editingSeason.season_number}` : 'Create MCC Season'}
                                 </h2>
@@ -132,7 +256,7 @@ export default function MCCSeasons({ seasons, nextSeasonNumber = 1, filters = {}
                         <button
                             type="button"
                             onClick={closeForm}
-                            className="rounded-lg p-1 text-gray-400 hover:text-white"
+                            className="shrink-0 rounded-lg p-1 text-gray-400 hover:text-white"
                         >
                             <X className="h-5 w-5" />
                         </button>
@@ -177,23 +301,23 @@ export default function MCCSeasons({ seasons, nextSeasonNumber = 1, filters = {}
                         </div>
 
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            <div>
+                            <div className="min-w-0">
                                 <label className="block text-xs font-semibold text-gray-300 mb-1.5">Start date</label>
                                 <input
                                     type="date"
                                     value={data.start_date}
                                     onChange={(event) => setData('start_date', event.target.value)}
-                                    className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white [color-scheme:dark] focus:border-yellow-400 focus:outline-none"
+                                    className="w-full min-w-0 rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white [color-scheme:dark] focus:border-yellow-400 focus:outline-none"
                                 />
                                 {errors.start_date && <p className="mt-1 text-xs text-red-400">{errors.start_date}</p>}
                             </div>
-                            <div>
+                            <div className="min-w-0">
                                 <label className="block text-xs font-semibold text-gray-300 mb-1.5">End date</label>
                                 <input
                                     type="date"
                                     value={data.end_date}
                                     onChange={(event) => setData('end_date', event.target.value)}
-                                    className="w-full rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white [color-scheme:dark] focus:border-yellow-400 focus:outline-none"
+                                    className="w-full min-w-0 rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-xs text-white [color-scheme:dark] focus:border-yellow-400 focus:outline-none"
                                 />
                                 {errors.end_date && <p className="mt-1 text-xs text-red-400">{errors.end_date}</p>}
                             </div>
@@ -221,18 +345,18 @@ export default function MCCSeasons({ seasons, nextSeasonNumber = 1, filters = {}
                             <span>Set as active season</span>
                         </label>
 
-                        <div className="flex items-center justify-end gap-3 border-t border-white/10 pt-4 mt-6">
+                        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 border-t border-white/10 pt-4 mt-6">
                             <button
                                 type="button"
                                 onClick={closeForm}
-                                className="rounded-xl border border-white/10 px-4 py-2.5 text-xs font-bold text-gray-300 hover:bg-white/5"
+                                className="min-h-[40px] w-full sm:w-auto rounded-xl border border-white/10 px-4 py-2.5 text-xs font-bold text-gray-300 hover:bg-white/5"
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="inline-flex items-center gap-1.5 rounded-xl bg-yellow-400 px-5 py-2.5 text-xs font-bold text-black hover:bg-yellow-300 disabled:opacity-50 transition-all shadow-[0_0_15px_rgba(251,191,36,0.2)]"
+                                className="min-h-[40px] w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-yellow-400 px-5 py-2.5 text-xs font-bold text-black hover:bg-yellow-300 disabled:opacity-50 transition-all shadow-[0_0_15px_rgba(251,191,36,0.2)]"
                             >
                                 <span>{processing ? 'Saving...' : editingSeason ? 'Update Season' : 'Create Season'}</span>
                             </button>
@@ -244,5 +368,6 @@ export default function MCCSeasons({ seasons, nextSeasonNumber = 1, filters = {}
         )}
         <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6 md:p-8"><div className="mb-6"><h2 className="text-lg font-bold text-yellow-500 sm:text-xl">Season list</h2><p className="mt-1 text-sm text-gray-400">{seasons?.total ?? items.length} season{(seasons?.total ?? items.length) === 1 ? '' : 's'}</p></div>{items.length === 0 ? <div className="py-14 text-center"><Star className="mx-auto mb-4 h-10 w-10 text-gray-600" /><p className="text-sm text-gray-400">No MCC seasons found. Create your first season above.</p></div> : <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">{items.map((season) => <SeasonCard key={season.id} season={season} onEdit={openEdit} onDelete={deleteSeason} onToggle={toggleActive} />)}</div>}<Pagination paginator={seasons} /></section>
         {editingSeason && <ContentManager season={editingSeason} contentTypes={contentTypes} />}
-    </AdminLayout>;
+        </AdminLayout>
+    );
 }

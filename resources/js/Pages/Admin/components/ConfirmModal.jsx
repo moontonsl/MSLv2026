@@ -29,18 +29,21 @@ export default function ConfirmModal({
             {/* Backdrop click handler */}
             <div className="absolute inset-0" onClick={onCancel} />
             
-            <div className="w-full max-w-md bg-[#0f0f11]/95 backdrop-blur-2xl border border-white/15 rounded-2xl p-6 relative shadow-[0_20px_70px_rgba(0,0,0,0.6)] z-10 animate-in fade-in zoom-in-95 duration-150">
+            <div className="w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain bg-[#0f0f11]/95 backdrop-blur-2xl border border-white/15 rounded-2xl p-4 sm:p-6 relative shadow-[0_20px_70px_rgba(0,0,0,0.6)] z-10 animate-in fade-in zoom-in-95 duration-150">
                 {/* Visual identity left accent border */}
                 <div className="absolute top-0 left-0 w-[4px] h-full bg-brand-500 rounded-l-2xl" />
                 
                 {/* Header */}
-                <div className="flex justify-between items-center mb-4 pb-3 border-b border-white/5">
-                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                        <HelpCircle className="h-5 w-5 text-brand-500" /> {title}
+                <div className="flex justify-between items-start gap-3 mb-4 pb-3 border-b border-white/5">
+                    <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-2 min-w-0">
+                        <HelpCircle className="h-5 w-5 shrink-0 text-brand-500" />
+                        <span className="break-words">{title}</span>
                     </h3>
                     <button
+                        type="button"
+                        aria-label="Close modal"
                         onClick={onCancel}
-                        className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+                        className="inline-flex min-h-9 min-w-9 shrink-0 items-center justify-center p-1 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
                     >
                         <X className="h-5 w-5" />
                     </button>
@@ -48,24 +51,24 @@ export default function ConfirmModal({
 
                 {/* Body */}
                 <div className="mb-6">
-                    <p className="text-sm text-gray-300 leading-relaxed">
+                    <p className="text-sm text-gray-300 leading-relaxed break-words">
                         {message}
                     </p>
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-3 pt-3 border-t border-white/5">
+                <div className="flex flex-col-reverse min-[380px]:flex-row gap-2.5 sm:gap-3 pt-3 border-t border-white/5">
                     <button
                         type="button"
                         onClick={onCancel}
-                        className="flex-1 py-2.5 rounded-xl border border-white/10 hover:bg-white/5 text-sm font-semibold text-gray-400 hover:text-white transition-colors"
+                        className="flex-1 min-h-[42px] py-2.5 rounded-xl border border-white/10 hover:bg-white/5 text-sm font-semibold text-gray-400 hover:text-white transition-colors"
                     >
                         {cancelText}
                     </button>
                     <button
                         type="button"
                         onClick={onConfirm}
-                        className="flex-1 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-black text-sm font-bold transition-all uppercase tracking-wider hover:scale-[1.02] active:scale-[0.98]"
+                        className="flex-1 min-h-[42px] py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-black text-sm font-bold transition-all uppercase tracking-wider hover:scale-[1.02] active:scale-[0.98]"
                     >
                         {confirmText}
                     </button>

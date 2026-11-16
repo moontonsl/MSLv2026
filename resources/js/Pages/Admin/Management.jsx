@@ -478,13 +478,13 @@ export default function Management({
             <Head title="Permissions & Roles | RBAC Center" />
 
             {/* Header with Title and Quick Actions */}
-            <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                    <div className="flex items-center gap-2.5">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20 shadow-[0_0_15px_rgba(251,191,36,0.15)]">
+            <div className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
+                <div className="min-w-0">
+                    <div className="flex items-start gap-2.5 sm:items-center">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber-400/20 bg-amber-400/10 text-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.15)]">
                             <Shield className="h-5 w-5" />
                         </div>
-                        <div>
+                        <div className="min-w-0">
                             <h1 className="text-2xl font-black tracking-tight text-white sm:text-3xl">
                                 Permissions &amp; Roles
                             </h1>
@@ -495,34 +495,34 @@ export default function Management({
                     </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2.5">
+                <div className="flex flex-wrap items-center gap-2.5 shrink-0">
                     <button
                         type="button"
                         onClick={handleOpenCreateRole}
-                        className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-amber-400 px-4 text-xs font-bold text-black shadow-lg shadow-amber-400/20 transition-all hover:bg-amber-300 active:scale-95"
+                        className="inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-xl bg-amber-400 px-4 text-xs font-bold text-black shadow-lg shadow-amber-400/20 transition-all hover:bg-amber-300 active:scale-95"
                     >
-                        <Plus className="h-4 w-4 stroke-[3]" />
+                        <Plus className="h-4 w-4 shrink-0 stroke-[3]" />
                         <span>Create New Role</span>
                     </button>
 
                     <Link
                         href={route('admin.accounts.index')}
-                        className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xs font-bold text-gray-300 transition-colors hover:border-amber-400/40 hover:text-white"
+                        className="inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xs font-bold text-gray-300 transition-colors hover:border-amber-400/40 hover:text-white"
                     >
-                        <UserPlus className="h-4 w-4 text-amber-400" />
+                        <UserPlus className="h-4 w-4 shrink-0 text-amber-400" />
                         <span>Manage Accounts</span>
-                        <ExternalLink className="h-3.5 w-3.5 text-gray-500" />
+                        <ExternalLink className="h-3.5 w-3.5 shrink-0 text-gray-500" />
                     </Link>
                 </div>
             </div>
 
             {/* Metric Summary Cards */}
-            <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4">
+            <div className="mb-6 grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 xl:grid-cols-4 lg:gap-4">
                 {/* Total Roles */}
                 <div className="rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-500/[0.08] to-transparent p-4 sm:p-5">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                         <span className="text-xs font-bold uppercase tracking-wider text-amber-400">Configured Roles</span>
-                        <ShieldCheck className="h-5 w-5 text-amber-400" />
+                        <ShieldCheck className="h-5 w-5 shrink-0 text-amber-400" />
                     </div>
                     <p className="mt-3 text-2xl font-black text-white sm:text-3xl">{roles.length}</p>
                     <p className="mt-1 text-xs text-gray-400">Role capability templates</p>
@@ -530,9 +530,9 @@ export default function Management({
 
                 {/* Total Back-Office Staff */}
                 <div className="rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-500/[0.08] to-transparent p-4 sm:p-5">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                         <span className="text-xs font-bold uppercase tracking-wider text-blue-400">Total Staff</span>
-                        <Users className="h-5 w-5 text-blue-400" />
+                        <Users className="h-5 w-5 shrink-0 text-blue-400" />
                     </div>
                     <p className="mt-3 text-2xl font-black text-white sm:text-3xl">{adminUsers.length}</p>
                     <p className="mt-1 text-xs text-gray-400">Authorized staff logins</p>
@@ -540,9 +540,9 @@ export default function Management({
 
                 {/* Super Admins */}
                 <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/[0.08] to-transparent p-4 sm:p-5">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                         <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Super Admins</span>
-                        <Crown className="h-5 w-5 text-emerald-400" />
+                        <Crown className="h-5 w-5 shrink-0 text-emerald-400" />
                     </div>
                     <p className="mt-3 text-2xl font-black text-white sm:text-3xl">{stats.super_admins ?? 1}</p>
                     <p className="mt-1 text-xs text-gray-400">Protected root system bypasses</p>
@@ -550,9 +550,9 @@ export default function Management({
 
                 {/* Platform Capabilities */}
                 <div className="rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/[0.08] to-transparent p-4 sm:p-5">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                         <span className="text-xs font-bold uppercase tracking-wider text-purple-400">Capabilities</span>
-                        <Layers className="h-5 w-5 text-purple-400" />
+                        <Layers className="h-5 w-5 shrink-0 text-purple-400" />
                     </div>
                     <p className="mt-3 text-2xl font-black text-white sm:text-3xl">{allPermissions.length}</p>
                     <p className="mt-1 text-xs text-gray-400">Granular platform privileges</p>
@@ -588,10 +588,10 @@ export default function Management({
             )}
 
             {/* Master-Detail Dual-Pane Workspace */}
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
                 {/* Left Column: Directory Switcher (Roles vs Staff) */}
-                <div className="lg:col-span-4">
-                    <div className="sticky top-6 rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl p-5 shadow-2xl">
+                <div className="min-w-0 xl:col-span-4">
+                    <div className="rounded-2xl border border-white/10 bg-black/40 p-4 shadow-2xl backdrop-blur-xl sm:p-5 xl:sticky xl:top-24">
                         {/* Tab Switcher */}
                         <div className="mb-4 grid grid-cols-2 gap-1 rounded-xl border border-white/10 bg-white/[0.03] p-1">
                             <button
@@ -820,7 +820,7 @@ export default function Management({
                 </div>
 
                 {/* Right Column: Active Role or Staff Matrix Workspace */}
-                <div className="lg:col-span-8 space-y-6">
+                <div className="min-w-0 space-y-6 xl:col-span-8">
                     {/* WORKSPACE VIEW 1: ROLE CAPABILITIES CONFIGURATOR */}
                     {workspaceTab === 'roles' && (
                         <>
@@ -1030,10 +1030,10 @@ export default function Management({
                                                                                 {permission.name}
                                                                             </p>
                                                                         </div>
-                                                                        <p className="mt-1 text-[11px] text-gray-400 line-clamp-2">
+                                                                        <p className="mt-1 line-clamp-2 text-[11px] text-gray-400">
                                                                             {permission.description}
                                                                         </p>
-                                                                        <span className="mt-1.5 inline-block font-mono text-[9px] text-gray-500">
+                                                                        <span className="mt-1.5 inline-block break-all font-mono text-[9px] text-gray-500">
                                                                             {permission.id}
                                                                         </span>
                                                                     </div>
@@ -1094,23 +1094,23 @@ export default function Management({
                                                     </div>
                                                 </div>
 
-                                                <div className="flex items-center gap-2.5 self-end sm:self-center">
+                                                <div className="flex w-full flex-wrap items-center justify-end gap-2.5 sm:w-auto sm:self-center">
                                                     <button
                                                         type="button"
                                                         onClick={discardRoleChanges}
                                                         disabled={saving}
-                                                        className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xs font-bold text-gray-300 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-50"
+                                                        className="inline-flex min-h-[40px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xs font-bold text-gray-300 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-50 sm:flex-none"
                                                     >
-                                                        <Undo2 className="h-3.5 w-3.5" />
+                                                        <Undo2 className="h-3.5 w-3.5 shrink-0" />
                                                         Discard
                                                     </button>
                                                     <button
                                                         type="button"
                                                         onClick={saveRolePermissions}
                                                         disabled={saving}
-                                                        className="inline-flex min-h-[40px] items-center gap-2 rounded-xl bg-amber-400 px-5 text-xs font-bold text-black shadow-lg shadow-amber-400/20 transition-all hover:bg-amber-300 active:scale-95 disabled:opacity-50"
+                                                        className="inline-flex min-h-[40px] flex-1 items-center justify-center gap-2 rounded-xl bg-amber-400 px-5 text-xs font-bold text-black shadow-lg shadow-amber-400/20 transition-all hover:bg-amber-300 active:scale-95 disabled:opacity-50 sm:flex-none"
                                                     >
-                                                        <Save className="h-3.5 w-3.5" />
+                                                        <Save className="h-3.5 w-3.5 shrink-0" />
                                                         {saving ? 'Saving...' : 'Save Role Permissions'}
                                                     </button>
                                                 </div>
@@ -1134,9 +1134,9 @@ export default function Management({
                                     </p>
                                 </div>
                             ) : (
-                                <div className="rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl p-5 sm:p-6 shadow-2xl space-y-6">
+                                <div className="space-y-6 rounded-2xl border border-white/10 bg-black/40 p-5 shadow-2xl backdrop-blur-xl sm:p-6">
                                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                                        <div className="flex items-center gap-4">
+                                        <div className="flex min-w-0 items-center gap-4">
                                             <div
                                                 className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-xl font-black ${
                                                     isSelectedStaffSuper
@@ -1146,7 +1146,7 @@ export default function Management({
                                             >
                                                 {selectedStaff.name?.charAt(0)?.toUpperCase() || '?'}
                                             </div>
-                                            <div>
+                                            <div className="min-w-0">
                                                 <div className="flex flex-wrap items-center gap-2">
                                                     <h2 className="text-xl font-bold text-white">
                                                         {selectedStaff.name}
@@ -1161,22 +1161,22 @@ export default function Management({
                                                         {isSelectedStaffSuper ? 'Super Admin' : selectedStaffRole}
                                                     </span>
                                                 </div>
-                                                <p className="mt-0.5 text-xs text-gray-400">{selectedStaff.email}</p>
+                                                <p className="mt-0.5 min-w-0 break-all text-xs text-gray-400">{selectedStaff.email}</p>
                                             </div>
                                         </div>
 
                                         <Link
                                             href={route('admin.accounts.index')}
-                                            className="inline-flex min-h-[40px] items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xs font-bold text-gray-300 hover:border-amber-400/40 hover:text-white"
+                                            className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xs font-bold text-gray-300 hover:border-amber-400/40 hover:text-white"
                                         >
-                                            <UserCog className="h-4 w-4 text-amber-400" />
+                                            <UserCog className="h-4 w-4 shrink-0 text-amber-400" />
                                             <span>Manage All Accounts</span>
                                         </Link>
                                     </div>
 
                                     {/* Role Selector Card */}
-                                    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-5">
-                                        <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">
+                                    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4 sm:p-5">
+                                        <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-amber-400">
                                             Assigned Role
                                         </h3>
                                         {isSelectedStaffSuper ? (
@@ -1185,11 +1185,11 @@ export default function Management({
                                             </p>
                                         ) : (
                                             <div>
-                                                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                                                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                                                     <select
                                                         value={selectedStaffRole}
                                                         onChange={(e) => setSelectedStaffRole(e.target.value)}
-                                                        className="min-h-[44px] rounded-xl border border-white/10 bg-[#161618] px-4 py-2 text-xs font-semibold text-white focus:border-amber-400 focus:outline-none sm:w-72"
+                                                        className="min-h-[44px] w-full max-w-full rounded-xl border border-white/10 bg-[#161618] px-4 py-2 text-xs font-semibold text-white focus:border-amber-400 focus:outline-none sm:w-72"
                                                     >
                                                         {roles
                                                             .filter((r) => r.slug !== 'super_admin')
@@ -1216,10 +1216,10 @@ export default function Management({
 
                                     {/* Sticky Save Bar for Staff */}
                                     {isStaffDirty && (
-                                        <div className="sticky bottom-6 z-30 rounded-2xl border border-amber-400/40 bg-[#141416]/95 p-4 sm:p-5 backdrop-blur-xl shadow-2xl shadow-amber-400/10">
+                                        <div className="sticky bottom-6 z-30 rounded-2xl border border-amber-400/40 bg-[#141416]/95 p-4 shadow-2xl shadow-amber-400/10 backdrop-blur-xl sm:p-5">
                                             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                                 <div className="flex items-center gap-3">
-                                                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400/20 text-amber-400 border border-amber-400/30">
+                                                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber-400/30 bg-amber-400/20 text-amber-400">
                                                         <AlertCircle className="h-5 w-5" />
                                                     </span>
                                                     <div>
@@ -1228,7 +1228,7 @@ export default function Management({
                                                         </p>
                                                         <p className="text-[11px] text-gray-400">
                                                             Role updated for{' '}
-                                                            <span className="text-amber-400 font-semibold">
+                                                            <span className="font-semibold text-amber-400">
                                                                 {selectedStaff.name}
                                                             </span>
                                                             . Save to confirm the change.
@@ -1236,23 +1236,23 @@ export default function Management({
                                                     </div>
                                                 </div>
 
-                                                <div className="flex items-center gap-2.5 self-end sm:self-center">
+                                                <div className="flex w-full flex-wrap items-center justify-end gap-2.5 sm:w-auto sm:self-center">
                                                     <button
                                                         type="button"
                                                         onClick={() => setSelectedStaffRole(savedStaffRole)}
                                                         disabled={saving}
-                                                        className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xs font-bold text-gray-300 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-50"
+                                                        className="inline-flex min-h-[40px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xs font-bold text-gray-300 transition-colors hover:bg-white/10 hover:text-white disabled:opacity-50 sm:flex-none"
                                                     >
-                                                        <Undo2 className="h-3.5 w-3.5" />
+                                                        <Undo2 className="h-3.5 w-3.5 shrink-0" />
                                                         Discard
                                                     </button>
                                                     <button
                                                         type="button"
                                                         onClick={handleSaveStaffChanges}
                                                         disabled={saving}
-                                                        className="inline-flex min-h-[40px] items-center gap-2 rounded-xl bg-amber-400 px-5 text-xs font-bold text-black shadow-lg shadow-amber-400/20 transition-all hover:bg-amber-300 active:scale-95 disabled:opacity-50"
+                                                        className="inline-flex min-h-[40px] flex-1 items-center justify-center gap-2 rounded-xl bg-amber-400 px-5 text-xs font-bold text-black shadow-lg shadow-amber-400/20 transition-all hover:bg-amber-300 active:scale-95 disabled:opacity-50 sm:flex-none"
                                                     >
-                                                        <Save className="h-3.5 w-3.5" />
+                                                        <Save className="h-3.5 w-3.5 shrink-0" />
                                                         {saving ? 'Saving...' : 'Save Staff Changes'}
                                                     </button>
                                                 </div>
@@ -1269,20 +1269,20 @@ export default function Management({
             {/* CREATE NEW ROLE MODAL */}
             {isCreateRoleModalOpen && typeof document !== 'undefined' && createPortal(
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md transition-all duration-200"
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-md transition-all duration-200"
                     role="dialog"
                     aria-modal="true"
                     onClick={(e) => {
                         if (e.target === e.currentTarget) setIsCreateRoleModalOpen(false);
                     }}
                 >
-                    <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-white/15 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
-                        <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-5">
-                            <div className="flex items-center gap-2.5">
-                                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20">
+                    <div className="max-h-[calc(100dvh-2rem)] w-full max-w-2xl overflow-y-auto overscroll-contain rounded-2xl border border-white/15 bg-[#0f0f11]/95 p-4 shadow-[0_20px_70px_rgba(0,0,0,0.6)] backdrop-blur-2xl animate-in fade-in zoom-in-95 duration-150 sm:p-6">
+                        <div className="mb-5 flex items-start justify-between gap-3 border-b border-white/10 pb-4">
+                            <div className="flex min-w-0 items-center gap-2.5">
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-amber-400/20 bg-amber-400/10 text-amber-400">
                                     <ShieldCheck className="h-5 w-5" />
                                 </div>
-                                <div>
+                                <div className="min-w-0">
                                     <h3 className="text-base font-bold text-white">Create New Admin Role</h3>
                                     <p className="text-xs text-gray-400">
                                         Define a reusable role template with pre-assigned permissions.
@@ -1292,7 +1292,7 @@ export default function Management({
                             <button
                                 type="button"
                                 onClick={() => setIsCreateRoleModalOpen(false)}
-                                className="rounded-lg p-1.5 text-gray-400 hover:text-white"
+                                className="shrink-0 rounded-lg p-1.5 text-gray-400 hover:text-white"
                             >
                                 <X className="h-5 w-5" />
                             </button>
@@ -1306,7 +1306,7 @@ export default function Management({
 
                         <form onSubmit={handleCreateRoleSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-xs font-bold text-gray-300 uppercase mb-1.5">
+                                <label className="mb-1.5 block text-xs font-bold uppercase text-gray-300">
                                     Role Name <span className="text-red-400">*</span>
                                 </label>
                                 <input
@@ -1320,7 +1320,7 @@ export default function Management({
                             </div>
 
                             <div>
-                                <label className="block text-xs font-bold text-gray-300 uppercase mb-1.5">
+                                <label className="mb-1.5 block text-xs font-bold uppercase text-gray-300">
                                     Description (Optional)
                                 </label>
                                 <input
@@ -1333,8 +1333,8 @@ export default function Management({
                             </div>
 
                             <div>
-                                <div className="flex items-center justify-between mb-2">
-                                    <label className="block text-xs font-bold text-gray-300 uppercase">
+                                <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                                    <label className="block text-xs font-bold uppercase text-gray-300">
                                         Assign Permissions ({newRoleForm.permissions.length} selected)
                                     </label>
                                     <div className="flex items-center gap-2">
@@ -1361,16 +1361,16 @@ export default function Management({
                                     </div>
                                 </div>
 
-                                <div className="max-h-60 overflow-y-auto rounded-xl border border-white/10 bg-black/40 p-3 space-y-2">
+                                <div className="max-h-60 space-y-2 overflow-y-auto rounded-xl border border-white/10 bg-black/40 p-3">
                                     {allPermissions.map((perm) => {
                                         const isChecked = newRoleForm.permissions.includes(perm.id);
                                         return (
                                             <label
                                                 key={perm.id}
-                                                className={`flex items-start gap-2.5 rounded-lg p-2 transition-colors cursor-pointer ${
+                                                className={`flex cursor-pointer items-start gap-2.5 rounded-lg p-2 transition-colors ${
                                                     isChecked
-                                                        ? 'bg-amber-400/10 border border-amber-400/30'
-                                                        : 'hover:bg-white/5 border border-transparent'
+                                                        ? 'border border-amber-400/30 bg-amber-400/10'
+                                                        : 'border border-transparent hover:bg-white/5'
                                                 }`}
                                             >
                                                 <input
@@ -1389,20 +1389,20 @@ export default function Management({
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+                            <div className="flex flex-col-reverse gap-3 border-t border-white/10 pt-3 sm:flex-row sm:items-center sm:justify-end">
                                 <button
                                     type="button"
                                     onClick={() => setIsCreateRoleModalOpen(false)}
-                                    className="min-h-[40px] rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xs font-bold text-gray-300 hover:text-white"
+                                    className="inline-flex min-h-[42px] w-full items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] px-4 text-xs font-bold text-gray-300 hover:text-white sm:w-auto"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={saving}
-                                    className="inline-flex min-h-[40px] items-center gap-2 rounded-xl bg-amber-400 px-5 text-xs font-bold text-black shadow-lg shadow-amber-400/20 hover:bg-amber-300 disabled:opacity-50"
+                                    className="inline-flex min-h-[42px] w-full items-center justify-center gap-2 rounded-xl bg-amber-400 px-5 text-xs font-bold text-black shadow-lg shadow-amber-400/20 hover:bg-amber-300 disabled:opacity-50 sm:w-auto"
                                 >
-                                    <Plus className="h-4 w-4 stroke-[3]" />
+                                    <Plus className="h-4 w-4 shrink-0 stroke-[3]" />
                                     {saving ? 'Creating Role...' : 'Create Role'}
                                 </button>
                             </div>

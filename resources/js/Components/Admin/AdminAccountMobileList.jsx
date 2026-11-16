@@ -2,8 +2,8 @@ import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 
 function MobileDetail({ label, children }) {
     return (
-        <div className="grid min-w-0 grid-cols-[max-content_minmax(0,1fr)] items-center gap-3 text-sm">
-            <span className="whitespace-nowrap font-bold text-white">
+        <div className="flex flex-col gap-1 text-sm min-[420px]:grid min-[420px]:min-w-0 min-[420px]:grid-cols-[max-content_minmax(0,1fr)] min-[420px]:items-center min-[420px]:gap-3">
+            <span className="whitespace-nowrap text-xs font-bold uppercase tracking-wide text-gray-400 min-[420px]:text-sm min-[420px]:normal-case min-[420px]:tracking-normal min-[420px]:text-white">
                 {label}
             </span>
 
@@ -28,7 +28,7 @@ export default function AdminAccountMobileList({
     }
 
     return (
-        <div className="flex w-full flex-col">
+        <div className="flex w-full flex-col overflow-hidden rounded-lg border border-white/10">
             {accounts.map((account) => {
                 const isExpanded = expandedAccountId === account.id;
 
@@ -44,23 +44,29 @@ export default function AdminAccountMobileList({
                                 onEdit(account);
                             }
                         }}
-                        className="w-full cursor-pointer border-b border-white/10 bg-[#1A1A1A] outline-none transition hover:bg-[#202020] focus:bg-[#202020]"
+                        className="w-full cursor-pointer border-b border-white/10 bg-[#1A1A1A] outline-none transition last:border-b-0 hover:bg-[#202020] focus:bg-[#202020]"
                     >
-                        <div className="flex min-h-[52px] w-full items-center gap-3 px-3 py-2.5">
-                            <div className="grid min-w-0 flex-1 grid-cols-[max-content_minmax(0,1fr)] items-center gap-3">
-                                <span className="whitespace-nowrap text-sm font-bold text-white">
-                                    Admin Name
-                                </span>
-
-                                <span className="min-w-0 truncate whitespace-nowrap text-sm text-gray-400">
+                        <div className="flex min-h-[56px] w-full items-center justify-between gap-2.5 px-3.5 py-2.5">
+                            <div className="min-w-0 flex-1">
+                                <p className="truncate text-sm font-semibold text-white">
                                     {account.name}
-                                </span>
+                                </p>
+                                <p className="mt-0.5 truncate text-xs text-gray-400 sm:hidden">
+                                    {account.roleLabel}
+                                </p>
                             </div>
+
+                            <span className="hidden shrink-0 rounded-md bg-[#3B3B3B] px-2.5 py-1 text-xs font-semibold text-gray-200 sm:inline-flex">
+                                {account.roleLabel}
+                            </span>
 
                             <button
                                 type="button"
-                                onClick={(event) => onToggle(event, account.id)}
-                                className="flex min-h-9 min-w-9 shrink-0 items-center justify-center rounded-md text-white hover:bg-white/10"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    onToggle(event, account.id);
+                                }}
+                                className="flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-md text-white hover:bg-white/10"
                                 aria-label={
                                     isExpanded
                                         ? "Collapse account"
@@ -77,21 +83,21 @@ export default function AdminAccountMobileList({
                         </div>
 
                         {isExpanded ? (
-                            <div className="space-y-3 border-t border-white/10 px-3 py-3">
+                            <div className="space-y-3 border-t border-white/10 px-3.5 py-3.5">
                                 <MobileDetail label="Email Address">
-                                    <span className="block min-w-0 truncate whitespace-nowrap text-gray-400">
+                                    <span className="block min-w-0 break-all text-gray-300">
                                         {account.email}
                                     </span>
                                 </MobileDetail>
 
                                 <MobileDetail label="Role">
-                                    <span className="inline-flex w-fit rounded-md bg-[#3B3B3B] px-2 py-1 text-gray-200">
+                                    <span className="inline-flex max-w-full break-words rounded-md bg-[#3B3B3B] px-2.5 py-1 text-xs font-semibold text-gray-200">
                                         {account.roleLabel}
                                     </span>
                                 </MobileDetail>
 
                                 <MobileDetail label="Created Date">
-                                    <span className="block min-w-0 truncate whitespace-nowrap text-gray-400">
+                                    <span className="block min-w-0 text-gray-300">
                                         {account.createdDate}
                                     </span>
                                 </MobileDetail>
@@ -104,10 +110,11 @@ export default function AdminAccountMobileList({
                                     ) : (
                                         <button
                                             type="button"
-                                            onClick={(event) =>
-                                                onDelete(event, account)
-                                            }
-                                            className="w-fit rounded-md p-1 text-red-500 hover:bg-red-500/10"
+                                            onClick={(event) => {
+                                                event.stopPropagation();
+                                                onDelete(event, account);
+                                            }}
+                                            className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-md p-2 text-red-500 hover:bg-red-500/10"
                                             aria-label={`Delete ${account.email}`}
                                         >
                                             <Trash2 className="h-4 w-4" />

@@ -10,7 +10,7 @@ import { Bookmark, ChevronDown, Pencil, Plus, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const ADD_BUTTON_CLASS =
-    'inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 py-2.5 text-sm font-bold text-black transition hover:bg-yellow-400 active:scale-[0.98] sm:w-auto';
+    'inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-yellow-500 px-4 py-2.5 text-sm font-bold text-black transition hover:bg-yellow-400 active:scale-[0.98] sm:w-auto';
 
 export default function Faq({ faqs: initialFaqs = [] }) {
     const [modalOpen, setModalOpen] = useState(false);
@@ -139,7 +139,7 @@ export default function Faq({ faqs: initialFaqs = [] }) {
             <Head title="Frequently Asked Questions" />
 
             <div className="mb-6 flex flex-col gap-5 sm:mb-8 sm:flex-row sm:items-start sm:justify-between">
-                <div>
+                <div className="min-w-0">
                     <h1 className="mb-1 text-2xl font-bold text-white sm:text-3xl">
                         Frequently Asked Questions
                     </h1>
@@ -152,19 +152,19 @@ export default function Faq({ faqs: initialFaqs = [] }) {
                     onClick={openAddModal}
                     className={`${ADD_BUTTON_CLASS} hidden sm:inline-flex`}
                 >
-                    <Plus aria-hidden="true" className="h-4 w-4" />
+                    <Plus aria-hidden="true" className="h-4 w-4 shrink-0" />
                     Add New FAQ
                 </button>
             </div>
 
-            <section className="rounded-xl border-0 bg-transparent p-0 sm:border sm:border-neutral-800 sm:bg-[#111111] sm:p-6 lg:p-11">
+            <section className="rounded-xl border-0 bg-transparent p-0 sm:border sm:border-neutral-800 sm:bg-[#111111] sm:p-6 md:p-8">
                 {/* Homepage Active Counter Header */}
                 <div className="mb-6 flex flex-col gap-3 rounded-xl border border-neutral-800 bg-[#161616] p-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <div className="flex items-center gap-2">
+                    <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
                             <span className="text-sm font-semibold text-white">Homepage Active Questions</span>
                             <span
-                                className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
+                                className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-bold ${
                                     pinnedCount === 5
                                         ? 'border border-yellow-500/30 bg-yellow-500/20 text-yellow-400'
                                         : 'bg-neutral-800 text-gray-300'
@@ -180,12 +180,12 @@ export default function Faq({ faqs: initialFaqs = [] }) {
                 </div>
 
                 {limitWarning && (
-                    <div className="mb-4 flex items-center justify-between rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
-                        <span>{limitWarning}</span>
+                    <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+                        <span className="min-w-0 flex-1">{limitWarning}</span>
                         <button
                             type="button"
                             onClick={() => setLimitWarning('')}
-                            className="ml-4 text-xs font-semibold text-amber-200 underline hover:text-white"
+                            className="shrink-0 whitespace-nowrap text-xs font-semibold text-amber-200 underline hover:text-white"
                         >
                             Dismiss
                         </button>
@@ -193,11 +193,11 @@ export default function Faq({ faqs: initialFaqs = [] }) {
                 )}
 
                 <div className="mb-5 flex flex-col gap-5 sm:mb-8 sm:flex-row sm:items-start sm:justify-between">
-                    <h2 className="hidden text-xl font-bold text-white sm:block">
+                    <h2 className="hidden min-w-0 text-xl font-bold text-white sm:block">
                         Frequently Asked Questions
                     </h2>
 
-                    <div className="flex w-full flex-col gap-4 sm:w-auto sm:items-end">
+                    <div className="flex w-full shrink-0 flex-col gap-4 sm:w-auto sm:items-end">
                         <label className="w-full sm:w-[270px]">
                             <span className="mb-2 block text-sm font-medium text-gray-300">
                                 Category
@@ -222,7 +222,7 @@ export default function Faq({ faqs: initialFaqs = [] }) {
                             onClick={openAddModal}
                             className={`${ADD_BUTTON_CLASS} sm:hidden`}
                         >
-                            <Plus aria-hidden="true" className="h-4 w-4" />
+                            <Plus aria-hidden="true" className="h-4 w-4 shrink-0" />
                             Add New FAQ
                         </button>
                     </div>
@@ -234,7 +234,7 @@ export default function Faq({ faqs: initialFaqs = [] }) {
                             No FAQs in this category.
                         </p>
                     ) : (
-                        <div className="space-y-2.5 md:space-y-5">
+                        <div className="space-y-3 md:space-y-4">
                             {filteredFaqs.map((item) => {
                                 const isExpanded = expandedFaqId === item.id;
                                 const answerId = `faq-answer-${item.id}`;
@@ -242,92 +242,97 @@ export default function Faq({ faqs: initialFaqs = [] }) {
                                 return (
                                     <article
                                         key={item.id}
-                                        className={`flex min-h-[56px] items-center gap-2.5 rounded-md border border-neutral-800 bg-[#111111] px-2.5 py-2 md:gap-6 md:rounded-xl md:px-8 ${
-                                            isExpanded
-                                                ? 'md:min-h-[120px] md:py-5'
-                                                : 'md:min-h-[64px] md:py-3'
-                                        }`}
+                                        className="rounded-lg border border-neutral-800 bg-[#111111] p-3 sm:rounded-xl sm:px-5 sm:py-4 md:px-6"
                                     >
-                                        <button
-                                            type="button"
-                                            onClick={() => togglePin(item)}
-                                            aria-label={
-                                                item.is_pinned
-                                                    ? `Remove ${item.question} from the public FAQ section`
-                                                    : `Show ${item.question} on the public FAQ section`
-                                            }
-                                            aria-pressed={item.is_pinned}
-                                            title={
-                                                item.is_pinned
-                                                    ? 'Visible on the public page'
-                                                    : 'Show on the public page'
-                                            }
-                                            className="inline-flex min-h-11 min-w-9 shrink-0 items-center justify-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 md:min-w-11"
-                                        >
-                                            <Bookmark
-                                                aria-hidden="true"
-                                                className={`h-5 w-5 transition-colors ${
-                                                    item.is_pinned
-                                                        ? 'fill-yellow-400/20 text-yellow-400'
-                                                        : 'text-neutral-600 hover:text-yellow-400'
-                                                }`}
-                                            />
-                                        </button>
+                                        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                                            <div className="flex min-w-0 flex-1 items-start gap-2 sm:gap-3">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => togglePin(item)}
+                                                    aria-label={
+                                                        item.is_pinned
+                                                            ? `Remove ${item.question} from the public FAQ section`
+                                                            : `Show ${item.question} on the public FAQ section`
+                                                    }
+                                                    aria-pressed={item.is_pinned}
+                                                    title={
+                                                        item.is_pinned
+                                                            ? 'Visible on the public page'
+                                                            : 'Show on the public page'
+                                                    }
+                                                    className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500"
+                                                >
+                                                    <Bookmark
+                                                        aria-hidden="true"
+                                                        className={`h-5 w-5 transition-colors ${
+                                                            item.is_pinned
+                                                                ? 'fill-yellow-400/20 text-yellow-400'
+                                                                : 'text-neutral-600 hover:text-yellow-400'
+                                                        }`}
+                                                    />
+                                                </button>
 
-                                        <div className="min-w-0 flex-1">
-                                            <div className="flex flex-wrap items-center gap-2">
-                                                <h3 className="text-base font-bold leading-5 text-white md:text-[22px] md:leading-7">
-                                                    <span className="block min-w-0 overflow-hidden text-ellipsis whitespace-nowrap md:overflow-visible md:text-clip md:whitespace-normal">
-                                                        {item.question}
-                                                    </span>
-                                                </h3>
-                                                {item.is_pinned ? (
-                                                    <span className="inline-flex shrink-0 items-center rounded-full border border-yellow-500/30 bg-yellow-500/15 px-2.5 py-0.5 text-[11px] font-semibold text-yellow-400">
-                                                        Active on Homepage
-                                                    </span>
-                                                ) : null}
+                                                <div className="min-w-0 flex-1 py-2">
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <h3
+                                                            className={`min-w-0 break-words text-base font-bold leading-6 text-white md:text-lg lg:text-xl ${
+                                                                isExpanded ? '' : 'line-clamp-2 sm:line-clamp-none'
+                                                            }`}
+                                                        >
+                                                            {item.question}
+                                                        </h3>
+                                                        {item.is_pinned ? (
+                                                            <span className="inline-flex shrink-0 items-center rounded-full border border-yellow-500/30 bg-yellow-500/15 px-2.5 py-0.5 text-[11px] font-semibold text-yellow-400">
+                                                                Active on Homepage
+                                                            </span>
+                                                        ) : null}
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <p
-                                                id={answerId}
-                                                hidden={!isExpanded}
-                                                className="mt-2 text-xs leading-4 text-gray-400 md:text-base md:leading-6"
-                                            >
-                                                {item.answer}
-                                            </p>
+
+                                            <div className="flex shrink-0 items-center justify-end gap-0.5 border-t border-neutral-800/70 pt-1.5 sm:border-t-0 sm:pt-0">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => toggleFaq(item.id)}
+                                                    className={`${MODAL_ACTION_ICON_CLASS} text-gray-500 hover:bg-white/5 hover:text-white`}
+                                                    aria-label={`${isExpanded ? 'Collapse' : 'Expand'} answer for ${item.question}`}
+                                                    aria-expanded={isExpanded}
+                                                    aria-controls={answerId}
+                                                >
+                                                    <ChevronDown
+                                                        aria-hidden="true"
+                                                        className={`h-4 w-4 transition-transform duration-200 ${
+                                                            isExpanded ? 'rotate-180' : ''
+                                                        }`}
+                                                    />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => openEditModal(item)}
+                                                    className={`${MODAL_ACTION_ICON_CLASS} text-blue-500 hover:bg-blue-500/10 hover:text-blue-400`}
+                                                    aria-label={`Edit FAQ: ${item.question}`}
+                                                >
+                                                    <Pencil aria-hidden="true" className="h-4 w-4" />
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => requestDelete(item.id)}
+                                                    className={`${MODAL_ACTION_ICON_CLASS} text-red-500 hover:bg-red-500/10 hover:text-red-400`}
+                                                    aria-label={`Delete FAQ: ${item.question}`}
+                                                >
+                                                    <Trash2 aria-hidden="true" className="h-4 w-4" />
+                                                </button>
+                                            </div>
                                         </div>
 
-                                        <div className="flex shrink-0 items-center gap-0.5">
-                                            <button
-                                                type="button"
-                                                onClick={() => toggleFaq(item.id)}
-                                                className={`${MODAL_ACTION_ICON_CLASS} text-gray-500 hover:bg-white/5 hover:text-white`}
-                                                aria-label={`${isExpanded ? 'Collapse' : 'Expand'} answer for ${item.question}`}
-                                                aria-expanded={isExpanded}
-                                                aria-controls={answerId}
-                                            >
-                                                <ChevronDown
-                                                    aria-hidden="true"
-                                                    className={`h-4 w-4 transition-transform duration-200 ${
-                                                        isExpanded ? 'rotate-180' : ''
-                                                    }`}
-                                                />
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => openEditModal(item)}
-                                                className={`${MODAL_ACTION_ICON_CLASS} text-blue-500 hover:bg-blue-500/10 hover:text-blue-400`}
-                                                aria-label={`Edit FAQ: ${item.question}`}
-                                            >
-                                                <Pencil aria-hidden="true" className="h-4 w-4" />
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => requestDelete(item.id)}
-                                                className={`${MODAL_ACTION_ICON_CLASS} text-red-500 hover:bg-red-500/10 hover:text-red-400`}
-                                                aria-label={`Delete FAQ: ${item.question}`}
-                                            >
-                                                <Trash2 aria-hidden="true" className="h-4 w-4" />
-                                            </button>
+                                        <div
+                                            id={answerId}
+                                            hidden={!isExpanded}
+                                            className="mt-2.5 border-t border-neutral-800/70 pt-3 sm:pl-14"
+                                        >
+                                            <p className="break-words text-sm leading-6 text-gray-400 md:text-base">
+                                                {item.answer}
+                                            </p>
                                         </div>
                                     </article>
                                 );

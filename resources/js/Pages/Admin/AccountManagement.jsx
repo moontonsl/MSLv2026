@@ -237,7 +237,7 @@ export default function AccountManagement({ adminUsers }) {
 
             <div className="min-w-0 w-full overflow-x-hidden">
                 <header className="mb-6 flex flex-col gap-4 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
-                    <div>
+                    <div className="min-w-0">
                         <h1 className="text-2xl font-bold tracking-tight text-[#FFFBEB] sm:text-3xl">
                             Account Management
                         </h1>
@@ -245,8 +245,8 @@ export default function AccountManagement({ adminUsers }) {
                             Review and manage administrator accounts and access details.
                         </p>
                     </div>
-                    <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
-                        <label className="relative block min-w-0 flex-1 sm:w-64 sm:flex-none">
+                    <div className="flex w-full flex-col gap-2 sm:flex-row xl:w-auto">
+                        <label className="relative block min-w-0 flex-1 xl:w-64 xl:flex-none">
                             <span className="sr-only">Search admin accounts</span>
                             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
                             <input
@@ -261,15 +261,15 @@ export default function AccountManagement({ adminUsers }) {
                         <button
                             type="button"
                             onClick={() => setShowCreateModal(true)}
-                            className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 text-sm font-bold text-black transition hover:bg-yellow-400"
+                            className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-yellow-500 px-4 text-sm font-bold text-black transition hover:bg-yellow-400"
                         >
-                            <Plus className="h-4 w-4" />
+                            <Plus className="h-4 w-4 shrink-0" />
                             New Admin
                         </button>
                     </div>
                 </header>
 
-                <section className="max-w-full overflow-hidden bg-[#0B0B0B] md:rounded-xl md:border md:border-white/[0.08] md:px-11 md:py-11">
+                <section className="max-w-full overflow-hidden rounded-xl border border-white/[0.08] bg-[#0B0B0B] p-4 sm:p-6 md:p-8">
                     <div className="mb-6">
                         <h2 className="font-heading text-base font-bold text-[#FBBF24] sm:text-2xl">
                             Administrator list

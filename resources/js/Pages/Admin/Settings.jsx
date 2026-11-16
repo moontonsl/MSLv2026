@@ -7,12 +7,12 @@ const ERROR_CLASS = 'mt-1 text-sm text-red-400';
 
 function AssetPreview({ label, url, file, compact = false }) {
     return (
-        <div className="mt-3 flex items-center gap-4 rounded-lg border border-neutral-800 bg-[#1a1a1a] p-3">
+        <div className="mt-3 flex flex-col gap-3 rounded-lg border border-neutral-800 bg-[#1a1a1a] p-3 min-[420px]:flex-row min-[420px]:items-center min-[420px]:gap-4">
             <div className={`flex shrink-0 items-center justify-center overflow-hidden rounded-md bg-neutral-900 ${compact ? 'h-12 w-12' : 'h-16 w-24'}`}>
                 {url ? <img src={url} alt={`Current ${label}`} className="h-full w-full object-contain" /> : <Image className="h-6 w-6 text-neutral-600" />}
             </div>
             <div className="min-w-0 text-sm">
-                <p className="text-gray-300">{file ? `Selected: ${file.name}` : url ? `Current ${label}` : `No ${label} uploaded`}</p>
+                <p className="break-all text-gray-300">{file ? `Selected: ${file.name}` : url ? `Current ${label}` : `No ${label} uploaded`}</p>
                 {file && <p className="mt-1 text-xs text-yellow-500">The selected file will replace the current asset when saved.</p>}
             </div>
         </div>
@@ -46,8 +46,8 @@ export default function Settings({ settings = {} }) {
             <form onSubmit={submit} className="w-full space-y-6">
                 <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6 md:p-8">
                     <div className="mb-6 flex items-start gap-3">
-                        <div className="rounded-lg bg-yellow-500/10 p-2 text-yellow-500"><ShieldCheck className="h-5 w-5" /></div>
-                        <div><h2 className="text-lg font-bold text-yellow-500">Website identity</h2><p className="mt-1 text-sm text-gray-400">These values are stored for the website title and name.</p></div>
+                        <div className="shrink-0 rounded-lg bg-yellow-500/10 p-2 text-yellow-500"><ShieldCheck className="h-5 w-5" /></div>
+                        <div className="min-w-0"><h2 className="text-lg font-bold text-yellow-500">Website identity</h2><p className="mt-1 text-sm text-gray-400">These values are stored for the website title and name.</p></div>
                     </div>
                     <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                         <div>
@@ -66,15 +66,15 @@ export default function Settings({ settings = {} }) {
                 <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6 md:p-8">
                     <div className="mb-6"><h2 className="text-lg font-bold text-yellow-500">Website assets</h2><p className="mt-1 text-sm text-gray-400">Upload a logo or favicon. Existing uploaded files are cleaned up when replaced.</p></div>
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        <div>
+                        <div className="min-w-0">
                             <label htmlFor="website-logo" className="mb-2 block text-sm font-medium text-gray-300">Logo <span className="font-normal text-gray-500">(max 2 MB)</span></label>
-                            <input id="website-logo" type="file" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp" onChange={(event) => setData('logo', event.target.files?.[0] ?? null)} className="block min-h-[44px] w-full rounded-md border border-neutral-800 bg-[#1a1a1a] px-3 py-2 text-sm text-gray-300 file:mr-3 file:rounded file:border-0 file:bg-yellow-500 file:px-3 file:py-1.5 file:font-semibold file:text-black" />
+                            <input id="website-logo" type="file" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp" onChange={(event) => setData('logo', event.target.files?.[0] ?? null)} className="block min-h-[44px] w-full max-w-full rounded-md border border-neutral-800 bg-[#1a1a1a] px-3 py-2 text-sm text-gray-300 file:mr-3 file:rounded file:border-0 file:bg-yellow-500 file:px-3 file:py-1.5 file:font-semibold file:text-black" />
                             <AssetPreview label="logo" url={settings.logo_url} file={data.logo} />
                             {errors.logo && <p className={ERROR_CLASS}>{errors.logo}</p>}
                         </div>
-                        <div>
+                        <div className="min-w-0">
                             <label htmlFor="website-favicon" className="mb-2 block text-sm font-medium text-gray-300">Favicon <span className="font-normal text-gray-500">(max 512 KB)</span></label>
-                            <input id="website-favicon" type="file" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,image/x-icon" onChange={(event) => setData('favicon', event.target.files?.[0] ?? null)} className="block min-h-[44px] w-full rounded-md border border-neutral-800 bg-[#1a1a1a] px-3 py-2 text-sm text-gray-300 file:mr-3 file:rounded file:border-0 file:bg-yellow-500 file:px-3 file:py-1.5 file:font-semibold file:text-black" />
+                            <input id="website-favicon" type="file" accept="image/png,image/jpeg,image/jpg,image/gif,image/webp,image/x-icon" onChange={(event) => setData('favicon', event.target.files?.[0] ?? null)} className="block min-h-[44px] w-full max-w-full rounded-md border border-neutral-800 bg-[#1a1a1a] px-3 py-2 text-sm text-gray-300 file:mr-3 file:rounded file:border-0 file:bg-yellow-500 file:px-3 file:py-1.5 file:font-semibold file:text-black" />
                             <AssetPreview label="favicon" url={settings.favicon_url} file={data.favicon} compact />
                             {errors.favicon && <p className={ERROR_CLASS}>{errors.favicon}</p>}
                         </div>
@@ -84,7 +84,7 @@ export default function Settings({ settings = {} }) {
                 <section className="rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6 md:p-8">
                     <div className="mb-6"><h2 className="text-lg font-bold text-yellow-500">Maintenance notice</h2><p className="mt-1 text-sm text-gray-400">Save the maintenance status and message used by the public site integration.</p></div>
                     <label className="flex min-h-[44px] items-center gap-3 text-sm text-gray-300">
-                        <input type="checkbox" checked={Boolean(data.maintenance_mode)} onChange={(event) => setData('maintenance_mode', event.target.checked)} className="h-4 w-4 rounded border-neutral-700 bg-[#1a1a1a] text-yellow-500 focus:ring-yellow-500" />
+                        <input type="checkbox" checked={Boolean(data.maintenance_mode)} onChange={(event) => setData('maintenance_mode', event.target.checked)} className="h-4 w-4 shrink-0 rounded border-neutral-700 bg-[#1a1a1a] text-yellow-500 focus:ring-yellow-500" />
                         Enable maintenance mode
                     </label>
                     {errors.maintenance_mode && <p className={ERROR_CLASS}>{errors.maintenance_mode}</p>}
@@ -95,7 +95,12 @@ export default function Settings({ settings = {} }) {
                     </div>
                 </section>
 
-                <div className="flex justify-end pb-4"><button type="submit" disabled={processing} className="inline-flex min-h-[44px] items-center gap-2 rounded-md bg-yellow-500 px-5 py-2.5 text-sm font-bold text-black hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-50"><Save className="h-4 w-4" />{processing ? 'Saving...' : 'Save Settings'}</button></div>
+                <div className="flex justify-end pb-4">
+                    <button type="submit" disabled={processing} className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-md bg-yellow-500 px-5 py-2.5 text-sm font-bold text-black hover:bg-yellow-400 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto">
+                        <Save className="h-4 w-4 shrink-0" />
+                        {processing ? 'Saving...' : 'Save Settings'}
+                    </button>
+                </div>
             </form>
         </AdminLayout>
     );

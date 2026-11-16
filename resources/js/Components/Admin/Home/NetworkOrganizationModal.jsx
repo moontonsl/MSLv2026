@@ -1,9 +1,10 @@
 import BaseModal from "@/Components/Admin/BaseModal";
 import FeaturedImageUpload from "@/Components/Admin/FeaturedImageUpload";
 import {
+    MODAL_CANCEL_CLASS,
+    MODAL_CONFIRM_YES_CLASS,
     MODAL_INPUT_CLASS,
     MODAL_LABEL_CLASS,
-    MODAL_SUBMIT_FOOTER_CLASS,
 } from "@/Components/Admin/adminModalFormStyles";
 import { useEffect, useState } from "react";
 
@@ -71,20 +72,20 @@ export default function NetworkOrganizationModal({
             isOpen={isOpen}
             onClose={onClose}
             title={isEditing ? "Edit Network Organization" : "Add Network Organization Logo"}
-            size="lg"
+            maxWidth="max-w-lg"
             footer={
-                <div className={MODAL_SUBMIT_FOOTER_CLASS}>
+                <div className="grid grid-cols-1 gap-2.5 min-[380px]:grid-cols-2 sm:gap-3">
                     <button
                         type="button"
                         onClick={onClose}
-                        className="rounded-lg border border-neutral-700 bg-transparent px-5 py-2.5 text-sm font-semibold text-neutral-300 transition-colors hover:bg-neutral-800 hover:text-white"
+                        className={MODAL_CANCEL_CLASS}
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
                         form="network-org-form"
-                        className="rounded-lg bg-[#FBBF24] px-5 py-2.5 text-sm font-bold text-black transition-all hover:brightness-110 active:scale-[0.98]"
+                        className={MODAL_CONFIRM_YES_CLASS}
                     >
                         {isEditing ? "Update Organization" : "Add Organization"}
                     </button>
@@ -144,7 +145,7 @@ export default function NetworkOrganizationModal({
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div>
+                    <div className="min-w-0">
                         <label htmlFor="org-order" className={MODAL_LABEL_CLASS}>
                             Display Order
                         </label>
@@ -162,14 +163,14 @@ export default function NetworkOrganizationModal({
                         </p>
                     </div>
 
-                    <div className="flex items-center pt-6">
-                        <label className="flex cursor-pointer items-center gap-3">
+                    <div className="flex items-center sm:pt-6">
+                        <label className="flex min-h-[44px] cursor-pointer items-center gap-3">
                             <input
                                 name="is_active"
                                 type="checkbox"
                                 checked={form.is_active}
                                 onChange={handleChange}
-                                className="h-4 w-4 rounded border-neutral-700 bg-neutral-900 text-[#FBBF24] focus:ring-[#FBBF24]"
+                                className="h-4 w-4 shrink-0 rounded border-neutral-700 bg-neutral-900 text-[#FBBF24] focus:ring-[#FBBF24]"
                             />
                             <span className="text-sm font-medium text-white">
                                 Active on Homepage

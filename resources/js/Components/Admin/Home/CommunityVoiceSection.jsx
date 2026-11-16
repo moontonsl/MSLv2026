@@ -83,10 +83,10 @@ export default function CommunityVoiceSection() {
 
     return (
         <>
-            <SectionCard title="Community Voice">
+            <SectionCard title="MSL Campus Community">
                 <div className="space-y-6">
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                        <div>
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                        <div className="min-w-0">
                             <AdminFieldLabel htmlFor="community-fullname" required>
                                 Fullname
                             </AdminFieldLabel>
@@ -97,7 +97,7 @@ export default function CommunityVoiceSection() {
                                 className={ADMIN_INPUT_CLASS}
                             />
                         </div>
-                        <div>
+                        <div className="min-w-0">
                             <AdminFieldLabel htmlFor="community-position" required>
                                 Position
                             </AdminFieldLabel>
@@ -108,7 +108,7 @@ export default function CommunityVoiceSection() {
                                 className={ADMIN_INPUT_CLASS}
                             />
                         </div>
-                        <div>
+                        <div className="min-w-0">
                             <AdminFieldLabel htmlFor="community-school" required>
                                 School
                             </AdminFieldLabel>
@@ -125,8 +125,8 @@ export default function CommunityVoiceSection() {
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                        <div className="lg:col-span-2">
+                    <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+                        <div className="min-w-0 xl:col-span-2">
                             <AdminFieldLabel htmlFor="community-message" required>
                                 Message
                             </AdminFieldLabel>
@@ -137,19 +137,23 @@ export default function CommunityVoiceSection() {
                                 className={`${ADMIN_TEXTAREA_CLASS} h-32`}
                             />
                         </div>
-                        <div className="flex lg:col-span-1">
-                            <ImageDropzone className="min-h-[120px] flex-1 sm:min-h-[8rem] lg:min-h-0 lg:h-32" />
+                        <div className="flex min-w-0 xl:col-span-1">
+                            <ImageDropzone className="min-h-[120px] flex-1 sm:min-h-[8rem]" />
                         </div>
                     </div>
 
                     <div className="flex justify-end">
-                        <button type="button" className={ADMIN_GOLD_BUTTON_CLASS} onClick={openAddModal}>
-                            <Plus className="h-4 w-4" />
+                        <button
+                            type="button"
+                            className={`${ADMIN_GOLD_BUTTON_CLASS} w-full sm:w-auto`}
+                            onClick={openAddModal}
+                        >
+                            <Plus className="h-4 w-4 shrink-0" />
                             Add New
                         </button>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
                         {items.map((item) => (
                             <ContentCard
                                 key={item.id}

@@ -109,8 +109,8 @@ export default function StatisticsSection({ initialStatistics = {}, liveCounts =
             >
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Mode Selector */}
-                    <div className="flex flex-col gap-3 rounded-xl border border-neutral-800 bg-[#161616] p-4 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
+                    <div className="flex flex-col gap-3 rounded-xl border border-neutral-800 bg-[#161616] p-4 xl:flex-row xl:items-center xl:justify-between">
+                        <div className="min-w-0">
                             <span className="text-sm font-semibold text-white">Counting Data Source</span>
                             <p className="text-xs text-gray-400">
                                 {mode === 'live'
@@ -118,11 +118,11 @@ export default function StatisticsSection({ initialStatistics = {}, liveCounts =
                                     : 'Using custom manual values entered below.'}
                             </p>
                         </div>
-                        <div className="inline-flex rounded-lg border border-neutral-700 bg-neutral-900 p-1">
+                        <div className="grid w-full shrink-0 grid-cols-1 gap-1 rounded-lg border border-neutral-700 bg-neutral-900 p-1 min-[420px]:grid-cols-2 sm:inline-flex sm:w-auto">
                             <button
                                 type="button"
                                 onClick={() => handleModeChange('live')}
-                                className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
+                                className={`rounded-md px-3 py-1.5 text-center text-xs font-semibold transition-colors ${
                                     mode === 'live'
                                         ? 'bg-[#FBBF24] text-black shadow'
                                         : 'text-gray-400 hover:text-white'
@@ -133,7 +133,7 @@ export default function StatisticsSection({ initialStatistics = {}, liveCounts =
                             <button
                                 type="button"
                                 onClick={() => handleModeChange('custom')}
-                                className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
+                                className={`rounded-md px-3 py-1.5 text-center text-xs font-semibold transition-colors ${
                                     mode === 'custom'
                                         ? 'bg-[#FBBF24] text-black shadow'
                                         : 'text-gray-400 hover:text-white'
@@ -143,7 +143,7 @@ export default function StatisticsSection({ initialStatistics = {}, liveCounts =
                             </button>
                         </div>
                     </div>
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
                         {STAT_CONFIG.map((stat) => {
                             const Icon = stat.icon;
                             const valueKey = stat.key;
@@ -156,12 +156,12 @@ export default function StatisticsSection({ initialStatistics = {}, liveCounts =
                                     className="flex flex-col justify-between rounded-xl border border-neutral-800 bg-[#161616] p-5 transition-colors hover:border-neutral-700"
                                 >
                                     <div>
-                                        <div className="flex items-center justify-between gap-3">
-                                            <div className="flex items-center gap-3">
-                                                <span className="grid h-10 w-10 place-items-center rounded-lg bg-[#FBBF24]/10 text-[#FBBF24]">
+                                        <div className="flex flex-wrap items-start justify-between gap-3 sm:items-center">
+                                            <div className="flex min-w-0 items-center gap-3">
+                                                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#FBBF24]/10 text-[#FBBF24]">
                                                     <Icon className="h-5 w-5" />
                                                 </span>
-                                                <div>
+                                                <div className="min-w-0">
                                                     <h3 className="text-base font-semibold text-white">
                                                         {stat.title}
                                                     </h3>
@@ -172,8 +172,8 @@ export default function StatisticsSection({ initialStatistics = {}, liveCounts =
                                             </div>
 
                                             {/* Live DB Reference pill */}
-                                            <div className="flex items-center gap-1.5 rounded-full border border-neutral-700 bg-neutral-900/80 px-2.5 py-1 text-[11px] text-gray-300">
-                                                <Database className="h-3 w-3 text-emerald-400" />
+                                            <div className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-neutral-700 bg-neutral-900/80 px-2.5 py-1 text-[11px] text-gray-300">
+                                                <Database className="h-3 w-3 shrink-0 text-emerald-400" />
                                                 <span>DB: <strong className="text-white">{Number(liveCount).toLocaleString()}</strong></span>
                                                 <button
                                                     type="button"
@@ -187,7 +187,7 @@ export default function StatisticsSection({ initialStatistics = {}, liveCounts =
                                         </div>
 
                                         <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                            <div>
+                                            <div className="min-w-0">
                                                 <AdminFieldLabel htmlFor={`stat-${valueKey}`}>
                                                     Counter Value
                                                 </AdminFieldLabel>
@@ -208,7 +208,7 @@ export default function StatisticsSection({ initialStatistics = {}, liveCounts =
                                                 </span>
                                             </div>
 
-                                            <div>
+                                            <div className="min-w-0">
                                                 <AdminFieldLabel htmlFor={`stat-${labelKey}`}>
                                                     Display Label
                                                 </AdminFieldLabel>
@@ -239,9 +239,9 @@ export default function StatisticsSection({ initialStatistics = {}, liveCounts =
                         <button
                             type="submit"
                             disabled={saving}
-                            className={ADMIN_GOLD_BUTTON_CLASS}
+                            className={`${ADMIN_GOLD_BUTTON_CLASS} w-full sm:w-auto`}
                         >
-                            <Save className="h-4 w-4" />
+                            <Save className="h-4 w-4 shrink-0" />
                             {saving ? 'Saving...' : 'Save Statistics'}
                         </button>
                     </div>
@@ -251,8 +251,8 @@ export default function StatisticsSection({ initialStatistics = {}, liveCounts =
             <SuccessModal
                 isOpen={successOpen}
                 onClose={() => setSuccessOpen(false)}
-                title="Homepage Statistics Saved"
-                message="The homepage statistics counters have been successfully updated. Visitors will now see the updated dynamic values and animations on the landing page."
+                message="Homepage Statistics Saved!"
+                description="The homepage statistics counters have been successfully updated. Visitors will now see the updated dynamic values and animations on the landing page."
             />
         </>
     );

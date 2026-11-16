@@ -14,27 +14,27 @@ export default function RegionalAdminDesktopTable({
     }
 
     return (
-        <div className="w-full min-w-0 overflow-hidden">
-            <table className="w-full table-fixed text-left">
+        <div className="w-full min-w-0 overflow-x-auto">
+            <table className="w-full min-w-[680px] table-fixed text-left">
                 <thead>
                     <tr className="border-b border-white/[0.06]">
-                        <th className="w-[22%] pb-4 text-sm font-bold text-white lg:text-base">
+                        <th className="w-[22%] pb-4 pr-3 text-sm font-bold text-white lg:text-base">
                             Fullname
                         </th>
 
-                        <th className="w-[22%] pb-4 text-sm font-bold text-white lg:text-base">
+                        <th className="w-[21%] pb-4 pr-3 text-sm font-bold text-white lg:text-base">
                             Username
                         </th>
 
-                        <th className="w-[18%] pb-4 text-sm font-bold text-white lg:text-base">
+                        <th className="w-[17%] pb-4 pr-3 text-sm font-bold text-white lg:text-base">
                             MSL ID
                         </th>
 
-                        <th className="w-[28%] pb-4 text-sm font-bold text-white lg:text-base">
+                        <th className="w-[26%] pb-4 pr-3 text-sm font-bold text-white lg:text-base">
                             Original School
                         </th>
 
-                        <th className="w-[10%] pb-4 text-right text-sm font-bold text-white lg:text-base">
+                        <th className="w-[110px] pb-4 text-right text-sm font-bold text-white lg:text-base">
                             Actions
                         </th>
                     </tr>
@@ -46,31 +46,31 @@ export default function RegionalAdminDesktopTable({
                             key={regionalAdmin.id}
                             className="border-b border-white/[0.04] transition last:border-0 hover:bg-white/[0.025]"
                         >
-                            <td className="max-w-0 py-5 pr-4 text-sm font-semibold text-gray-400 lg:text-base">
+                            <td className="max-w-0 py-5 pr-3 text-sm font-semibold text-gray-400 lg:text-base">
                                 <span className="block truncate">
                                     {regionalAdmin.fullName}
                                 </span>
                             </td>
 
-                            <td className="max-w-0 py-5 pr-4 text-sm font-semibold text-gray-400 lg:text-base">
+                            <td className="max-w-0 py-5 pr-3 text-sm font-semibold text-gray-400 lg:text-base">
                                 <span className="block truncate">
                                     {regionalAdmin.username}
                                 </span>
                             </td>
 
-                            <td className="max-w-0 py-5 pr-4 text-sm font-semibold text-gray-400 lg:text-base">
+                            <td className="max-w-0 py-5 pr-3 text-sm font-semibold text-gray-400 lg:text-base">
                                 <span className="block truncate">
                                     {regionalAdmin.mslId}
                                 </span>
                             </td>
 
-                            <td className="max-w-0 py-5 pr-4 text-sm font-semibold text-gray-400 lg:text-base">
+                            <td className="max-w-0 py-5 pr-3 text-sm font-semibold text-gray-400 lg:text-base">
                                 <span className="block truncate">
                                     {regionalAdmin.originalSchool}
                                 </span>
                             </td>
 
-                            <td className="py-5">
+                            <td className="w-[110px] py-5">
                                 <div className="flex items-center justify-end gap-2">
                                     <button
                                         type="button"

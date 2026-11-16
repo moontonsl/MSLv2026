@@ -103,7 +103,7 @@ export default function FeaturedImagesUpload({
             />
 
             {value.length > 0 && (
-                <div className="mb-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                <div className="mb-3 grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 sm:grid-cols-3">
                     {value.map((item, index) => {
                         const preview = resolvePreview(item, objectUrls);
                         return (
@@ -121,10 +121,12 @@ export default function FeaturedImagesUpload({
                                 <button
                                     type="button"
                                     onClick={() => removeAt(index)}
-                                    className="absolute right-1 top-1 flex min-h-11 min-w-11 items-center justify-center rounded-full bg-black/70 text-white transition-colors hover:bg-black"
+                                    className="absolute right-0.5 top-0.5 flex min-h-11 min-w-11 items-center justify-center"
                                     aria-label="Remove image"
                                 >
-                                    <X className="h-4 w-4" />
+                                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-black/75 text-white transition-colors hover:bg-black">
+                                        <X className="h-4 w-4" />
+                                    </span>
                                 </button>
                             </div>
                         );

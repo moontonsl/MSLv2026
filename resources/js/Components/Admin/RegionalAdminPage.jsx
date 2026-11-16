@@ -3,7 +3,7 @@ import RegionalAdminMobileList from "@/Components/Admin/RegionalAdminMobileList"
 
 export default function RegionalAdminPage({
     regionalAdmins,
-    isActive,
+    isActive = true,
     expandedRegionalAdminId,
     onToggle,
     onEdit,
@@ -11,7 +11,7 @@ export default function RegionalAdminPage({
 }) {
     return (
         <div aria-hidden={!isActive}>
-            <div className="md:hidden">
+            <div className="xl:hidden">
                 <RegionalAdminMobileList
                     regionalAdmins={regionalAdmins}
                     expandedRegionalAdminId={expandedRegionalAdminId}
@@ -21,7 +21,7 @@ export default function RegionalAdminPage({
                 />
             </div>
 
-            <div className="hidden md:block">
+            <div className="hidden xl:block">
                 <RegionalAdminDesktopTable
                     regionalAdmins={regionalAdmins}
                     onEdit={onEdit}

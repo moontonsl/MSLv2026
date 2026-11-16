@@ -42,7 +42,7 @@ export default function AdminPagination({
 
     return (
         <nav
-            className="flex items-center justify-end gap-1 text-sm text-gray-500 sm:gap-3"
+            className="flex flex-wrap items-center justify-center gap-1 text-sm text-gray-500 sm:justify-end sm:gap-2"
             aria-label={ariaLabel}
         >
             <button

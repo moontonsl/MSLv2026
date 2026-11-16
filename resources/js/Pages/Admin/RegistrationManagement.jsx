@@ -138,7 +138,7 @@ function createLocalId() {
 
 function SearchInput({ value, onChange, label }) {
     return (
-        <label className="relative block w-full min-w-0 sm:w-[196px]">
+        <label className="relative block w-full min-w-0 flex-1 sm:w-64 sm:flex-none">
             <span className="sr-only">{label}</span>
 
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
@@ -149,7 +149,7 @@ function SearchInput({ value, onChange, label }) {
                 onChange={(event) => onChange(event.target.value)}
                 placeholder="Search..."
                 aria-label={label}
-                className="min-h-[44px] w-full rounded-md border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-9 pr-3 text-sm text-white outline-none placeholder:text-gray-500 transition focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500"
+                className="min-h-[44px] w-full min-w-0 rounded-md border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-9 pr-3 text-sm text-white outline-none placeholder:text-gray-500 transition focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500"
             />
         </label>
     );
@@ -382,7 +382,7 @@ export default function RegistrationManagement({
                 <SectionCard
                     title="Attendance Registrations"
                     headerRight={
-                        <div className="flex w-full min-w-0 items-center gap-2 sm:w-auto">
+                        <div className="flex w-full min-w-0 flex-col gap-2 min-[420px]:flex-row min-[420px]:items-center sm:w-auto">
                             <SearchInput
                                 value={registrationSearch}
                                 onChange={setRegistrationSearch}
@@ -392,17 +392,11 @@ export default function RegistrationManagement({
                             <button
                                 type="button"
                                 onClick={openCreateModal}
-                                className="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 text-sm font-bold text-black transition hover:bg-yellow-400"
+                                className="inline-flex min-h-[44px] w-full min-[420px]:w-auto shrink-0 items-center justify-center gap-2 rounded-md bg-yellow-500 px-4 text-sm font-bold text-black transition hover:bg-yellow-400"
                             >
-                                <Plus className="h-4 w-4" />
+                                <Plus className="h-4 w-4 shrink-0" />
 
-                                <span className="hidden min-[420px]:inline">
-                                    Create Registration
-                                </span>
-
-                                <span className="min-[420px]:hidden">
-                                    Create
-                                </span>
+                                <span>Create Registration</span>
                             </button>
                         </div>
                     }

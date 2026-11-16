@@ -55,44 +55,44 @@ export default function Form({ module, action, record = {} }) {
                     Update the details for this {module.toLowerCase()} record.
                 </p>
             </header>
-            <form onSubmit={submit} className="w-full space-y-4 rounded-lg border border-neutral-800 bg-neutral-900 p-6">
+            <form onSubmit={submit} className="w-full space-y-4 rounded-lg border border-neutral-800 bg-neutral-900 p-4 sm:p-6">
                 {isMcc ? <>
-                    <input type="number" className="w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="Season number" value={data.season_number} onChange={(event) => setData('season_number', event.target.value)} />
-                    <input className="w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="Season name" value={data.season_name} onChange={(event) => setData('season_name', event.target.value)} />
-                    <input className="w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="Route slug" value={data.route_slug} onChange={(event) => setData('route_slug', event.target.value)} />
-                    <textarea className="min-h-32 w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="Description" value={data.description} onChange={(event) => setData('description', event.target.value)} />
+                    <input type="number" className="min-h-[44px] w-full min-w-0 rounded border-neutral-700 bg-neutral-800 px-3 text-white" placeholder="Season number" value={data.season_number} onChange={(event) => setData('season_number', event.target.value)} />
+                    <input className="min-h-[44px] w-full min-w-0 rounded border-neutral-700 bg-neutral-800 px-3 text-white" placeholder="Season name" value={data.season_name} onChange={(event) => setData('season_name', event.target.value)} />
+                    <input className="min-h-[44px] w-full min-w-0 rounded border-neutral-700 bg-neutral-800 px-3 text-white" placeholder="Route slug" value={data.route_slug} onChange={(event) => setData('route_slug', event.target.value)} />
+                    <textarea className="min-h-32 w-full min-w-0 rounded border-neutral-700 bg-neutral-800 p-3 text-white" placeholder="Description" value={data.description} onChange={(event) => setData('description', event.target.value)} />
                 </> : isNews ? <>
-                    <input className="w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="News title" value={data.news_title} onChange={(event) => setData('news_title', event.target.value)} />
-                    <input className="w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="Author" value={data.news_author} onChange={(event) => setData('news_author', event.target.value)} />
-                    <input className="w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="Canonical slug (optional)" value={data.news_canonical} onChange={(event) => setData('news_canonical', event.target.value)} />
-                    <textarea className="min-h-32 w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="News content" value={data.news_content} onChange={(event) => setData('news_content', event.target.value)} />
-                    <input type="file" accept="image/*" onChange={(event) => setData('news_img1', event.target.files[0])} />
+                    <input className="min-h-[44px] w-full min-w-0 rounded border-neutral-700 bg-neutral-800 px-3 text-white" placeholder="News title" value={data.news_title} onChange={(event) => setData('news_title', event.target.value)} />
+                    <input className="min-h-[44px] w-full min-w-0 rounded border-neutral-700 bg-neutral-800 px-3 text-white" placeholder="Author" value={data.news_author} onChange={(event) => setData('news_author', event.target.value)} />
+                    <input className="min-h-[44px] w-full min-w-0 rounded border-neutral-700 bg-neutral-800 px-3 text-white" placeholder="Canonical slug (optional)" value={data.news_canonical} onChange={(event) => setData('news_canonical', event.target.value)} />
+                    <textarea className="min-h-32 w-full min-w-0 rounded border-neutral-700 bg-neutral-800 p-3 text-white" placeholder="News content" value={data.news_content} onChange={(event) => setData('news_content', event.target.value)} />
+                    <input type="file" accept="image/*" className="block w-full max-w-full text-sm text-gray-300 file:mr-3 file:rounded file:border-0 file:bg-amber-400 file:px-3 file:py-1.5 file:font-semibold file:text-black" onChange={(event) => setData('news_img1', event.target.files[0])} />
                 </> : isCarousel ? <>
-                    <input className="w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="Carousel title" value={data.title} onChange={(event) => setData('title', event.target.value)} />
-                    <input type="file" accept="image/*" required={!isEdit} onChange={(event) => setData('image', event.target.files[0])} />
+                    <input className="min-h-[44px] w-full min-w-0 rounded border-neutral-700 bg-neutral-800 px-3 text-white" placeholder="Carousel title" value={data.title} onChange={(event) => setData('title', event.target.value)} />
+                    <input type="file" accept="image/*" required={!isEdit} className="block w-full max-w-full text-sm text-gray-300 file:mr-3 file:rounded file:border-0 file:bg-amber-400 file:px-3 file:py-1.5 file:font-semibold file:text-black" onChange={(event) => setData('image', event.target.files[0])} />
                 </> : isEventPhoto ? <>
-                    <input className="w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="Event name" value={data.event_name} onChange={(event) => setData('event_name', event.target.value)} />
-                    <input className="w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="School name" value={data.school_name} onChange={(event) => setData('school_name', event.target.value)} />
-                    <input type="file" accept="image/*" required={!isEdit} onChange={(event) => setData('picture', event.target.files[0])} />
+                    <input className="min-h-[44px] w-full min-w-0 rounded border-neutral-700 bg-neutral-800 px-3 text-white" placeholder="Event name" value={data.event_name} onChange={(event) => setData('event_name', event.target.value)} />
+                    <input className="min-h-[44px] w-full min-w-0 rounded border-neutral-700 bg-neutral-800 px-3 text-white" placeholder="School name" value={data.school_name} onChange={(event) => setData('school_name', event.target.value)} />
+                    <input type="file" accept="image/*" required={!isEdit} className="block w-full max-w-full text-sm text-gray-300 file:mr-3 file:rounded file:border-0 file:bg-amber-400 file:px-3 file:py-1.5 file:font-semibold file:text-black" onChange={(event) => setData('picture', event.target.files[0])} />
                 </> : isMslEvent ? <>
-                    <input className="w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="Event name" value={data.event_name} onChange={(event) => setData('event_name', event.target.value)} />
-                    <input className="w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="Event title" value={data.event_title} onChange={(event) => setData('event_title', event.target.value)} />
-                    <input className="w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="Canonical slug (optional)" value={data.event_canonical} onChange={(event) => setData('event_canonical', event.target.value)} />
-                    <textarea className="min-h-32 w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="Event subtitle" value={data.event_subtitle} onChange={(event) => setData('event_subtitle', event.target.value)} />
-                    <input type="file" accept="image/*" onChange={(event) => setData('event_logo', event.target.files[0])} />
+                    <input className="min-h-[44px] w-full min-w-0 rounded border-neutral-700 bg-neutral-800 px-3 text-white" placeholder="Event name" value={data.event_name} onChange={(event) => setData('event_name', event.target.value)} />
+                    <input className="min-h-[44px] w-full min-w-0 rounded border-neutral-700 bg-neutral-800 px-3 text-white" placeholder="Event title" value={data.event_title} onChange={(event) => setData('event_title', event.target.value)} />
+                    <input className="min-h-[44px] w-full min-w-0 rounded border-neutral-700 bg-neutral-800 px-3 text-white" placeholder="Canonical slug (optional)" value={data.event_canonical} onChange={(event) => setData('event_canonical', event.target.value)} />
+                    <textarea className="min-h-32 w-full min-w-0 rounded border-neutral-700 bg-neutral-800 p-3 text-white" placeholder="Event subtitle" value={data.event_subtitle} onChange={(event) => setData('event_subtitle', event.target.value)} />
+                    <input type="file" accept="image/*" className="block w-full max-w-full text-sm text-gray-300 file:mr-3 file:rounded file:border-0 file:bg-amber-400 file:px-3 file:py-1.5 file:font-semibold file:text-black" onChange={(event) => setData('event_logo', event.target.files[0])} />
                 </> : <>
-                    <input className="w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="Title / name" value={data.title} onChange={(event) => setData('title', event.target.value)} />
-                    <textarea className="min-h-32 w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="Description / content" value={data.description} onChange={(event) => setData('description', event.target.value)} />
+                    <input className="min-h-[44px] w-full min-w-0 rounded border-neutral-700 bg-neutral-800 px-3 text-white" placeholder="Title / name" value={data.title} onChange={(event) => setData('title', event.target.value)} />
+                    <textarea className="min-h-32 w-full min-w-0 rounded border-neutral-700 bg-neutral-800 p-3 text-white" placeholder="Description / content" value={data.description} onChange={(event) => setData('description', event.target.value)} />
                     {isEvent && <>
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <input type="datetime-local" className="rounded border-neutral-700 bg-neutral-800 text-white" value={data.start_date} onChange={(event) => setData('start_date', event.target.value)} />
-                            <input type="datetime-local" className="rounded border-neutral-700 bg-neutral-800 text-white" value={data.end_date} onChange={(event) => setData('end_date', event.target.value)} />
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                            <input type="datetime-local" className="min-h-[44px] w-full min-w-0 rounded border-neutral-700 bg-neutral-800 px-3 text-white [color-scheme:dark]" value={data.start_date} onChange={(event) => setData('start_date', event.target.value)} />
+                            <input type="datetime-local" className="min-h-[44px] w-full min-w-0 rounded border-neutral-700 bg-neutral-800 px-3 text-white [color-scheme:dark]" value={data.end_date} onChange={(event) => setData('end_date', event.target.value)} />
                         </div>
-                        <input className="w-full rounded border-neutral-700 bg-neutral-800 text-white" placeholder="Location" value={data.location} onChange={(event) => setData('location', event.target.value)} />
+                        <input className="min-h-[44px] w-full min-w-0 rounded border-neutral-700 bg-neutral-800 px-3 text-white" placeholder="Location" value={data.location} onChange={(event) => setData('location', event.target.value)} />
                     </>}
                 </>}
                 {Object.values(errors).map((error) => <p key={error} className="text-sm text-red-400">{error}</p>)}
-                <button disabled={processing} className="rounded bg-amber-400 px-4 py-2 font-semibold text-black">Save</button>
+                <button disabled={processing} className="inline-flex min-h-[44px] w-full items-center justify-center rounded bg-amber-400 px-5 py-2 font-semibold text-black hover:bg-amber-300 disabled:opacity-50 sm:w-auto">Save</button>
             </form>
         </AdminLayout>
     );

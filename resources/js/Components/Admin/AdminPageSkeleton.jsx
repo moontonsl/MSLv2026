@@ -17,18 +17,18 @@ function Skeleton({ className = '' }) {
  */
 function StatCardsSkeleton({ count = 4 }) {
     return (
-        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+        <div className="mb-6 grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 xl:grid-cols-4 sm:gap-4">
             {Array.from({ length: count }).map((_, i) => (
                 <div
                     key={i}
                     className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-4 sm:p-5 backdrop-blur-sm"
                 >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                         <Skeleton className="h-3.5 w-24 sm:w-28" />
-                        <Skeleton className="h-8 w-8 rounded-xl" />
+                        <Skeleton className="h-8 w-8 shrink-0 rounded-xl" />
                     </div>
                     <Skeleton className="mt-3.5 h-8 w-20 sm:w-28" />
-                    <Skeleton className="mt-2 h-3 w-32" />
+                    <Skeleton className="mt-2 h-3 w-full max-w-[8rem]" />
                 </div>
             ))}
         </div>
@@ -43,16 +43,16 @@ function DashboardSkeleton() {
         <div className="space-y-8 pb-12" aria-label="Loading dashboard" aria-busy="true">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
-                <div className="space-y-2">
+                <div className="min-w-0 space-y-2">
                     <div className="flex items-center gap-2">
-                        <div className="h-2.5 w-2.5 rounded-full bg-amber-400/40 animate-pulse" />
+                        <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-amber-400/40 animate-pulse" />
                         <Skeleton className="h-3.5 w-32" />
                     </div>
-                    <Skeleton className="h-8 w-64 rounded-xl" />
-                    <Skeleton className="h-4 w-80 sm:w-96" />
+                    <Skeleton className="h-8 w-full max-w-[16rem] rounded-xl" />
+                    <Skeleton className="h-4 w-full max-w-[24rem]" />
                 </div>
                 <div className="flex items-center gap-3">
-                    <Skeleton className="h-10 w-44 rounded-xl" />
+                    <Skeleton className="h-10 w-full max-w-[11rem] rounded-xl" />
                 </div>
             </div>
 
@@ -151,16 +151,16 @@ function StudentLeadersSkeleton() {
         <div className="space-y-6 pb-12" aria-label="Loading student leaders" aria-busy="true">
             {/* Header */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between mb-6">
-                <div className="flex items-center gap-3">
-                    <Skeleton className="h-11 w-11 rounded-2xl" />
-                    <div className="space-y-1.5">
-                        <Skeleton className="h-7 w-48" />
-                        <Skeleton className="h-3.5 w-72" />
+                <div className="flex min-w-0 items-center gap-3">
+                    <Skeleton className="h-11 w-11 shrink-0 rounded-2xl" />
+                    <div className="min-w-0 flex-1 space-y-1.5">
+                        <Skeleton className="h-7 w-full max-w-[12rem]" />
+                        <Skeleton className="h-3.5 w-full max-w-[18rem]" />
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <Skeleton className="h-11 w-64 sm:w-72 rounded-xl" />
-                    <Skeleton className="h-11 w-20 rounded-xl" />
+                <div className="flex w-full sm:w-auto items-center gap-2">
+                    <Skeleton className="h-11 flex-1 sm:w-72 rounded-xl" />
+                    <Skeleton className="h-11 w-20 shrink-0 rounded-xl" />
                 </div>
             </div>
 
@@ -169,11 +169,11 @@ function StudentLeadersSkeleton() {
 
             {/* Filter Tabs & Region Selector */}
             <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-                <div className="flex gap-1.5 p-1 rounded-xl border border-white/10 bg-black/40">
-                    <Skeleton className="h-9 w-44 rounded-lg" />
-                    <Skeleton className="h-9 w-44 rounded-lg" />
+                <div className="flex flex-wrap gap-1.5 p-1 rounded-xl border border-white/10 bg-black/40 w-full sm:w-auto">
+                    <Skeleton className="h-9 flex-1 sm:w-44 rounded-lg" />
+                    <Skeleton className="h-9 flex-1 sm:w-44 rounded-lg" />
                 </div>
-                <Skeleton className="h-10 w-44 rounded-xl" />
+                <Skeleton className="h-10 w-full sm:w-44 rounded-xl" />
             </div>
 
             {/* Table Container */}
@@ -227,16 +227,16 @@ function RegionalAdminsSkeleton() {
         <div className="space-y-6 pb-12" aria-label="Loading regional admins" aria-busy="true">
             {/* Header */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
-                <div className="flex items-center gap-3">
-                    <Skeleton className="h-10 w-10 rounded-xl" />
-                    <div className="space-y-1.5">
-                        <Skeleton className="h-7 w-48" />
-                        <Skeleton className="h-3.5 w-72" />
+                <div className="flex min-w-0 items-center gap-3">
+                    <Skeleton className="h-10 w-10 shrink-0 rounded-xl" />
+                    <div className="min-w-0 flex-1 space-y-1.5">
+                        <Skeleton className="h-7 w-full max-w-[12rem]" />
+                        <Skeleton className="h-3.5 w-full max-w-[18rem]" />
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <Skeleton className="h-10 w-64 rounded-xl" />
-                    <Skeleton className="h-10 w-20 rounded-xl" />
+                <div className="flex w-full sm:w-auto items-center gap-2">
+                    <Skeleton className="h-10 flex-1 sm:w-64 rounded-xl" />
+                    <Skeleton className="h-10 w-20 shrink-0 rounded-xl" />
                 </div>
             </div>
 
@@ -245,11 +245,11 @@ function RegionalAdminsSkeleton() {
 
             {/* Tabs & Controls */}
             <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-                <div className="flex gap-1.5 p-1 rounded-xl border border-white/10 bg-black/40">
-                    <Skeleton className="h-9 w-44 rounded-lg" />
-                    <Skeleton className="h-9 w-48 rounded-lg" />
+                <div className="flex flex-wrap gap-1.5 p-1 rounded-xl border border-white/10 bg-black/40 w-full sm:w-auto">
+                    <Skeleton className="h-9 flex-1 sm:w-44 rounded-lg" />
+                    <Skeleton className="h-9 flex-1 sm:w-48 rounded-lg" />
                 </div>
-                <Skeleton className="h-10 w-44 rounded-xl" />
+                <Skeleton className="h-10 w-full sm:w-44 rounded-xl" />
             </div>
 
             {/* Table Container */}
@@ -300,17 +300,17 @@ function SchoolManagementSkeleton() {
         <div className="space-y-6 pb-12" aria-label="Loading school management" aria-busy="true">
             {/* Header */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
-                <div className="flex items-center gap-3">
-                    <Skeleton className="h-10 w-10 rounded-xl" />
-                    <div className="space-y-1.5">
-                        <Skeleton className="h-7 w-52" />
-                        <Skeleton className="h-3.5 w-80 sm:w-96" />
+                <div className="flex min-w-0 items-center gap-3">
+                    <Skeleton className="h-10 w-10 shrink-0 rounded-xl" />
+                    <div className="min-w-0 flex-1 space-y-1.5">
+                        <Skeleton className="h-7 w-full max-w-[13rem]" />
+                        <Skeleton className="h-3.5 w-full max-w-[22rem]" />
                     </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
-                    <Skeleton className="h-10 w-56 sm:w-64 rounded-xl" />
-                    <Skeleton className="h-10 w-20 rounded-xl" />
-                    <Skeleton className="h-10 w-36 rounded-xl" />
+                <div className="flex flex-wrap w-full sm:w-auto items-center gap-2">
+                    <Skeleton className="h-10 flex-1 sm:w-64 rounded-xl" />
+                    <Skeleton className="h-10 w-20 shrink-0 rounded-xl" />
+                    <Skeleton className="h-10 w-full sm:w-36 rounded-xl" />
                 </div>
             </div>
 
@@ -319,11 +319,11 @@ function SchoolManagementSkeleton() {
 
             {/* Filter Tabs & Selectors */}
             <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-                <div className="flex gap-1.5 p-1 rounded-xl border border-white/10 bg-black/40">
-                    <Skeleton className="h-9 w-44 rounded-lg" />
-                    <Skeleton className="h-9 w-44 rounded-lg" />
+                <div className="flex flex-wrap gap-1.5 p-1 rounded-xl border border-white/10 bg-black/40 w-full sm:w-auto">
+                    <Skeleton className="h-9 flex-1 sm:w-44 rounded-lg" />
+                    <Skeleton className="h-9 flex-1 sm:w-44 rounded-lg" />
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                     <Skeleton className="h-9 w-28 rounded-xl" />
                     <Skeleton className="h-9 w-36 rounded-xl" />
                     <Skeleton className="h-9 w-28 rounded-xl" />
@@ -379,16 +379,16 @@ function PendingUsersSkeleton() {
         <div className="space-y-6 pb-12" aria-label="Loading pending queue" aria-busy="true">
             {/* Header */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between mb-6">
-                <div>
-                    <div className="flex items-center gap-2.5">
+                <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2.5">
                         <Skeleton className="h-8 w-44" />
                         <Skeleton className="h-6 w-32 rounded-full" />
                     </div>
-                    <Skeleton className="mt-2 h-3.5 w-80 sm:w-96" />
+                    <Skeleton className="mt-2 h-3.5 w-full max-w-[22rem]" />
                 </div>
-                <div className="flex items-center gap-2">
-                    <Skeleton className="h-11 w-64 sm:w-72 rounded-xl" />
-                    <Skeleton className="h-11 w-20 rounded-xl" />
+                <div className="flex w-full sm:w-auto items-center gap-2">
+                    <Skeleton className="h-11 flex-1 sm:w-72 rounded-xl" />
+                    <Skeleton className="h-11 w-20 shrink-0 rounded-xl" />
                 </div>
             </div>
 
@@ -448,23 +448,23 @@ function ManagementSkeleton() {
         <div className="space-y-6 pb-12" aria-label="Loading permissions and roles" aria-busy="true">
             {/* Header */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between mb-6">
-                <div className="flex items-center gap-3">
-                    <Skeleton className="h-10 w-10 rounded-xl" />
-                    <div className="space-y-1.5">
-                        <Skeleton className="h-7 w-56" />
-                        <Skeleton className="h-3.5 w-80 sm:w-96" />
+                <div className="flex min-w-0 items-center gap-3">
+                    <Skeleton className="h-10 w-10 shrink-0 rounded-xl" />
+                    <div className="min-w-0 flex-1 space-y-1.5">
+                        <Skeleton className="h-7 w-full max-w-[14rem]" />
+                        <Skeleton className="h-3.5 w-full max-w-[22rem]" />
                     </div>
                 </div>
-                <Skeleton className="h-10 w-44 rounded-xl" />
+                <Skeleton className="h-10 w-full sm:w-44 rounded-xl" />
             </div>
 
             {/* Quick Stat Cards */}
             <StatCardsSkeleton count={4} />
 
             {/* Dual Pane Layout (Directory + Permissions Matrix) */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 {/* Left Pane: Staff Directory */}
-                <div className="lg:col-span-1 rounded-2xl border border-white/10 bg-white/[0.02] p-5 backdrop-blur-md space-y-4">
+                <div className="xl:col-span-1 rounded-2xl border border-white/10 bg-white/[0.02] p-5 backdrop-blur-md space-y-4">
                     <Skeleton className="h-10 w-full rounded-xl" />
                     <div className="space-y-2.5">
                         {Array.from({ length: 6 }).map((_, i) => (
@@ -486,7 +486,7 @@ function ManagementSkeleton() {
                 </div>
 
                 {/* Right Pane: Capabilities & Role Matrix */}
-                <div className="lg:col-span-2 space-y-6">
+                <div className="xl:col-span-2 space-y-6">
                     {/* User Profile Card */}
                     <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 backdrop-blur-md">
                         <div className="flex items-center gap-4">
@@ -552,15 +552,15 @@ function ManagementSkeleton() {
 function DefaultSkeleton({ rows = 6 }) {
     return (
         <div className="space-y-6 pb-12" aria-label="Loading page" aria-busy="true">
-            <div className="flex items-center justify-between border-b border-white/10 pb-6">
-                <Skeleton className="h-8 w-60 rounded-xl" />
-                <Skeleton className="h-10 w-44 rounded-xl" />
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-6">
+                <Skeleton className="h-8 w-full max-w-[15rem] rounded-xl" />
+                <Skeleton className="h-10 w-full max-w-[11rem] rounded-xl" />
             </div>
             <StatCardsSkeleton count={4} />
-            <div className="rounded-2xl border border-white/10 bg-black/40 p-6 shadow-2xl">
-                <div className="mb-6 flex items-center justify-between gap-4">
-                    <Skeleton className="h-6 w-48" />
-                    <Skeleton className="h-10 w-56 rounded-xl" />
+            <div className="rounded-2xl border border-white/10 bg-black/40 p-4 sm:p-6 shadow-2xl">
+                <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+                    <Skeleton className="h-6 w-full max-w-[12rem]" />
+                    <Skeleton className="h-10 w-full sm:w-56 rounded-xl" />
                 </div>
                 <div className="space-y-4">
                     {Array.from({ length: rows }).map((_, index) => (

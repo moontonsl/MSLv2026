@@ -123,14 +123,18 @@ export default function CarouselSection({ initialItems = [] }) {
             <SectionCard title="Hero Carousel (Happening Now)">
                 <div className="space-y-6">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
+                        <div className="min-w-0">
                             <h3 className="text-sm font-semibold text-white">Carousel Slides</h3>
                             <p className="text-xs text-gray-400">
                                 Manage slides displayed in the "HAPPENING NOW" hero section of the homepage.
                             </p>
                         </div>
-                        <button type="button" className={ADMIN_GOLD_BUTTON_CLASS} onClick={openAddModal}>
-                            <Plus className="h-4 w-4" />
+                        <button
+                            type="button"
+                            className={`${ADMIN_GOLD_BUTTON_CLASS} w-full shrink-0 whitespace-nowrap sm:w-auto`}
+                            onClick={openAddModal}
+                        >
+                            <Plus className="h-4 w-4 shrink-0" />
                             Add Slide
                         </button>
                     </div>
@@ -141,7 +145,7 @@ export default function CarouselSection({ initialItems = [] }) {
                             <p className="text-sm text-gray-400">No slides yet. Click "Add Slide" to create the first one.</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
                             {items.map((item) => (
                                 <ContentCard
                                     key={item.id}
@@ -150,7 +154,7 @@ export default function CarouselSection({ initialItems = [] }) {
                                     onEdit={() => openEditModal(item)}
                                     onDelete={() => requestDelete(item.id)}
                                 >
-                                    <div className="space-y-1">
+                                    <div className="min-w-0 space-y-1">
                                         {item.label && (
                                             <span className="inline-block rounded bg-red-600/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
                                                 {item.label}

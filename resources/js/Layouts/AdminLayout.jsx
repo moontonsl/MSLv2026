@@ -53,11 +53,11 @@ export default function AdminLayout({
     const showSkeleton = isLoading || isInitialMount;
 
     return (
-        <div className="relative min-h-screen w-full overflow-x-hidden bg-[#070709] text-white selection:bg-brand-500 selection:text-black">
+        <div className="relative min-h-dvh w-full overflow-x-clip bg-[#070709] text-white selection:bg-brand-500 selection:text-black">
             {/* Ambient Lighting & Esports Glow Effects */}
-            <div className="fixed top-[-10%] left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-gradient-to-b from-amber-500/15 via-brand-500/5 to-transparent blur-[120px] pointer-events-none rounded-full z-0" />
-            <div className="fixed bottom-[-15%] right-[-10%] w-[500px] h-[500px] bg-amber-600/10 blur-[140px] pointer-events-none rounded-full z-0" />
-            <div className="fixed top-[-10%] left-[-10%] w-[450px] h-[450px] bg-blue-600/5 blur-[140px] pointer-events-none rounded-full z-0" />
+            <div className="fixed top-[-10%] left-1/2 -translate-x-1/2 w-[min(700px,100vw)] h-[400px] bg-gradient-to-b from-amber-500/15 via-brand-500/5 to-transparent blur-[120px] pointer-events-none rounded-full z-0" />
+            <div className="fixed bottom-[-15%] right-[-10%] w-[min(500px,90vw)] h-[500px] bg-amber-600/10 blur-[140px] pointer-events-none rounded-full z-0" />
+            <div className="fixed top-[-10%] left-[-10%] w-[min(450px,90vw)] h-[450px] bg-blue-600/5 blur-[140px] pointer-events-none rounded-full z-0" />
 
             {/* Subtle Grid Backdrop */}
             <div 
@@ -69,26 +69,26 @@ export default function AdminLayout({
             />
 
             <AdminSidebar activeId={activeNavId} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-            <div className="relative z-10 ml-0 flex min-h-screen min-w-0 flex-1 flex-col overflow-hidden lg:ml-64">
-                <header className="relative z-30 flex shrink-0 items-center justify-between border-b border-white/10 bg-[#070709]/80 backdrop-blur-xl px-4 py-4 sm:px-6 lg:px-8 lg:py-5">
+            <div className="relative z-10 ml-0 flex min-h-dvh min-w-0 flex-1 flex-col lg:ml-64">
+                <header className="sticky top-0 z-30 flex shrink-0 items-center justify-between gap-3 border-b border-white/10 bg-[#070709]/85 backdrop-blur-xl px-3.5 py-3 sm:px-6 sm:py-4 lg:px-8 lg:py-4">
                     <button
                         type="button"
                         aria-label="Open admin navigation"
                         aria-expanded={isSidebarOpen}
                         onClick={() => setIsSidebarOpen(true)}
-                        className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white lg:hidden transition-colors"
+                        className="inline-flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white lg:hidden transition-colors"
                     >
                         <Menu className="h-5 w-5" />
                     </button>
-                    <div className="ml-auto flex items-center">
+                    <div className="ml-auto flex min-w-0 items-center">
                         <AdminUserProfile />
                     </div>
                 </header>
-                <main className="min-w-0 flex-1 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+                <main className="min-w-0 flex-1 px-3.5 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
                     {showSkeleton ? (
                         <AdminPageSkeleton type={activeNavId} />
                     ) : (
-                        <div className="animate-fadeIn">
+                        <div className="min-w-0 animate-fadeIn">
                             {children}
                         </div>
                     )}

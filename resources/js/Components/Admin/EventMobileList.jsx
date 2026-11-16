@@ -13,7 +13,7 @@ import { formatEventDate } from "@/data/adminEventData";
 
 function MobileField({ label, children }) {
     return (
-        <div className="grid min-w-0 grid-cols-[88px_minmax(0,1fr)] items-start gap-4">
+        <div className="grid min-w-0 grid-cols-1 gap-1 min-[380px]:grid-cols-[96px_minmax(0,1fr)] min-[380px]:items-start min-[380px]:gap-3">
             <span className="text-sm font-bold leading-5 text-[#F5F5F5]">
                 {label}
             </span>
@@ -80,20 +80,20 @@ export default function EventMobileList({
                         key={event.id}
                         className={expanded ? "bg-[#1A1A1A]" : "bg-[#080808]"}
                     >
-                        <div className="flex min-h-[52px] items-center border-b border-white/20 px-2.5">
+                        <div className="flex min-h-[52px] items-center gap-1 border-b border-white/20 px-2.5 py-1.5">
                             <button
                                 type="button"
                                 onClick={() =>
                                     setExpandedId(expanded ? null : event.id)
                                 }
-                                className="flex min-w-0 flex-1 items-center text-left"
+                                className="flex min-w-0 flex-1 flex-col justify-center text-left min-[420px]:flex-row min-[420px]:items-center min-[420px]:gap-3"
                                 aria-expanded={expanded}
                             >
-                                <span className="w-[100px] shrink-0 text-sm font-bold text-[#F5F5F5]">
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400 min-[420px]:w-[96px] min-[420px]:shrink-0 min-[420px]:text-sm min-[420px]:normal-case min-[420px]:tracking-normal min-[420px]:text-[#F5F5F5]">
                                     Event Code
                                 </span>
 
-                                <span className="min-w-0 truncate text-sm text-[#94949F]">
+                                <span className="min-w-0 truncate text-sm font-semibold text-[#F5F5F5] min-[420px]:font-normal min-[420px]:text-[#94949F]">
                                     {event.eventCode}
                                 </span>
                             </button>
@@ -101,7 +101,7 @@ export default function EventMobileList({
                             <button
                                 type="button"
                                 onClick={() => onCopy(event.eventCode)}
-                                className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-md text-gray-500 hover:bg-white/10 hover:text-white"
+                                className="inline-flex shrink-0 min-h-10 min-w-10 items-center justify-center rounded-md text-gray-500 hover:bg-white/10 hover:text-white"
                                 aria-label={`Copy ${event.eventCode}`}
                             >
                                 {copied ? (
@@ -116,7 +116,7 @@ export default function EventMobileList({
                                 onClick={() =>
                                     setExpandedId(expanded ? null : event.id)
                                 }
-                                className="inline-flex min-h-10 min-w-10 items-center justify-center"
+                                className="inline-flex shrink-0 min-h-10 min-w-10 items-center justify-center"
                                 aria-label={
                                     expanded ? "Collapse event" : "Expand event"
                                 }

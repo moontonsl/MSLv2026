@@ -246,13 +246,13 @@ export default function Schools({
             <Head title="School Management | Command Center | MSL Philippines" />
 
             {/* Header Section */}
-            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20 shadow-[0_0_15px_rgba(251,191,36,0.15)]">
-                            <School className="h-5 w-5" />
+            <div className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+                <div className="min-w-0">
+                    <div className="flex items-center gap-3 min-w-0">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20 shadow-[0_0_15px_rgba(251,191,36,0.15)]">
+                            <School className="h-5 w-5 shrink-0" />
                         </div>
-                        <div>
+                        <div className="min-w-0">
                             <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white">
                                 School Management
                             </h1>
@@ -264,21 +264,21 @@ export default function Schools({
                 </div>
 
                 {/* Right Top Actions */}
-                <div className="flex flex-wrap items-center gap-2">
-                    <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
-                        <div className="relative">
+                <div className="flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center xl:w-auto">
+                    <form onSubmit={handleSearchSubmit} className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:flex-nowrap">
+                        <div className="relative min-w-0 flex-1 sm:w-72 sm:flex-none">
                             <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-500" />
                             <input
                                 type="search"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder="Search school, acronym, division..."
-                                className="min-h-[40px] w-56 sm:w-72 rounded-xl border border-white/10 bg-black/40 pl-9 pr-3 text-xs text-white placeholder:text-gray-500 focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 focus:outline-none"
+                                className="min-h-[40px] w-full min-w-0 rounded-xl border border-white/10 bg-black/40 pl-9 pr-3 text-xs text-white placeholder:text-gray-500 focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 focus:outline-none"
                             />
                         </div>
                         <button
                             type="submit"
-                            className="min-h-[40px] rounded-xl bg-amber-400 px-4 text-xs font-bold text-black transition-all hover:bg-amber-300"
+                            className="min-h-[40px] shrink-0 rounded-xl bg-amber-400 px-4 text-xs font-bold text-black transition-all hover:bg-amber-300"
                         >
                             Search
                         </button>
@@ -288,16 +288,16 @@ export default function Schools({
                         type="button"
                         id="add-institution-btn"
                         onClick={openCreateModal}
-                        className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl bg-emerald-500 px-4 text-xs font-bold text-white transition-all hover:bg-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
+                        className="inline-flex min-h-[40px] w-full sm:w-auto items-center justify-center gap-1.5 rounded-xl bg-emerald-500 px-4 text-xs font-bold text-white transition-all hover:bg-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]"
                     >
-                        <Plus className="h-4 w-4" />
+                        <Plus className="h-4 w-4 shrink-0" />
                         <span>Add Institution</span>
                     </button>
                 </div>
             </div>
 
             {/* Metric Summary Cards (Taste Skill Clickable Telemetry Cards) */}
-            <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4">
+            <div className="mb-6 grid grid-cols-1 min-[480px]:grid-cols-2 gap-3 xl:grid-cols-4 lg:gap-4">
                 {/* 1. Colleges & Universities */}
                 <button
                     type="button"
@@ -309,12 +309,12 @@ export default function Schools({
                     }`}
                 >
                     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
-                    <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-                            <span>Higher Ed (CHED)</span>
-                            {isCollegesActive && <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />}
+                    <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5 min-w-0">
+                            <span className="truncate">Higher Ed (CHED)</span>
+                            {isCollegesActive && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400 animate-pulse" />}
                         </span>
-                        <div className="p-2 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 group-hover:scale-110 transition-transform">
+                        <div className="shrink-0 p-2 rounded-xl bg-amber-400/10 border border-amber-400/20 text-amber-400 group-hover:scale-110 transition-transform">
                             <Building2 className="h-4 w-4" />
                         </div>
                     </div>
@@ -322,9 +322,9 @@ export default function Schools({
                         {(stats.total_colleges ?? 0).toLocaleString()}
                     </p>
                     <p className="mt-1 text-xs text-gray-400">Colleges & Universities</p>
-                    <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between text-[11px] font-semibold text-amber-400/80 group-hover:text-amber-300">
-                        <span>{isCollegesActive ? '● Viewing All Colleges' : 'Click to view colleges'}</span>
-                        <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                    <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between gap-2 text-[11px] font-semibold text-amber-400/80 group-hover:text-amber-300">
+                        <span className="truncate">{isCollegesActive ? '● Viewing All Colleges' : 'Click to view colleges'}</span>
+                        <ArrowRight className="h-3 w-3 shrink-0 transition-transform group-hover:translate-x-0.5" />
                     </div>
                 </button>
 
@@ -339,12 +339,12 @@ export default function Schools({
                     }`}
                 >
                     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent" />
-                    <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                            <span>Active Campuses</span>
-                            {isActiveCampusesActive && <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />}
+                    <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5 min-w-0">
+                            <span className="truncate">Active Campuses</span>
+                            {isActiveCampusesActive && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400 animate-pulse" />}
                         </span>
-                        <div className="p-2 rounded-xl bg-emerald-400/10 border border-emerald-400/20 text-emerald-400 group-hover:scale-110 transition-transform">
+                        <div className="shrink-0 p-2 rounded-xl bg-emerald-400/10 border border-emerald-400/20 text-emerald-400 group-hover:scale-110 transition-transform">
                             <CheckCircle2 className="h-4 w-4" />
                         </div>
                     </div>
@@ -352,9 +352,9 @@ export default function Schools({
                         {(stats.active_colleges ?? 0).toLocaleString()}
                     </p>
                     <p className="mt-1 text-xs text-gray-400">Active league participants</p>
-                    <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between text-[11px] font-semibold text-emerald-400/80 group-hover:text-emerald-300">
-                        <span>{isActiveCampusesActive ? '● Viewing Active Only' : 'Click to filter active'}</span>
-                        <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                    <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between gap-2 text-[11px] font-semibold text-emerald-400/80 group-hover:text-emerald-300">
+                        <span className="truncate">{isActiveCampusesActive ? '● Viewing Active Only' : 'Click to filter active'}</span>
+                        <ArrowRight className="h-3 w-3 shrink-0 transition-transform group-hover:translate-x-0.5" />
                     </div>
                 </button>
 
@@ -369,12 +369,12 @@ export default function Schools({
                     }`}
                 >
                     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-400/40 to-transparent" />
-                    <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
-                            <span>Basic Ed (DepEd)</span>
-                            {isShsActive && <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />}
+                    <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5 min-w-0">
+                            <span className="truncate">Basic Ed (DepEd)</span>
+                            {isShsActive && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-blue-400 animate-pulse" />}
                         </span>
-                        <div className="p-2 rounded-xl bg-blue-400/10 border border-blue-400/20 text-blue-400 group-hover:scale-110 transition-transform">
+                        <div className="shrink-0 p-2 rounded-xl bg-blue-400/10 border border-blue-400/20 text-blue-400 group-hover:scale-110 transition-transform">
                             <GraduationCap className="h-4 w-4" />
                         </div>
                     </div>
@@ -382,9 +382,9 @@ export default function Schools({
                         {(stats.total_shs ?? 0).toLocaleString()}
                     </p>
                     <p className="mt-1 text-xs text-gray-400">Senior High Schools</p>
-                    <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between text-[11px] font-semibold text-blue-400/80 group-hover:text-blue-300">
-                        <span>{isShsActive ? '● Viewing DepEd SHS' : 'Click to view SHS catalog'}</span>
-                        <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                    <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between gap-2 text-[11px] font-semibold text-blue-400/80 group-hover:text-blue-300">
+                        <span className="truncate">{isShsActive ? '● Viewing DepEd SHS' : 'Click to view SHS catalog'}</span>
+                        <ArrowRight className="h-3 w-3 shrink-0 transition-transform group-hover:translate-x-0.5" />
                     </div>
                 </button>
 
@@ -399,12 +399,12 @@ export default function Schools({
                     }`}
                 >
                     <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-purple-400/40 to-transparent" />
-                    <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-1.5">
-                            <span>Student Leaders</span>
-                            {isLeadersActive && <span className="h-1.5 w-1.5 rounded-full bg-purple-400 animate-pulse" />}
+                    <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-1.5 min-w-0">
+                            <span className="truncate">Student Leaders</span>
+                            {isLeadersActive && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400 animate-pulse" />}
                         </span>
-                        <div className="p-2 rounded-xl bg-purple-400/10 border border-purple-400/20 text-purple-400 group-hover:scale-110 transition-transform">
+                        <div className="shrink-0 p-2 rounded-xl bg-purple-400/10 border border-purple-400/20 text-purple-400 group-hover:scale-110 transition-transform">
                             <Users className="h-4 w-4" />
                         </div>
                     </div>
@@ -412,9 +412,9 @@ export default function Schools({
                         {(stats.total_enrolled ?? 0).toLocaleString()}
                     </p>
                     <p className="mt-1 text-xs text-gray-400">Registered campus leaders</p>
-                    <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between text-[11px] font-semibold text-purple-400/80 group-hover:text-purple-300">
-                        <span>Click to view {stats.total_enrolled ?? 0} student leaders</span>
-                        <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                    <div className="mt-3 pt-2.5 border-t border-white/5 flex items-center justify-between gap-2 text-[11px] font-semibold text-purple-400/80 group-hover:text-purple-300">
+                        <span className="truncate">Click to view {stats.total_enrolled ?? 0} student leaders</span>
+                        <ArrowRight className="h-3 w-3 shrink-0 transition-transform group-hover:translate-x-0.5" />
                     </div>
                 </button>
             </div>
@@ -422,32 +422,32 @@ export default function Schools({
             {/* Filter and Tab Controls */}
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
                 {/* View Tabs */}
-                <div className="flex rounded-xl border border-white/10 bg-black/40 p-1">
+                <div className="grid w-full grid-cols-1 gap-1 rounded-xl border border-white/10 bg-black/40 p-1 min-[460px]:grid-cols-2 sm:inline-flex sm:w-auto">
                     <button
                         type="button"
                         id="tab-colleges-btn"
                         onClick={() => handleTabChange('colleges')}
-                        className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition-all ${
+                        className={`inline-flex min-h-[40px] min-w-0 items-center justify-center gap-2 rounded-lg px-3 sm:px-4 py-2 text-xs font-bold transition-all ${
                             currentTab === 'colleges'
                                 ? 'bg-amber-400 text-black shadow-sm'
                                 : 'text-gray-400 hover:text-white'
                         }`}
                     >
-                        <Building2 className="h-4 w-4" />
-                        <span>Colleges & Universities ({stats.total_colleges?.toLocaleString() ?? 0})</span>
+                        <Building2 className="h-4 w-4 shrink-0" />
+                        <span className="truncate">Colleges & Universities ({stats.total_colleges?.toLocaleString() ?? 0})</span>
                     </button>
                     <button
                         type="button"
                         id="tab-shs-btn"
                         onClick={() => handleTabChange('shs')}
-                        className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition-all ${
+                        className={`inline-flex min-h-[40px] min-w-0 items-center justify-center gap-2 rounded-lg px-3 sm:px-4 py-2 text-xs font-bold transition-all ${
                             currentTab === 'shs'
                                 ? 'bg-amber-400 text-black shadow-sm'
                                 : 'text-gray-400 hover:text-white'
                         }`}
                     >
-                        <BookOpen className="h-4 w-4" />
-                        <span>Senior High Schools ({stats.total_shs?.toLocaleString() ?? 0})</span>
+                        <BookOpen className="h-4 w-4 shrink-0" />
+                        <span className="truncate">Senior High Schools ({stats.total_shs?.toLocaleString() ?? 0})</span>
                     </button>
                 </div>
 
@@ -461,7 +461,7 @@ export default function Schools({
                                 setSelectedIsland(e.target.value);
                                 applyFilters({ island: e.target.value });
                             }}
-                            className="rounded-xl border border-white/10 bg-black/50 px-3 py-2 text-xs font-semibold text-white focus:border-amber-400/50 focus:outline-none"
+                            className="min-h-[40px] rounded-xl border border-white/10 bg-black/50 px-3 py-2 text-xs font-semibold text-white focus:border-amber-400/50 focus:outline-none"
                         >
                             <option value="">All Islands</option>
                             {islands.map((isl) => (
@@ -477,7 +477,7 @@ export default function Schools({
                             setSelectedRegion(e.target.value);
                             applyFilters({ region: e.target.value });
                         }}
-                        className="rounded-xl border border-white/10 bg-black/50 px-3 py-2 text-xs font-semibold text-white focus:border-amber-400/50 focus:outline-none max-w-[160px] truncate"
+                        className="min-h-[40px] rounded-xl border border-white/10 bg-black/50 px-3 py-2 text-xs font-semibold text-white focus:border-amber-400/50 focus:outline-none max-w-[160px] truncate"
                     >
                         <option value="">All Regions</option>
                         {regions.map((reg) => (
@@ -493,7 +493,7 @@ export default function Schools({
                                 setSelectedStatus(e.target.value);
                                 applyFilters({ status: e.target.value });
                             }}
-                            className="rounded-xl border border-white/10 bg-black/50 px-3 py-2 text-xs font-semibold text-white focus:border-amber-400/50 focus:outline-none"
+                            className="min-h-[40px] rounded-xl border border-white/10 bg-black/50 px-3 py-2 text-xs font-semibold text-white focus:border-amber-400/50 focus:outline-none"
                         >
                             <option value="">All Status</option>
                             <option value="active">Active Hubs</option>
@@ -505,7 +505,7 @@ export default function Schools({
                         <button
                             type="button"
                             onClick={handleResetFilters}
-                            className="rounded-xl border border-white/10 px-3 py-2 text-xs font-medium text-gray-400 hover:text-white hover:bg-white/5"
+                            className="min-h-[40px] rounded-xl border border-white/10 px-3 py-2 text-xs font-medium text-gray-400 hover:text-white hover:bg-white/5"
                         >
                             Reset Filters
                         </button>
@@ -516,28 +516,28 @@ export default function Schools({
             {/* Filter Active Notification Banner */}
             {Boolean(filters.with_leaders) && (
                 <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-purple-500/30 bg-gradient-to-r from-purple-500/10 via-purple-500/5 to-transparent p-4 text-xs text-purple-200 shadow-lg">
-                    <div className="flex items-center gap-2.5">
-                        <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-purple-500/20 text-purple-400">
-                            <Users className="h-4 w-4" />
+                    <div className="flex items-start sm:items-center gap-2.5 min-w-0">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-purple-500/20 text-purple-400">
+                            <Users className="h-4 w-4 shrink-0" />
                         </div>
-                        <div>
+                        <div className="min-w-0">
                             <span className="font-bold text-white">Filtering Campuses With Registered Student Leaders</span>
                             <p className="text-[11px] text-purple-300/80">Only displaying institutions that have registered student leaders in the active season.</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
                         <button
                             type="button"
                             onClick={() => handleOpenLeadersModal()}
-                            className="inline-flex items-center gap-1.5 rounded-xl bg-purple-500/20 border border-purple-500/30 px-3 py-1.5 text-xs font-bold text-purple-200 hover:bg-purple-500/30 hover:text-white transition-colors cursor-pointer"
+                            className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl bg-purple-500/20 border border-purple-500/30 px-3 py-1.5 text-xs font-bold text-purple-200 hover:bg-purple-500/30 hover:text-white transition-colors cursor-pointer"
                         >
                             <span>View All {stats.total_enrolled ?? 0} Leaders</span>
-                            <ArrowRight className="h-3.5 w-3.5" />
+                            <ArrowRight className="h-3.5 w-3.5 shrink-0" />
                         </button>
                         <button
                             type="button"
                             onClick={() => applyFilters({ with_leaders: undefined })}
-                            className="rounded-xl border border-white/10 px-3 py-1.5 text-xs font-semibold text-zinc-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                            className="min-h-[40px] rounded-xl border border-white/10 px-3 py-1.5 text-xs font-semibold text-zinc-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
                         >
                             Clear Filter
                         </button>
@@ -548,7 +548,7 @@ export default function Schools({
             {/* School Table Container */}
             <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl shadow-2xl">
                 {schoolItems.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center p-12 text-center">
+                    <div className="flex flex-col items-center justify-center p-6 sm:p-12 text-center">
                         <School className="h-12 w-12 text-gray-600 mb-3" />
                         <p className="text-base font-bold text-white">No institutions found</p>
                         <p className="text-xs text-gray-400 max-w-sm mt-1">
@@ -557,181 +557,323 @@ export default function Schools({
                         <button
                             type="button"
                             onClick={handleResetFilters}
-                            className="mt-4 rounded-xl bg-white/10 px-4 py-2 text-xs font-bold text-white hover:bg-white/20 transition-colors"
+                            className="mt-4 min-h-[40px] rounded-xl bg-white/10 px-4 py-2 text-xs font-bold text-white hover:bg-white/20 transition-colors"
                         >
                             Reset All Filters
                         </button>
                     </div>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="border-b border-white/10 bg-white/[0.02] text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                                    <th className="px-5 py-4">Institution Name</th>
-                                    <th className="px-5 py-4">
-                                        {currentTab === 'colleges' ? 'Jurisdiction & Island' : 'Division & Municipality'}
-                                    </th>
-                                    <th className="px-5 py-4">
-                                        {currentTab === 'colleges' ? 'Status' : 'Region & Island'}
-                                    </th>
-                                    <th className="px-5 py-4">
-                                        {currentTab === 'colleges' ? 'Student Leaders' : 'Classification'}
-                                    </th>
-                                    <th className="px-5 py-4 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-white/5 text-xs text-gray-300">
-                                {schoolItems.map((school) => {
-                                    const isCollege = school.type === 'college';
-                                    const isActive = school.status === 'active';
+                    <>
+                        {/* Mobile / Tablet Card List (< 1280px) */}
+                        <div className="divide-y divide-white/10 xl:hidden">
+                            {schoolItems.map((school) => {
+                                const isCollege = school.type === 'college';
+                                const isActive = school.status === 'active';
 
-                                    return (
-                                        <tr
-                                            key={`${school.type}-${school.id}`}
-                                            className="transition-colors hover:bg-white/[0.02] group"
-                                        >
-                                            {/* Institution Name */}
-                                            <td className="px-5 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 font-bold text-white uppercase group-hover:border-amber-400/30 group-hover:bg-amber-400/10 transition-colors">
-                                                        {school.acronym ? school.acronym.substring(0, 3) : school.name.charAt(0)}
-                                                    </div>
-                                                    <div>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="font-bold text-white group-hover:text-amber-400 transition-colors">
-                                                                {school.name}
+                                return (
+                                    <div
+                                        key={`${school.type}-${school.id}`}
+                                        className="p-4 sm:p-5 space-y-3.5 transition-colors hover:bg-white/[0.02]"
+                                    >
+                                        {/* Top Row: School Identity + Status / Region Badge */}
+                                        <div className="flex flex-wrap items-start justify-between gap-3">
+                                            <div className="flex items-start gap-3 min-w-0 flex-1">
+                                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 font-bold text-xs text-white uppercase">
+                                                    {school.acronym ? school.acronym.substring(0, 3) : school.name.charAt(0)}
+                                                </div>
+                                                <div className="min-w-0 flex-1">
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <span className="font-bold text-sm text-white break-words">
+                                                            {school.name}
+                                                        </span>
+                                                        {school.acronym && (
+                                                            <span className="rounded-md border border-amber-400/30 bg-amber-400/10 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-400">
+                                                                {school.acronym}
                                                             </span>
-                                                            {school.acronym && (
-                                                                <span className="rounded-md border border-amber-400/30 bg-amber-400/10 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-400">
-                                                                    {school.acronym}
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                        <div className="flex items-center gap-1.5 text-gray-400 mt-0.5 text-[11px]">
-                                                            <span>ID: #{school.id}</span>
-                                                            <span>•</span>
-                                                            <span className="text-gray-500 uppercase">{school.type}</span>
-                                                        </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex flex-wrap items-center gap-1.5 text-gray-400 mt-0.5 text-[11px]">
+                                                        <span>ID: #{school.id}</span>
+                                                        <span>•</span>
+                                                        <span className="text-gray-500 uppercase">{school.type}</span>
                                                     </div>
                                                 </div>
-                                            </td>
+                                            </div>
 
-                                            {/* Location / Division */}
-                                            <td className="px-5 py-4">
-                                                {isCollege ? (
-                                                    <div className="space-y-1">
+                                            {isCollege ? (
+                                                <span
+                                                    className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-bold ${
+                                                        isActive
+                                                            ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
+                                                            : 'border-rose-500/30 bg-rose-500/10 text-rose-400'
+                                                    }`}
+                                                >
+                                                    {isActive ? (
+                                                        <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                                                    ) : (
+                                                        <XCircle className="h-3.5 w-3.5 shrink-0" />
+                                                    )}
+                                                    <span className="capitalize">{school.status}</span>
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-blue-500/20 bg-blue-500/10 px-2.5 py-0.5 text-xs font-bold text-blue-400">
+                                                    <MapPin className="h-3 w-3 shrink-0" />
+                                                    <span>{school.region}</span>
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        {/* Location & Leaders / Classification */}
+                                        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3 text-xs">
+                                            {isCollege ? (
+                                                <>
+                                                    <div className="flex flex-wrap items-center gap-2 min-w-0">
                                                         <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-bold text-emerald-400">
-                                                            <MapPin className="h-3 w-3" />
+                                                            <MapPin className="h-3 w-3 shrink-0" />
                                                             <span>{school.region}</span>
                                                         </span>
-                                                        <span className="block text-[11px] text-gray-400">
+                                                        <span className="text-[11px] text-gray-400">
                                                             Island: {school.island}
                                                         </span>
                                                     </div>
-                                                ) : (
-                                                    <div className="space-y-0.5">
-                                                        <p className="font-medium text-gray-200">{school.division || '—'}</p>
-                                                        <p className="text-[11px] text-gray-400">{school.municipality || '—'}</p>
-                                                    </div>
-                                                )}
-                                            </td>
 
-                                            {/* Status / Region for SHS */}
-                                            <td className="px-5 py-4">
-                                                {isCollege ? (
-                                                    <span
-                                                        className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-bold ${
-                                                            isActive
-                                                                ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
-                                                                : 'border-rose-500/30 bg-rose-500/10 text-rose-400'
-                                                        }`}
-                                                    >
-                                                        {isActive ? (
-                                                            <CheckCircle2 className="h-3.5 w-3.5" />
+                                                    <div>
+                                                        {school.students_count > 0 ? (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleOpenLeadersModal(school.name)}
+                                                                className="inline-flex min-h-[34px] items-center gap-1.5 rounded-xl border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-xs font-bold text-amber-300 hover:bg-amber-400/20 transition-all cursor-pointer"
+                                                            >
+                                                                <Users className="h-3.5 w-3.5 shrink-0 text-amber-400" />
+                                                                <span>{school.students_count} {school.students_count === 1 ? 'student leader' : 'student leaders'}</span>
+                                                                <ExternalLink className="h-3 w-3 shrink-0 text-amber-400/60" />
+                                                            </button>
                                                         ) : (
-                                                            <XCircle className="h-3.5 w-3.5" />
+                                                            <div className="inline-flex items-center gap-1.5 rounded-xl border border-white/5 bg-white/[0.02] px-2.5 py-1 text-xs text-zinc-500">
+                                                                <Users className="h-3.5 w-3.5 shrink-0 text-zinc-600" />
+                                                                <span>0 student leaders</span>
+                                                            </div>
                                                         )}
-                                                        <span className="capitalize">{school.status}</span>
-                                                    </span>
-                                                ) : (
-                                                    <span className="inline-flex items-center gap-1 rounded-full border border-blue-500/20 bg-blue-500/10 px-2.5 py-0.5 text-xs font-bold text-blue-400">
-                                                        <MapPin className="h-3 w-3" />
-                                                        <span>{school.region}</span>
-                                                    </span>
-                                                )}
-                                            </td>
-
-                                            {/* Enrolled Student Leaders or Classification */}
-                                            <td className="px-5 py-4">
-                                                {isCollege ? (
-                                                    school.students_count > 0 ? (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => handleOpenLeadersModal(school.name)}
-                                                            title={`Click to view ${school.students_count} student leader${school.students_count > 1 ? 's' : ''} from ${school.name}`}
-                                                            className="inline-flex items-center gap-1.5 rounded-xl border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-xs font-bold text-amber-300 hover:bg-amber-400/20 hover:border-amber-400/50 hover:scale-105 transition-all shadow-sm group/btn cursor-pointer"
-                                                        >
-                                                            <Users className="h-3.5 w-3.5 text-amber-400" />
-                                                            <span>{school.students_count} {school.students_count === 1 ? 'student leader' : 'student leaders'}</span>
-                                                            <ExternalLink className="h-3 w-3 text-amber-400/60 group-hover/btn:text-amber-300 transition-colors" />
-                                                        </button>
-                                                    ) : (
-                                                        <div className="inline-flex items-center gap-1.5 rounded-xl border border-white/5 bg-white/[0.02] px-2.5 py-1 text-xs text-zinc-500">
-                                                            <Users className="h-3.5 w-3.5 text-zinc-600" />
-                                                            <span>0 student leaders</span>
-                                                        </div>
-                                                    )
-                                                ) : (
-                                                    <span className="text-[11px] text-gray-300">
+                                                    </div>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div className="min-w-0 space-y-0.5">
+                                                        <p className="font-medium text-gray-200 break-words">{school.division || '—'}</p>
+                                                        <p className="text-[11px] text-gray-400 break-words">{school.municipality || '—'}</p>
+                                                    </div>
+                                                    <span className="text-[11px] text-gray-300 font-medium">
                                                         {school.classification || 'Basic Ed / SHS'}
                                                     </span>
-                                                )}
-                                            </td>
+                                                </>
+                                            )}
+                                        </div>
 
-                                            {/* Actions */}
-                                            <td className="px-5 py-4 text-right">
-                                                {isCollege ? (
-                                                    <div className="flex items-center justify-end gap-2">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => openEditModal(school)}
-                                                            className="inline-flex min-h-[34px] items-center gap-1 rounded-xl border border-white/10 bg-white/5 px-3 text-xs font-medium text-gray-300 hover:border-amber-400/40 hover:text-white hover:bg-white/10 transition-colors"
-                                                        >
-                                                            <Edit2 className="h-3.5 w-3.5 text-amber-400" />
-                                                            <span>Edit</span>
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => handleToggleStatus(school)}
-                                                            disabled={isSubmitting}
-                                                            className={`inline-flex min-h-[34px] items-center gap-1 rounded-xl border px-3 text-xs font-bold transition-all ${
+                                        {/* Actions Row */}
+                                        <div className="flex flex-wrap items-center justify-end gap-2">
+                                            {isCollege ? (
+                                                <>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => openEditModal(school)}
+                                                        className="inline-flex min-h-[38px] items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3.5 text-xs font-medium text-gray-300 hover:border-amber-400/40 hover:text-white hover:bg-white/10 transition-colors"
+                                                    >
+                                                        <Edit2 className="h-3.5 w-3.5 shrink-0 text-amber-400" />
+                                                        <span>Edit</span>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleToggleStatus(school)}
+                                                        disabled={isSubmitting}
+                                                        className={`inline-flex min-h-[38px] items-center gap-1 rounded-xl border px-3.5 text-xs font-bold transition-all ${
+                                                            isActive
+                                                                ? 'border-rose-500/20 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20'
+                                                                : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20'
+                                                        }`}
+                                                    >
+                                                        {isActive ? 'Deactivate' : 'Activate'}
+                                                    </button>
+                                                </>
+                                            ) : (
+                                                <span className="text-[11px] text-gray-500 italic">DepEd Catalog</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* Desktop Table (1280px+) */}
+                        <div className="hidden xl:block overflow-x-auto">
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="border-b border-white/10 bg-white/[0.02] text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                                        <th className="px-5 py-4">Institution Name</th>
+                                        <th className="px-5 py-4">
+                                            {currentTab === 'colleges' ? 'Jurisdiction & Island' : 'Division & Municipality'}
+                                        </th>
+                                        <th className="px-5 py-4">
+                                            {currentTab === 'colleges' ? 'Status' : 'Region & Island'}
+                                        </th>
+                                        <th className="px-5 py-4">
+                                            {currentTab === 'colleges' ? 'Student Leaders' : 'Classification'}
+                                        </th>
+                                        <th className="px-5 py-4 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5 text-xs text-gray-300">
+                                    {schoolItems.map((school) => {
+                                        const isCollege = school.type === 'college';
+                                        const isActive = school.status === 'active';
+
+                                        return (
+                                            <tr
+                                                key={`${school.type}-${school.id}`}
+                                                className="transition-colors hover:bg-white/[0.02] group"
+                                            >
+                                                {/* Institution Name */}
+                                                <td className="px-5 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 font-bold text-white uppercase group-hover:border-amber-400/30 group-hover:bg-amber-400/10 transition-colors">
+                                                            {school.acronym ? school.acronym.substring(0, 3) : school.name.charAt(0)}
+                                                        </div>
+                                                        <div className="min-w-0">
+                                                            <div className="flex items-center gap-2 flex-wrap">
+                                                                <span className="font-bold text-white group-hover:text-amber-400 transition-colors">
+                                                                    {school.name}
+                                                                </span>
+                                                                {school.acronym && (
+                                                                    <span className="rounded-md border border-amber-400/30 bg-amber-400/10 px-1.5 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-400">
+                                                                        {school.acronym}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <div className="flex items-center gap-1.5 text-gray-400 mt-0.5 text-[11px]">
+                                                                <span>ID: #{school.id}</span>
+                                                                <span>•</span>
+                                                                <span className="text-gray-500 uppercase">{school.type}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+                                                {/* Location / Division */}
+                                                <td className="px-5 py-4">
+                                                    {isCollege ? (
+                                                        <div className="space-y-1">
+                                                            <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-bold text-emerald-400">
+                                                                <MapPin className="h-3 w-3 shrink-0" />
+                                                                <span>{school.region}</span>
+                                                            </span>
+                                                            <span className="block text-[11px] text-gray-400">
+                                                                Island: {school.island}
+                                                            </span>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="space-y-0.5">
+                                                            <p className="font-medium text-gray-200">{school.division || '—'}</p>
+                                                            <p className="text-[11px] text-gray-400">{school.municipality || '—'}</p>
+                                                        </div>
+                                                    )}
+                                                </td>
+
+                                                {/* Status / Region for SHS */}
+                                                <td className="px-5 py-4">
+                                                    {isCollege ? (
+                                                        <span
+                                                            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-bold ${
                                                                 isActive
-                                                                    ? 'border-rose-500/20 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20'
-                                                                    : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20'
+                                                                    ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
+                                                                    : 'border-rose-500/30 bg-rose-500/10 text-rose-400'
                                                             }`}
                                                         >
-                                                            {isActive ? 'Deactivate' : 'Activate'}
-                                                        </button>
-                                                    </div>
-                                                ) : (
-                                                    <span className="text-[11px] text-gray-500 italic">DepEd Catalog</span>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
+                                                            {isActive ? (
+                                                                <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                                                            ) : (
+                                                                <XCircle className="h-3.5 w-3.5 shrink-0" />
+                                                            )}
+                                                            <span className="capitalize">{school.status}</span>
+                                                        </span>
+                                                    ) : (
+                                                        <span className="inline-flex items-center gap-1 rounded-full border border-blue-500/20 bg-blue-500/10 px-2.5 py-0.5 text-xs font-bold text-blue-400">
+                                                            <MapPin className="h-3 w-3 shrink-0" />
+                                                            <span>{school.region}</span>
+                                                        </span>
+                                                    )}
+                                                </td>
+
+                                                {/* Enrolled Student Leaders or Classification */}
+                                                <td className="px-5 py-4">
+                                                    {isCollege ? (
+                                                        school.students_count > 0 ? (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleOpenLeadersModal(school.name)}
+                                                                title={`Click to view ${school.students_count} student leader${school.students_count > 1 ? 's' : ''} from ${school.name}`}
+                                                                className="inline-flex items-center gap-1.5 rounded-xl border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-xs font-bold text-amber-300 hover:bg-amber-400/20 hover:border-amber-400/50 hover:scale-105 transition-all shadow-sm group/btn cursor-pointer"
+                                                            >
+                                                                <Users className="h-3.5 w-3.5 shrink-0 text-amber-400" />
+                                                                <span>{school.students_count} {school.students_count === 1 ? 'student leader' : 'student leaders'}</span>
+                                                                <ExternalLink className="h-3 w-3 shrink-0 text-amber-400/60 group-hover/btn:text-amber-300 transition-colors" />
+                                                            </button>
+                                                        ) : (
+                                                            <div className="inline-flex items-center gap-1.5 rounded-xl border border-white/5 bg-white/[0.02] px-2.5 py-1 text-xs text-zinc-500">
+                                                                <Users className="h-3.5 w-3.5 shrink-0 text-zinc-600" />
+                                                                <span>0 student leaders</span>
+                                                            </div>
+                                                        )
+                                                    ) : (
+                                                        <span className="text-[11px] text-gray-300">
+                                                            {school.classification || 'Basic Ed / SHS'}
+                                                        </span>
+                                                    )}
+                                                </td>
+
+                                                {/* Actions */}
+                                                <td className="px-5 py-4 text-right">
+                                                    {isCollege ? (
+                                                        <div className="flex items-center justify-end gap-2">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => openEditModal(school)}
+                                                                className="inline-flex min-h-[34px] items-center gap-1 rounded-xl border border-white/10 bg-white/5 px-3 text-xs font-medium text-gray-300 hover:border-amber-400/40 hover:text-white hover:bg-white/10 transition-colors"
+                                                            >
+                                                                <Edit2 className="h-3.5 w-3.5 shrink-0 text-amber-400" />
+                                                                <span>Edit</span>
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleToggleStatus(school)}
+                                                                disabled={isSubmitting}
+                                                                className={`inline-flex min-h-[34px] items-center gap-1 rounded-xl border px-3 text-xs font-bold transition-all ${
+                                                                    isActive
+                                                                        ? 'border-rose-500/20 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20'
+                                                                        : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20'
+                                                                }`}
+                                                            >
+                                                                {isActive ? 'Deactivate' : 'Activate'}
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-[11px] text-gray-500 italic">DepEd Catalog</span>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
                 )}
 
                 {/* Pagination */}
                 {schools?.links && schools.links.length > 3 && (
-                    <div className="flex flex-col sm:flex-row items-center justify-between border-t border-white/10 px-6 py-4 gap-3">
+                    <div className="flex flex-col sm:flex-row flex-wrap items-center justify-between border-t border-white/10 px-4 sm:px-6 py-4 gap-3">
                         <span className="text-xs text-gray-400">
                             Showing page {schools.current_page} of {schools.last_page} ({schools.total?.toLocaleString()} total records)
                         </span>
-                        <div className="flex flex-wrap gap-1.5 justify-center">
+                        <div className="flex flex-wrap gap-2 justify-center">
                             {schools.links.map((link, idx) => (
                                 <Link
                                     key={idx}
@@ -759,21 +901,21 @@ export default function Schools({
                         if (e.target === e.currentTarget) setIsCreateModalOpen(false);
                     }}
                 >
-                    <div className={`w-full max-w-lg rounded-2xl border ${formData.type === 'shs' ? 'border-amber-500/30' : 'border-emerald-500/30'} bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150`}>
-                        <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                            <div className="flex items-center gap-2.5">
-                                <div className={`flex h-9 w-9 items-center justify-center rounded-xl border ${
+                    <div className={`w-full max-w-lg max-h-[90dvh] overflow-y-auto overscroll-contain rounded-2xl border ${formData.type === 'shs' ? 'border-amber-500/30' : 'border-emerald-500/30'} bg-[#0f0f11]/95 backdrop-blur-2xl p-4 sm:p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150`}>
+                        <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-4">
+                            <div className="flex items-center gap-2.5 min-w-0">
+                                <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border ${
                                     formData.type === 'shs'
                                         ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
                                         : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                                 }`}>
                                     {formData.type === 'shs' ? (
-                                        <BookOpen className="h-5 w-5" />
+                                        <BookOpen className="h-5 w-5 shrink-0" />
                                     ) : (
-                                        <GraduationCap className="h-5 w-5" />
+                                        <GraduationCap className="h-5 w-5 shrink-0" />
                                     )}
                                 </div>
-                                <div>
+                                <div className="min-w-0">
                                     <h3 className="text-base font-black text-white">
                                         {formData.type === 'shs' ? 'Add Senior High School' : 'Add Higher Ed Institution'}
                                     </h3>
@@ -787,7 +929,7 @@ export default function Schools({
                             <button
                                 type="button"
                                 onClick={() => setIsCreateModalOpen(false)}
-                                className="rounded-lg p-1 text-gray-400 hover:text-white"
+                                className="shrink-0 rounded-lg p-1 text-gray-400 hover:text-white"
                             >
                                 <X className="h-5 w-5" />
                             </button>
@@ -799,29 +941,29 @@ export default function Schools({
                                 <label className="block text-xs font-semibold text-gray-300 mb-1.5">
                                     Institution Level / Category *
                                 </label>
-                                <div className="grid grid-cols-2 gap-2 rounded-xl bg-black/60 p-1 border border-white/10">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 rounded-xl bg-black/60 p-1 border border-white/10">
                                     <button
                                         type="button"
                                         onClick={() => setFormData(prev => ({ ...prev, type: 'college' }))}
-                                        className={`flex items-center justify-center gap-2 rounded-lg py-2 px-3 text-xs font-bold transition-all ${
+                                        className={`flex min-h-[38px] items-center justify-center gap-2 rounded-lg py-2 px-3 text-xs font-bold transition-all ${
                                             formData.type === 'college'
                                                 ? 'bg-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)]'
                                                 : 'text-gray-400 hover:text-white hover:bg-white/5'
                                         }`}
                                     >
-                                        <GraduationCap className="h-4 w-4" />
+                                        <GraduationCap className="h-4 w-4 shrink-0" />
                                         <span>College / University</span>
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => setFormData(prev => ({ ...prev, type: 'shs' }))}
-                                        className={`flex items-center justify-center gap-2 rounded-lg py-2 px-3 text-xs font-bold transition-all ${
+                                        className={`flex min-h-[38px] items-center justify-center gap-2 rounded-lg py-2 px-3 text-xs font-bold transition-all ${
                                             formData.type === 'shs'
                                                 ? 'bg-amber-400 text-black shadow-[0_0_15px_rgba(251,191,36,0.3)]'
                                                 : 'text-gray-400 hover:text-white hover:bg-white/5'
                                         }`}
                                     >
-                                        <BookOpen className="h-4 w-4" />
+                                        <BookOpen className="h-4 w-4 shrink-0" />
                                         <span>Senior High School</span>
                                     </button>
                                 </div>
@@ -850,7 +992,7 @@ export default function Schools({
 
                             {formData.type === 'college' ? (
                                 <>
-                                    <div className="grid grid-cols-2 gap-3">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         <div>
                                             <label className="block text-xs font-semibold text-gray-300 mb-1.5">
                                                 Acronym
@@ -880,7 +1022,7 @@ export default function Schools({
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-3">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         <div>
                                             <label className="block text-xs font-semibold text-gray-300 mb-1.5">
                                                 Region *
@@ -913,7 +1055,7 @@ export default function Schools({
                                 </>
                             ) : (
                                 <>
-                                    <div className="grid grid-cols-2 gap-3">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         <div>
                                             <label className="block text-xs font-semibold text-gray-300 mb-1.5">
                                                 Region *
@@ -944,7 +1086,7 @@ export default function Schools({
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-3">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         <div>
                                             <label className="block text-xs font-semibold text-gray-300 mb-1.5">
                                                 Schools Division (SDO)
@@ -974,18 +1116,18 @@ export default function Schools({
                                 </>
                             )}
 
-                            <div className="mt-6 flex items-center justify-end gap-3 border-t border-white/10 pt-4">
+                            <div className="mt-6 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 border-t border-white/10 pt-4">
                                 <button
                                     type="button"
                                     onClick={() => setIsCreateModalOpen(false)}
-                                    className="rounded-xl border border-white/10 px-4 py-2.5 text-xs font-bold text-gray-300 hover:bg-white/5"
+                                    className="min-h-[40px] w-full sm:w-auto rounded-xl border border-white/10 px-4 py-2.5 text-xs font-bold text-gray-300 hover:bg-white/5"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className={`inline-flex items-center gap-1.5 rounded-xl px-5 py-2.5 text-xs font-bold transition-all disabled:opacity-50 ${
+                                    className={`min-h-[40px] w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl px-5 py-2.5 text-xs font-bold transition-all disabled:opacity-50 ${
                                         formData.type === 'shs'
                                             ? 'bg-amber-400 text-black hover:bg-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.3)]'
                                             : 'bg-emerald-500 text-white hover:bg-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
@@ -993,12 +1135,12 @@ export default function Schools({
                                 >
                                     {isSubmitting ? (
                                         <>
-                                            <LoaderCircle className="h-4 w-4 animate-spin" />
+                                            <LoaderCircle className="h-4 w-4 animate-spin shrink-0" />
                                             <span>Saving...</span>
                                         </>
                                     ) : (
                                         <>
-                                            <Check className="h-4 w-4" />
+                                            <Check className="h-4 w-4 shrink-0" />
                                             <span>
                                                 {formData.type === 'shs' ? 'Save Senior High School' : 'Save Institution'}
                                             </span>
@@ -1022,13 +1164,13 @@ export default function Schools({
                         if (e.target === e.currentTarget) setEditingSchool(null);
                     }}
                 >
-                    <div className="w-full max-w-lg rounded-2xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
-                        <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                            <div className="flex items-center gap-2.5">
-                                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20">
-                                    <Edit2 className="h-5 w-5" />
+                    <div className="w-full max-w-lg max-h-[90dvh] overflow-y-auto overscroll-contain rounded-2xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-4 sm:p-6 shadow-[0_20px_70px_rgba(0,0,0,0.6)] animate-in fade-in zoom-in-95 duration-150">
+                        <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-4">
+                            <div className="flex items-center gap-2.5 min-w-0">
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20">
+                                    <Edit2 className="h-5 w-5 shrink-0" />
                                 </div>
-                                <div>
+                                <div className="min-w-0">
                                     <h3 className="text-base font-black text-white">Edit Institution</h3>
                                     <p className="text-xs text-gray-400">Update institution profile and league status</p>
                                 </div>
@@ -1036,7 +1178,7 @@ export default function Schools({
                             <button
                                 type="button"
                                 onClick={() => setEditingSchool(null)}
-                                className="rounded-lg p-1 text-gray-400 hover:text-white"
+                                className="shrink-0 rounded-lg p-1 text-gray-400 hover:text-white"
                             >
                                 <X className="h-5 w-5" />
                             </button>
@@ -1056,7 +1198,7 @@ export default function Schools({
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
                                     <label className="block text-xs font-semibold text-gray-300 mb-1.5">
                                         Acronym
@@ -1085,7 +1227,7 @@ export default function Schools({
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
                                     <label className="block text-xs font-semibold text-gray-300 mb-1.5">
                                         Region *
@@ -1116,27 +1258,27 @@ export default function Schools({
                                 </div>
                             </div>
 
-                            <div className="mt-6 flex items-center justify-end gap-3 border-t border-white/10 pt-4">
+                            <div className="mt-6 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 border-t border-white/10 pt-4">
                                 <button
                                     type="button"
                                     onClick={() => setEditingSchool(null)}
-                                    className="rounded-xl border border-white/10 px-4 py-2.5 text-xs font-bold text-gray-300 hover:bg-white/5"
+                                    className="min-h-[40px] w-full sm:w-auto rounded-xl border border-white/10 px-4 py-2.5 text-xs font-bold text-gray-300 hover:bg-white/5"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="inline-flex items-center gap-1.5 rounded-xl bg-amber-400 px-5 py-2.5 text-xs font-bold text-black hover:bg-amber-300 disabled:opacity-50 transition-all shadow-[0_0_15px_rgba(251,191,36,0.2)]"
+                                    className="min-h-[40px] w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-amber-400 px-5 py-2.5 text-xs font-bold text-black hover:bg-amber-300 disabled:opacity-50 transition-all shadow-[0_0_15px_rgba(251,191,36,0.2)]"
                                 >
                                     {isSubmitting ? (
                                         <>
-                                            <LoaderCircle className="h-4 w-4 animate-spin" />
+                                            <LoaderCircle className="h-4 w-4 animate-spin shrink-0" />
                                             <span>Updating...</span>
                                         </>
                                     ) : (
                                         <>
-                                            <Check className="h-4 w-4" />
+                                            <Check className="h-4 w-4 shrink-0" />
                                             <span>Update Institution</span>
                                         </>
                                     )}
@@ -1151,23 +1293,23 @@ export default function Schools({
             {/* REGISTERED STUDENT LEADERS JUSTIFICATION MODAL */}
             {isLeadersModalOpen && typeof document !== 'undefined' && createPortal(
                 <div
-                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4 sm:p-6 backdrop-blur-md transition-all duration-200 animate-in fade-in duration-200"
+                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-3 sm:p-6 backdrop-blur-md transition-all duration-200 animate-in fade-in duration-200"
                     role="dialog"
                     aria-modal="true"
                     onClick={(e) => {
                         if (e.target === e.currentTarget) setIsLeadersModalOpen(false);
                     }}
                 >
-                    <div className="w-full max-w-3xl max-h-[85vh] flex flex-col rounded-3xl border border-purple-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl shadow-[0_20px_70px_rgba(0,0,0,0.6)] overflow-hidden my-auto">
+                    <div className="w-full max-w-3xl max-h-[90dvh] overscroll-contain flex flex-col rounded-2xl sm:rounded-3xl border border-purple-500/30 bg-[#0f0f11]/95 backdrop-blur-2xl shadow-[0_20px_70px_rgba(0,0,0,0.6)] overflow-hidden my-auto">
                         {/* Header */}
-                        <div className="p-6 border-b border-white/10 bg-gradient-to-b from-purple-500/[0.08] to-transparent flex items-start justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-purple-500/20 text-purple-400 border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.25)]">
-                                    <Users className="h-6 w-6" />
+                        <div className="p-4 sm:p-6 border-b border-white/10 bg-gradient-to-b from-purple-500/[0.08] to-transparent flex items-start justify-between gap-3 shrink-0">
+                            <div className="flex items-start sm:items-center gap-3 min-w-0">
+                                <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-purple-500/20 text-purple-400 border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.25)]">
+                                    <Users className="h-5 w-5 sm:h-6 sm:w-6 shrink-0" />
                                 </div>
-                                <div>
-                                    <div className="flex items-center gap-2">
-                                        <h3 className="text-lg font-black text-white tracking-tight">
+                                <div className="min-w-0">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <h3 className="text-base sm:text-lg font-black text-white tracking-tight">
                                             Registered Campus Student Leaders Telemetry
                                         </h3>
                                         <span className="rounded-full border border-purple-400/30 bg-purple-400/10 px-2 py-0.5 text-[10px] font-mono font-bold uppercase text-purple-300">
@@ -1182,16 +1324,16 @@ export default function Schools({
                             <button
                                 type="button"
                                 onClick={() => setIsLeadersModalOpen(false)}
-                                className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                                className="shrink-0 p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                             >
                                 <X className="h-5 w-5" />
                             </button>
                         </div>
 
                         {/* Filter Bar */}
-                        <div className="p-4 border-b border-white/5 bg-black/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div className="p-3.5 sm:p-4 border-b border-white/5 bg-black/30 flex flex-col sm:flex-row sm:items-start justify-between gap-3 shrink-0">
                             {/* School filter chips */}
-                            <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                            <div className="flex flex-wrap items-center gap-1.5 text-xs max-h-32 overflow-y-auto overscroll-contain min-w-0 flex-1 pr-1">
                                 <button
                                     type="button"
                                     onClick={() => setSelectedSchoolFilter(null)}
@@ -1226,20 +1368,20 @@ export default function Schools({
                             </div>
 
                             {/* Search */}
-                            <div className="relative">
+                            <div className="relative w-full sm:w-52 shrink-0">
                                 <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-500" />
                                 <input
                                     type="search"
                                     value={leaderSearch}
                                     onChange={(e) => setLeaderSearch(e.target.value)}
                                     placeholder="Filter by name, IGN, ID, course..."
-                                    className="h-8 w-full sm:w-48 rounded-xl border border-white/10 bg-black/40 pl-8 pr-3 text-xs text-white placeholder:text-gray-500 focus:border-purple-400/50 focus:outline-none"
+                                    className="min-h-[38px] w-full rounded-xl border border-white/10 bg-black/40 pl-8 pr-3 text-xs text-white placeholder:text-gray-500 focus:border-purple-400/50 focus:outline-none"
                                 />
                             </div>
                         </div>
 
                         {/* Student Leaders List */}
-                        <div className="flex-1 overflow-y-auto p-6 space-y-3">
+                        <div className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 space-y-3">
                             {filteredLeaders.length === 0 ? (
                                 <div className="text-center py-12 text-zinc-500 text-xs">
                                     No student leaders match the current search or school filter.
@@ -1248,37 +1390,41 @@ export default function Schools({
                                 filteredLeaders.map((leader) => (
                                     <div
                                         key={leader.id}
-                                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all"
+                                        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all"
                                     >
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex items-start sm:items-center gap-3 min-w-0">
                                             <div className="h-10 w-10 shrink-0 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 font-bold flex items-center justify-center">
                                                 {leader.name?.charAt(0)}
                                             </div>
-                                            <div>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="font-bold text-white text-sm">{leader.name}</span>
-                                                    <span className="text-[11px] text-zinc-400">({leader.email})</span>
+                                            <div className="min-w-0 flex-1">
+                                                <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                                                    <span className="font-bold text-white text-sm break-words">{leader.name}</span>
+                                                    <span className="text-[11px] text-zinc-400 break-all">({leader.email})</span>
                                                 </div>
                                                 <div className="flex flex-wrap items-center gap-2 mt-1 text-xs">
                                                     <span className="inline-flex items-center gap-1 font-mono font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/20">
-                                                        <Gamepad2 className="h-3 w-3" />
-                                                        <span>{leader.ml_ign || 'NO IGN'}</span>
+                                                        <Gamepad2 className="h-3 w-3 shrink-0" />
+                                                        <span className="break-all">{leader.ml_ign || 'NO IGN'}</span>
                                                         <span className="text-amber-400/60 text-[10px]">[{leader.ml_id || 'N/A'}]</span>
                                                     </span>
-                                                    <span className="text-zinc-500">•</span>
-                                                    <span className="text-zinc-300 font-medium">{leader.course || 'Enrolled Student Leader'}</span>
-                                                    <span className="text-zinc-500">•</span>
-                                                    <span className="text-zinc-400 uppercase text-[10px] font-bold">{leader.division}</span>
+                                                    <span className="text-zinc-500 hidden sm:inline">•</span>
+                                                    <span className="text-zinc-300 font-medium break-words">{leader.course || 'Enrolled Student Leader'}</span>
+                                                    {leader.division && (
+                                                        <>
+                                                            <span className="text-zinc-500 hidden sm:inline">•</span>
+                                                            <span className="text-zinc-400 uppercase text-[10px] font-bold">{leader.division}</span>
+                                                        </>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="flex sm:flex-col items-end justify-between sm:justify-center gap-1.5 shrink-0">
-                                            <span className="inline-flex items-center gap-1 rounded-full border border-purple-400/20 bg-purple-400/10 px-2.5 py-0.5 text-[11px] font-bold text-purple-300 max-w-[220px] truncate">
+                                        <div className="flex flex-wrap sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-1.5 shrink-0 min-w-0">
+                                            <span className="inline-flex min-w-0 max-w-full sm:max-w-[220px] items-center gap-1 rounded-full border border-purple-400/20 bg-purple-400/10 px-2.5 py-0.5 text-[11px] font-bold text-purple-300">
                                                 <School className="h-3 w-3 shrink-0" />
                                                 <span className="truncate">{leader.university}</span>
                                             </span>
-                                            <span className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                                            <span className={`inline-flex shrink-0 items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
                                                 leader.status === 'active'
                                                     ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20'
                                                     : leader.status === 'renewal-required'
@@ -1294,31 +1440,31 @@ export default function Schools({
                         </div>
 
                         {/* Modal Footer */}
-                        <div className="p-4 border-t border-white/10 bg-black/40 flex flex-wrap items-center justify-between gap-3">
+                        <div className="p-4 border-t border-white/10 bg-black/40 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-between gap-2.5 shrink-0">
                             <button
                                 type="button"
                                 onClick={() => {
                                     setIsLeadersModalOpen(false);
                                     handleFilterCampusesWithLeaders();
                                 }}
-                                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-bold hover:bg-purple-500/20 transition-all cursor-pointer"
+                                className="min-h-[40px] inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-bold hover:bg-purple-500/20 transition-all cursor-pointer"
                             >
-                                <Building2 className="h-3.5 w-3.5" />
+                                <Building2 className="h-3.5 w-3.5 shrink-0" />
                                 <span>Filter Table to Campuses with Leaders</span>
                             </button>
 
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-col-reverse min-[420px]:flex-row items-stretch min-[420px]:items-center gap-2">
                                 <Link
                                     href="/admin/users/pending"
-                                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-white/10 text-xs font-bold text-zinc-300 hover:text-white hover:bg-white/5 transition-all"
+                                    className="min-h-[40px] inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl border border-white/10 text-xs font-bold text-zinc-300 hover:text-white hover:bg-white/5 transition-all"
                                 >
                                     <span>Open Verification Queue</span>
-                                    <ExternalLink className="h-3.5 w-3.5" />
+                                    <ExternalLink className="h-3.5 w-3.5 shrink-0" />
                                 </Link>
                                 <button
                                     type="button"
                                     onClick={() => setIsLeadersModalOpen(false)}
-                                    className="px-4 py-2 rounded-xl bg-white/10 text-xs font-bold text-white hover:bg-white/20 transition-all cursor-pointer"
+                                    className="min-h-[40px] px-4 py-2 rounded-xl bg-white/10 text-xs font-bold text-white hover:bg-white/20 transition-all cursor-pointer"
                                 >
                                     Close
                                 </button>

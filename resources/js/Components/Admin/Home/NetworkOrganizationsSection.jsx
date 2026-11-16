@@ -159,17 +159,17 @@ export default function NetworkOrganizationsSection({ initialItems = [] }) {
                     <button
                         type="button"
                         onClick={openAddModal}
-                        className={ADMIN_GOLD_BUTTON_CLASS}
+                        className={`${ADMIN_GOLD_BUTTON_CLASS} w-full shrink-0 whitespace-nowrap sm:w-auto`}
                     >
-                        <Plus className="h-4 w-4" aria-hidden="true" />
+                        <Plus className="h-4 w-4 shrink-0" aria-hidden="true" />
                         Add Organization
                     </button>
                 }
             >
                         <div className="space-y-5">
                             {/* Search & Filter Toolbar */}
-                            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                                <div className="relative w-full sm:max-w-xs">
+                            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+                                <div className="relative min-w-0 w-full sm:max-w-xs">
                                     <Search
                                         aria-hidden="true"
                                         className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500"
@@ -202,7 +202,7 @@ export default function NetworkOrganizationsSection({ initialItems = [] }) {
                                                     setStatusFilter(tab.id);
                                                     setCurrentPage(1);
                                                 }}
-                                                className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${selected
+                                                className={`inline-flex min-h-9 items-center rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer ${selected
                                                         ? "bg-[#FBBF24]/15 text-[#FBBF24] border border-[#FBBF24]/40"
                                                         : "bg-[#141417] text-neutral-400 border border-neutral-800 hover:border-neutral-700 hover:text-white"
                                                     }`}
@@ -274,9 +274,9 @@ export default function NetworkOrganizationsSection({ initialItems = [] }) {
                                             {/* Sticky Row Header: Logo + Organization Name */}
                                             <th
                                                 scope="row"
-                                                className="px-4 py-3 font-semibold text-white whitespace-nowrap"
+                                                className="px-4 py-3 font-semibold text-white"
                                             >
-                                                <div className="flex items-center gap-3">
+                                                <div className="flex min-w-0 items-center gap-3">
                                                     <div className="flex h-11 w-14 shrink-0 items-center justify-center rounded-lg border border-neutral-800 bg-neutral-950 p-1.5">
                                                         <img
                                                             src={item.logo_url || item.logo_path}
@@ -284,24 +284,24 @@ export default function NetworkOrganizationsSection({ initialItems = [] }) {
                                                             className="max-h-full max-w-full object-contain"
                                                         />
                                                     </div>
-                                                    <span className="max-w-[220px] truncate font-semibold text-white" title={item.name}>
+                                                    <span className="min-w-0 flex-1 break-words font-semibold text-white" title={item.name}>
                                                         {item.name}
                                                     </span>
                                                 </div>
                                             </th>
 
                                             {/* Destination Link */}
-                                            <td className="px-4 py-3 whitespace-nowrap">
+                                            <td className="px-4 py-3">
                                                 {item.link ? (
                                                     <a
                                                         href={item.link}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         title={item.link}
-                                                        className="inline-flex max-w-xs items-center gap-1.5 text-xs font-medium text-[#FBBF24] hover:underline"
+                                                        className="inline-flex min-w-0 max-w-full items-center gap-1.5 break-all text-xs font-medium text-[#FBBF24] hover:underline xl:max-w-xs"
                                                     >
                                                         <Globe className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                                                        <span className="truncate">{item.link}</span>
+                                                        <span className="min-w-0 break-all xl:truncate">{item.link}</span>
                                                         <ExternalLink className="h-3 w-3 shrink-0" aria-hidden="true" />
                                                     </a>
                                                 ) : (
@@ -324,7 +324,7 @@ export default function NetworkOrganizationsSection({ initialItems = [] }) {
                                                                 type="button"
                                                                 onClick={() => handleToggleActive(item)}
                                                                 title="Click to toggle Active / Inactive"
-                                                                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold transition-colors cursor-pointer ${item.is_active
+                                                                className={`inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold transition-colors cursor-pointer ${item.is_active
                                                                         ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 hover:bg-emerald-500/20"
                                                                         : "bg-neutral-800 text-neutral-400 border border-neutral-700 hover:bg-neutral-700 hover:text-neutral-200"
                                                                     }`}
@@ -339,22 +339,22 @@ export default function NetworkOrganizationsSection({ initialItems = [] }) {
                                                         </td>
 
                                                             {/* Actions */}
-                                                            <td className="px-4 py-3 text-right whitespace-nowrap">
-                                                                <div className="inline-flex items-center justify-end gap-2">
+                                                            <td className="px-4 py-3 text-right">
+                                                                <div className="inline-flex flex-wrap items-center justify-end gap-2">
                                                                     <button
                                                                         type="button"
                                                                         onClick={() => openEditModal(item)}
-                                                                        className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-700 bg-neutral-900 px-2.5 py-1.5 text-xs font-medium text-neutral-200 transition-colors hover:bg-neutral-800 hover:text-white cursor-pointer"
+                                                                        className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-neutral-700 bg-neutral-900 px-2.5 py-1.5 text-xs font-medium text-neutral-200 transition-colors hover:bg-neutral-800 hover:text-white cursor-pointer"
                                                                     >
-                                                                        <Pencil className="h-3.5 w-3.5 text-[#FBBF24]" aria-hidden="true" />
+                                                                        <Pencil className="h-3.5 w-3.5 shrink-0 text-[#FBBF24]" aria-hidden="true" />
                                                                         <span>Edit</span>
                                                                     </button>
                                                                     <button
                                                                         type="button"
                                                                         onClick={() => requestDelete(item.id)}
-                                                                        className="inline-flex items-center gap-1.5 rounded-lg border border-red-500/25 bg-red-500/10 px-2.5 py-1.5 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20 hover:text-red-300 cursor-pointer"
+                                                                        className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-red-500/25 bg-red-500/10 px-2.5 py-1.5 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20 hover:text-red-300 cursor-pointer"
                                                                     >
-                                                                        <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                                                                        <Trash2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                                                                         <span>Delete</span>
                                                                     </button>
                                                                 </div>
@@ -385,13 +385,13 @@ export default function NetworkOrganizationsSection({ initialItems = [] }) {
                                                 {totalPages > 1 && (
                                                     <nav
                                                         aria-label="Network organizations pagination"
-                                                        className="flex items-center gap-1.5"
+                                                        className="flex flex-wrap items-center gap-1.5"
                                                     >
                                                         <button
                                                             type="button"
                                                             disabled={currentPage <= 1}
                                                             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                                                            className="inline-flex items-center gap-1 rounded-lg border border-neutral-800 bg-[#141417] px-2.5 py-1.5 font-semibold text-neutral-300 transition-colors hover:bg-neutral-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+                                                            className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-neutral-800 bg-[#141417] px-2.5 py-1.5 font-semibold text-neutral-300 transition-colors hover:bg-neutral-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
                                                         >
                                                             <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
                                                             Prev
@@ -403,7 +403,7 @@ export default function NetworkOrganizationsSection({ initialItems = [] }) {
                                                             type="button"
                                                             disabled={currentPage >= totalPages}
                                                             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                                                            className="inline-flex items-center gap-1 rounded-lg border border-neutral-800 bg-[#141417] px-2.5 py-1.5 font-semibold text-neutral-300 transition-colors hover:bg-neutral-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
+                                                            className="inline-flex min-h-9 items-center gap-1 rounded-lg border border-neutral-800 bg-[#141417] px-2.5 py-1.5 font-semibold text-neutral-300 transition-colors hover:bg-neutral-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer"
                                                         >
                                                             Next
                                                             <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />

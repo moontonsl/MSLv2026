@@ -84,8 +84,8 @@ export default function ProgramsSection() {
     };
 
     const headerRight = (
-        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-            <div className="relative w-full sm:w-64">
+        <div className="flex w-full min-w-0 flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+            <div className="relative min-w-0 w-full sm:w-64">
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
                 <input
                     type="search"
@@ -95,8 +95,12 @@ export default function ProgramsSection() {
                     className="w-full min-h-[44px] rounded-md border border-neutral-800 bg-[#1A1A1A] py-2.5 pl-10 pr-4 text-base text-white placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none md:text-sm"
                 />
             </div>
-            <button type="button" className={ADMIN_GOLD_BUTTON_CLASS} onClick={openAddModal}>
-                <Plus className="h-4 w-4" />
+            <button
+                type="button"
+                className={`${ADMIN_GOLD_BUTTON_CLASS} w-full shrink-0 whitespace-nowrap sm:w-auto`}
+                onClick={openAddModal}
+            >
+                <Plus className="h-4 w-4 shrink-0" />
                 Add Program
             </button>
         </div>
@@ -105,13 +109,13 @@ export default function ProgramsSection() {
     return (
         <>
             <SectionCard title="Our Programs" headerRight={headerRight}>
-                <div className="hidden overflow-x-auto md:block">
+                <div className="hidden overflow-x-auto xl:block">
                     <table className="w-full table-auto border-collapse">
                         <thead>
                             <tr>
-                                <th className="pb-4 text-left text-sm font-semibold text-white">Title</th>
-                                <th className="pb-4 text-left text-sm font-semibold text-white">Links</th>
-                                <th className="pb-4 pr-4 text-right text-sm font-semibold text-white">
+                                <th className="pb-4 pr-4 text-left text-sm font-semibold text-white">Title</th>
+                                <th className="pb-4 pr-4 text-left text-sm font-semibold text-white">Links</th>
+                                <th className="pb-4 pr-4 text-right text-sm font-semibold text-white whitespace-nowrap">
                                     Actions
                                 </th>
                             </tr>
@@ -119,18 +123,20 @@ export default function ProgramsSection() {
                         <tbody>
                             {filteredPrograms.map((row) => (
                                 <tr key={row.title}>
-                                    <td className="border-b border-neutral-800/50 py-4 text-sm text-gray-300">
+                                    <td className="border-b border-neutral-800/50 py-4 pr-4 text-sm text-gray-300">
                                         {row.title}
                                     </td>
-                                    <td className="border-b border-neutral-800/50 py-4 text-sm text-gray-300">
-                                        {row.link}
+                                    <td className="max-w-xs border-b border-neutral-800/50 py-4 pr-4 text-sm text-gray-300">
+                                        <span className="block max-w-xs truncate break-all" title={row.link}>
+                                            {row.link}
+                                        </span>
                                     </td>
-                                    <td className="border-b border-neutral-800/50 py-4 pr-4 text-right">
+                                    <td className="border-b border-neutral-800/50 py-4 pr-4 text-right whitespace-nowrap">
                                         <div className="inline-flex items-center justify-end gap-2">
                                             <img
                                                 src={row.thumbnail}
                                                 alt=""
-                                                className="h-10 w-10 rounded-md border border-neutral-700 object-cover"
+                                                className="h-10 w-10 shrink-0 rounded-md border border-neutral-700 object-cover"
                                             />
                                             <button
                                                 type="button"
@@ -156,7 +162,7 @@ export default function ProgramsSection() {
                     </table>
                 </div>
 
-                <div className="space-y-3 md:hidden">
+                <div className="space-y-3 xl:hidden">
                     {filteredPrograms.map((row) => (
                         <article
                             key={row.title}
@@ -166,7 +172,7 @@ export default function ProgramsSection() {
                                 <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                                     Title
                                 </p>
-                                <p className="mt-1 text-sm text-gray-200">{row.title}</p>
+                                <p className="mt-1 break-words text-sm text-gray-200">{row.title}</p>
                             </div>
                             <div className="mb-4 border-b border-neutral-800/60 pb-3">
                                 <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
@@ -174,11 +180,11 @@ export default function ProgramsSection() {
                                 </p>
                                 <p className="mt-1 break-all text-sm text-gray-200">{row.link}</p>
                             </div>
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between gap-2">
                                 <img
                                     src={row.thumbnail}
                                     alt=""
-                                    className="h-10 w-10 rounded-md border border-neutral-700 object-cover"
+                                    className="h-10 w-10 shrink-0 rounded-md border border-neutral-700 object-cover"
                                 />
                                 <div className="flex items-center gap-1">
                                     <button
@@ -203,9 +209,9 @@ export default function ProgramsSection() {
                     ))}
                 </div>
 
-                <div className="mt-6 flex justify-end">
+                <div className="mt-6 flex justify-center sm:justify-end">
                     <nav
-                        className="flex items-center gap-2 text-sm text-gray-400"
+                        className="flex flex-wrap items-center justify-center gap-1.5 text-sm text-gray-400 sm:justify-end sm:gap-2"
                         aria-label="Programs pagination"
                     >
                         <button type="button" className="min-h-[44px] px-2 transition-colors hover:text-white">

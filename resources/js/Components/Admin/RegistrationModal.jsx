@@ -12,7 +12,7 @@ import { useEffect, useId, useMemo, useState } from "react";
 const LABEL_CLASS = "mb-2 block text-xs font-medium leading-5 text-[#EDE3C0]";
 
 const CONTROL_CLASS =
-    "min-h-[42px] w-full rounded-sm border border-white/[0.03] bg-[#151515] px-4 py-2.5 text-sm text-[#F5F1E6] outline-none transition placeholder:text-[#65656F] hover:border-white/[0.10] focus:border-[#FBBF24] focus:ring-1 focus:ring-[#FBBF24]";
+    "min-h-[42px] w-full min-w-0 rounded-sm border border-white/[0.03] bg-[#151515] px-4 py-2.5 text-sm text-[#F5F1E6] outline-none transition placeholder:text-[#65656F] hover:border-white/[0.10] focus:border-[#FBBF24] focus:ring-1 focus:ring-[#FBBF24]";
 
 const SELECT_CLASS = `${CONTROL_CLASS} cursor-pointer appearance-none bg-none pr-10 [background-image:none] [&::-ms-expand]:hidden`;
 
@@ -389,10 +389,14 @@ function RegistrationSchoolPicker({ assignedSchools, onChange }) {
             ) : null}
 
             <div className="mt-5">
-                <div className="grid grid-cols-[minmax(0,1fr)_110px_64px] gap-4 text-xs font-bold text-white">
+                <div className="hidden sm:grid sm:grid-cols-[minmax(0,1fr)_110px_64px] sm:gap-4 sm:pb-2 text-xs font-bold text-white">
                     <span>Assigned School</span>
                     <span>Region</span>
                     <span className="text-right">Actions</span>
+                </div>
+                <div className="flex items-center justify-between border-b border-white/[0.06] pb-2 text-xs font-bold text-white sm:hidden">
+                    <span>Assigned Schools</span>
+                    <span>Actions</span>
                 </div>
 
                 {assignedSchools.length === 0 ? (
@@ -400,27 +404,33 @@ function RegistrationSchoolPicker({ assignedSchools, onChange }) {
                         No schools have been assigned.
                     </p>
                 ) : (
-                    assignedSchools.map((school) => (
-                        <div
-                            key={school.id}
-                            className="grid min-h-9 grid-cols-[minmax(0,1fr)_110px_64px] items-center gap-4 text-xs text-[#898992]"
-                        >
-                            <span className="truncate">{school.name}</span>
-
-                            <span className="truncate">
-                                {school.regionName || "—"}
-                            </span>
-
-                            <button
-                                type="button"
-                                onClick={() => removeSchool(school.id)}
-                                className="ml-auto inline-flex min-h-9 min-w-9 items-center justify-center rounded-md text-red-500 hover:bg-red-500/10"
-                                aria-label={`Remove ${school.name}`}
+                    <div className="divide-y divide-white/[0.06] sm:divide-y-0">
+                        {assignedSchools.map((school) => (
+                            <div
+                                key={school.id}
+                                className="flex min-h-10 items-center justify-between gap-3 py-2 text-xs text-[#898992] sm:grid sm:min-h-9 sm:grid-cols-[minmax(0,1fr)_110px_64px] sm:gap-4 sm:py-1"
                             >
-                                <Trash2 className="h-4 w-4" />
-                            </button>
-                        </div>
-                    ))
+                                <div className="min-w-0 flex-1 sm:contents">
+                                    <span className="block break-words font-medium text-[#D4D4D8] sm:truncate sm:font-normal sm:text-[#898992]">
+                                        {school.name}
+                                    </span>
+
+                                    <span className="mt-0.5 block text-[11px] text-[#777781] sm:mt-0 sm:truncate sm:text-xs sm:text-[#898992]">
+                                        {school.regionName || "—"}
+                                    </span>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={() => removeSchool(school.id)}
+                                    className="ml-auto inline-flex shrink-0 min-h-9 min-w-9 items-center justify-center rounded-md text-red-500 hover:bg-red-500/10"
+                                    aria-label={`Remove ${school.name}`}
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
                 )}
             </div>
         </section>
@@ -512,9 +522,9 @@ export default function RegistrationModal({
             onClose={onClose}
             title={modalTitle}
             hideHeader
-            maxWidth="max-w-[330px] sm:max-w-[1128px]"
+            maxWidth="max-w-lg sm:max-w-[1128px]"
             panelClassName="border-[#8A6800] bg-[#0D0D0D] shadow-[0_24px_80px_rgba(0,0,0,0.72)]"
-            bodyClassName="!px-8 !py-7 sm:!py-8"
+            bodyClassName="!px-4 !py-5 sm:!px-8 sm:!py-8"
             confirmSubmitMessage={
                 isEditing
                     ? "Are you sure you want to edit this attendance registration?"
@@ -657,8 +667,8 @@ export default function RegistrationModal({
                     }
                 />
 
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,1fr)]">
-                    <div>
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    <div className="min-w-0">
                         <FieldLabel htmlFor={`${formId}-logo`}>
                             Attendance Logo or Banner
                         </FieldLabel>
@@ -673,7 +683,7 @@ export default function RegistrationModal({
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 lg:grid-cols-1">
+                    <div className="grid grid-cols-1 min-[440px]:grid-cols-2 gap-4 lg:grid-cols-1">
                         <ColorField
                             id={`${formId}-title`}
                             label="Title Text Color"
@@ -725,7 +735,7 @@ export default function RegistrationModal({
                     </p>
                 ) : null}
 
-                <div className="grid grid-cols-2 gap-4 pt-4 sm:ml-auto sm:w-[60%]">
+                <div className="flex flex-col-reverse gap-3 pt-4 min-[380px]:grid min-[380px]:grid-cols-2 min-[380px]:gap-4 sm:ml-auto sm:w-[60%]">
                     <button
                         type="button"
                         onClick={onClose}

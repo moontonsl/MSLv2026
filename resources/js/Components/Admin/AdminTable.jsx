@@ -6,7 +6,7 @@ const SEARCH_CLASS =
     "w-full min-h-[44px] rounded-md border border-neutral-800 bg-[#1a1a1a] py-2.5 pl-10 pr-4 text-base text-white placeholder:text-gray-500 focus:ring-2 focus:ring-yellow-500 focus:outline-none md:text-sm";
 
 const ADD_BUTTON_CLASS =
-    "flex min-h-[44px] w-full shrink-0 items-center justify-center gap-2 rounded-md px-4 py-2.5 text-base font-bold text-black md:w-auto md:text-sm";
+    "flex min-h-[44px] w-full shrink-0 items-center justify-center gap-2 rounded-md px-4 py-2.5 text-base font-bold text-black sm:w-auto md:text-sm";
 
 export default function AdminTable({
     title,
@@ -54,12 +54,12 @@ export default function AdminTable({
 
     return (
         <div className="mb-8 w-full rounded-xl border border-neutral-800 bg-[#111111] p-4 sm:p-6">
-            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <h3 className="text-lg font-bold text-yellow-500 sm:text-xl">
+            <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <h3 className="min-w-0 text-lg font-bold text-yellow-500 sm:text-xl">
                     {title}
                 </h3>
-                <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-                    <div className="relative w-full sm:w-64">
+                <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center lg:w-auto">
+                    <div className="relative w-full min-w-0 flex-1 sm:w-64 sm:flex-none">
                         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
                         <input
                             type="search"
@@ -86,19 +86,19 @@ export default function AdminTable({
                 </p>
             ) : (
                 <>
-                    <div className="hidden overflow-x-auto md:block">
+                    <div className="hidden overflow-x-auto xl:block">
                         <table className="w-full table-auto border-collapse">
                             <thead>
                                 <tr>
                                     {columns.map(({ key, label }) => (
                                         <th
                                             key={key}
-                                            className="pb-4 text-left text-sm font-semibold text-white"
+                                            className="pb-4 pr-4 text-left text-sm font-semibold text-white"
                                         >
                                             {label}
                                         </th>
                                     ))}
-                                    <th className="pb-4 pr-4 text-right text-sm font-semibold text-white">
+                                    <th className="pb-4 pr-2 text-right text-sm font-semibold text-white">
                                         Actions
                                     </th>
                                 </tr>
@@ -109,12 +109,12 @@ export default function AdminTable({
                                         {columns.map(({ key }) => (
                                             <td
                                                 key={key}
-                                                className="border-b border-neutral-800/50 py-4 text-sm text-gray-300"
+                                                className="border-b border-neutral-800/50 py-4 pr-4 text-sm text-gray-300 break-words"
                                             >
                                                 {row[key]}
                                             </td>
                                         ))}
-                                        <td className="border-b border-neutral-800/50 py-4 pr-4 text-right">
+                                        <td className="border-b border-neutral-800/50 py-4 pr-2 text-right whitespace-nowrap">
                                             {renderActions(row, rowIndex)}
                                         </td>
                                     </tr>
@@ -123,7 +123,7 @@ export default function AdminTable({
                         </table>
                     </div>
 
-                    <div className="space-y-3 md:hidden">
+                    <div className="space-y-3 xl:hidden">
                         {filteredData.map((row, rowIndex) => (
                             <article
                                 key={rowIndex}
@@ -137,7 +137,7 @@ export default function AdminTable({
                                         <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
                                             {label}
                                         </p>
-                                        <p className="mt-1 text-sm text-gray-200">
+                                        <p className="mt-1 break-words text-sm text-gray-200">
                                             {row[key]}
                                         </p>
                                     </div>
@@ -154,7 +154,7 @@ export default function AdminTable({
                 </>
             )}
 
-            <div className="mt-6 flex justify-end">
+            <div className="mt-6 flex justify-center sm:justify-end">
                 <nav
                     className="flex flex-wrap items-center gap-2 text-sm text-gray-400"
                     aria-label={`${title} pagination`}

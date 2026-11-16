@@ -2,14 +2,14 @@ export const MODAL_LABEL_CLASS =
     "mb-2 block text-xs font-medium leading-5 text-[#EDE3C0] sm:text-sm";
 
 export const MODAL_INPUT_CLASS =
-    "min-h-[44px] w-full rounded-sm border border-white/[0.06] bg-[#151515] px-4 py-2.5 text-sm text-[#F5F1E6] outline-none transition placeholder:text-[#65656F] hover:border-white/[0.14] focus:border-[#FBBF24] focus:ring-1 focus:ring-[#FBBF24]";
+    "min-h-[44px] w-full min-w-0 rounded-sm border border-white/[0.06] bg-[#151515] px-4 py-2.5 text-sm text-[#F5F1E6] outline-none transition placeholder:text-[#65656F] hover:border-white/[0.14] focus:border-[#FBBF24] focus:ring-1 focus:ring-[#FBBF24]";
 
 export const MODAL_TEXTAREA_CLASS = `${MODAL_INPUT_CLASS} min-h-[120px] resize-y py-3`;
 
 export const MODAL_SELECT_CLASS = `${MODAL_INPUT_CLASS} cursor-pointer [color-scheme:dark]`;
 
 export const MODAL_READONLY_CLASS =
-    "min-h-[44px] w-full cursor-default rounded-sm border border-white/[0.06] bg-[#151515] px-4 py-2.5 text-sm text-[#85858F] outline-none";
+    "min-h-[44px] w-full min-w-0 break-words cursor-default rounded-sm border border-white/[0.06] bg-[#151515] px-4 py-2.5 text-sm text-[#85858F] outline-none";
 
 export const MODAL_READONLY_TEXTAREA_CLASS = `${MODAL_READONLY_CLASS} min-h-[120px] whitespace-pre-wrap py-3`;
 
