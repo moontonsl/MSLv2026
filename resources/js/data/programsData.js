@@ -17,21 +17,6 @@ export const PROGRAMS = [
         image: '/Images/Home/buffsandsupport.png', href: PUBLIC_ROUTES.buffsSupport,
     },
     {
-        id: 'training', title: 'Phil. Collegiate Training Grounds', icon: 'gamepad', color: '#f2c21a',
-        description: 'Grants access to the professional Tournament Lobby client for universities preparing for official athletic leagues.',
-        image: '/Images/BuffsSupport/tournament-lobby.jpg', href: `${PUBLIC_ROUTES.buffsSupport}#tournament-lobby`,
-    },
-    {
-        id: 'masterclass', title: 'Esports Management Masterclass', icon: 'presentation', color: '#f2c21a',
-        description: 'Comprehensive educational modules teaching end-to-end esports organization management, production, and leadership.',
-        image: '/Images/Home/msl-partner.jpg', href: comingSoonHref('events'),
-    },
-    {
-        id: 'summit', title: 'The MSL Summit', icon: 'microphone', color: '#f2c21a',
-        description: 'The annual onsite convergence of all stakeholders to connect, strategize, and celebrate the year’s achievements.',
-        image: '/Images/Home/events.jpg', href: comingSoonHref('leadership-summit'),
-    },
-    {
         id: 'referral', title: 'The Referral Program', icon: 'user', color: '#4ade80',
         description: 'Empowering student leaders as recruiters. Refer new members and organizations to grow the MSL community.',
         image: '/Images/BuffsSupport/pnu-sulo-general-assembly-mlbb.jpg', href: comingSoonHref('referral'),

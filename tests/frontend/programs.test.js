@@ -12,7 +12,7 @@ test('program, campaign, and tournament previews reference available local artwo
 
 test('program links use public pages and retain Coming Soon for unfinished destinations', () => {
     assert.equal(PROGRAMS.find((item) => item.id === 'network').href, PUBLIC_ROUTES.network);
-    assert.equal(PROGRAMS.find((item) => item.id === 'training').href, '/BuffsAndSupport#tournament-lobby');
+    assert.deepEqual(PROGRAMS.map((item) => item.id), ['campus', 'network', 'support', 'referral']);
     assert.equal(PROGRAMS.find((item) => item.id === 'referral').href, '/ComingSoon?feature=referral');
     assert.ok(CAMPAIGNS.every((item) => item.href === '/ComingSoon?feature=events'));
 });
