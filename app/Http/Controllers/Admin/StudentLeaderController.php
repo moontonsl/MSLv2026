@@ -18,7 +18,7 @@ class StudentLeaderController extends Controller
         $tab = $request->string('tab', 'leaders')->toString();
 
         $slQuery = $this->studentLeadersQuery();
-        $studentQuery = $this->eligibleStudentsQuery();
+        $studentQuery = $this->activeStudentsQuery();
 
         if ($region !== '') {
             $slQuery->where('region', $region);
@@ -148,7 +148,7 @@ class StudentLeaderController extends Controller
             ->select($this->columns());
     }
 
-    private function eligibleStudentsQuery()
+    private function activeStudentsQuery()
     {
         return User::query()
             ->where('user_type', 'Student')

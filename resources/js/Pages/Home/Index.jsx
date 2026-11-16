@@ -11,7 +11,13 @@ import CommunityVoicesSection from "./Components/CommunityVoicesSection";
 import ChooseYourPathSection from "./Components/ChooseYourPathSection";
 import FAQSection from "./Components/FAQSection";
 
-export default function Home({ pinnedFaqs = [], heroSlides = [], statistics = [], networkLogos = [] }) {
+export default function Home({
+    pinnedFaqs = [],
+    heroSlides = [],
+    statistics = [],
+    networkLogos = [],
+    announcements = [],
+}) {
     const faqData = {
         ...homeData.faq,
         items: (pinnedFaqs.length > 0 ? pinnedFaqs : homeData.faq.items).slice(0, 5),
@@ -37,7 +43,10 @@ export default function Home({ pinnedFaqs = [], heroSlides = [], statistics = []
             <Head title="Home" />
 
             <div className="overflow-x-clip bg-[#050505] font-sans text-white">
-                <HomeAnnouncement data={homeData.announcement} />
+                <HomeAnnouncement
+                    announcements={announcements}
+                    data={homeData.announcement}
+                />
                 <HomeHero data={heroData} />
                 <AboutSection data={aboutData} />
                 <NetworkSection data={networkData} />

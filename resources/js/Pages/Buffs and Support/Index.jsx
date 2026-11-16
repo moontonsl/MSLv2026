@@ -25,7 +25,7 @@ import typography from '../ContentMedia.module.css';
 import styles from './BuffsSupport.module.css';
 
 const SPONSORSHIP_GUIDELINES_URL = 'https://bit.ly/SponsorshipsByMSL';
-const SPONSORSHIP_GUIDELINES_DOWNLOAD_URL = '/downloads/buffs-and-support-quick-application-guide.pdf';
+const QUICK_APPLICATION_GUIDE_URL = '/downloads/buffs-and-support-quick-application-guide.pdf';
 
 const ROADMAP_STEPS = [
     {
@@ -431,8 +431,9 @@ export default function BuffsAndSupportIndex() {
                                     <ArrowRight className="h-5 w-5" />
                                 </a>
                                 <a
-                                    href={SPONSORSHIP_GUIDELINES_DOWNLOAD_URL}
-                                    download="[PUBLIC] Buffs and Support Program - Quick Application Guide.pdf"
+                                    href={QUICK_APPLICATION_GUIDE_URL}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className={`${styles.actionButton} ${styles.secondaryButton}`}
                                 >
                                     View Quick Application Guide
@@ -663,6 +664,8 @@ export default function BuffsAndSupportIndex() {
                         </a>
                         <a
                             href={SPONSORSHIP_GUIDELINES_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className={`${styles.actionButton} ${styles.secondaryButton}`}
                         >
                             View Quick Application Guide

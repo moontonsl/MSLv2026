@@ -41,11 +41,11 @@ class AdminNetworkOrganizationsTest extends TestCase
             'is_active' => true,
         ]);
 
-        $response = $this->get(route('admin.home-page'));
+        $response = $this->get(route('admin.home-page.network-organizations'));
 
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
-            ->component('Admin/HomePage')
+            ->component('Admin/HomePage/NetworkOrganizations')
             ->has('networkOrganizations', 1)
             ->where('networkOrganizations.0.name', 'Test Org')
             ->where('networkOrganizations.0.link', 'https://facebook.com/testorg')

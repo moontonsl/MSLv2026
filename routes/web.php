@@ -125,7 +125,22 @@ Route::get('/', function () {
         ];
     }
 
+    $announcements = \App\Models\News::query()
+        ->orderByDesc('news_published')
+        ->orderByDesc('id')
+        ->take(5)
+        ->get()
+        ->map(fn (\App\Models\News $item) => [
+            'id' => (string) $item->id,
+            'title' => $item->news_state ? \Illuminate\Support\Str::finish($item->news_state, ':') : 'Latest News:',
+            'description' => $item->news_title,
+            'linkLabel' => 'See More',
+            'href' => '/News/' . ($item->news_canonical ?: $item->id),
+        ])
+        ->values();
+
     return Inertia::render('Home/Index', [
+        'announcements' => $announcements,
         'pinnedFaqs' => Faq::query()
             ->where('is_active', true)
             ->where('is_pinned', true)
@@ -365,6 +380,17 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
 
     Route::get('/Admin/HomePage', [HomePageController::class, 'index'])
         ->middleware('admin.permission:manage_homepage')->name('admin.home-page');
+    Route::get('/admin/home-page/hero-carousel', [HomePageController::class, 'heroCarousel'])
+        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.hero-carousel');
+    Route::get('/admin/home-page/statistics', [HomePageController::class, 'statistics'])
+        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.statistics.index');
+    Route::get('/admin/home-page/network-organizations', [HomePageController::class, 'networkOrganizations'])
+        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.network-organizations');
+    Route::get('/admin/home-page/programs', [HomePageController::class, 'programs'])
+        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.programs');
+    Route::get('/admin/home-page/community-voice', [HomePageController::class, 'communityVoice'])
+        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.community-voice');
+
     Route::post('/admin/home-page/statistics', [HomePageController::class, 'updateStatistics'])
         ->middleware('admin.permission:manage_homepage')->name('admin.home-page.statistics');
     Route::post('/admin/home-page/network-organizations', [HomePageController::class, 'storeNetworkOrganization'])
@@ -673,7 +699,7 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
     Route::delete('/admin/legacy-news/{news}', [LegacyContentController::class, 'deleteNews'])
         ->middleware('admin.permission:manage_news')->name('admin.news.delete');
 
-    Route::get('/admin/carousel', fn () => redirect()->route('admin.home-page'))->name('admin.carousel');
+    Route::get('/admin/carousel', fn () => redirect()->route('admin.home-page.hero-carousel'))->name('admin.carousel');
     Route::post('/admin/carousel', [CarouselController::class, 'store'])
         ->middleware('admin.permission:manage_homepage')->name('admin.carousel.store');
     Route::put('/admin/carousel/{carousel}', [CarouselController::class, 'update'])

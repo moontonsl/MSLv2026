@@ -28,14 +28,38 @@ class HomePageController extends Controller
         $leadersCount = User::where('user_type', 'Student Leader')->count();
 
         return [
-            'student_gamers' => $studentsCount > 0 ? ($studentsCount . '+') : '0',
-            'campus_communities' => $campusesCount > 0 ? (number_format($campusesCount) . '+') : '0',
-            'events_sponsored' => $eventsCount > 0 ? ($eventsCount . '+') : '0',
-            'student_leaders' => $leadersCount > 0 ? ($leadersCount . '+') : '0',
+            'student_gamers' => $studentsCount > 0 ? ($studentsCount.'+') : '0',
+            'campus_communities' => $campusesCount > 0 ? (number_format($campusesCount).'+') : '0',
+            'events_sponsored' => $eventsCount > 0 ? ($eventsCount.'+') : '0',
+            'student_leaders' => $leadersCount > 0 ? ($leadersCount.'+') : '0',
         ];
     }
 
-    public function index(): Response
+    public function index(): RedirectResponse
+    {
+        return redirect()->route('admin.home-page.hero-carousel');
+    }
+
+    public function heroCarousel(): Response
+    {
+        return Inertia::render('Admin/HomePage/HeroCarousel', [
+            'carousels' => Carousel::ordered()->get()->map(fn (Carousel $c) => [
+                'id' => $c->id,
+                'title' => $c->title,
+                'label' => $c->label,
+                'subtitle' => $c->subtitle,
+                'link' => $c->link,
+                'start_date' => $c->start_date?->format('Y-m-d'),
+                'end_date' => $c->end_date?->format('Y-m-d'),
+                'image_path' => $c->image_path,
+                'image_url' => $this->imageUrl($c->image_path),
+                'order' => $c->order,
+                'is_active' => $c->is_active,
+            ])->values(),
+        ]);
+    }
+
+    public function statistics(): Response
     {
         $liveCounts = self::getLiveStatistics();
         $mode = Setting::getValue('homepage_stat_mode', 'live');
@@ -52,22 +76,15 @@ class HomePageController extends Controller
             'student_leaders_label' => Setting::getValue('homepage_stat_student_leaders_label', 'STUDENT LEADERS'),
         ];
 
-        return Inertia::render('Admin/HomePage', [
-            'carousels' => Carousel::ordered()->get()->map(fn (Carousel $c) => [
-                'id' => $c->id,
-                'title' => $c->title,
-                'label' => $c->label,
-                'subtitle' => $c->subtitle,
-                'link' => $c->link,
-                'start_date' => $c->start_date?->format('Y-m-d'),
-                'end_date' => $c->end_date?->format('Y-m-d'),
-                'image_path' => $c->image_path,
-                'image_url' => $this->imageUrl($c->image_path),
-                'order' => $c->order,
-                'is_active' => $c->is_active,
-            ])->values(),
+        return Inertia::render('Admin/HomePage/StatisticsCounters', [
             'statistics' => $statistics,
             'liveCounts' => $liveCounts,
+        ]);
+    }
+
+    public function networkOrganizations(): Response
+    {
+        return Inertia::render('Admin/HomePage/NetworkOrganizations', [
             'networkOrganizations' => NetworkOrganization::orderBy('order')->get()->map(fn (NetworkOrganization $org) => [
                 'id' => $org->id,
                 'name' => $org->name,
@@ -78,6 +95,16 @@ class HomePageController extends Controller
                 'logo_url' => $org->logo_url,
             ])->values(),
         ]);
+    }
+
+    public function programs(): Response
+    {
+        return Inertia::render('Admin/HomePage/OurPrograms');
+    }
+
+    public function communityVoice(): Response
+    {
+        return Inertia::render('Admin/HomePage/CommunityVoice');
     }
 
     public function updateStatistics(Request $request): RedirectResponse
@@ -139,8 +166,8 @@ class HomePageController extends Controller
         ]);
 
         if ($request->hasFile('logo')) {
-            if ($networkOrganization->logo_path && !Str::startsWith($networkOrganization->logo_path, ['/'])) {
-                Storage::disk('public')->delete('network_organizations/' . $networkOrganization->logo_path);
+            if ($networkOrganization->logo_path && ! Str::startsWith($networkOrganization->logo_path, ['/'])) {
+                Storage::disk('public')->delete('network_organizations/'.$networkOrganization->logo_path);
             }
             $data['logo_path'] = basename($request->file('logo')->store('network_organizations', 'public'));
             unset($data['logo']);
@@ -157,8 +184,8 @@ class HomePageController extends Controller
 
     public function deleteNetworkOrganization(NetworkOrganization $networkOrganization): RedirectResponse
     {
-        if ($networkOrganization->logo_path && !Str::startsWith($networkOrganization->logo_path, ['/'])) {
-            Storage::disk('public')->delete('network_organizations/' . $networkOrganization->logo_path);
+        if ($networkOrganization->logo_path && ! Str::startsWith($networkOrganization->logo_path, ['/'])) {
+            Storage::disk('public')->delete('network_organizations/'.$networkOrganization->logo_path);
         }
 
         $networkOrganization->delete();
@@ -168,7 +195,7 @@ class HomePageController extends Controller
 
     private function imageUrl(?string $image): ?string
     {
-        if (!$image) {
+        if (! $image) {
             return null;
         }
 
@@ -176,6 +203,6 @@ class HomePageController extends Controller
             return $image;
         }
 
-        return Storage::disk('public')->url('carousel/' . $image);
+        return Storage::disk('public')->url('carousel/'.$image);
     }
 }
