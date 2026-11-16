@@ -70,11 +70,11 @@
 .leaderCard strong { display: block; margin-top: 4px; font-size: 14px; line-height: 20px; }
 .workSection { padding-block: 64px; border-top: 1px solid #262626; background: #0d0d0d; }
 .workGrid { display: grid; gap: 20px; max-width: 680px; margin: 36px auto 0; }
-.workCard { display: block; border: 1px solid #594a12; border-radius: 12px; background: #0a0a08; padding: 24px; transition: border-color 180ms ease-out, background-color 180ms ease-out; }
+.workCard { display: flex; flex-direction: column; min-width: 0; border: 1px solid #594a12; border-radius: 12px; background: #0a0a08; padding: 24px; transition: border-color 180ms ease-out, background-color 180ms ease-out; }
 .workCard > svg { color: #f2c21a; }
 .workCard h3 { margin-top: 20px; font-family: 'Raleway', var(--font-inter); font-size: 18px; font-weight: 700; }
 .workCard p { margin-top: 12px; color: #9ca3af; font-size: 14px; line-height: 22px; }
-.workCard > span { display: flex; align-items: center; gap: 12px; margin-top: 20px; color: #f2c21a; font-size: 13px; font-weight: 700; }
+.workCard > span { display: flex; align-items: center; gap: 12px; margin-top: auto; padding-top: 20px; color: #f2c21a; font-size: 13px; font-weight: 700; }
 .brandWork { border-color: #153d25; }
 .brandWork > svg, .brandWork > span { color: #4ade80; }
 .page :where(a, button):focus-visible { outline: 2px solid #f2c21a; outline-offset: 4px; }

@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
-import { ArrowRight, CheckCircle2, Crown, Diamond, Gamepad2, MonitorPlay, Network, ShieldCheck, Star, Target, Trophy, Users, X, Zap } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Crown, Diamond, Gamepad2, MonitorPlay, Network, ShieldCheck, Star, Target, TrendingUp, Trophy, Users, X, Zap } from 'lucide-react';
 import { FaDiscord } from 'react-icons/fa';
 import MainLayout from '@/Layouts/MainLayout';
 import DepartmentBadge from '@/Components/DepartmentBadge';
-import { COMMUNITY_AWARDS, INDIVIDUAL_AWARDS, LEADERBOARD, MAJOR_AWARDS, NETWORK_GALLERY, NETWORK_LINKS, NETWORK_TIERS, ORGANIZATION_BUFFS, SPOTLIGHT } from '@/data/mslNetworkData';
+import SupportApplicationButton from '@/Components/SupportApplicationButton';
+import { LEADERBOARD, NETWORK_GALLERY, NETWORK_LINKS, NETWORK_TIERS, ORGANIZATION_BUFFS, SPOTLIGHT } from '@/data/mslNetworkData';
 import typography from './ContentMedia.module.css';
 import styles from './MSLNetwork.module.css';
 
 const number = (value) => value.toLocaleString('en-PH');
+const SHOW_PARTNER_LEADERBOARD = false;
 const BUFF_ICONS = { financial: Diamond, ecosystem: Gamepad2, industry: Trophy };
 
 function SectionHeading({ id, badge, icon = Network, title, children }) {
@@ -23,64 +25,45 @@ function SectionHeading({ id, badge, icon = Network, title, children }) {
 }
 
 function ActionLink({ href, secondary = false, children }) {
+    if (/^https?:\/\//.test(href)) {
+        return <a href={href} target="_blank" rel="noopener noreferrer" className={`${styles.button} ${secondary ? styles.secondaryButton : styles.primaryButton}`}>{children}</a>;
+    }
     return <Link href={href} className={`${styles.button} ${secondary ? styles.secondaryButton : styles.primaryButton}`}>{children}</Link>;
 }
 
-function AwardCard({ award }) {
-    return (
-        <article className={`${styles.awardCard} ${award.featured ? styles.featuredAward : ''}`}>
-            {award.grant && <div className={styles.awardTop}>
-                {award.featured ? <Crown size={26} aria-hidden="true" /> : <Trophy size={22} aria-hidden="true" />}
-                <span className={styles.grant}>{award.grant}</span>
-            </div>}
-            <h4>{award.title}</h4>
-            <p>{award.description}</p>
-            <ul className={styles.rewards} aria-label="Award recognition">
-                {award.rewards.map((reward) => <li key={reward}>{reward}</li>)}
-            </ul>
-        </article>
-    );
-}
-
 function TierPanel({ tier }) {
-    if (!tier.details) {
-        return <div className={`${styles.tierPanel} ${styles.pendingTier}`}>
-            <Target size={30} aria-hidden="true" />
-            <h3>{tier.label}</h3>
-            <p>Allocation, requirements, and privileges are awaiting confirmation.</p>
-        </div>;
-    }
-
     const details = tier.details;
+    const TierIcon = tier.id === 'ss' ? Crown : tier.id === 'a' ? Star : tier.id === 'b' ? TrendingUp : Target;
     return (
-        <div className={styles.tierPanel}>
-            <div className={styles.tierHeader}><h3>{tier.label}</h3><Target size={28} aria-hidden="true" /></div>
+        <div className={styles.tierPanel} style={{ '--tier-color': tier.color }}>
+            <div className={styles.tierHeader}><h3>{tier.title}</h3><TierIcon size={28} aria-hidden="true" /></div>
             <div className={styles.tierSummary}>
                 <div className={styles.allocation}>
                     <span className={styles.eyebrow}>Max allocation</span>
-                    <strong>{number(details.allocation)}</strong><small>Diamonds / Sem</small>
+                    <strong>{number(details.allocation)}</strong><small>Diamonds / Semester · MSL Network</small>
                     <Diamond className={styles.allocationIcon} size={42} aria-hidden="true" />
                 </div>
                 <div className={styles.requirements}>
-                    <div className={styles.requirementsHeading}><span className={styles.eyebrow}>Community requirements</span><small>via Campus Dept</small></div>
+                    <div className={styles.requirementsHeading}><span className={styles.eyebrow}>Support availability</span><a href={NETWORK_LINKS.guidelines} target="_blank" rel="noopener noreferrer" className={styles.guidelinesLink}>View Guidelines<ArrowRight size={12} aria-hidden="true" /></a></div>
                     <dl className={styles.metrics}>
-                        <div><dt>Members</dt><dd>{details.members}</dd></div>
-                        <div><dt>Active %</dt><dd>{details.active}</dd></div>
-                        <div><dt>Turnout</dt><dd>{details.turnout}</dd></div>
+                        <div><dt>Merchandise</dt><dd>₱{number(details.merchandise)}</dd></div>
+                        <div><dt>Airdrop tracks</dt><dd>{details.airdropTracks}</dd></div>
+                        <div><dt>Monetary</dt><dd className={styles.eligibilityValue}>{details.monetaryEligible ? 'Eligible' : 'Not eligible'}</dd></div>
                     </dl>
                 </div>
             </div>
             <div className={styles.privileges}>
                 <div className={styles.inlineLabel}><Star size={18} aria-hidden="true" /><span className={styles.eyebrow}>Perks & privileges</span></div>
                 <dl className={styles.perks}>
-                    <div><dt>Event activation priority</dt><dd>{details.activation}</dd></div>
-                    <div><dt>Creative space *</dt><dd>{details.creativeSpace}</dd><small>* Subject to availability</small></div>
-                    <div><dt>Monetary sponsorship *</dt><dd>{details.sponsorship}</dd><small>* Ascend to Tier B to unlock</small></div>
+                    <div><dt>Cross-campus budget</dt><dd>{number(details.crossCampus)} diamonds</dd><small>Maximum per semester for cross-campus support.</small></div>
+                    <div><dt>Eligible Airdrop packages</dt><dd>{details.airdropPackages}</dd><small>Subject to officially announced availability. First come, first served.</small></div>
+                    <div><dt>Monetary sponsorship</dt><dd>{details.monetaryEligible ? 'Subject to approval' : 'Tier A & Superschools only'}</dd><small>{details.monetaryEligible ? 'Apply at least 2 months before the event. Finance and Sponsorship approval required.' : 'The guide does not provide monetary grants for this tier.'}</small></div>
                 </dl>
             </div>
             <div className={styles.compliance}>
-                <div className={styles.inlineLabel}><ShieldCheck size={15} aria-hidden="true" /><span className={styles.eyebrow}>Compliance gate</span></div>
-                <ul><li><CheckCircle2 size={16} aria-hidden="true" />Recognized by School</li><li><CheckCircle2 size={16} aria-hidden="true" />Endorsed by Adviser</li></ul>
+                <div className={styles.inlineLabel}><ShieldCheck size={15} aria-hidden="true" /><span className={styles.eyebrow}>Eligibility requirements</span></div>
+                <ul><li><CheckCircle2 size={16} aria-hidden="true" />Official MSL Network partner school</li><li><CheckCircle2 size={16} aria-hidden="true" />Event hosted or approved by a student organization or school administration</li></ul>
+                <p className={styles.tierSourceNote}>Maximum budgets are subject to the guide’s event allocations and approval requirements. Merchandise applications must be submitted at least 2 months before the event.</p>
             </div>
         </div>
     );
@@ -141,10 +124,10 @@ export default function MSLNetwork() {
                         <div className={styles.buffGrid}>
                             {ORGANIZATION_BUFFS.map((buff) => {
                                 const Icon = BUFF_ICONS[buff.id];
-                                return <Link key={buff.id} href={buff.href} className={styles.buffCard} style={{ '--accent': buff.color }}>
+                                return <SupportApplicationButton key={buff.id} className={`${styles.buffCard} w-full cursor-pointer text-left`} style={{ '--accent': buff.color }}>
                                     <img src={buff.image} alt="" loading="lazy" /><span className={styles.buffIcon}><Icon size={23} aria-hidden="true" /></span>
                                     <div className={styles.buffCopy}><h3>{buff.title}</h3><p>{buff.description}</p><span className={styles.accentLine} aria-hidden="true" /></div>
-                                </Link>;
+                                </SupportApplicationButton>;
                             })}
                         </div>
                     </div>
@@ -155,7 +138,7 @@ export default function MSLNetwork() {
                         <SectionHeading id="ascension-title" title="The Ascension">Start your journey. Prove your worth.<br /><span className={styles.gold}>Climb the ranks</span> to unlock greater power.</SectionHeading>
                         <div className={styles.tierLayout}>
                             <div className={styles.tierRail} role="group" aria-label="Network tiers">
-                                {NETWORK_TIERS.map((tier) => <button type="button" key={tier.id} aria-pressed={tier.id === tierId} aria-controls="network-tier-panel" onClick={() => setTierId(tier.id)} className={`${styles.tierButton} ${tier.id === tierId ? styles.selectedTier : ''}`}>
+                                {NETWORK_TIERS.map((tier) => <button type="button" key={tier.id} aria-pressed={tier.id === tierId} aria-controls="network-tier-panel" onClick={() => setTierId(tier.id)} className={`${styles.tierButton} ${tier.id === tierId ? styles.selectedTier : ''}`} style={{ '--tier-color': tier.color }}>
                                     <span>{tier.label}</span><span className={styles.tierNode} aria-hidden="true"><span /></span>
                                 </button>)}
                             </div>
@@ -164,6 +147,7 @@ export default function MSLNetwork() {
                     </div>
                 </section>
 
+                {SHOW_PARTNER_LEADERBOARD && (
                 <section className={styles.section} aria-labelledby="leaderboard-title">
                     <div className={styles.container}>
                         <SectionHeading id="leaderboard-title" title="Partner Leaderboard">Top performing organizations of Season 2025</SectionHeading>
@@ -179,19 +163,7 @@ export default function MSLNetwork() {
                         </ol>
                     </div>
                 </section>
-
-                <section className={`${styles.section} ${styles.awardsSection}`} aria-labelledby="awards-title">
-                    <div className={styles.awardsContainer}>
-                        <SectionHeading id="awards-title" badge="Hall of Legends" icon={Crown} title="The MSL Network Awards">Honoring the outstanding achievements of student organizations and leaders who have elevated the campus esports experience.</SectionHeading>
-                        <h3 className={styles.awardGroupHeading}><Trophy aria-hidden="true" />Major Awards</h3>
-                        <div className={styles.majorAwards}>{MAJOR_AWARDS.map((award) => <AwardCard key={award.title} award={award} />)}</div>
-                        <div className={styles.awardColumns}>
-                            <div><h3 className={styles.awardGroupHeading}><Users className={styles.blue} aria-hidden="true" />Community Awards</h3><div className={styles.awardStack}>{COMMUNITY_AWARDS.map((award) => <AwardCard key={award.title} award={award} />)}</div></div>
-                            <div><h3 className={styles.awardGroupHeading}><Star className={styles.purple} aria-hidden="true" />Individual Awards</h3><div className={styles.awardStack}>{INDIVIDUAL_AWARDS.map((award) => <AwardCard key={award.title} award={award} />)}</div></div>
-                        </div>
-                        <Link href={NETWORK_LINKS.nomination} className={styles.nomination}><span className={styles.nominationArrow}><ArrowRight size={25} aria-hidden="true" /></span><strong>Make a Nomination</strong></Link>
-                    </div>
-                </section>
+                )}
 
                 <section className={`${styles.section} ${styles.discordSection}`} aria-labelledby="discord-title">
                     <div className={styles.container}>
