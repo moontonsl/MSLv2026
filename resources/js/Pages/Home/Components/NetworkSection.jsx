@@ -1,155 +1,122 @@
-import { useEffect, useRef, useState } from "react";
-import { SectionHeading } from "./HomeUI";
+import { ExternalLink } from "lucide-react";
+import { HomeContainer, SectionHeading } from "./HomeUI";
+
+function getDisplayLabel(logo) {
+    const raw = (logo.name || logo.alt || "").trim();
+    if (!raw || /^msl network organization\s*\d*$/i.test(raw)) {
+        return "";
+    }
+    return raw;
+}
 
 export default function NetworkSection({ data }) {
-    const scrollerRef = useRef(null);
-    const [paused, setPaused] = useState(false);
+    const logos = data?.logos ?? [];
 
-    useEffect(() => {
-        const element = scrollerRef.current;
-
-        if (!element) return;
-
-        const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-        let frameId = null;
-        let previousTime = null;
-        let position = element.scrollLeft;
-        let visible = false;
-
-        const shouldAnimate = () =>
-            visible && !paused && !document.hidden && !media.matches;
-
-        function stop() {
-            if (frameId !== null) {
-                window.cancelAnimationFrame(frameId);
-            }
-
-            frameId = null;
-            previousTime = null;
-        }
-
-        function animate(time) {
-            if (!shouldAnimate()) {
-                stop();
-                return;
-            }
-
-            const elapsed =
-                previousTime === null ? 0 : Math.min(time - previousTime, 50);
-
-            previousTime = time;
-
-            const groupWidth =
-                element.firstElementChild?.getBoundingClientRect().width || 0;
-
-            if (groupWidth > 0) {
-                position += elapsed * 0.025;
-
-                if (position >= groupWidth) {
-                    position %= groupWidth;
-                }
-
-                element.scrollLeft = position;
-            }
-
-            frameId = window.requestAnimationFrame(animate);
-        }
-
-        function updatePlayback() {
-            stop();
-
-            if (shouldAnimate()) {
-                position = element.scrollLeft;
-                frameId = window.requestAnimationFrame(animate);
-            }
-        }
-
-        const observer = new IntersectionObserver(([entry]) => {
-            visible = entry.isIntersecting;
-            updatePlayback();
-        });
-
-        observer.observe(element);
-        media.addEventListener("change", updatePlayback);
-        document.addEventListener("visibilitychange", updatePlayback);
-
-        return () => {
-            stop();
-            observer.disconnect();
-            media.removeEventListener("change", updatePlayback);
-            document.removeEventListener("visibilitychange", updatePlayback);
-        };
-    }, [paused]);
+    if (logos.length === 0) {
+        return null;
+    }
 
     return (
         <section
             aria-labelledby="home-network-title"
-            className="overflow-hidden border-b border-white/[0.06] bg-[#050505] py-12 text-center"
+            className="relative isolate overflow-hidden border-b border-white/[0.06] bg-[#050505] py-14 md:py-20"
         >
-            <SectionHeading id="home-network-title" className="px-6">
-                {data.title}
-            </SectionHeading>
-
             <div
-                ref={scrollerRef}
-                tabIndex={0}
-                aria-label="MSL network organization logos"
-                className="hide-scrollbar mt-10 flex overflow-x-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2C21A]"
-                onMouseEnter={() => setPaused(true)}
-                onMouseLeave={() => setPaused(false)}
-                onFocusCapture={() => setPaused(true)}
-                onBlurCapture={(event) => {
-                    if (!event.currentTarget.contains(event.relatedTarget)) {
-                        setPaused(false);
-                    }
-                }}
-            >
-                {[0, 1].map((copy) => (
-                    <div
-                        key={copy}
-                        aria-hidden={copy === 1 ? true : undefined}
-                        className="flex shrink-0 items-center gap-10 pr-10 md:gap-20 md:pr-20"
-                    >
-                        {data.logos.map((logo, index) => {
-                            const logoImg = (
-                                <img
-                                    src={logo.src}
-                                    alt={copy === 0 ? (logo.alt || logo.name || "") : ""}
-                                    loading="lazy"
-                                    className="max-h-[110px] max-w-full object-contain transition-transform duration-300 group-hover:scale-110 md:max-h-[150px]"
-                                />
-                            );
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_0%,rgba(242,194,26,0.07),transparent_68%)]"
+            />
 
-                            if (logo.link) {
-                                const isExternal = /^https?:\/\//i.test(logo.link);
-                                return (
+            <HomeContainer>
+                <div className="mx-auto max-w-2xl text-center">
+                    <SectionHeading id="home-network-title">
+                        {data.title}
+                    </SectionHeading>
+                    {data.description ? (
+                        <p className="mt-3 font-sans text-sm leading-relaxed text-[#9CA3AF] md:text-base">
+                            {data.description}
+                        </p>
+                    ) : null}
+                </div>
+
+                <ul
+                    aria-label="MSL network organization logos"
+                    className="mt-10 flex flex-wrap justify-center gap-3 sm:gap-4 md:mt-12 md:gap-5"
+                >
+                    {logos.map((logo, index) => {
+                        const displayLabel = getDisplayLabel(logo);
+                        const accessibleName =
+                            displayLabel ||
+                            logo.alt ||
+                            logo.name ||
+                            `MSL Network Organization ${index + 1}`;
+                        const href = typeof logo.link === "string" ? logo.link.trim() : "";
+                        const isExternal = /^https?:\/\//i.test(href);
+
+                        const tileInner = (
+                            <>
+                                {/* Top subtle gold highlight on hover */}
+                                <span
+                                    aria-hidden="true"
+                                    className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-[#F2C21A]/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
+                                />
+
+                                {href ? (
+                                    <span
+                                        aria-hidden="true"
+                                        className="pointer-events-none absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full border border-white/10 bg-black/50 text-[#F2C21A] opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100 [@media(hover:none)]:opacity-70"
+                                    >
+                                        <ExternalLink className="h-3 w-3" />
+                                    </span>
+                                ) : null}
+
+                                <div className="flex h-[84px] w-full items-center justify-center sm:h-[96px] md:h-[108px]">
+                                    <img
+                                        src={logo.src}
+                                        alt={accessibleName}
+                                        loading="lazy"
+                                        className="network-tile-logo max-h-full max-w-[85%] object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.45)] group-hover:drop-shadow-[0_8px_20px_rgba(242,194,26,0.18)]"
+                                    />
+                                </div>
+
+                                {displayLabel ? (
+                                    <span className="mt-3 line-clamp-1 w-full text-center font-sans text-xs font-semibold tracking-wide text-[#D1D5DB] transition-colors duration-200 group-hover:text-[#F2C21A]">
+                                        {displayLabel}
+                                    </span>
+                                ) : null}
+                            </>
+                        );
+
+                        const baseTileClasses =
+                            "network-tile group relative flex h-full min-h-[132px] w-full flex-col items-center justify-center overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.045] to-white/[0.015] px-4 py-5 text-center shadow-[0_8px_24px_rgba(0,0,0,0.35)] sm:min-h-[152px] sm:px-5 sm:py-6";
+
+                        return (
+                            <li
+                                key={logo.id ?? `${logo.src}-${index}`}
+                                className="w-[calc((100%-0.75rem)/2)] sm:w-[calc((100%-2rem)/3)] md:w-[calc((100%-3.75rem)/4)] lg:w-[calc((100%-5rem)/5)]"
+                            >
+                                {href ? (
                                     <a
-                                        key={`${logo.src}-${copy}-${index}`}
-                                        href={logo.link}
+                                        href={href}
                                         target={isExternal ? "_blank" : undefined}
                                         rel={isExternal ? "noopener noreferrer" : undefined}
-                                        title={logo.alt || logo.name || "Visit organization"}
-                                        tabIndex={copy === 1 ? -1 : 0}
-                                        className="group grid h-[110px] w-[150px] shrink-0 place-items-center rounded-xl p-2 transition-all duration-200 hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2C21A] md:h-[150px] md:w-[220px]"
+                                        title={accessibleName}
+                                        className={`${baseTileClasses} cursor-pointer hover:border-[#F2C21A]/45 hover:bg-white/[0.06] hover:shadow-[0_14px_34px_-8px_rgba(242,194,26,0.2)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2C21A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505]`}
                                     >
-                                        {logoImg}
+                                        {tileInner}
                                     </a>
-                                );
-                            }
-
-                            return (
-                                <div
-                                    key={`${logo.src}-${copy}-${index}`}
-                                    className="grid h-[110px] w-[150px] shrink-0 place-items-center md:h-[150px] md:w-[220px]"
-                                >
-                                    {logoImg}
-                                </div>
-                            );
-                        })}
-                    </div>
-                ))}
-            </div>
+                                ) : (
+                                    <div
+                                        title={accessibleName}
+                                        className={`${baseTileClasses} hover:border-white/20 hover:bg-white/[0.04]`}
+                                    >
+                                        {tileInner}
+                                    </div>
+                                )}
+                            </li>
+                        );
+                    })}
+                </ul>
+            </HomeContainer>
         </section>
     );
 }

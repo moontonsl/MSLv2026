@@ -140,3 +140,54 @@
   }
 }
 
+/* MSL Network Organizations Tiles — Individual Transform + Fallback */
+.network-tile {
+  scale: 1;
+  transition:
+    border-color 220ms ease,
+    background-color 220ms ease,
+    box-shadow 220ms ease,
+    scale 150ms ease-out;
+}
+
+a.network-tile:active {
+  scale: 0.98;
+}
+
+.network-tile-logo {
+  transform: scale(1);
+  scale: 1;
+  transition:
+    scale 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 280ms ease;
+}
+
+@supports not (translate: 0px) {
+  .network-tile:hover .network-tile-logo,
+  .network-tile:focus-visible .network-tile-logo {
+    transform: scale(1.08);
+  }
+}
+
+@supports (translate: 0px) {
+  .network-tile:hover .network-tile-logo,
+  .network-tile:focus-visible .network-tile-logo {
+    scale: 1.08;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .network-tile,
+  .network-tile-logo {
+    transition: none;
+  }
+
+  a.network-tile:active,
+  .network-tile:hover .network-tile-logo,
+  .network-tile:focus-visible .network-tile-logo {
+    scale: 1;
+    transform: none;
+  }
+}
+
