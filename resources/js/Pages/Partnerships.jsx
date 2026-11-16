@@ -4,7 +4,7 @@ import { ArrowRight, Building2, Gem, GraduationCap, Layers, Network, ShieldCheck
 import MainLayout from '@/Layouts/MainLayout';
 import DepartmentBadge from '@/Components/DepartmentBadge';
 import ContentDetailModal from '@/Components/ContentDetailModal';
-import { CAMPAIGNS, CORE_PROGRAMS, NETWORK_BENEFITS, OTHER_INITIATIVES, PARTNER_STATS, PARTNERSHIP_DIVISIONS, PARTNERSHIP_LEADERS, PARTNERSHIP_LINKS } from '@/data/partnershipsData';
+import { CAMPAIGNS, CORE_PROGRAMS, NETWORK_BENEFITS, PARTNER_STATS, PARTNERSHIP_DIVISIONS, PARTNERSHIP_LEADERS, PARTNERSHIP_LINKS } from '@/data/partnershipsData';
 import type from './ContentMedia.module.css';
 import styles from './Partnerships.module.css';
 
@@ -89,15 +89,13 @@ export default function Partnerships() {
                             </div>
                             <div className={styles.corePillars}><h4 className="mb-4 text-sm font-semibold text-gray-400">Core Pillars</h4>{CORE_PROGRAMS.map((program) => <ProgramLink key={program.title} program={program} />)}</div>
                         </div>
-                        <h3 className={`mt-12 ${type.subsectionTitle}`}>Other Initiatives</h3>
-                        <div className={styles.initiativeGrid}>{OTHER_INITIATIVES.map((program) => <ProgramLink key={program.title} program={program} />)}</div>
                     </div>
                 </section>
 
                 <section className={styles.section} aria-labelledby="partnership-divisions-title">
                     <div className={styles.container}>
                         <div className={styles.sectionIntro}><h2 id="partnership-divisions-title" className={type.sectionTitle}>Functional Divisions</h2><p className={`mt-3 text-gray-400 ${type.sectionDescription}`}>The machine behind the magic. Specialized units working in sync to power the ecosystem.</p></div>
-                        <div className={styles.divisionGrid}>{PARTNERSHIP_DIVISIONS.map((division) => {
+                        <div className={styles.divisionGrid}>{PARTNERSHIP_DIVISIONS.filter((division) => ['network', 'sponsorships', 'activations'].includes(division.id)).map((division) => {
                             const Icon = division.icon;
                             return <button key={division.id} type="button" aria-haspopup="dialog" onClick={() => setDetail({ ...division, kind: 'division' })} className={styles.divisionCard} style={{ '--division-accent': division.color }}><span className={styles.divisionIcon}><Icon size={24} aria-hidden="true" /></span><h3>{division.title}</h3><p>{division.description}</p></button>;
                         })}</div>
@@ -119,8 +117,8 @@ export default function Partnerships() {
                     <div className={styles.container}>
                         <div className={styles.sectionIntro}><h2 id="work-with-us-title" className={type.sectionTitle}>Work With Us</h2><p className={`mt-3 text-gray-400 ${type.sectionDescription}`}>Whether you represent a student organization looking to join The MSL Network or a brand looking to sponsor, drop us a message.</p></div>
                         <div className={styles.workGrid}>
-                            <a href={PARTNERSHIP_LINKS.contact} className={`${styles.workCard} ${styles.brandWork}`}><Building2 size={28} aria-hidden="true" /><h3>I'm a Brand/Corporation</h3><p>Looking to sponsor events, maximize brand visibility, or invest in the collegiate scene.</p><span>Explore Opportunities <ArrowRight size={17} aria-hidden="true" /></span></a>
-                            <Link href={PARTNERSHIP_LINKS.network} className={styles.workCard}><GraduationCap size={28} aria-hidden="true" /><h3>I'm a Campus Esports Org</h3><p>Looking to join MSL Network, get accredited, and receive diamond funding.</p><span>Join The Network <ArrowRight size={17} aria-hidden="true" /></span></Link>
+                            <a href={PARTNERSHIP_LINKS.application} target="_blank" rel="noopener noreferrer" className={`${styles.workCard} ${styles.brandWork}`}><Building2 size={28} aria-hidden="true" /><h3>I'm a Brand/Corporation</h3><p>Looking to sponsor events, maximize brand visibility, or invest in the collegiate scene.</p><span>Explore Opportunities <ArrowRight size={17} aria-hidden="true" /></span></a>
+                            <a href={PARTNERSHIP_LINKS.application} target="_blank" rel="noopener noreferrer" className={styles.workCard}><GraduationCap size={28} aria-hidden="true" /><h3>I'm a Campus Esports Org</h3><p>Looking to join MSL Network, get accredited, and receive diamond funding.</p><span>Join The Network <ArrowRight size={17} aria-hidden="true" /></span></a>
                         </div>
                     </div>
                 </section>

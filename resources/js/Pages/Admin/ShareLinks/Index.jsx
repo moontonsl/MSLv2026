@@ -125,7 +125,7 @@ function LinkRow({ link, onEdit, onDelete }) {
                 <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                         <span className="break-all rounded-md bg-yellow-500/10 px-2.5 py-1 font-mono text-sm font-semibold text-yellow-400">
-                            /s/{link.code}
+                            /S/{link.code}
                         </span>
                         <span className="text-xs text-gray-500">
                             {link.clicks} click{link.clicks === 1 ? '' : 's'}
@@ -192,7 +192,7 @@ export default function Index({ shortLinks: initialShortLinks = [] }) {
     const openEdit = (link) => { setEditingLink(link); setFormOpen(true); };
     const closeForm = () => { setEditingLink(null); setFormOpen(false); };
     const remove = (link) => {
-        if (!window.confirm(`Delete /s/${link.code}?`)) return;
+        if (!window.confirm(`Delete /S/${link.code}?`)) return;
         setShortLinks((items) => items.filter((item) => item.id !== link.id));
         router.delete(route('admin.share-links.destroy', link.id), { preserveScroll: true });
     };

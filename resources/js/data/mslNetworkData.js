@@ -1,8 +1,9 @@
 import { comingSoonHref, PUBLIC_ROUTES } from './siteNavigation.js';
 
 export const NETWORK_LINKS = {
-    membership: comingSoonHref('membership'),
-    partner: '/login',
+    guidelines: 'https://docs.google.com/document/d/14rAnSyb5goYr2nAfe10RtGE5k_rNQ2AA3yow0UEncS8/edit?tab=t.0',
+    membership: 'https://docs.google.com/forms/d/e/1FAIpQLSeGDXCrZTQlFxh4WhfDm-CnYGmV9bIIEnmb-g0OTiGpt1MpvA/viewform',
+    partner: '/Login',
     support: PUBLIC_ROUTES.buffsSupport,
     tournamentLobby: `${PUBLIC_ROUTES.buffsSupport}#tournament-lobby`,
     nomination: comingSoonHref('msl'),
@@ -38,17 +39,29 @@ export const ORGANIZATION_BUFFS = [
     },
 ];
 
-// Only Tier C requirements were supplied. Do not infer the other allocations.
+// Source: 2026 Buffs and Support Program - Quick Application Guide,
+// Semesteral Diamond Budget, Merchandise Support, Monetary Grants, and Airdrop Package Eligibility.
+// Community size, activation priority and creative-access thresholds are not specified in the guide.
 export const NETWORK_TIERS = [
-    { id: 'ss', label: 'Tier SS', details: null },
-    { id: 'a', label: 'Tier A', details: null },
-    { id: 'b', label: 'Tier B', details: null },
     {
-        id: 'c', label: 'Tier C',
-        details: {
-            allocation: 50000, members: '<100', active: '≤5%', turnout: '40+',
-            activation: 'Low', creativeSpace: 'N/A', sponsorship: 'Locked',
-        },
+        id: 'ss', label: 'Tier SS', title: 'Superschools', color: '#facc15',
+        details: { allocation: 150000, crossCampus: 50000, merchandise: 2500,
+            airdropTracks: 'A, B & C', airdropPackages: 'A-1, A-2, B-1, B-2, C-1, C-2', monetaryEligible: true },
+    },
+    {
+        id: 'a', label: 'Tier A', title: 'Tier A', color: '#c084fc',
+        details: { allocation: 100000, crossCampus: 40000, merchandise: 2000,
+            airdropTracks: 'A, B & C', airdropPackages: 'A-1, A-2, B-1, B-2, C-1, C-2', monetaryEligible: true },
+    },
+    {
+        id: 'b', label: 'Tier B', title: 'Tier B', color: '#60a5fa',
+        details: { allocation: 70000, crossCampus: 30000, merchandise: 1500,
+            airdropTracks: 'A & B', airdropPackages: 'A-1, A-2, B-1, B-2', monetaryEligible: false },
+    },
+    {
+        id: 'c', label: 'Tier C', title: 'Tier C', color: '#a1a1aa',
+        details: { allocation: 50000, crossCampus: 20000, merchandise: 1000,
+            airdropTracks: 'A', airdropPackages: 'A-1, A-2', monetaryEligible: false },
     },
 ];
 

@@ -50,7 +50,7 @@ class CampusTournamentController extends Controller
 
         // 2. Active Student Leader -> /Tournament/SL
         if ($authorization->hasActiveStudentLeaderAffiliation($user)) {
-            return redirect('/Tournament/SL');
+            return redirect('/Tournament/StudentLeader');
         }
 
         abort_unless($authorization->canAccessPlayerPages($user), 403);
@@ -71,7 +71,7 @@ class CampusTournamentController extends Controller
                 ->exists();
 
             if ($captainedTeam) {
-                return redirect('/Tournament/CampusTournamentTeam');
+                return redirect('/Tournament/CaptainTeam');
             }
 
             // 3b. Active Premade Team Member -> /Tournament/MemberTeam
@@ -121,7 +121,7 @@ class CampusTournamentController extends Controller
         }
 
         // 4. Default student -> Captain Hub
-        return redirect('/Tournament/CampusTournament');
+        return redirect('/Tournament/Captain');
     }
 
     /**

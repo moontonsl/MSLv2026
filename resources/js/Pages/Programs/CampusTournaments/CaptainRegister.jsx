@@ -228,7 +228,7 @@ export default function CaptainRegister({ captain, tournament }) {
                 <div className="mx-auto max-w-xl">
                     <div className="rounded-2xl border border-neutral-800 bg-[#111111] p-5 sm:p-8">
                         <Link
-                            href="/Tournament/CampusTournament"
+                            href="/Tournament/Captain"
                             className="mb-6 inline-flex min-h-[44px] items-center text-sm text-gray-400 hover:text-white"
                         >
                             Back

@@ -18,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
             $adminDomain = config('app.admin_domain') ?: env('ADMIN_DOMAIN');
             $isAdminHost = $adminDomain && $request->getHost() === $adminDomain;
 
-            return $isAdminHost || $request->is('admin/*') || $request->is('admin') || $request->is('Oppo-settings')
+            return $isAdminHost || ($request->is('admin/*') || $request->is('Admin/*')) || $request->is('admin') || $request->is('Oppo-settings')
                 ? route('admin.login')
                 : route('login');
         });

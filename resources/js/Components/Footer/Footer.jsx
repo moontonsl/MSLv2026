@@ -13,14 +13,14 @@ import {
 
 const PROGRAM_LINKS = [
     { label: 'The MSL Network', href: MSL_NETWORK_HREF },
-    { label: 'Campus Tournaments', href: '/campus-tournament' },
+    { label: 'Campus Tournaments', href: PUBLIC_ROUTES.tournaments },
     { label: 'MCC League', originalHref: '/programs/mcc-league', href: comingSoonHref('mcc-league'), comingSoon: true },
     { label: 'Buffs & Support', href: PUBLIC_ROUTES.buffsSupport },
 ];
 
 const RESOURCE_LINKS = [
     { label: 'Partner With Us', href: MSL_NETWORK_HREF },
-    { label: 'Join the Team', href: '/careers' },
+    { label: 'Join the Team', href: PUBLIC_ROUTES.careers },
     { label: 'News & Updates', originalHref: '/News', href: comingSoonHref('news'), comingSoon: true },
 ];
 
@@ -166,7 +166,7 @@ const Footer = () => {
                     <div className="lg:col-span-3">
                         <h3 className="text-sm font-bold text-white">Safe Spaces</h3>
                         <Link
-                            href="/report-violation"
+                            href={PUBLIC_ROUTES.reportViolation}
                             className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-red-700/80 bg-red-950/40 px-4 py-3 text-sm font-medium text-red-500 transition-colors hover:bg-red-950/60 hover:text-red-400"
                         >
                             <ShieldAlert className="h-4 w-4 shrink-0" />
@@ -243,7 +243,7 @@ const Footer = () => {
                     <div className="mt-10 text-center">
                         <h3 className="text-sm font-bold text-white">Safe Spaces</h3>
                         <Link
-                            href="/report-violation"
+                            href={PUBLIC_ROUTES.reportViolation}
                             className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-red-700/80 bg-red-950/40 px-4 py-3 text-sm font-medium text-red-500 transition-colors hover:bg-red-950/60 hover:text-red-400"
                         >
                             <ShieldAlert className="h-4 w-4 shrink-0" />

@@ -3,7 +3,7 @@ import { Link, usePage, router } from '@inertiajs/react';
 import { Menu, ChevronDown, UserRound } from 'lucide-react';
 import AccountModificationModal from './AccountModificationModal';
 import MobileNavigationDrawer from './MobileNavigationDrawer';
-import { ABOUT_ITEMS, PROGRAMS_ITEMS, MAIN_LINKS, isNavigationItemActive, isNavigationGroupActive } from '@/data/siteNavigation';
+import { ABOUT_ITEMS, PROGRAMS_ITEMS, MAIN_LINKS, PUBLIC_ROUTES, isNavigationItemActive, isNavigationGroupActive } from '@/data/siteNavigation';
 
 const navFocusClass = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-500';
 const navRowClass = `flex min-h-12 items-center gap-2 rounded-sm text-left text-sm font-medium transition-colors duration-150 hover:text-white motion-reduce:transition-none ${navFocusClass}`;
@@ -32,7 +32,7 @@ function NavItemLink({ item, url, onNavigate, mobile = false, submenu = false })
     );
 }
 
-function NavDropdown({ id, label, items, isOpen, onToggle, onNavigate, url, mobile = false }) {
+function NavDropdown({ id, label, items, isOpen, onToggle, onNavigate, url, mobile = false, href }) {
     const childActive = isNavigationGroupActive(url, id, items);
     const panelId = `${mobile ? 'mobile' : 'desktop'}-${id}-links`;
 
@@ -44,7 +44,28 @@ function NavDropdown({ id, label, items, isOpen, onToggle, onNavigate, url, mobi
                 event.currentTarget.querySelector('button')?.focus();
             }
         }}>
-            <button
+            {href ? (
+                <div className={`flex items-center ${mobile ? 'justify-between' : ''}`}>
+                    <Link
+                        href={href}
+                        onClick={onNavigate}
+                        aria-current={isNavigationItemActive(url, { href, exact: true }) ? 'page' : undefined}
+                        className={`${navRowClass} ${mobile ? 'flex-1 px-3' : 'pl-2 pr-0'} ${childActive ? 'text-brand-500' : 'text-gray-300'}`}
+                    >
+                        <span className={navUnderlineClass(childActive)}>{label}</span>
+                    </Link>
+                    <button
+                        type="button"
+                        aria-label={`${isOpen ? 'Close' : 'Open'} ${label} menu`}
+                        aria-expanded={isOpen}
+                        aria-controls={panelId}
+                        onClick={() => onToggle(id)}
+                        className={`flex min-h-12 min-w-11 items-center justify-center rounded-sm ${navFocusClass} ${childActive || isOpen ? 'text-brand-500' : 'text-gray-300'} hover:text-white`}
+                    >
+                        <ChevronDown aria-hidden="true" className={`h-4 w-4 transition-transform duration-150 motion-reduce:transition-none ${isOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                </div>
+            ) : <button
                 type="button"
                 className={`${navRowClass} ${mobile ? 'w-full justify-between px-3' : 'px-2'} ${childActive || isOpen ? 'text-brand-500' : 'text-gray-300'}`}
                 aria-expanded={isOpen}
@@ -58,7 +79,7 @@ function NavDropdown({ id, label, items, isOpen, onToggle, onNavigate, url, mobi
                         isOpen ? 'rotate-180' : ''
                     }`}
                 />
-            </button>
+            </button>}
             {isOpen && (
                 <div id={panelId} className={mobile ? 'mb-3 ml-3 pl-2' : 'absolute left-0 top-full z-50 mt-2 min-w-64 rounded-xl border border-white/10 bg-bg-card p-2 shadow-soft'}>
                     {items.map((item) => <NavItemLink key={item.label} item={item} url={url} onNavigate={onNavigate} submenu mobile={mobile} />)}
@@ -79,13 +100,14 @@ function DesktopNavigation({
         <nav
             ref={navRef}
             id="main-navigation"
-            className="hidden items-center gap-2 lg:flex"
+            className="hidden items-center justify-start gap-4 lg:flex"
             aria-label="Main"
         >
             <NavItemLink item={{ label: 'Home', href: '/' }} url={url} onNavigate={closeNavDropdowns} />
             <NavDropdown
                 id="about"
                 label="About"
+                href={PUBLIC_ROUTES.about}
                 items={ABOUT_ITEMS}
                 isOpen={openDropdown === 'about'}
                 onToggle={toggleNavDropdown}
@@ -95,6 +117,7 @@ function DesktopNavigation({
             <NavDropdown
                 id="programs"
                 label="Programs"
+                href={PUBLIC_ROUTES.programs}
                 items={PROGRAMS_ITEMS}
                 isOpen={openDropdown === 'programs'}
                 onToggle={toggleNavDropdown}
@@ -109,10 +132,10 @@ function DesktopNavigation({
 function AccountMenuLinks({ user, userRole, onClose, onOpenModification }) {
     const profileHref =
         userRole === 'Student'
-            ? '/studentportal'
+            ? '/StudentPortal'
             : userRole === 'Regional Admin'
               ? '/RegionalAdmin'
-              : '/admin/dashboard';
+              : '/Admin/Dashboard';
 
     const showSlAdmin =
         userRole === 'SL' ||
@@ -161,7 +184,7 @@ function AccountMenuLinks({ user, userRole, onClose, onOpenModification }) {
                 </Link>
             )}
             {showCampusTournaments && (
-                <Link href="/campus-tournament" className={linkClass} onClick={onClose}>
+                <Link href={PUBLIC_ROUTES.tournaments} className={linkClass} onClick={onClose}>
                     Campus Tournaments
                 </Link>
             )}
@@ -171,7 +194,7 @@ function AccountMenuLinks({ user, userRole, onClose, onOpenModification }) {
                 </Link>
             )}
             {userRole === 'Super Admin' && (
-                <Link href="/admin/user-regions" className={linkClass} onClick={onClose}>
+                <Link href="/Admin/UserRegions" className={linkClass} onClick={onClose}>
                     User Regions
                 </Link>
             )}
@@ -319,7 +342,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                 <div className="relative z-[61] flex shrink-0 items-center justify-end">
                     {!loggedIn ? (
                         <Link
-                            href="/login"
+                            href="/Login"
                             className={`group inline-flex items-center justify-center rounded-full ${navFocusClass}`}
                             aria-label="Log in"
                         >
@@ -371,7 +394,7 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
             >
                 <nav id="mobile-main-navigation" className="flex flex-col" aria-label="Mobile main">
                     <NavItemLink item={{ label: 'Home', href: '/' }} url={currentUrl} onNavigate={closeNavDropdowns} mobile />
-                    {[{ id: 'about', label: 'About', items: ABOUT_ITEMS }, { id: 'programs', label: 'Programs', items: PROGRAMS_ITEMS }].map((group) => (
+                    {[{ id: 'about', label: 'About', href: PUBLIC_ROUTES.about, items: ABOUT_ITEMS }, { id: 'programs', label: 'Programs', href: PUBLIC_ROUTES.programs, items: PROGRAMS_ITEMS }].map((group) => (
                         <NavDropdown key={group.id} {...group} isOpen={mobileSubmenu === group.id} onToggle={(id) => setMobileSubmenu((previous) => previous === id ? null : id)} onNavigate={closeNavDropdowns} url={currentUrl} mobile />
                     ))}
                     {MAIN_LINKS.map((item) => <NavItemLink key={item.label} item={item} url={currentUrl} onNavigate={closeNavDropdowns} mobile />)}

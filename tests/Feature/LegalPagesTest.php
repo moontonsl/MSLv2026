@@ -13,18 +13,19 @@ class LegalPagesTest extends TestCase
     {
         $this->withoutVite();
 
-        $this->get('/privacy-policy')
+        $this->get('/PrivacyPolicy')
             ->assertOk()
             ->assertInertia(fn ($page) => $page->component('PrivacyPolicy'));
 
-        $this->get('/terms-of-service')
+        $this->get('/TermsAndConditions')
             ->assertOk()
             ->assertInertia(fn ($page) => $page->component('TermsAndConditions'));
     }
 
     public function test_legacy_policy_urls_redirect_to_the_canonical_pages(): void
     {
-        $this->get('/PrivacyPolicy')->assertStatus(301)->assertRedirect('/privacy-policy');
-        $this->get('/TermsAndConditions')->assertStatus(301)->assertRedirect('/terms-of-service');
+        $this->get('/privacy-policy')->assertStatus(301)->assertRedirect('/PrivacyPolicy');
+        $this->get('/terms-of-service')->assertStatus(301)->assertRedirect('/TermsAndConditions');
+        $this->get('/TermsOfService')->assertStatus(301)->assertRedirect('/TermsAndConditions');
     }
 }

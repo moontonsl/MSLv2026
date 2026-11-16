@@ -75,7 +75,7 @@ export default function AdminDashboard({
             badgeBg: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
             indicatorColor: activeUsers > 0 ? 'text-emerald-400' : 'text-zinc-500',
             indicatorText: activeUsers > 0 ? 'Active in DB' : 'None',
-            href: '/admin/users/pending',
+            href: '/Admin/Users/Pending',
             cta: 'View student queue'
         },
         {

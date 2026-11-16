@@ -14,13 +14,13 @@ class PasswordResetTest extends TestCase
 
     public function test_reset_password_link_screen_can_be_rendered(): void
     {
-        $response = $this->get('/forgot-password');
+        $response = $this->get('/ForgotPassword');
 
         $response->assertStatus(200)
             ->assertInertia(fn ($page) => $page->component('Auth/ForgotPassword'));
 
         // Check alias redirect
-        $this->get('/ForgotPassword')->assertRedirect('/forgot-password');
+        $this->get('/forgot-password')->assertStatus(301)->assertRedirect('/ForgotPassword');
     }
 
     public function test_reset_password_link_can_be_requested(): void
@@ -29,7 +29,7 @@ class PasswordResetTest extends TestCase
 
         $user = User::factory()->create();
 
-        $this->post('/forgot-password', ['email' => $user->email]);
+        $this->post('/ForgotPassword', ['email' => $user->email]);
 
         Notification::assertSentTo($user, ResetPassword::class);
     }
@@ -40,10 +40,10 @@ class PasswordResetTest extends TestCase
 
         $user = User::factory()->create();
 
-        $this->post('/forgot-password', ['email' => $user->email]);
+        $this->post('/ForgotPassword', ['email' => $user->email]);
 
         Notification::assertSentTo($user, ResetPassword::class, function ($notification) {
-            $response = $this->get('/reset-password/'.$notification->token);
+            $response = $this->get('/ResetPassword/'.$notification->token);
 
             $response->assertStatus(200);
 
@@ -57,10 +57,10 @@ class PasswordResetTest extends TestCase
 
         $user = User::factory()->create();
 
-        $this->post('/forgot-password', ['email' => $user->email]);
+        $this->post('/ForgotPassword', ['email' => $user->email]);
 
         Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
-            $response = $this->post('/reset-password', [
+            $response = $this->post('/ResetPassword', [
                 'token' => $notification->token,
                 'email' => $user->email,
                 'password' => 'password',
@@ -77,7 +77,7 @@ class PasswordResetTest extends TestCase
 
     public function test_cannot_request_reset_with_invalid_or_unknown_email(): void
     {
-        $response = $this->post('/forgot-password', ['email' => 'nonexistent@example.com']);
+        $response = $this->post('/ForgotPassword', ['email' => 'nonexistent@example.com']);
 
         $response->assertSessionHasErrors(['email']);
     }
@@ -86,7 +86,7 @@ class PasswordResetTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->post('/reset-password', [
+        $response = $this->post('/ResetPassword', [
             'token' => 'dummy-token',
             'email' => $user->email,
             'password' => 'newpassword123',

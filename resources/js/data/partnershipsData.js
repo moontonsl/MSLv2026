@@ -2,12 +2,13 @@ import { BarChart3, BriefcaseBusiness, Building2, Gift, GraduationCap, Layers, N
 import { comingSoonHref, MSL_NETWORK_HREF, PUBLIC_ROUTES } from './siteNavigation.js';
 
 export const PARTNERSHIP_LINKS = {
+    application: 'https://docs.google.com/forms/d/e/1FAIpQLSeGDXCrZTQlFxh4WhfDm-CnYGmV9bIIEnmb-g0OTiGpt1MpvA/viewform',
     network: MSL_NETWORK_HREF,
     support: PUBLIC_ROUTES.buffsSupport,
     cup: comingSoonHref('collegiate-cup'),
     events: comingSoonHref('events'),
     summit: comingSoonHref('leadership-summit'),
-    tournaments: '/campus-tournament',
+    tournaments: PUBLIC_ROUTES.tournaments,
     contact: 'mailto:contact@moontonslph.org?subject=Partnership%20Enquiry',
 };
 
@@ -37,7 +38,7 @@ export const OTHER_INITIATIVES = [
 ];
 
 export const PARTNERSHIP_DIVISIONS = [
-    { id: 'network', title: 'Network Deployment', description: 'Owns the partner lifecycle—onboarding new schools, onboarding organizations, and fostering long-term engagement.', icon: Share2, color: '#60a5fa' },
+    { id: 'network', title: 'Network Development', description: 'Owns the partner lifecycle—onboarding new schools, onboarding organizations, and fostering long-term engagement.', icon: Share2, color: '#60a5fa' },
     { id: 'sponsorships', title: 'Sponsorships', description: 'Processes and audits sponsorship requests, ensuring strict compliance and quality control.', icon: ShieldCheck, color: '#4ade80' },
     { id: 'products', title: 'Products & Engineering', description: 'Builds and maintains the digital ecosystem powering MSL operations for a seamless user experience.', icon: Package, color: '#c084fc' },
     { id: 'activations', title: 'Activations & Campaigns', description: 'Manages Moonton campaigns and brand partnerships by mobilizing our network with necessary resources.', icon: Paintbrush, color: '#fb923c' },

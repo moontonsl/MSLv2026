@@ -128,9 +128,9 @@ class CampusTournamentFrontendWiringTest extends TestCase
     public function test_guest_is_redirected_to_login(): void
     {
         $this->get(route('campus.tournament'))->assertRedirect(route('login'));
-        $this->get('/Tournament/SL')->assertRedirect(route('login'));
+        $this->get('/Tournament/StudentLeader')->assertRedirect(route('login'));
         $this->get('/Tournament/Organizer')->assertRedirect(route('login'));
-        $this->get('/Tournament/CampusTournament')->assertRedirect(route('login'));
+        $this->get('/Tournament/Captain')->assertRedirect(route('login'));
     }
 
     public function test_public_tournament_route_is_accessible_to_guests(): void
@@ -153,14 +153,14 @@ class CampusTournamentFrontendWiringTest extends TestCase
     {
         $this->actingAs($this->studentLeader)
             ->get(route('campus.tournament'))
-            ->assertRedirect('/Tournament/SL');
+            ->assertRedirect('/Tournament/StudentLeader');
     }
 
     public function test_default_student_redirects_to_captain_hub(): void
     {
         $this->actingAs($this->student)
             ->get(route('campus.tournament'))
-            ->assertRedirect('/Tournament/CampusTournament');
+            ->assertRedirect('/Tournament/Captain');
     }
 
     public function test_captain_hub_identifies_an_existing_premade_team(): void
@@ -260,7 +260,7 @@ class CampusTournamentFrontendWiringTest extends TestCase
 
     public function test_generic_legacy_tournament_link_uses_the_role_aware_entry(): void
     {
-        $this->get('/programs/campus-tournaments')->assertRedirect('/campus-tournament');
+        $this->get('/programs/campus-tournaments')->assertStatus(301)->assertRedirect('/CampusTournaments');
     }
 
     public function test_management_pages_reject_other_roles_on_direct_navigation(): void
@@ -700,7 +700,7 @@ class CampusTournamentFrontendWiringTest extends TestCase
 
         $this->actingAs($this->student)
             ->get(route('campus.tournament'))
-            ->assertRedirect('/Tournament/CampusTournamentTeam');
+            ->assertRedirect('/Tournament/CaptainTeam');
     }
 
     public function test_solo_assembling_player_redirects_to_solo_player(): void
@@ -904,7 +904,7 @@ class CampusTournamentFrontendWiringTest extends TestCase
 
         $this->actingAs($this->student)
             ->get(route('campus.tournament'))
-            ->assertRedirect('/Tournament/CampusTournament');
+            ->assertRedirect('/Tournament/Captain');
     }
 
     public function test_invitation_for_closed_registration_is_not_shown(): void
@@ -1072,7 +1072,7 @@ class CampusTournamentFrontendWiringTest extends TestCase
             );
 
         $this->actingAs($this->studentLeader)
-            ->get('/Tournament/SL')
+            ->get('/Tournament/StudentLeader')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Programs/CampusTournaments/SlView')
