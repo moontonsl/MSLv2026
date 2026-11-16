@@ -1,5 +1,4 @@
 import CarouselSection from '@/Components/Admin/Home/CarouselSection';
-import HighlightLinkSection from '@/Components/Admin/Home/HighlightLinkSection';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
 
@@ -15,11 +14,10 @@ export default function HeroCarousel({ carousels = [] }) {
                     Hero Carousel
                 </h1>
                 <p className="mt-2 text-sm leading-6 text-gray-400">
-                    Manage the featured announcement link and "Happening Now" hero slider displayed at the top of the public homepage.
+                    Manage slides displayed in the "Happening Now" hero slider at the top of the public homepage.
                 </p>
             </header>
 
-            <HighlightLinkSection />
             <CarouselSection initialItems={carousels} />
         </AdminLayout>
     );

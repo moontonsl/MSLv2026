@@ -45,6 +45,30 @@ class AdminHomePageStatisticsTest extends TestCase
         );
     }
 
+    public function test_public_homepage_renders_latest_news_in_announcement_banner(): void
+    {
+        \App\Models\News::create([
+            'news_canonical' => 'season-5-grand-finals-announced',
+            'news_state' => 'Announcement',
+            'news_title' => 'Season 5 Grand Finals Announced',
+            'news_subtitle' => 'National University clashes with rival schools.',
+            'news_published' => now(),
+            'news_writer' => 'MSL Press',
+            'news_content' => '<p>Details here</p>',
+        ]);
+
+        $response = $this->get('/');
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('Home/Index')
+            ->has('announcements', 1)
+            ->where('announcements.0.title', 'Announcement:')
+            ->where('announcements.0.description', 'Season 5 Grand Finals Announced')
+            ->where('announcements.0.href', '/News/season-5-grand-finals-announced')
+        );
+    }
+
     public function test_admin_can_view_statistics_and_live_counts_in_home_page_settings(): void
     {
         $this->signInSuperAdmin();

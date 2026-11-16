@@ -125,7 +125,22 @@ Route::get('/', function () {
         ];
     }
 
+    $announcements = \App\Models\News::query()
+        ->orderByDesc('news_published')
+        ->orderByDesc('id')
+        ->take(5)
+        ->get()
+        ->map(fn (\App\Models\News $item) => [
+            'id' => (string) $item->id,
+            'title' => $item->news_state ? \Illuminate\Support\Str::finish($item->news_state, ':') : 'Latest News:',
+            'description' => $item->news_title,
+            'linkLabel' => 'See More',
+            'href' => '/News/' . ($item->news_canonical ?: $item->id),
+        ])
+        ->values();
+
     return Inertia::render('Home/Index', [
+        'announcements' => $announcements,
         'pinnedFaqs' => Faq::query()
             ->where('is_active', true)
             ->where('is_pinned', true)
