@@ -31,8 +31,10 @@ class RedirectIfAuthenticatedByStatus
                 return redirect()->route('renewal.review');
             }
 
-            if (in_array($user->user_type, ['Super Admin', 'Student Leader'])) {
-                return redirect()->route('admin.dashboard');
+            if (in_array($user->user_type, ['Core Admin', 'Super Admin', 'Student Leader'], true)) {
+                return in_array($user->user_type, ['Core Admin', 'Super Admin'], true)
+                    ? redirect()->route('core.admin')
+                    : redirect()->route('student.leader');
             }
         }
 

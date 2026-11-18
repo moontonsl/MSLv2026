@@ -130,33 +130,36 @@ function DesktopNavigation({
 }
 
 function AccountMenuLinks({ user, userRole, onClose, onOpenModification }) {
+    const isCoreAdmin = userRole === 'Core Admin' || userRole === 'Super Admin';
     const profileHref =
         userRole === 'Student'
             ? '/StudentPortal'
             : userRole === 'Regional Admin'
               ? '/RegionalAdmin'
-              : '/Admin/Dashboard';
+              : isCoreAdmin
+                ? '/CoreAdmin'
+                : '/Admin/Dashboard';
 
     const showSlAdmin =
         userRole === 'SL' ||
         userRole === 'Student Leader' ||
-        userRole === 'Super Admin' ||
+        isCoreAdmin ||
         userRole === 'Regional Admin';
 
     const showCampusTournaments =
         userRole === 'SL' ||
         userRole === 'Student Leader' ||
         userRole === 'Regional Admin' ||
-        userRole === 'Super Admin';
+        isCoreAdmin;
 
     const showModification =
         userRole === 'SL' ||
         userRole === 'Student Leader' ||
         userRole === 'Regional Admin' ||
-        userRole === 'Super Admin';
+        isCoreAdmin;
 
     const modificationHref =
-        userRole === 'Regional Admin' || userRole === 'Super Admin'
+        userRole === 'Regional Admin' || isCoreAdmin
             ? '/RegionalAdminApproval'
             : '/SLAdminApproval';
 
@@ -171,7 +174,7 @@ function AccountMenuLinks({ user, userRole, onClose, onOpenModification }) {
             {showSlAdmin && (
                 <Link
                     href={
-                        userRole === 'Super Admin'
+                        isCoreAdmin
                             ? '/CoreAdmin'
                             : userRole === 'Regional Admin'
                               ? '/RegionalAdmin'

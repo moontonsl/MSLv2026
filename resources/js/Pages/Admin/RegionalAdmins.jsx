@@ -1,14 +1,14 @@
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import axios from 'axios';
 import {
     ShieldCheck, UserRound, Building2, MapPin, Search,
     Mail, CalendarDays, ArrowUp, ArrowDown, Eye, Phone,
     ExternalLink, X, Shield, Gamepad2, CheckCircle2, AlertTriangle,
     Users, Award, ChevronDown, Check, LoaderCircle, Globe, Crown,
-    UserPlus, Sparkles, FileText, CheckCircle, Plus, Trash2
+    UserPlus, Sparkles, FileText, CheckCircle, Plus, Trash2, Lock
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 const ACCENT = '#FBBF24';
@@ -71,7 +71,11 @@ export default function RegionalAdmins({
     filters = {},
     stats = {},
     regionsList = [],
+    errors: propErrors = {},
 }) {
+    const { errors: pageErrors = {} } = usePage().props;
+    const serverErrors = { ...pageErrors, ...propErrors };
+
     const [search, setSearch] = useState(filters.search ?? '');
     const [selectedRegion, setSelectedRegion] = useState(filters.region ?? '');
 
@@ -94,12 +98,22 @@ export default function RegionalAdmins({
     const [schoolSearchResults, setSchoolSearchResults] = useState([]);
     const [isSearchingSchools, setIsSearchingSchools] = useState(false);
     const [isSavingSchools, setIsSavingSchools] = useState(false);
-    const [searchTimeoutId, setSearchTimeoutId] = useState(null);
+    const [manageSchoolsError, setManageSchoolsError] = useState('');
+    const manageSearchTimeoutRef = useRef(null);
+    const manageSearchSeqRef = useRef(0);
 
     // Form states for promotion
-    const [assignedRegion, setAssignedRegion] = useState(PHILIPPINE_REGIONS[0]);
+    const [assignedRegion, setAssignedRegion] = useState('');
     const [assignedDesignation, setAssignedDesignation] = useState(REGIONAL_DESIGNATIONS[0]);
     const [assignedCampus, setAssignedCampus] = useState('');
+    const [promoteAssignedSchools, setPromoteAssignedSchools] = useState([]);
+    const [promoteSchoolSearchQuery, setPromoteSchoolSearchQuery] = useState('');
+    const [promoteSchoolResults, setPromoteSchoolResults] = useState([]);
+    const [isSearchingPromoteSchools, setIsSearchingPromoteSchools] = useState(false);
+    const [promoteSchoolsError, setPromoteSchoolsError] = useState('');
+    const promoteSearchTimeoutRef = useRef(null);
+    const promoteSearchSeqRef = useRef(0);
+
     const [demoteTargetRole, setDemoteTargetRole] = useState('Student');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -113,6 +127,25 @@ export default function RegionalAdmins({
             document.body.style.overflow = '';
         };
     }, [inspectAdmin, promoteTarget, demoteTarget, isSearchStudentModalOpen, manageSchoolsAdmin]);
+
+    useEffect(() => {
+        return () => {
+            if (manageSearchTimeoutRef.current) clearTimeout(manageSearchTimeoutRef.current);
+            if (promoteSearchTimeoutRef.current) clearTimeout(promoteSearchTimeoutRef.current);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (manageSchoolsAdmin && serverErrors?.school_ids) {
+            setManageSchoolsError(serverErrors.school_ids);
+        }
+    }, [serverErrors?.school_ids]);
+
+    useEffect(() => {
+        if (promoteTarget && (serverErrors?.school_ids || serverErrors?.region)) {
+            setPromoteSchoolsError(serverErrors.school_ids || serverErrors.region);
+        }
+    }, [serverErrors?.school_ids, serverErrors?.region]);
 
     const adminItems = regionalAdmins?.data ?? [];
 
@@ -171,14 +204,137 @@ export default function RegionalAdmins({
         }
     };
 
+    const fetchPromoteSchools = async (q, region) => {
+        const lockedRegion = (region || '').trim();
+        if (!lockedRegion) {
+            setPromoteSchoolResults([]);
+            setIsSearchingPromoteSchools(false);
+            return;
+        }
+
+        const seq = ++promoteSearchSeqRef.current;
+        setIsSearchingPromoteSchools(true);
+        try {
+            const res = await axios.get(route('schools.search.college'), {
+                params: {
+                    q: q.trim(),
+                    region: lockedRegion,
+                },
+            });
+            if (seq !== promoteSearchSeqRef.current) return;
+            const rawList = Array.isArray(res.data) ? res.data : [];
+            setPromoteSchoolResults(
+                rawList.filter((school) => school.region === lockedRegion)
+            );
+        } catch (err) {
+            if (seq !== promoteSearchSeqRef.current) return;
+            console.error('Failed to search schools for promotion:', err);
+            setPromoteSchoolResults([]);
+        } finally {
+            if (seq === promoteSearchSeqRef.current) {
+                setIsSearchingPromoteSchools(false);
+            }
+        }
+    };
+
     const openPromoteModal = (user) => {
+        if (promoteSearchTimeoutRef.current) clearTimeout(promoteSearchTimeoutRef.current);
         setPromoteTarget(user);
         setAssignedCampus(user.university || '');
         const validDesignation = REGIONAL_DESIGNATIONS.includes(user.division)
             ? user.division
             : REGIONAL_DESIGNATIONS[0];
         setAssignedDesignation(validDesignation);
-        setAssignedRegion(user.region || 'NCR');
+
+        const initialRegion = (user.region || '').trim();
+        setAssignedRegion(initialRegion);
+        setPromoteAssignedSchools([]);
+        setPromoteSchoolSearchQuery('');
+        setPromoteSchoolsError('');
+
+        if (initialRegion) {
+            fetchPromoteSchools('', initialRegion);
+        } else {
+            promoteSearchSeqRef.current += 1;
+            setPromoteSchoolResults([]);
+            setIsSearchingPromoteSchools(false);
+        }
+    };
+
+    const handlePromoteRegionChange = (newRegion) => {
+        const trimmedRegion = (newRegion || '').trim();
+        setAssignedRegion(trimmedRegion);
+        setPromoteSchoolsError('');
+        if (promoteSearchTimeoutRef.current) clearTimeout(promoteSearchTimeoutRef.current);
+
+        // Remove any selected schools that do not belong to the newly selected region
+        setPromoteAssignedSchools((prev) =>
+            trimmedRegion ? prev.filter((school) => school.region === trimmedRegion) : []
+        );
+        setPromoteSchoolSearchQuery('');
+
+        if (!trimmedRegion) {
+            promoteSearchSeqRef.current += 1;
+            setPromoteSchoolResults([]);
+            setIsSearchingPromoteSchools(false);
+            return;
+        }
+
+        fetchPromoteSchools('', trimmedRegion);
+    };
+
+    const handlePromoteSchoolSearchInput = (value) => {
+        setPromoteSchoolSearchQuery(value);
+        if (promoteSearchTimeoutRef.current) clearTimeout(promoteSearchTimeoutRef.current);
+
+        const lockedRegion = (assignedRegion || '').trim();
+        if (!lockedRegion) {
+            setPromoteSchoolResults([]);
+            setIsSearchingPromoteSchools(false);
+            return;
+        }
+
+        const trimmed = value.trim();
+        if (trimmed.length === 0) {
+            fetchPromoteSchools('', lockedRegion);
+            return;
+        }
+
+        setIsSearchingPromoteSchools(true);
+        const seqSnapshot = promoteSearchSeqRef.current;
+        promoteSearchTimeoutRef.current = setTimeout(() => {
+            if (seqSnapshot !== promoteSearchSeqRef.current) return;
+            fetchPromoteSchools(trimmed, lockedRegion);
+        }, 250);
+    };
+
+    const handleAddPromoteSchool = (school) => {
+        const lockedRegion = (assignedRegion || '').trim();
+        if (!lockedRegion || school.region !== lockedRegion) {
+            setPromoteSchoolsError(
+                lockedRegion
+                    ? `Only ${lockedRegion} schools can be assigned to a ${lockedRegion} Regional Admin.`
+                    : 'Please select a regional jurisdiction first before assigning schools.'
+            );
+            return;
+        }
+        if (promoteAssignedSchools.some((s) => s.id === school.id)) return;
+        setPromoteSchoolsError('');
+        setPromoteAssignedSchools((prev) => [
+            ...prev,
+            {
+                id: school.id,
+                name: school.name,
+                acronym: school.acronym,
+                region: school.region,
+                island: school.island,
+            },
+        ]);
+    };
+
+    const handleRemovePromoteSchool = (schoolId) => {
+        setPromoteSchoolsError('');
+        setPromoteAssignedSchools((prev) => prev.filter((s) => s.id !== schoolId));
     };
 
     const openDemoteModal = (user) => {
@@ -188,20 +344,30 @@ export default function RegionalAdmins({
 
     const handlePromoteSubmit = (e) => {
         e.preventDefault();
-        if (!promoteTarget || isSubmitting) return;
+        if (!promoteTarget || isSubmitting || !assignedRegion) return;
 
         setIsSubmitting(true);
+        setPromoteSchoolsError('');
         router.post(route('admin.users.promote-regional-admin', promoteTarget.id), {
             region: assignedRegion,
             division: assignedDesignation,
             university: assignedCampus,
+            school_ids: promoteAssignedSchools.map((s) => s.id),
         }, {
             preserveScroll: true,
-            onFinish: () => {
-                setIsSubmitting(false);
+            onSuccess: () => {
                 setPromoteTarget(null);
                 setIsSearchStudentModalOpen(false);
                 setInspectAdmin(null);
+                setPromoteSchoolsError('');
+            },
+            onError: (errs) => {
+                if (errs?.school_ids || errs?.region) {
+                    setPromoteSchoolsError(errs.school_ids || errs.region);
+                }
+            },
+            onFinish: () => {
+                setIsSubmitting(false);
             },
         });
     };
@@ -222,44 +388,73 @@ export default function RegionalAdmins({
     };
 
     // Manage Schools Handlers
+    const fetchManageSchools = async (q, region) => {
+        const lockedRegion = (region || '').trim();
+        const seq = ++manageSearchSeqRef.current;
+        setIsSearchingSchools(true);
+        try {
+            const res = await axios.get(route('schools.search.college'), {
+                params: {
+                    q: q.trim(),
+                    region: lockedRegion,
+                },
+            });
+            if (seq !== manageSearchSeqRef.current) return;
+            const rawList = Array.isArray(res.data) ? res.data : [];
+            setSchoolSearchResults(
+                rawList.filter((school) => !lockedRegion || school.region === lockedRegion)
+            );
+        } catch (err) {
+            if (seq !== manageSearchSeqRef.current) return;
+            console.error('Failed to search schools:', err);
+            setSchoolSearchResults([]);
+        } finally {
+            if (seq === manageSearchSeqRef.current) {
+                setIsSearchingSchools(false);
+            }
+        }
+    };
+
     const openManageSchoolsModal = (admin) => {
+        if (manageSearchTimeoutRef.current) clearTimeout(manageSearchTimeoutRef.current);
         setManageSchoolsAdmin(admin);
         setAssignedSchoolsList(admin.assigned_schools ? [...admin.assigned_schools] : []);
         setSchoolSearchQuery('');
         setSchoolSearchResults([]);
-        setIsSearchingSchools(false);
+        setManageSchoolsError('');
+        fetchManageSchools('', admin?.region || '');
     };
 
     const handleSchoolSearchInput = (value) => {
         setSchoolSearchQuery(value);
-        if (searchTimeoutId) clearTimeout(searchTimeoutId);
+        if (manageSearchTimeoutRef.current) clearTimeout(manageSearchTimeoutRef.current);
 
         const trimmed = value.trim();
-        if (trimmed.length < 2) {
-            setSchoolSearchResults([]);
-            setIsSearchingSchools(false);
+        const lockedRegion = manageSchoolsAdmin?.region || '';
+
+        if (trimmed.length === 0) {
+            fetchManageSchools('', lockedRegion);
             return;
         }
 
         setIsSearchingSchools(true);
-        const timeout = setTimeout(async () => {
-            try {
-                const res = await axios.get(route('schools.search.college'), {
-                    params: { q: trimmed },
-                });
-                setSchoolSearchResults(res.data || []);
-            } catch (err) {
-                console.error('Failed to search schools:', err);
-                setSchoolSearchResults([]);
-            } finally {
-                setIsSearchingSchools(false);
-            }
+        const seqSnapshot = manageSearchSeqRef.current;
+        manageSearchTimeoutRef.current = setTimeout(() => {
+            if (seqSnapshot !== manageSearchSeqRef.current) return;
+            fetchManageSchools(trimmed, lockedRegion);
         }, 250);
-        setSearchTimeoutId(timeout);
     };
 
     const handleAddSchool = (school) => {
+        const lockedRegion = (manageSchoolsAdmin?.region || '').trim();
+        if (lockedRegion && school.region !== lockedRegion) {
+            setManageSchoolsError(
+                `Only ${lockedRegion} schools can be assigned to a ${lockedRegion} Regional Admin.`
+            );
+            return;
+        }
         if (assignedSchoolsList.some((s) => s.id === school.id)) return;
+        setManageSchoolsError('');
         setAssignedSchoolsList((prev) => [
             ...prev,
             {
@@ -273,12 +468,14 @@ export default function RegionalAdmins({
     };
 
     const handleRemoveSchool = (schoolId) => {
+        setManageSchoolsError('');
         setAssignedSchoolsList((prev) => prev.filter((s) => s.id !== schoolId));
     };
 
     const handleSaveAssignedSchools = () => {
         if (!manageSchoolsAdmin || isSavingSchools) return;
         setIsSavingSchools(true);
+        setManageSchoolsError('');
         router.post(
             route('admin.users.regional-admin-schools', manageSchoolsAdmin.id),
             {
@@ -288,6 +485,12 @@ export default function RegionalAdmins({
                 preserveScroll: true,
                 onSuccess: () => {
                     setManageSchoolsAdmin(null);
+                    setManageSchoolsError('');
+                },
+                onError: (errs) => {
+                    if (errs?.school_ids) {
+                        setManageSchoolsError(errs.school_ids);
+                    }
                 },
                 onFinish: () => {
                     setIsSavingSchools(false);
@@ -300,7 +503,18 @@ export default function RegionalAdmins({
     const availableRegions = Array.from(new Set([
         ...regionsList,
         ...PHILIPPINE_REGIONS,
+        ...(promoteTarget?.region ? [promoteTarget.region.trim()] : []),
     ])).filter(Boolean).sort();
+
+    const lockedManageRegion = (manageSchoolsAdmin?.region || '').trim();
+    const visibleManageSchoolResults = schoolSearchResults.filter(
+        (school) => !lockedManageRegion || school.region === lockedManageRegion
+    );
+
+    const lockedPromoteRegion = (assignedRegion || '').trim();
+    const visiblePromoteSchoolResults = promoteSchoolResults.filter(
+        (school) => Boolean(lockedPromoteRegion) && school.region === lockedPromoteRegion
+    );
 
     return (
         <AdminLayout activeNavId="regional-admins" showGlobalSearch>
@@ -1013,87 +1227,132 @@ export default function RegionalAdmins({
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="appoint-ra-modal-title"
-                    onClick={(e) => { if (e.target === e.currentTarget) setPromoteTarget(null); }}
+                    onClick={(e) => { if (e.target === e.currentTarget && !isSubmitting) setPromoteTarget(null); }}
                 >
-                    <div className="w-full max-w-lg max-h-[90dvh] overflow-y-auto overscroll-contain rounded-2xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-4 sm:p-6 shadow-[0_20px_70px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-150">
-                        <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-4">
-                            <div className="flex items-center gap-2.5 min-w-0">
-                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20">
-                                    <ShieldCheck className="h-5 w-5 shrink-0" />
+                    <div className="w-full max-w-2xl max-h-[90dvh] overflow-y-auto overscroll-contain rounded-2xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-4 sm:p-6 shadow-[0_20px_70px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-150 flex flex-col">
+                        <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-4 shrink-0">
+                            <div className="flex items-start gap-2.5 min-w-0">
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20 mt-0.5">
+                                    <ShieldCheck className="h-5 w-5 shrink-0" aria-hidden="true" />
                                 </div>
                                 <div className="min-w-0">
                                     <h3 id="appoint-ra-modal-title" className="text-base font-bold text-white">
                                         Appoint Regional Admin
                                     </h3>
-                                    <p className="text-xs text-gray-400">Assign territorial jurisdiction and operational role</p>
+                                    <p className="text-xs text-gray-400">
+                                        Assign territorial jurisdiction, operational role, and region-locked campuses
+                                    </p>
+                                    {lockedPromoteRegion && (
+                                        <div className="mt-2 inline-flex max-w-full flex-wrap items-center gap-1.5 rounded-lg border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-[11px] font-bold text-amber-300">
+                                            <Lock className="h-3 w-3 shrink-0 text-amber-400" aria-hidden="true" />
+                                            <span className="break-words">
+                                                Jurisdiction Locked: {lockedPromoteRegion} Schools Only
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <button
                                 type="button"
+                                disabled={isSubmitting}
                                 onClick={() => setPromoteTarget(null)}
+                                aria-label="Close appoint Regional Admin modal"
                                 className="shrink-0 rounded-lg p-1 text-gray-400 hover:bg-white/10 hover:text-white"
                             >
-                                <X className="h-5 w-5" />
+                                <X className="h-5 w-5" aria-hidden="true" />
                             </button>
                         </div>
 
-                        {/* Candidate Summary Card */}
-                        <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-3.5 flex items-center gap-3">
-                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400/20 font-bold text-amber-400 uppercase">
-                                {promoteTarget.name?.charAt(0) || 'U'}
+                        <form onSubmit={handlePromoteSubmit} className="mt-4 flex-1 overflow-y-auto overscroll-contain space-y-4 pr-1">
+                            {/* Candidate Summary Card */}
+                            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5 flex items-center gap-3">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400/20 font-bold text-amber-400 uppercase">
+                                    {promoteTarget.name?.charAt(0) || 'U'}
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <p className="font-bold text-white truncate">{promoteTarget.name}</p>
+                                    <p className="text-xs text-gray-400 truncate">
+                                        {promoteTarget.email} • ID: <span className="font-mono text-gray-300">{promoteTarget.studentId || '—'}</span>
+                                    </p>
+                                    {promoteTarget.university && (
+                                        <p className="text-xs text-amber-400/90 truncate mt-0.5">{promoteTarget.university}</p>
+                                    )}
+                                </div>
                             </div>
-                            <div className="min-w-0 flex-1">
-                                <p className="font-bold text-white truncate">{promoteTarget.name}</p>
-                                <p className="text-xs text-gray-400 truncate">
-                                    {promoteTarget.email} • ID: <span className="font-mono text-gray-300">{promoteTarget.studentId || '—'}</span>
-                                </p>
-                                {promoteTarget.university && (
-                                    <p className="text-xs text-amber-400/90 truncate mt-0.5">{promoteTarget.university}</p>
-                                )}
-                            </div>
-                        </div>
 
-                        <form onSubmit={handlePromoteSubmit} className="mt-5 space-y-4">
-                            <div>
-                                <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">
-                                    Territorial Jurisdiction / Regional Hub <span className="text-amber-400">*</span>
-                                </label>
-                                <select
-                                    required
-                                    value={assignedRegion}
-                                    onChange={(e) => setAssignedRegion(e.target.value)}
-                                    className="w-full rounded-xl border border-white/10 bg-black/60 p-3 text-xs text-white focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 focus:outline-none"
+                            {promoteSchoolsError && (
+                                <div
+                                    id="promote-schools-error"
+                                    role="alert"
+                                    className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 flex items-start gap-2.5 text-xs text-red-300"
                                 >
-                                    {availableRegions.map((reg) => (
-                                        <option key={reg} value={reg}>
-                                            {reg}
-                                        </option>
-                                    ))}
-                                </select>
+                                    <AlertTriangle className="h-4 w-4 shrink-0 text-red-400 mt-0.5" aria-hidden="true" />
+                                    <div className="min-w-0 flex-1 break-words">
+                                        <p className="font-bold text-red-300">Jurisdiction Validation Error</p>
+                                        <p className="mt-0.5 text-red-200/90">{promoteSchoolsError}</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="min-w-0">
+                                    <label
+                                        htmlFor="promote-region-select"
+                                        className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5"
+                                    >
+                                        Territorial Jurisdiction / Regional Hub <span className="text-amber-400" aria-hidden="true">*</span>
+                                    </label>
+                                    <select
+                                        id="promote-region-select"
+                                        name="region"
+                                        required
+                                        value={assignedRegion}
+                                        onChange={(e) => handlePromoteRegionChange(e.target.value)}
+                                        aria-invalid={Boolean(promoteSchoolsError && !assignedRegion) || undefined}
+                                        className="w-full rounded-xl border border-white/10 bg-black/60 p-3 text-xs text-white focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 focus:outline-none"
+                                    >
+                                        <option value="">Select regional hub...</option>
+                                        {availableRegions.map((reg) => (
+                                            <option key={reg} value={reg}>
+                                                {reg}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="min-w-0">
+                                    <label
+                                        htmlFor="promote-designation-select"
+                                        className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5"
+                                    >
+                                        Operational Designation / Role <span className="text-amber-400" aria-hidden="true">*</span>
+                                    </label>
+                                    <select
+                                        id="promote-designation-select"
+                                        name="division"
+                                        value={assignedDesignation}
+                                        onChange={(e) => setAssignedDesignation(e.target.value)}
+                                        className="w-full rounded-xl border border-white/10 bg-black/60 p-3 text-xs text-white focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 focus:outline-none"
+                                    >
+                                        {REGIONAL_DESIGNATIONS.map((pos) => (
+                                            <option key={pos} value={pos}>
+                                                {pos}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
 
                             <div>
-                                <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">
-                                    Operational Designation / Role <span className="text-amber-400">*</span>
-                                </label>
-                                <select
-                                    value={assignedDesignation}
-                                    onChange={(e) => setAssignedDesignation(e.target.value)}
-                                    className="w-full rounded-xl border border-white/10 bg-black/60 p-3 text-xs text-white focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 focus:outline-none"
+                                <label
+                                    htmlFor="promote-base-campus-input"
+                                    className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5"
                                 >
-                                    {REGIONAL_DESIGNATIONS.map((pos) => (
-                                        <option key={pos} value={pos}>
-                                            {pos}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">
                                     Affiliated University / Base Institution
                                 </label>
                                 <input
+                                    id="promote-base-campus-input"
+                                    name="university"
                                     type="text"
                                     value={assignedCampus}
                                     onChange={(e) => setAssignedCampus(e.target.value)}
@@ -1102,9 +1361,166 @@ export default function RegionalAdmins({
                                 />
                             </div>
 
-                            <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 pt-2">
+                            {/* Region-Locked Campus Assignment */}
+                            <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3.5 sm:p-4 space-y-3">
+                                <div className="flex flex-wrap items-center justify-between gap-2">
+                                    <label
+                                        htmlFor="promote-school-search-input"
+                                        className="text-xs font-bold uppercase tracking-wider text-gray-300"
+                                    >
+                                        Assign Supervised Campuses ({promoteAssignedSchools.length})
+                                    </label>
+                                    {lockedPromoteRegion ? (
+                                        <span
+                                            id="promote-jurisdiction-lock-hint"
+                                            className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-bold text-emerald-400"
+                                        >
+                                            <Lock className="h-2.5 w-2.5 shrink-0" aria-hidden="true" />
+                                            <span>Jurisdiction Locked: {lockedPromoteRegion} Schools Only</span>
+                                        </span>
+                                    ) : (
+                                        <span
+                                            id="promote-jurisdiction-lock-hint"
+                                            className="inline-flex items-center gap-1 rounded-full border border-amber-400/30 bg-amber-400/10 px-2.5 py-0.5 text-[10px] font-bold text-amber-400"
+                                        >
+                                            <MapPin className="h-2.5 w-2.5 shrink-0" aria-hidden="true" />
+                                            <span>Select Region First</span>
+                                        </span>
+                                    )}
+                                </div>
+
+                                {!lockedPromoteRegion ? (
+                                    <div className="rounded-xl border border-dashed border-amber-400/30 bg-amber-400/[0.04] p-4 text-center">
+                                        <MapPin className="h-6 w-6 text-amber-400/80 mx-auto mb-1.5" aria-hidden="true" />
+                                        <p className="text-xs font-semibold text-amber-200">
+                                            Select a Regional Hub first
+                                        </p>
+                                        <p className="text-[11px] text-gray-400 mt-0.5">
+                                            Choose the Territorial Jurisdiction above to unlock and assign campuses belonging to that region.
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="relative">
+                                            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" aria-hidden="true" />
+                                            <input
+                                                id="promote-school-search-input"
+                                                type="search"
+                                                value={promoteSchoolSearchQuery}
+                                                onChange={(e) => handlePromoteSchoolSearchInput(e.target.value)}
+                                                autoCorrect="off"
+                                                autoCapitalize="none"
+                                                spellCheck={false}
+                                                aria-describedby={promoteSchoolsError ? 'promote-jurisdiction-lock-hint promote-schools-error' : 'promote-jurisdiction-lock-hint'}
+                                                aria-invalid={Boolean(promoteSchoolsError) || undefined}
+                                                placeholder={`Filter ${lockedPromoteRegion} campuses by name or acronym...`}
+                                                className="w-full rounded-xl border border-white/10 bg-black/60 pl-10 pr-10 py-2.5 text-xs text-white placeholder:text-gray-500 focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 focus:outline-none"
+                                            />
+                                            {isSearchingPromoteSchools && (
+                                                <LoaderCircle className="absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-amber-400" aria-hidden="true" />
+                                            )}
+                                        </div>
+
+                                        {visiblePromoteSchoolResults.length > 0 ? (
+                                            <div className="max-h-44 overflow-y-auto rounded-xl border border-white/10 bg-[#16161a] p-2 space-y-1 shadow-xl">
+                                                {visiblePromoteSchoolResults.map((school) => {
+                                                    const isAlreadyAdded = promoteAssignedSchools.some((s) => s.id === school.id);
+                                                    return (
+                                                        <div
+                                                            key={school.id}
+                                                            className={`flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 rounded-lg p-2 transition-colors ${
+                                                                isAlreadyAdded
+                                                                    ? 'bg-white/[0.02] opacity-60'
+                                                                    : 'hover:bg-amber-400/10'
+                                                            }`}
+                                                        >
+                                                            <div className="min-w-0 flex-1">
+                                                                <div className="flex items-center gap-1.5 flex-wrap">
+                                                                    <span className="font-semibold text-white text-xs break-words">
+                                                                        {school.name}
+                                                                    </span>
+                                                                    {school.acronym && (
+                                                                        <span className="rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] font-mono text-gray-300">
+                                                                            {school.acronym}
+                                                                        </span>
+                                                                    )}
+                                                                    <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-400">
+                                                                        {school.region}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="shrink-0">
+                                                                {isAlreadyAdded ? (
+                                                                    <span className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-1 text-[11px] font-semibold text-gray-400">
+                                                                        <Check className="h-3 w-3 shrink-0 text-emerald-400" aria-hidden="true" /> Added
+                                                                    </span>
+                                                                ) : (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => handleAddPromoteSchool(school)}
+                                                                        className="inline-flex items-center gap-1 rounded-md bg-amber-400 px-2.5 py-1 text-[11px] font-bold text-black hover:bg-amber-300 transition-colors"
+                                                                    >
+                                                                        <Plus className="h-3 w-3 shrink-0" aria-hidden="true" /> Assign
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        ) : !isSearchingPromoteSchools ? (
+                                            <p className="text-[11px] text-gray-400 italic">
+                                                {promoteSchoolSearchQuery.trim()
+                                                    ? `No ${lockedPromoteRegion} institutions found matching "${promoteSchoolSearchQuery}".`
+                                                    : `No active ${lockedPromoteRegion} institutions available.`}
+                                            </p>
+                                        ) : null}
+
+                                        {promoteAssignedSchools.length > 0 && (
+                                            <div className="pt-1 space-y-1.5">
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <span className="text-[11px] font-semibold text-gray-400">
+                                                        Selected {lockedPromoteRegion} Campuses ({promoteAssignedSchools.length})
+                                                    </span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setPromoteSchoolsError('');
+                                                            setPromoteAssignedSchools([]);
+                                                        }}
+                                                        className="text-[11px] font-semibold text-red-400 hover:text-red-300"
+                                                    >
+                                                        Clear Selected
+                                                    </button>
+                                                </div>
+                                                <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
+                                                    {promoteAssignedSchools.map((school) => (
+                                                        <span
+                                                            key={school.id}
+                                                            className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-amber-400/25 bg-amber-400/10 px-2.5 py-1 text-[11px] text-amber-200"
+                                                        >
+                                                            <span className="truncate font-semibold">{school.acronym || school.name}</span>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleRemovePromoteSchool(school.id)}
+                                                                aria-label={`Remove ${school.name}`}
+                                                                className="shrink-0 rounded p-0.5 text-amber-300/80 hover:bg-red-500/20 hover:text-red-300"
+                                                            >
+                                                                <X className="h-3 w-3" aria-hidden="true" />
+                                                            </button>
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+
+                            <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 pt-2 border-t border-white/10">
                                 <button
                                     type="button"
+                                    disabled={isSubmitting}
                                     onClick={() => setPromoteTarget(null)}
                                     className="min-h-[40px] w-full sm:w-auto rounded-xl border border-white/10 px-4 py-2 text-xs font-semibold text-gray-400 hover:text-white"
                                 >
@@ -1116,9 +1532,9 @@ export default function RegionalAdmins({
                                     className="min-h-[40px] w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-amber-400 px-5 py-2.5 text-xs font-bold text-black transition-colors hover:bg-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.2)] disabled:opacity-50"
                                 >
                                     {isSubmitting ? (
-                                        <LoaderCircle className="h-4 w-4 animate-spin shrink-0" />
+                                        <LoaderCircle className="h-4 w-4 animate-spin shrink-0" aria-hidden="true" />
                                     ) : (
-                                        <ShieldCheck className="h-4 w-4 shrink-0" />
+                                        <ShieldCheck className="h-4 w-4 shrink-0" aria-hidden="true" />
                                     )}
                                     <span>Confirm & Appoint</span>
                                 </button>
@@ -1474,54 +1890,112 @@ export default function RegionalAdmins({
                     <div className="w-full max-w-2xl rounded-2xl border border-amber-400/30 bg-[#0f0f11]/95 backdrop-blur-2xl p-4 sm:p-6 shadow-[0_20px_70px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in-95 duration-150 max-h-[90dvh] overflow-y-auto overscroll-contain flex flex-col">
                         {/* Header */}
                         <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-4 shrink-0">
-                            <div className="flex items-center gap-3 min-w-0">
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20 shadow-[0_0_15px_rgba(251,191,36,0.15)]">
-                                    <Building2 className="h-5 w-5 shrink-0" />
+                            <div className="flex items-start gap-3 min-w-0">
+                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 border border-amber-400/20 shadow-[0_0_15px_rgba(251,191,36,0.15)] mt-0.5">
+                                    <Building2 className="h-5 w-5 shrink-0" aria-hidden="true" />
                                 </div>
                                 <div className="min-w-0">
                                     <h3 id="assign-schools-modal-title" className="text-base font-bold text-white">
                                         Assign Schools & Campuses
                                     </h3>
                                     <p className="text-xs text-gray-400 break-words">
-                                        Managing territory for <strong className="text-amber-400">{manageSchoolsAdmin.name}</strong> ({manageSchoolsAdmin.region || 'Regional Admin'})
+                                        Managing territory for <strong className="text-amber-400">{manageSchoolsAdmin.name}</strong> ({lockedManageRegion || 'Unassigned Region'})
                                     </p>
+                                    {lockedManageRegion ? (
+                                        <div
+                                            id="manage-jurisdiction-lock-hint"
+                                            className="mt-2 inline-flex max-w-full flex-wrap items-center gap-1.5 rounded-lg border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-[11px] font-bold text-amber-300"
+                                        >
+                                            <Lock className="h-3.5 w-3.5 shrink-0 text-amber-400" aria-hidden="true" />
+                                            <span className="break-words">
+                                                Jurisdiction Locked: {lockedManageRegion} Schools Only
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <div
+                                            id="manage-jurisdiction-lock-hint"
+                                            className="mt-2 inline-flex max-w-full flex-wrap items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-gray-300"
+                                        >
+                                            <MapPin className="h-3.5 w-3.5 shrink-0 text-gray-400" aria-hidden="true" />
+                                            <span>No Region Assigned</span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <button
                                 type="button"
                                 disabled={isSavingSchools}
                                 onClick={() => setManageSchoolsAdmin(null)}
+                                aria-label="Close assign schools modal"
                                 className="shrink-0 rounded-lg p-1 text-gray-400 hover:bg-white/10 hover:text-white"
                             >
-                                <X className="h-5 w-5" />
+                                <X className="h-5 w-5" aria-hidden="true" />
                             </button>
                         </div>
 
                         {/* Modal Body */}
                         <div className="flex-1 overflow-y-auto overscroll-contain py-4 space-y-5 pr-1">
+                            {manageSchoolsError && (
+                                <div
+                                    id="manage-schools-error"
+                                    role="alert"
+                                    className="rounded-xl border border-red-500/30 bg-red-500/10 p-3 flex items-start gap-2.5 text-xs text-red-300"
+                                >
+                                    <AlertTriangle className="h-4 w-4 shrink-0 text-red-400 mt-0.5" aria-hidden="true" />
+                                    <div className="min-w-0 flex-1 break-words">
+                                        <p className="font-bold text-red-300">Jurisdiction Validation Error</p>
+                                        <p className="mt-0.5 text-red-200/90">{manageSchoolsError}</p>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Search Bar for Schools */}
                             <div>
-                                <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1.5">
-                                    Search & Add School / Campus
-                                </label>
+                                <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                                    <label
+                                        htmlFor="manage-school-search-input"
+                                        className="block text-xs font-bold uppercase tracking-wider text-gray-300"
+                                    >
+                                        {lockedManageRegion
+                                            ? `Search & Assign ${lockedManageRegion} Schools / Campuses`
+                                            : 'Search & Add School / Campus'}
+                                    </label>
+                                    {lockedManageRegion && (
+                                        <span className="text-[11px] font-medium text-emerald-400">
+                                            {isSearchingSchools
+                                                ? `Loading ${lockedManageRegion} schools...`
+                                                : `${visibleManageSchoolResults.length} ${lockedManageRegion} school${visibleManageSchoolResults.length === 1 ? '' : 's'} shown`}
+                                        </span>
+                                    )}
+                                </div>
                                 <div className="relative">
-                                    <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                    <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" aria-hidden="true" />
                                     <input
+                                        id="manage-school-search-input"
                                         type="search"
                                         value={schoolSearchQuery}
                                         onChange={(e) => handleSchoolSearchInput(e.target.value)}
-                                        placeholder="Type campus name or acronym (e.g., PUP, UST, DLSU, UP, EARIST)..."
+                                        autoCorrect="off"
+                                        autoCapitalize="none"
+                                        spellCheck={false}
+                                        aria-describedby={manageSchoolsError ? 'manage-jurisdiction-lock-hint manage-schools-error' : 'manage-jurisdiction-lock-hint'}
+                                        aria-invalid={Boolean(manageSchoolsError) || undefined}
+                                        placeholder={
+                                            lockedManageRegion
+                                                ? `Filter ${lockedManageRegion} campuses by name or acronym...`
+                                                : 'Type campus name or acronym (e.g., PUP, UST, DLSU, UP, EARIST)...'
+                                        }
                                         className="w-full rounded-xl border border-white/10 bg-black/60 pl-10 pr-10 py-3 text-xs text-white placeholder:text-gray-500 focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 focus:outline-none"
                                     />
                                     {isSearchingSchools && (
-                                        <LoaderCircle className="absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-amber-400" />
+                                        <LoaderCircle className="absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-amber-400" aria-hidden="true" />
                                     )}
                                 </div>
 
-                                {/* Autocomplete Results Dropdown */}
-                                {schoolSearchResults.length > 0 && (
+                                {/* Available / Filtered Region Schools List */}
+                                {visibleManageSchoolResults.length > 0 && (
                                     <div className="mt-2 max-h-56 overflow-y-auto rounded-xl border border-white/10 bg-[#16161a] p-2 space-y-1.5 shadow-2xl">
-                                        {schoolSearchResults.map((school) => {
+                                        {visibleManageSchoolResults.map((school) => {
                                             const isAlreadyAdded = assignedSchoolsList.some((s) => s.id === school.id);
                                             return (
                                                 <div
@@ -1552,7 +2026,7 @@ export default function RegionalAdmins({
                                                     <div className="shrink-0">
                                                         {isAlreadyAdded ? (
                                                             <span className="inline-flex items-center gap-1 rounded-md bg-white/5 px-2 py-1 text-[11px] font-semibold text-gray-400">
-                                                                <Check className="h-3 w-3 shrink-0 text-emerald-400" /> Added
+                                                                <Check className="h-3 w-3 shrink-0 text-emerald-400" aria-hidden="true" /> Added
                                                             </span>
                                                         ) : (
                                                             <button
@@ -1560,7 +2034,7 @@ export default function RegionalAdmins({
                                                                 onClick={() => handleAddSchool(school)}
                                                                 className="inline-flex items-center gap-1 rounded-md bg-amber-400 px-2.5 py-1 text-[11px] font-bold text-black hover:bg-amber-300 transition-colors shadow-sm"
                                                             >
-                                                                <Plus className="h-3 w-3 shrink-0" /> Assign
+                                                                <Plus className="h-3 w-3 shrink-0" aria-hidden="true" /> Assign
                                                             </button>
                                                         )}
                                                     </div>
@@ -1569,9 +2043,11 @@ export default function RegionalAdmins({
                                         })}
                                     </div>
                                 )}
-                                {schoolSearchQuery.trim().length >= 2 && !isSearchingSchools && schoolSearchResults.length === 0 && (
+                                {!isSearchingSchools && visibleManageSchoolResults.length === 0 && (
                                     <p className="mt-2 text-[11px] text-gray-400 italic">
-                                        No institutions found matching "{schoolSearchQuery}".
+                                        {schoolSearchQuery.trim().length > 0
+                                            ? `No ${lockedManageRegion ? `${lockedManageRegion} ` : ''}institutions found matching "${schoolSearchQuery}".`
+                                            : `No active institutions found for ${lockedManageRegion || 'this region'}.`}
                                     </p>
                                 )}
                             </div>
@@ -1579,16 +2055,19 @@ export default function RegionalAdmins({
                             {/* Assigned Campuses Section */}
                             <div>
                                 <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                                    <label className="text-xs font-bold uppercase tracking-wider text-gray-300 flex flex-wrap items-center gap-1.5">
+                                    <span className="text-xs font-bold uppercase tracking-wider text-gray-300 flex flex-wrap items-center gap-1.5">
                                         <span>Assigned Campuses ({assignedSchoolsList.length})</span>
                                         <span className="text-[11px] font-normal normal-case text-gray-400">
-                                            (Institutions under this admin)
+                                            ({lockedManageRegion ? `${lockedManageRegion} jurisdiction` : 'Institutions under this admin'})
                                         </span>
-                                    </label>
+                                    </span>
                                     {assignedSchoolsList.length > 0 && (
                                         <button
                                             type="button"
-                                            onClick={() => setAssignedSchoolsList([])}
+                                            onClick={() => {
+                                                setManageSchoolsError('');
+                                                setAssignedSchoolsList([]);
+                                            }}
                                             className="text-[11px] font-semibold text-red-400 hover:text-red-300 transition-colors"
                                         >
                                             Remove All
@@ -1598,46 +2077,64 @@ export default function RegionalAdmins({
 
                                 {assignedSchoolsList.length === 0 ? (
                                     <div className="rounded-xl border border-dashed border-white/10 bg-white/[0.01] p-6 text-center">
-                                        <Building2 className="h-8 w-8 text-gray-500 mx-auto mb-2 opacity-50" />
+                                        <Building2 className="h-8 w-8 text-gray-500 mx-auto mb-2 opacity-50" aria-hidden="true" />
                                         <p className="text-xs font-semibold text-gray-300">No campuses assigned yet</p>
                                         <p className="text-[11px] text-gray-500 mt-1">
-                                            Search for schools above to assign campuses under this admin's jurisdiction.
+                                            {lockedManageRegion
+                                                ? `Select from the available ${lockedManageRegion} schools above to assign campuses under this admin's jurisdiction.`
+                                                : "Select from the available schools above to assign campuses under this admin's jurisdiction."}
                                         </p>
                                     </div>
                                 ) : (
                                     <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto pr-1">
-                                        {assignedSchoolsList.map((school) => (
-                                            <div
-                                                key={school.id}
-                                                className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 hover:border-white/20 transition-all"
-                                            >
-                                                <div className="min-w-0 flex-1">
-                                                    <div className="flex items-center gap-2 flex-wrap">
-                                                        <span className="font-semibold text-white text-xs break-words">
-                                                            {school.name}
-                                                        </span>
-                                                        {school.acronym && (
-                                                            <span className="rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] font-mono text-gray-300">
-                                                                {school.acronym}
-                                                            </span>
-                                                        )}
-                                                        {school.region && (
-                                                            <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-400">
-                                                                {school.region}
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleRemoveSchool(school.id)}
-                                                    className="shrink-0 rounded-lg p-1.5 text-gray-400 hover:bg-red-500/20 hover:text-red-400 transition-colors"
-                                                    title="Remove campus assignment"
+                                        {assignedSchoolsList.map((school) => {
+                                            const isRegionMismatch = Boolean(
+                                                lockedManageRegion && school.region && school.region !== lockedManageRegion
+                                            );
+                                            return (
+                                                <div
+                                                    key={school.id}
+                                                    className={`flex items-center justify-between gap-3 rounded-xl border p-3 transition-all ${
+                                                        isRegionMismatch
+                                                            ? 'border-red-500/40 bg-red-500/[0.06]'
+                                                            : 'border-white/10 bg-white/[0.03] hover:border-white/20'
+                                                    }`}
                                                 >
-                                                    <Trash2 className="h-3.5 w-3.5" />
-                                                </button>
-                                            </div>
-                                        ))}
+                                                    <div className="min-w-0 flex-1">
+                                                        <div className="flex items-center gap-2 flex-wrap">
+                                                            <span className="font-semibold text-white text-xs break-words">
+                                                                {school.name}
+                                                            </span>
+                                                            {school.acronym && (
+                                                                <span className="rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 text-[10px] font-mono text-gray-300">
+                                                                    {school.acronym}
+                                                                </span>
+                                                            )}
+                                                            {school.region && (
+                                                                <span
+                                                                    className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${
+                                                                        isRegionMismatch
+                                                                            ? 'border-red-500/30 bg-red-500/15 text-red-300'
+                                                                            : 'border-emerald-500/20 bg-emerald-500/10 text-emerald-400'
+                                                                    }`}
+                                                                >
+                                                                    {isRegionMismatch ? `Outside ${lockedManageRegion}: ${school.region}` : school.region}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveSchool(school.id)}
+                                                        aria-label={`Remove ${school.name}`}
+                                                        className="shrink-0 rounded-lg p-1.5 text-gray-400 hover:bg-red-500/20 hover:text-red-400 transition-colors"
+                                                        title="Remove campus assignment"
+                                                    >
+                                                        <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 )}
                             </div>
@@ -1664,9 +2161,9 @@ export default function RegionalAdmins({
                                     className="min-h-[40px] w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-amber-400 px-5 py-2.5 text-xs font-bold text-black hover:bg-amber-300 transition-colors shadow-[0_0_15px_rgba(251,191,36,0.25)] disabled:opacity-50"
                                 >
                                     {isSavingSchools ? (
-                                        <LoaderCircle className="h-4 w-4 animate-spin shrink-0" />
+                                        <LoaderCircle className="h-4 w-4 animate-spin shrink-0" aria-hidden="true" />
                                     ) : (
-                                        <Check className="h-4 w-4 shrink-0" />
+                                        <Check className="h-4 w-4 shrink-0" aria-hidden="true" />
                                     )}
                                     <span>Save School Assignments</span>
                                 </button>

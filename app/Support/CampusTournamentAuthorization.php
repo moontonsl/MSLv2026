@@ -22,14 +22,14 @@ class CampusTournamentAuthorization
     public function canAccessReviewerPage(User $user): bool
     {
         return $user->status === 'active'
-            && ($user->user_type === 'Super Admin'
+            && ($user->isCoreAdmin()
                 || RegionAdmin::query()->where('user_id', $user->id)->exists());
     }
 
     public function canAccessPlayerPages(User $user): bool
     {
         return $user->status === 'active'
-            && ! in_array($user->user_type, ['Student Leader', 'Regional Admin', 'Super Admin'], true)
+            && ! in_array($user->user_type, ['Student Leader', 'Regional Admin', 'Super Admin', 'Core Admin'], true)
             && ! $this->canAccessReviewerPage($user)
             && ! $this->hasActiveStudentLeaderAffiliation($user);
     }
@@ -57,7 +57,7 @@ class CampusTournamentAuthorization
             return false;
         }
 
-        if ($user->user_type === 'Super Admin') {
+        if ($user->isCoreAdmin()) {
             return true;
         }
 

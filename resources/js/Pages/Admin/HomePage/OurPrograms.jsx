@@ -2,7 +2,11 @@ import ProgramsSection from '@/Components/Admin/Home/ProgramsSection';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
 
-export default function OurPrograms() {
+export default function OurPrograms({
+    programs = [],
+    bookmarkedCount = 0,
+    maxBookmarked = 5,
+}) {
     return (
         <AdminLayout activeNavId="home-programs">
             <Head title="Our Programs — Home Page" />
@@ -14,11 +18,17 @@ export default function OurPrograms() {
                     Our Programs
                 </h1>
                 <p className="mt-2 text-sm leading-6 text-gray-400">
-                    Manage featured MSL programs and destination links showcased on the public homepage.
+                    All active programs appear on the public{' '}
+                    <span className="font-semibold text-gray-200">/Programs</span>{' '}
+                    main page, while up to {maxBookmarked} bookmarked programs are showcased on the Homepage.
                 </p>
             </header>
 
-            <ProgramsSection />
+            <ProgramsSection
+                programs={programs}
+                bookmarkedCount={bookmarkedCount}
+                maxBookmarked={maxBookmarked}
+            />
         </AdminLayout>
     );
 }

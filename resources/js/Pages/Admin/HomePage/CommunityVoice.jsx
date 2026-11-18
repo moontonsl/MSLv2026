@@ -2,7 +2,11 @@ import CommunityVoiceSection from '@/Components/Admin/Home/CommunityVoiceSection
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
 
-export default function CommunityVoice() {
+export default function CommunityVoice({
+    voices = [],
+    schools = [],
+    sectionVisible = true,
+}) {
     return (
         <AdminLayout activeNavId="home-community-voice">
             <Head title="MSL Campus Community — Home Page" />
@@ -14,11 +18,15 @@ export default function CommunityVoice() {
                     MSL Campus Community
                 </h1>
                 <p className="mt-2 text-sm leading-6 text-gray-400">
-                    Curate campus community highlights and student testimonials featured on the public homepage.
+                    Curate campus community highlights and student testimonials featured on the public homepage, or toggle section visibility anytime.
                 </p>
             </header>
 
-            <CommunityVoiceSection />
+            <CommunityVoiceSection
+                voices={voices}
+                schools={schools}
+                sectionVisible={sectionVisible}
+            />
         </AdminLayout>
     );
 }

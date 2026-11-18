@@ -289,7 +289,7 @@ export default function Index({ adminUsers = [], roles = [], roleOptions = [] })
                                                         : 'border border-blue-500/20 bg-blue-500/10 text-blue-400'
                                                 }`}
                                             >
-                                                {admin.is_super_admin ? 'Super Admin' : admin.role}
+                                                {admin.is_super_admin ? 'Core Admin' : admin.role}
                                             </span>
 
                                             {admin.is_super_admin ? (
@@ -372,7 +372,7 @@ export default function Index({ adminUsers = [], roles = [], roleOptions = [] })
                                                             : 'border border-blue-500/20 bg-blue-500/10 text-blue-400'
                                                     }`}
                                                 >
-                                                    {admin.is_super_admin ? 'Super Admin' : admin.role}
+                                                    {admin.is_super_admin ? 'Core Admin' : admin.role}
                                                 </span>
                                             </td>
                                             <td className="px-4 py-4 text-gray-300">

@@ -54,7 +54,7 @@ class CampusTournament extends Model
             return $query->whereRaw('1 = 0');
         }
 
-        if ($user->user_type === 'Super Admin') {
+        if ($user->isCoreAdmin()) {
             return $query;
         }
 

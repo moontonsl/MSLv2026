@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Carousel;
+use App\Models\CommunityVoice;
 use App\Models\Institution;
 use App\Models\MslEvent;
 use App\Models\NetworkOrganization;
+use App\Models\Program;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -18,6 +20,8 @@ use Inertia\Response;
 
 class HomePageController extends Controller
 {
+    public const MAX_BOOKMARKED_PROGRAMS = 5;
+
     public static function getLiveStatistics(): array
     {
         $studentsCount = User::where('user_type', 'Student')->count();
@@ -99,12 +103,259 @@ class HomePageController extends Controller
 
     public function programs(): Response
     {
-        return Inertia::render('Admin/HomePage/OurPrograms');
+        return Inertia::render('Admin/HomePage/OurPrograms', [
+            'programs' => Program::query()
+                ->orderBy('order')
+                ->orderBy('id')
+                ->get()
+                ->map(fn (Program $p) => [
+                    'id' => $p->id,
+                    'title' => $p->title,
+                    'description' => $p->description,
+                    'link' => $p->link,
+                    'icon' => $p->icon,
+                    'color' => $p->color,
+                    'is_bookmarked' => $p->is_bookmarked,
+                    'is_active' => $p->is_active,
+                    'order' => $p->order,
+                    'image_path' => $p->image_path,
+                    'image_url' => $p->image_url,
+                ])
+                ->values(),
+            'bookmarkedCount' => Program::where('is_bookmarked', true)->count(),
+            'maxBookmarked' => self::MAX_BOOKMARKED_PROGRAMS,
+        ]);
+    }
+
+    public function storeProgram(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:1500'],
+            'link' => ['nullable', 'string', 'max:500'],
+            'icon' => ['nullable', 'string', 'max:50'],
+            'color' => ['nullable', 'string', 'max:30'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif,webp,svg', 'max:5120'],
+            'is_bookmarked' => ['nullable', 'boolean'],
+            'is_active' => ['nullable', 'boolean'],
+            'order' => ['nullable', 'integer', 'min:0'],
+        ]);
+
+        $wantsBookmark = $request->boolean('is_bookmarked', false);
+        if ($wantsBookmark && Program::where('is_bookmarked', true)->count() >= self::MAX_BOOKMARKED_PROGRAMS) {
+            return back()->with('error', 'Maximum of '.self::MAX_BOOKMARKED_PROGRAMS.' programs can be bookmarked for the homepage. Please unbookmark one first.');
+        }
+
+        if ($request->hasFile('image')) {
+            $data['image_path'] = basename($request->file('image')->store('programs', 'public'));
+        }
+        unset($data['image']);
+
+        $maxOrder = Program::max('order');
+        $data['order'] ??= $maxOrder === null ? 1 : ((int) $maxOrder) + 1;
+        $data['icon'] = $data['icon'] ?? 'swords';
+        $data['color'] = $data['color'] ?? '#f2c21a';
+        $data['is_bookmarked'] = $wantsBookmark;
+        $data['is_active'] = $request->boolean('is_active', true);
+
+        Program::create($data);
+
+        return back()->with('success', 'Program added successfully and published to Our Programs.');
+    }
+
+    public function updateProgram(Request $request, Program $program): RedirectResponse
+    {
+        $data = $request->validate([
+            'title' => ['sometimes', 'required', 'string', 'max:255'],
+            'description' => ['sometimes', 'nullable', 'string', 'max:1500'],
+            'link' => ['sometimes', 'nullable', 'string', 'max:500'],
+            'icon' => ['sometimes', 'nullable', 'string', 'max:50'],
+            'color' => ['sometimes', 'nullable', 'string', 'max:30'],
+            'image' => ['sometimes', 'nullable', 'image', 'mimes:jpeg,jpg,png,gif,webp,svg', 'max:5120'],
+            'is_bookmarked' => ['sometimes', 'boolean'],
+            'is_active' => ['sometimes', 'boolean'],
+            'order' => ['sometimes', 'integer', 'min:0'],
+        ]);
+
+        if ($request->has('is_bookmarked')) {
+            $wantsBookmark = $request->boolean('is_bookmarked');
+            if (
+                $wantsBookmark
+                && ! $program->is_bookmarked
+                && Program::where('is_bookmarked', true)->where('id', '!=', $program->id)->count() >= self::MAX_BOOKMARKED_PROGRAMS
+            ) {
+                return back()->with('error', 'Maximum of '.self::MAX_BOOKMARKED_PROGRAMS.' programs can be bookmarked for the homepage. Please unbookmark one first.');
+            }
+            $data['is_bookmarked'] = $wantsBookmark;
+        }
+
+        if ($request->has('is_active')) {
+            $data['is_active'] = $request->boolean('is_active');
+        }
+
+        if ($request->hasFile('image')) {
+            if ($program->image_path && ! Str::startsWith($program->image_path, ['/', 'http://', 'https://'])) {
+                Storage::disk('public')->delete('programs/'.$program->image_path);
+            }
+            $data['image_path'] = basename($request->file('image')->store('programs', 'public'));
+            unset($data['image']);
+        }
+
+        $program->update($data);
+
+        return back()->with('success', 'Program updated successfully.');
+    }
+
+    public function toggleProgramBookmark(Request $request, Program $program): RedirectResponse
+    {
+        $target = $request->has('is_bookmarked')
+            ? $request->boolean('is_bookmarked')
+            : ! $program->is_bookmarked;
+
+        if (
+            $target
+            && Program::where('is_bookmarked', true)->where('id', '!=', $program->id)->count() >= self::MAX_BOOKMARKED_PROGRAMS
+        ) {
+            return back()->with(
+                'error',
+                'Maximum of '.self::MAX_BOOKMARKED_PROGRAMS.' programs can be bookmarked for the homepage. Please unbookmark an active one first.'
+            );
+        }
+
+        $program->update(['is_bookmarked' => $target]);
+
+        return back()->with(
+            'success',
+            $target
+                ? 'Program bookmarked for the Homepage (max '.self::MAX_BOOKMARKED_PROGRAMS.').'
+                : 'Program removed from Homepage bookmarks.'
+        );
+    }
+
+    public function deleteProgram(Program $program): RedirectResponse
+    {
+        if ($program->image_path && ! Str::startsWith($program->image_path, ['/', 'http://', 'https://'])) {
+            Storage::disk('public')->delete('programs/'.$program->image_path);
+        }
+
+        $program->delete();
+
+        return back()->with('success', 'Program deleted successfully.');
     }
 
     public function communityVoice(): Response
     {
-        return Inertia::render('Admin/HomePage/CommunityVoice');
+        $schools = class_exists(Institution::class)
+            ? Institution::query()
+                ->where('status', 'active')
+                ->orderBy('name')
+                ->limit(300)
+                ->pluck('name')
+                ->values()
+            : collect();
+
+        return Inertia::render('Admin/HomePage/CommunityVoice', [
+            'voices' => CommunityVoice::query()
+                ->orderBy('order')
+                ->orderByDesc('id')
+                ->get()
+                ->map(fn (CommunityVoice $v) => [
+                    'id' => $v->id,
+                    'name' => $v->name,
+                    'role' => $v->role,
+                    'school' => $v->school,
+                    'quote' => $v->quote,
+                    'is_active' => $v->is_active,
+                    'order' => $v->order,
+                    'image_path' => $v->image_path,
+                    'image_url' => $v->image_url,
+                ])
+                ->values(),
+            'schools' => $schools,
+            'sectionVisible' => filter_var(Setting::getValue('homepage_community_voices_visible', '1'), FILTER_VALIDATE_BOOLEAN),
+        ]);
+    }
+
+    public function storeCommunityVoice(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'role' => ['required', 'string', 'max:255'],
+            'school' => ['required', 'string', 'max:255'],
+            'quote' => ['required', 'string', 'max:1500'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif,webp,svg', 'max:5120'],
+            'is_active' => ['nullable', 'boolean'],
+            'order' => ['nullable', 'integer', 'min:0'],
+        ]);
+
+        if ($request->hasFile('image')) {
+            $data['image_path'] = basename($request->file('image')->store('community_voices', 'public'));
+        }
+        unset($data['image']);
+
+        $maxOrder = CommunityVoice::max('order');
+        $data['order'] ??= $maxOrder === null ? 1 : ((int) $maxOrder) + 1;
+        $data['is_active'] = $request->boolean('is_active', true);
+
+        CommunityVoice::create($data);
+
+        return back()->with('success', 'Community story added successfully.');
+    }
+
+    public function updateCommunityVoice(Request $request, CommunityVoice $communityVoice): RedirectResponse
+    {
+        $data = $request->validate([
+            'name' => ['sometimes', 'required', 'string', 'max:255'],
+            'role' => ['sometimes', 'required', 'string', 'max:255'],
+            'school' => ['sometimes', 'required', 'string', 'max:255'],
+            'quote' => ['sometimes', 'required', 'string', 'max:1500'],
+            'image' => ['sometimes', 'nullable', 'image', 'mimes:jpeg,jpg,png,gif,webp,svg', 'max:5120'],
+            'is_active' => ['sometimes', 'boolean'],
+            'order' => ['sometimes', 'integer', 'min:0'],
+        ]);
+
+        if ($request->has('is_active')) {
+            $data['is_active'] = $request->boolean('is_active');
+        }
+
+        if ($request->hasFile('image')) {
+            if ($communityVoice->image_path && ! Str::startsWith($communityVoice->image_path, ['/', 'http://', 'https://'])) {
+                Storage::disk('public')->delete('community_voices/'.$communityVoice->image_path);
+            }
+            $data['image_path'] = basename($request->file('image')->store('community_voices', 'public'));
+            unset($data['image']);
+        }
+
+        $communityVoice->update($data);
+
+        return back()->with('success', 'Community story updated successfully.');
+    }
+
+    public function toggleCommunityVoiceVisibility(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'visible' => ['required', 'boolean'],
+        ]);
+
+        Setting::setValue('homepage_community_voices_visible', $validated['visible'] ? '1' : '0', 'string');
+
+        return back()->with(
+            'success',
+            $validated['visible']
+                ? 'MSL Campus Community section is now visible on the Homepage.'
+                : 'MSL Campus Community section is now hidden on the Homepage.'
+        );
+    }
+
+    public function deleteCommunityVoice(CommunityVoice $communityVoice): RedirectResponse
+    {
+        if ($communityVoice->image_path && ! Str::startsWith($communityVoice->image_path, ['/', 'http://', 'https://'])) {
+            Storage::disk('public')->delete('community_voices/'.$communityVoice->image_path);
+        }
+
+        $communityVoice->delete();
+
+        return back()->with('success', 'Community story deleted successfully.');
     }
 
     public function updateStatistics(Request $request): RedirectResponse

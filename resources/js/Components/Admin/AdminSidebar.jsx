@@ -18,7 +18,7 @@ const NAV_SECTIONS = [
         title: "Community & Students",
         items: [
             { id: 'pending-users', label: 'Pending Verification', href: '/Admin/Users/Pending', icon: ClipboardCheck, permission: 'manage_accounts' },
-            { id: 'sl-management', label: 'Student Leaders', href: '/admin/sl-management', icon: UserCog, permission: 'manage_sl' },
+            { id: 'sl-management', label: 'Account Management', href: '/admin/sl-management', icon: UserCog, permission: 'manage_sl' },
             { id: 'regional-admins', label: 'Regional Admins', href: '/admin/regional-admin-management', icon: MapPin, permission: 'manage_regional_admins' },
             { id: 'school-management', label: 'School Management', href: '/Admin/SchoolManagement', icon: School, permission: 'manage_schools' },
         ],
@@ -61,7 +61,7 @@ const NAV_SECTIONS = [
 export default function AdminSidebar({ activeId = 'dashboard', isOpen = false, onClose = () => {} }) {
     const { auth, admin_notifications_unread_count: unreadCount = 0 } = usePage().props;
     const role = auth?.user?.role;
-    const isSuperAdmin = auth?.is_super_admin ?? ['Super Admin', 'super_admin'].includes(role);
+    const isSuperAdmin = auth?.is_super_admin ?? ['Super Admin', 'super_admin', 'Core Admin', 'core_admin'].includes(role);
     const permissions = auth?.permissions ?? [];
 
     const isPermitted = (permission) => permission === null || isSuperAdmin || permissions.includes(permission);

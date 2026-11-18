@@ -147,6 +147,8 @@
     border-color 220ms ease,
     background-color 220ms ease,
     box-shadow 220ms ease,
+    min-height 260ms ease,
+    padding 260ms ease,
     scale 150ms ease-out;
 }
 

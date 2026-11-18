@@ -103,9 +103,14 @@ class User extends Authenticatable
         ];
     }
 
+    public function isCoreAdmin(): bool
+    {
+        return in_array($this->user_type, ['Core Admin', 'Super Admin'], true);
+    }
+
     public function isSuperAdmin(): bool
     {
-        return $this->user_type === 'Super Admin';
+        return $this->isCoreAdmin();
     }
 
     public function campusAffiliations(): HasMany
@@ -182,8 +187,8 @@ class User extends Authenticatable
      */
     public function hasPermission(string $slug): bool
     {
-        // Super Admins automatically bypass all permission checks
-        if ($this->user_type === 'Super Admin') {
+        // Core / Super Admins automatically bypass all permission checks
+        if ($this->isCoreAdmin()) {
             return true;
         }
 

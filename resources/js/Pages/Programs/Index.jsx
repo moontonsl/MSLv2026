@@ -33,9 +33,10 @@ function CampaignGroup({ group, title }) {
     );
 }
 
-export default function Programs() {
+export default function Programs({ programs = null }) {
     const [region, setRegion] = useState('All Regions');
     const tournaments = filterCampusTournaments(CAMPUS_TOURNAMENT_PREVIEWS, region);
+    const programList = Array.isArray(programs) && programs.length > 0 ? programs : PROGRAMS;
 
     return (
         <MainLayout fullWidth>
@@ -50,18 +51,23 @@ export default function Programs() {
 
                 <section className={`${styles.container} ${styles.programSection}`} aria-label="Explore our programs">
                     <div className={styles.programGrid}>
-                        {PROGRAMS.map((program) => {
-                            const Icon = ICONS[program.icon];
+                        {programList.map((program) => {
+                            const Icon = ICONS[program.icon] || Swords;
+                            const isExternal = /^https?:\/\//i.test(program.href || '');
                             return (
                                 <article key={program.id} className={styles.programCard}>
                                     <div className={styles.programImage}>
                                         <img src={program.image} alt="" loading="lazy" />
-                                        <span className={styles.programIcon} style={{ color: program.color }}><Icon size={20} aria-hidden="true" /></span>
+                                        <span className={styles.programIcon} style={{ color: program.color || '#f2c21a' }}><Icon size={20} aria-hidden="true" /></span>
                                     </div>
                                     <div className={styles.programBody}>
                                         <h2>{program.title}</h2>
                                         <p>{program.description}</p>
-                                        <Link href={program.href} className={styles.learnMore} aria-label={`Learn more about ${program.title}`}>Learn More <ArrowRight size={14} aria-hidden="true" /></Link>
+                                        {isExternal ? (
+                                            <a href={program.href} target="_blank" rel="noopener noreferrer" className={styles.learnMore} aria-label={`Learn more about ${program.title}`}>Learn More <ArrowRight size={14} aria-hidden="true" /></a>
+                                        ) : (
+                                            <Link href={program.href || '/Programs'} className={styles.learnMore} aria-label={`Learn more about ${program.title}`}>Learn More <ArrowRight size={14} aria-hidden="true" /></Link>
+                                        )}
                                     </div>
                                 </article>
                             );

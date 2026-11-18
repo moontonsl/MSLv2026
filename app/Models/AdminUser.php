@@ -43,8 +43,7 @@ class AdminUser extends Authenticatable
 
     public function isSuperAdmin(): bool
     {
-        return strcasecmp((string) $this->role, 'Super Admin') === 0
-            || strcasecmp((string) $this->role, 'super_admin') === 0
+        return in_array(strtolower((string) $this->role), ['super admin', 'super_admin', 'core admin', 'core_admin'], true)
             || strcasecmp((string) $this->email, 'admin@msl.com') === 0;
     }
 

@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -18,7 +19,6 @@ class RegionalAdminManagementController extends Controller
     {
         $search = $request->string('search')->toString();
         $region = $request->string('region')->toString();
-        $tab = $request->string('tab', 'admins')->toString();
 
         $adminQuery = $this->regionalAdminsQuery()->with(['assignedSchools:id,name,acronym,region,island']);
 
@@ -101,22 +101,29 @@ class RegionalAdminManagementController extends Controller
             'school_ids.*' => 'integer|exists:institutions,id',
         ]);
 
+        $targetRegion = trim($validated['region']);
+        $schoolIds = array_values(array_unique($validated['school_ids'] ?? []));
+
+        if (! empty($schoolIds)) {
+            $this->assertSchoolsMatchRegion($schoolIds, $targetRegion);
+        }
+
         $updates = [
             'user_type' => 'Regional Admin',
-            'region' => $validated['region'],
+            'region' => $targetRegion,
         ];
 
-        if (!empty($validated['division'])) {
+        if (! empty($validated['division'])) {
             $updates['division'] = $validated['division'];
         }
-        if (!empty($validated['university'])) {
+        if (! empty($validated['university'])) {
             $updates['university'] = $validated['university'];
         }
 
         $user->update($updates);
 
-        if (!empty($validated['school_ids'])) {
-            $user->assignedSchools()->sync($validated['school_ids']);
+        if (! empty($schoolIds)) {
+            $user->assignedSchools()->sync($schoolIds);
         }
 
         return back()->with('success', "User {$user->name} has been appointed as Regional Admin for {$user->region}.");
@@ -135,7 +142,13 @@ class RegionalAdminManagementController extends Controller
             'school_ids.*' => 'integer|exists:institutions,id',
         ]);
 
-        $schoolIds = $validated['school_ids'] ?? [];
+        $adminRegion = trim((string) $user->region);
+        $schoolIds = array_values(array_unique($validated['school_ids'] ?? []));
+
+        if (! empty($schoolIds) && $adminRegion !== '') {
+            $this->assertSchoolsMatchRegion($schoolIds, $adminRegion);
+        }
+
         $user->assignedSchools()->sync($schoolIds);
 
         if ($request->wantsJson()) {
@@ -158,7 +171,7 @@ class RegionalAdminManagementController extends Controller
         );
 
         $targetRole = $request->input('target_role', 'Student');
-        if (!in_array($targetRole, ['Student', 'Student Leader'], true)) {
+        if (! in_array($targetRole, ['Student', 'Student Leader'], true)) {
             $targetRole = 'Student';
         }
 
@@ -166,7 +179,32 @@ class RegionalAdminManagementController extends Controller
             'user_type' => $targetRole,
         ]);
 
+        $user->assignedSchools()->detach();
+
         return back()->with('success', "Regional Admin {$user->name} has been reverted to {$targetRole}.");
+    }
+
+    /**
+     * Strictly verify that all given school IDs belong to the Regional Admin's tagged region.
+     *
+     * @param  array<int, int>  $schoolIds
+     */
+    private function assertSchoolsMatchRegion(array $schoolIds, string $region): void
+    {
+        $invalidSchools = Institution::query()
+            ->whereIn('id', $schoolIds)
+            ->where(function ($query) use ($region) {
+                $query->whereNull('region')
+                    ->orWhere('region', '!=', $region);
+            })
+            ->pluck('name')
+            ->all();
+
+        if (! empty($invalidSchools)) {
+            throw ValidationException::withMessages([
+                'school_ids' => "Only {$region} schools can be assigned to a {$region} Regional Admin. Invalid selection: ".implode(', ', array_slice($invalidSchools, 0, 3)),
+            ]);
+        }
     }
 
     private function regionalAdminsQuery()

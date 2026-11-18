@@ -17,7 +17,7 @@ class RegionalAdminController extends Controller
         $admin = $request->user();
 
         abort_unless(
-            $admin && in_array($admin->user_type, ['Super Admin', 'Regional Admin'], true),
+            $admin && in_array($admin->user_type, ['Core Admin', 'Super Admin', 'Regional Admin'], true),
             403,
             'Unauthorized access.'
         );
@@ -109,7 +109,7 @@ class RegionalAdminController extends Controller
         $admin = $request->user();
 
         abort_unless(
-            $admin && in_array($admin->user_type, ['Super Admin', 'Regional Admin'], true),
+            $admin && in_array($admin->user_type, ['Core Admin', 'Super Admin', 'Regional Admin'], true),
             403,
             'Unauthorized access.'
         );

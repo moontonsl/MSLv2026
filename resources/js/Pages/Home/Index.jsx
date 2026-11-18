@@ -17,6 +17,9 @@ export default function Home({
     statistics = [],
     networkLogos = [],
     announcements = [],
+    bookmarkedPrograms = null,
+    communityVoices = [],
+    communityVisible = true,
 }) {
     const faqData = {
         ...homeData.faq,
@@ -38,6 +41,21 @@ export default function Home({
         logos: networkLogos.length > 0 ? networkLogos : homeData.network.logos,
     };
 
+    const programsData = {
+        ...homeData.programs,
+        items: Array.isArray(bookmarkedPrograms)
+            ? bookmarkedPrograms.slice(0, 5)
+            : homeData.programs.items.slice(0, 5),
+    };
+
+    const communityData = {
+        ...homeData.community,
+        voices: communityVoices.length > 0 ? communityVoices : homeData.community.voices,
+    };
+
+    const shouldShowCommunity =
+        Boolean(communityVisible) && communityData.voices.length > 0;
+
     return (
         <MainLayout fullWidth>
             <Head title="Home" />
@@ -50,9 +68,11 @@ export default function Home({
                 <HomeHero data={heroData} />
                 <AboutSection data={aboutData} />
                 <NetworkSection data={networkData} />
-                <ProgramsSection data={homeData.programs} />
-                {homeData.community.visible !== false && (
-                    <CommunityVoicesSection data={homeData.community} />
+                {programsData.items.length > 0 && (
+                    <ProgramsSection data={programsData} />
+                )}
+                {shouldShowCommunity && (
+                    <CommunityVoicesSection data={communityData} />
                 )}
                 <ChooseYourPathSection data={homeData.paths} />
                 <FAQSection data={faqData} />

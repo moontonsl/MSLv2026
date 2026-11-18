@@ -80,7 +80,7 @@ class CampusTournamentReportController extends Controller
             : $this->registeredTeams($tournament);
         $user = $request->user();
         $isAdmin = $user instanceof AdminUser;
-        $viewerRole = $isAdmin || $user->user_type === 'Super Admin'
+        $viewerRole = $isAdmin || ($user && method_exists($user, 'isCoreAdmin') && $user->isCoreAdmin())
             ? 'core'
             : (RegionAdmin::query()->where('user_id', $user->id)->exists()
                 ? 'regional_admin'

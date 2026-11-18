@@ -241,7 +241,7 @@ class CampusTournamentController extends Controller
 
         $rejectedRequests = CampusTournament::query()
             ->where('approval_status', CampusTournamentApprovalStatus::Rejected)
-            ->when($user->user_type !== 'Super Admin', function ($q) use ($user, $isReviewer) {
+            ->when(! $user->isCoreAdmin(), function ($q) use ($user, $isReviewer) {
                 if ($isReviewer) {
                     $q->whereHas('campus.city', function ($cityQuery) use ($user): void {
                         $cityQuery->whereIn('region_code', RegionAdmin::query()
@@ -274,7 +274,7 @@ class CampusTournamentController extends Controller
         $managedTournamentsQuery = CampusTournament::query()
             ->where('approval_status', CampusTournamentApprovalStatus::Approved);
 
-        if ($user->user_type !== 'Super Admin' && $isReviewer) {
+        if (! $user->isCoreAdmin() && $isReviewer) {
             $managedTournamentsQuery->whereHas('campus.city', function ($cityQuery) use ($user): void {
                 $cityQuery->whereIn('region_code', RegionAdmin::query()
                     ->select('region_code')
@@ -457,7 +457,7 @@ class CampusTournamentController extends Controller
         });
 
         $user = $request->user();
-        $viewerRole = $user->user_type === 'Super Admin'
+        $viewerRole = $user->isCoreAdmin()
             ? 'core'
             : (RegionAdmin::query()->where('user_id', $user->id)->exists()
                 ? 'regional_admin'

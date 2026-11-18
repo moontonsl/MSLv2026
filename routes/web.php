@@ -164,9 +164,44 @@ Route::get('/', function () {
                 'id' => $org->id,
                 'src' => $org->logo_url,
                 'alt' => $org->name,
+                'name' => $org->name,
                 'link' => $org->link,
             ])
             ->values(),
+        'bookmarkedPrograms' => \Illuminate\Support\Facades\Schema::hasTable('programs')
+            ? \App\Models\Program::query()
+                ->where('is_active', true)
+                ->where('is_bookmarked', true)
+                ->orderBy('order')
+                ->orderBy('id')
+                ->take(5)
+                ->get()
+                ->map(fn (\App\Models\Program $p) => [
+                    'id' => (string) $p->id,
+                    'title' => $p->title,
+                    'description' => $p->description ?? '',
+                    'image' => $p->image_url,
+                    'href' => $p->link ?: '/Programs',
+                ])
+                ->values()
+            : null,
+        'communityVoices' => \Illuminate\Support\Facades\Schema::hasTable('community_voices')
+            ? \App\Models\CommunityVoice::query()
+                ->where('is_active', true)
+                ->orderBy('order')
+                ->orderByDesc('id')
+                ->get()
+                ->map(fn (\App\Models\CommunityVoice $v) => [
+                    'id' => (string) $v->id,
+                    'name' => $v->name,
+                    'role' => $v->role,
+                    'university' => $v->school,
+                    'quote' => $v->quote,
+                    'image' => $v->image_url,
+                ])
+                ->values()
+            : [],
+        'communityVisible' => filter_var(\App\Models\Setting::getValue('homepage_community_voices_visible', '1'), FILTER_VALIDATE_BOOLEAN),
     ]);
 });
 
@@ -316,7 +351,29 @@ Route::get('/CampusTournament', function () {
     return Inertia::render('Campus/Index');
 })->name('campus.tournament.listing');
 
-Route::inertia('/Programs', 'Programs/Index')->name('programs');
+Route::get('/Programs', function () {
+    $programs = \Illuminate\Support\Facades\Schema::hasTable('programs')
+        ? \App\Models\Program::query()
+            ->where('is_active', true)
+            ->orderBy('order')
+            ->orderBy('id')
+            ->get()
+            ->map(fn (\App\Models\Program $p) => [
+                'id' => (string) $p->id,
+                'title' => $p->title,
+                'description' => $p->description ?? '',
+                'image' => $p->image_url,
+                'href' => $p->link ?: '/Programs',
+                'icon' => $p->icon ?: 'swords',
+                'color' => $p->color ?: '#f2c21a',
+            ])
+            ->values()
+        : null;
+
+    return Inertia::render('Programs/Index', [
+        'programs' => $programs,
+    ]);
+})->name('programs');
 Route::redirect('/programs', '/Programs', 301);
 
 Route::get('/Partnerships', function () {
@@ -399,6 +456,24 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->middleware('admin.permission:manage_homepage')->name('admin.home-page.network-organizations.update');
     Route::delete('/admin/home-page/network-organizations/{networkOrganization}', [HomePageController::class, 'deleteNetworkOrganization'])
         ->middleware('admin.permission:manage_homepage')->name('admin.home-page.network-organizations.delete');
+
+    Route::post('/admin/home-page/programs', [HomePageController::class, 'storeProgram'])
+        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.programs.store');
+    Route::post('/admin/home-page/programs/{program}', [HomePageController::class, 'updateProgram'])
+        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.programs.update');
+    Route::patch('/admin/home-page/programs/{program}/bookmark', [HomePageController::class, 'toggleProgramBookmark'])
+        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.programs.bookmark');
+    Route::delete('/admin/home-page/programs/{program}', [HomePageController::class, 'deleteProgram'])
+        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.programs.delete');
+
+    Route::post('/admin/home-page/community-voice', [HomePageController::class, 'storeCommunityVoice'])
+        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.community-voice.store');
+    Route::post('/admin/home-page/community-voice/visibility', [HomePageController::class, 'toggleCommunityVoiceVisibility'])
+        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.community-voice.visibility');
+    Route::post('/admin/home-page/community-voice/{communityVoice}', [HomePageController::class, 'updateCommunityVoice'])
+        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.community-voice.update');
+    Route::delete('/admin/home-page/community-voice/{communityVoice}', [HomePageController::class, 'deleteCommunityVoice'])
+        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.community-voice.delete');
 
     Route::get('/Admin/FAQs', [FaqController::class, 'index'])
         ->middleware('admin.permission:manage_faq')->name('admin.faq');
@@ -788,6 +863,9 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
 
     Route::get('/admin/student-leaders', [StudentLeaderController::class, 'index'])
         ->middleware('admin.permission:manage_sl')->name('admin.sl-management');
+    Route::redirect('/admin/account-management', '/admin/student-leaders');
+    Route::post('/admin/users/{user}/update-role', [StudentLeaderController::class, 'updateRole'])
+        ->middleware('admin.permission:manage_sl')->name('admin.users.update-role');
     Route::post('/admin/users/{user}/promote-sl', [StudentLeaderController::class, 'promote'])
         ->middleware('admin.permission:manage_sl')->name('admin.users.promote-sl');
     Route::post('/admin/users/{user}/demote-sl', [StudentLeaderController::class, 'demote'])

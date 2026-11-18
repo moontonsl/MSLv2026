@@ -68,6 +68,6 @@ class CampusTournamentPolicy
         }
 
         return $user->status === 'active'
-            && ($user->user_type === 'Super Admin' || $this->submitResults($user, $tournament));
+            && ($user->isCoreAdmin() || $this->submitResults($user, $tournament));
     }
 }

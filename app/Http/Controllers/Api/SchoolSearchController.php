@@ -218,12 +218,17 @@ class SchoolSearchController extends Controller
      */
     public function searchCollege(Request $request): JsonResponse
     {
-        $q = trim($request->input('q', ''));
+        $q = trim((string) $request->input('q', ''));
+        $region = trim((string) $request->input('region', ''));
         $searchData = $this->expandSearchTerms($q);
 
         $query = Institution::query()
             ->select(['id', 'name', 'acronym', 'region', 'island'])
             ->where('status', 'active');
+
+        if ($region !== '') {
+            $query->where('region', $region);
+        }
 
         if (! empty($q)) {
             $query->where(function ($sub) use ($q, $searchData) {
