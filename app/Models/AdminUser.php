@@ -74,7 +74,7 @@ class AdminUser extends Authenticatable
             return true;
         }
 
-        if ($permission === 'access_admin_dashboard' && strcasecmp((string) $this->role, 'Admin') === 0) {
+        if ($permission === 'access_admin_dashboard') {
             return true;
         }
 

@@ -149,4 +149,70 @@ class AdminRbacAuditTest extends TestCase
         $this->get('/CoreAdmin')->assertForbidden();
         $this->get('/Admin/Dashboard')->assertRedirect(route('admin.login'));
     }
+
+    public function test_creating_a_new_custom_role_and_assigning_to_admin_works_seamlessly(): void
+    {
+        // 1. Super Admin creates a new custom role called "Campus Coordinator" with specific permissions
+        $superAdmin = AdminUser::create([
+            'name' => 'Super Root',
+            'email' => 'super@msl.com',
+            'password' => Hash::make('password'),
+            'role' => 'Super Admin',
+        ]);
+        $this->actingAs($superAdmin, 'admin');
+
+        $this->post(route('admin.roles.store'), [
+            'name' => 'Campus Coordinator',
+            'description' => 'Handles school directory and regional affairs only.',
+            'permissions' => ['manage_schools', 'manage_regional_admins'],
+        ])->assertRedirect();
+
+        $this->assertDatabaseHas('admin_roles', [
+            'name' => 'Campus Coordinator',
+            'slug' => 'campus_coordinator',
+        ]);
+
+        // 2. Create a new staff account assigned to this brand-new custom role
+        $this->post(route('admin.accounts.store'), [
+            'name' => 'Campus Staff',
+            'email' => 'coordinator@msl.com',
+            'password' => 'P@ssword123',
+            'password_confirmation' => 'P@ssword123',
+            'role' => 'Campus Coordinator',
+        ])->assertRedirect();
+
+        $staffUser = AdminUser::where('email', 'coordinator@msl.com')->firstOrFail();
+        $this->assertEquals('Campus Coordinator', $staffUser->role);
+
+        // 3. Log in as this new staff user
+        $this->actingAs($staffUser, 'admin');
+
+        // Can access dashboard and their assigned modules
+        $response = $this->get(route('admin.dashboard'));
+        $response->assertOk();
+
+        // Check Inertia permissions share
+        $response->assertInertia(function ($page) {
+            $perms = $page->toArray()['props']['auth']['permissions'] ?? [];
+            $this->assertContains('access_admin_dashboard', $perms);
+            $this->assertContains('manage_schools', $perms);
+            $this->assertContains('manage_regional_admins', $perms);
+
+            // Must NOT have unassigned permissions
+            $this->assertNotContains('manage_news', $perms);
+            $this->assertNotContains('manage_mcc_seasons', $perms);
+            $this->assertNotContains('manage_admin_accounts', $perms);
+            $this->assertNotContains('manage_settings', $perms);
+        });
+
+        // Authorized routes return 200 OK
+        $this->get(route('admin.school-management'))->assertOk();
+        $this->get(route('admin.regional-admin-management'))->assertOk();
+
+        // Unauthorized routes return 403 Forbidden
+        $this->get(route('admin.news-updates'))->assertForbidden();
+        $this->get(route('admin.mcc-seasons.index'))->assertForbidden();
+        $this->get(route('admin.accounts.index'))->assertForbidden();
+        $this->get(route('admin.settings'))->assertForbidden();
+    }
 }

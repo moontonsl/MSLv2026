@@ -142,8 +142,13 @@ class AdminManagementController extends Controller
      */
     public function updateRole(Request $request, int $id): RedirectResponse
     {
+        $availableRoles = \App\Models\AdminRole::where('slug', '!=', 'super_admin')->pluck('name')->all();
+        if (empty($availableRoles)) {
+            $availableRoles = self::EDITABLE_ROLES;
+        }
+
         $validated = $request->validate([
-            'role' => ['required', 'string', Rule::in(self::EDITABLE_ROLES)],
+            'role' => ['required', 'string', Rule::in($availableRoles)],
         ]);
 
         $user = AdminUser::findOrFail($id);
