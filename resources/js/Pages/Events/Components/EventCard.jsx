@@ -1,5 +1,6 @@
 import { ArrowRight, CalendarDays, ExternalLink, MapPin } from "lucide-react";
 import { focusStyles } from "../eventStyles";
+import HoverOutline from "@/Components/HoverOutline";
 
 const STATUS_STYLES = {
     upcoming: "bg-blue-600/60 text-blue-300",
@@ -21,7 +22,7 @@ function EventAction({ event }) {
             "cursor-not-allowed border-white/10 bg-[#262626] text-gray-500";
     } else if (isRegistration) {
         buttonStyles =
-            "border-black/5 bg-brand-400 text-black hover:bg-brand-300";
+            "border-black/5 bg-[#F2C21A] text-black hover:bg-[#F8D54B]";
     }
 
     return (
@@ -44,7 +45,7 @@ export default function EventCard({ event }) {
 
     return (
         <article
-            className={`flex min-h-[514px] min-w-0 flex-col overflow-hidden rounded-xl border bg-[#121212] ${
+            className={`relative flex min-h-[514px] min-w-0 flex-col overflow-hidden rounded-xl border bg-[#121212] ${
                 event.featured ? "border-brand-600" : "border-gray-500/70"
             }`}
         >
@@ -99,6 +100,7 @@ export default function EventCard({ event }) {
 
                 <EventAction event={event} />
             </div>
+            <HoverOutline color="#F2C21A" />
         </article>
     );
 }

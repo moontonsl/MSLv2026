@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import ContentDetailModal from './ContentDetailModal';
 import styles from '@/Pages/ContentMedia.module.css';
+import HoverOutline from '@/Components/HoverOutline';
 
 const portraitStyle = (profile) =>
     profile.id === 'aj'
@@ -8,11 +9,12 @@ const portraitStyle = (profile) =>
         : undefined;
 
 export default function Leadership({ profiles }) {
-    const [featuredId, setFeaturedId] = useState('mary');
     const [selectedId, setSelectedId] = useState(null);
     const [activeTab, setActiveTab] = useState('overview');
     const departmentHead = profiles.find((profile) => profile.id === 'mary') || profiles[0];
-    const featured = profiles.find((profile) => profile.id === featuredId) || departmentHead;
+    // The featured card always shows the Department Head; hovering a division head
+    // only highlights that head's own card, it never replaces the featured profile.
+    const featured = departmentHead;
     const selected = profiles.find((profile) => profile.id === selectedId);
     const divisionHeads = profiles.filter((profile) => profile.id !== departmentHead?.id);
     const tabs = selected ? [
@@ -22,7 +24,6 @@ export default function Leadership({ profiles }) {
 
     const openProfile = (profile) => {
         setActiveTab('overview');
-        setFeaturedId(profile.id);
         setSelectedId(profile.id);
     };
 
@@ -74,13 +75,13 @@ export default function Leadership({ profiles }) {
     if (!featured) return null;
 
     return (
-        <section aria-labelledby="leadership-title" onMouseLeave={() => setFeaturedId(departmentHead.id)}>
+        <section aria-labelledby="leadership-title">
             <div className="text-center">
                 <h2 id="leadership-title" className={styles.sectionTitle}>Leadership</h2>
                 <p className={`mt-4 text-gray-400 ${styles.sectionDescription}`}>The creative minds steering the department.</p>
             </div>
 
-            <article className="mx-auto mt-12 flex max-w-3xl flex-col overflow-hidden rounded-[2rem] border border-neutral-800 bg-[#111111] p-4 md:flex-row lg:mt-20 lg:p-5">
+            <article className="relative mx-auto mt-12 flex max-w-3xl flex-col overflow-hidden rounded-[2rem] border border-neutral-800 bg-[#111111] p-4 md:flex-row lg:mt-20 lg:p-5">
                 <button
                     type="button"
                     onClick={() => openProfile(featured)}
@@ -99,6 +100,7 @@ export default function Leadership({ profiles }) {
                     </h3>
                     <blockquote className={`mt-5 border-l-2 border-purple-400 pl-4 italic text-gray-300 ${styles.featuredQuote}`}>“{featured.featuredQuote || featured.motto}”</blockquote>
                 </div>
+                <HoverOutline color="rgb(192 132 252)" />
             </article>
 
             <div className="mt-12 border-t border-neutral-800 pt-8 lg:mt-16">
@@ -108,20 +110,17 @@ export default function Leadership({ profiles }) {
                         <button
                             key={profile.id}
                             type="button"
-                            onMouseEnter={() => {
-                                if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) setFeaturedId(profile.id);
-                            }}
-                            onFocus={() => setFeaturedId(profile.id)}
                             onClick={() => openProfile(profile)}
                             aria-label={`Read ${profile.name}’s full profile`}
                             aria-haspopup="dialog"
-                            className={`${styles.poster} relative aspect-square w-full overflow-hidden rounded-xl border bg-[#111111] text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-400 ${featured.id === profile.id ? 'border-purple-400' : 'border-neutral-800'}`}
+                            className={`${styles.poster} relative aspect-square w-full overflow-hidden rounded-xl border bg-[#111111] text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-400 border-neutral-800`}
                         >
                             <img src={profile.image} alt="" loading="lazy" style={portraitStyle(profile)} className={`${styles.posterImage} h-full w-full object-cover object-center`} />
                             <span className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] bg-gradient-to-t from-black via-black/70 to-transparent p-3 pt-10">
                                 <span className="block text-[10px] font-bold uppercase leading-tight text-purple-300">{profile.role}</span>
                                 <span className="mt-1 block font-inter text-sm font-bold leading-5 text-white lg:text-xl lg:leading-7">{profile.name}</span>
                             </span>
+                            <HoverOutline color="rgb(192 132 252)" />
                         </button>
                     ))}
                 </div>

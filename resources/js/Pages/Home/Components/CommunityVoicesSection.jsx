@@ -1,4 +1,5 @@
 import { MapPin, Quote } from "lucide-react";
+import HoverOutline from "@/Components/HoverOutline";
 import {
     CarouselButton,
     HomeContainer,
@@ -47,6 +48,7 @@ function VoiceCard({ voice }) {
                     “{voice.quote}”
                 </blockquote>
             </div>
+            <HoverOutline color="#F2C21A" />
         </article>
     );
 }

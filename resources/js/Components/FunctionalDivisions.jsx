@@ -1,4 +1,5 @@
 import { ArrowRight } from 'lucide-react';
+import HoverOutline from '@/Components/HoverOutline';
 import { useState } from 'react';
 import ContentDetailModal from './ContentDetailModal';
 import styles from '@/Pages/ContentMedia.module.css';
@@ -81,6 +82,7 @@ export default function FunctionalDivisions({ divisions }) {
                                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                                 </button>
                             </div>
+                            <HoverOutline />
                         </article>
                     );
                 })}

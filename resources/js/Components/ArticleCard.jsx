@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { ArrowRight, Calendar, Clock, Tag } from 'lucide-react';
+import HoverOutline from '@/Components/HoverOutline';
 
 const ACCENT = '#FBBF24';
 
@@ -20,7 +21,7 @@ const ACCENT = '#FBBF24';
 export default function ArticleCard({ article, articleClassName = '' }) {
     return (
         <article
-            className={`group flex h-full w-full flex-col overflow-hidden rounded-lg border border-neutral-800 bg-[#111111] transition-all hover:-translate-y-1 hover:shadow-2xl md:rounded-2xl ${articleClassName}`}
+            className={`relative group flex h-full w-full flex-col overflow-hidden rounded-lg border border-neutral-800 bg-[#111111] transition-all hover:-translate-y-1 hover:shadow-2xl md:rounded-2xl ${articleClassName}`}
         >
             <Link
                 href={`/news/${article.slug}`}
@@ -67,6 +68,7 @@ export default function ArticleCard({ article, articleClassName = '' }) {
                     </div>
                 </div>
             </Link>
+            <HoverOutline color="#F2C21A" />
         </article>
     );
 }

@@ -1,6 +1,7 @@
 import styles from '@/Pages/ContentMedia.module.css';
 import { Play } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import HoverOutline from '@/Components/HoverOutline';
 
 export default function BroadcastVideoCard({ item }) {
     const [started, setStarted] = useState(false);
@@ -12,7 +13,7 @@ export default function BroadcastVideoCard({ item }) {
     }, [started]);
 
     return (
-        <article className="overflow-hidden rounded-2xl border border-neutral-800 bg-black">
+        <article className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-black">
             <div className="relative aspect-video">
                 {started ? (
                     <video
@@ -56,6 +57,7 @@ export default function BroadcastVideoCard({ item }) {
                     <a href={item.video} className="underline underline-offset-4">Open the video directly</a>.
                 </p>
             )}
+            <HoverOutline color="#f87171" />
         </article>
     );
 }

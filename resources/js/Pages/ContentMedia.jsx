@@ -8,6 +8,7 @@ import {
 } from '@/data/contentsSocialMediaData';
 import MainLayout from '@/Layouts/MainLayout';
 import DepartmentBadge from '@/Components/DepartmentBadge';
+import HoverOutline from '@/Components/HoverOutline';
 import BroadcastVideoCard from '@/Components/BroadcastVideoCard';
 import EditorialList from '@/Components/EditorialList';
 import FunctionalDivisions from '@/Components/FunctionalDivisions';
@@ -116,6 +117,7 @@ export default function ContentMedia() {
                                         <span className={styles.heroCardCategory}><Palette className="h-3 w-3" aria-hidden="true" />{heroDesign.category}</span>
                                         <span className={styles.heroCardTitle}>{heroDesign.title}</span>
                                     </span>
+                                    <HoverOutline color="rgb(192 132 252)" />
                                 </button>
                             )}
                             {heroBroadcast && (
@@ -133,6 +135,7 @@ export default function ContentMedia() {
                                         <span className={styles.heroCardCategory}><Video className="h-3 w-3" aria-hidden="true" />{heroBroadcast.category}</span>
                                         <span className={styles.heroCardTitle}>{heroBroadcast.title}</span>
                                     </span>
+                                    <HoverOutline color="rgb(192 132 252)" />
                                 </button>
                             )}
                         </div>
@@ -180,6 +183,7 @@ export default function ContentMedia() {
                                             {item.title}
                                         </h4>
                                     </figcaption>
+                                    <HoverOutline color="rgb(192 132 252)" />
                                 </figure>
                             ))}
                         </div>
@@ -207,6 +211,7 @@ export default function ContentMedia() {
                                         <span className="inline-flex items-center rounded bg-red-600 px-2 py-1 text-[10px] font-semibold uppercase leading-4 tracking-wide text-white lg:text-xs lg:leading-[18px]">{item.category}</span>
                                         <h4 className={`mt-2 text-sm font-bold leading-5 text-white sm:text-lg sm:leading-[26px] lg:text-subsection ${styles.ralewayTitle}`}>{item.title}</h4>
                                     </figcaption>
+                                    <HoverOutline color="rgb(192 132 252)" />
                                 </figure>
                             ))}
                         </div>
@@ -225,7 +230,7 @@ export default function ContentMedia() {
                                         Caption Writing
                                     </h3>
                                 </div>
-                                <article className="rounded-2xl border border-neutral-800 bg-[#1e1e1e] p-4 sm:p-5">
+                                <article className="relative rounded-2xl border border-neutral-800 bg-[#1e1e1e] p-4 sm:p-5">
                                     <div className="mb-4 flex items-center gap-3">
                                         <img src={CAPTION_POST.avatar || '/MSL_LOGO.png'} alt="" width="40" height="40" className="h-10 w-10 shrink-0 rounded-full object-cover" />
                                         <div>
@@ -295,6 +300,7 @@ export default function ContentMedia() {
                                             Share
                                         </button>
                                     </div>
+                                    <HoverOutline color="#60a5fa" />
                                 </article>
                             </div>
                         </div>
@@ -330,6 +336,7 @@ export default function ContentMedia() {
                                             </p>
                                         </div>
                                     </div>
+                                    <HoverOutline color="rgb(45 212 191)" />
                                 </article>
                             ))}
                         </div>

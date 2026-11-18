@@ -1,10 +1,11 @@
 import { Link } from "@inertiajs/react";
 import { Calendar, Clock, Tag } from "lucide-react";
 import NewsImage from "./NewsImage";
+import HoverOutline from "@/Components/HoverOutline";
 
 export default function NewsArticleCard({ article }) {
     return (
-        <article className="group flex h-full min-h-[500px] overflow-hidden rounded-xl border border-[#424650] bg-[#111111] transition-colors hover:border-[#A88410]">
+        <article className="group relative flex h-full min-h-[500px] overflow-hidden rounded-xl border border-[#424650] bg-[#111111] transition-colors hover:border-[#A88410]">
             <Link
                 href={article.href}
                 className="flex w-full flex-col text-white no-underline hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#FBBF24]"
@@ -61,6 +62,7 @@ export default function NewsArticleCard({ article }) {
                     </span>
                 </div>
             </Link>
+            <HoverOutline color="#A88410" />
         </article>
     );
 }

@@ -1,6 +1,7 @@
 export const PUBLIC_ROUTES = Object.freeze({
     home: '/',
     about: '/About',
+    contact: '/ContactUs',
     campus: '/Campus',
     contents: '/ContentsAndSocialMedia',
     partnerships: '/Partnerships',

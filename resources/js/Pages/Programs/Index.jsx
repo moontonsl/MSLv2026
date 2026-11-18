@@ -6,6 +6,7 @@ import { PUBLIC_ROUTES, comingSoonHref } from '@/data/siteNavigation';
 import { PROGRAMS, CAMPAIGNS, CAMPUS_TOURNAMENT_PREVIEWS, REGIONS, filterCampusTournaments } from '@/data/programsData';
 import typography from '../ContentMedia.module.css';
 import styles from './Programs.module.css';
+import HoverOutline from '@/Components/HoverOutline';
 
 const ICONS = { swords: Swords, network: Network, gift: Gift, gamepad: Gamepad2, presentation: Presentation, microphone: Mic2, user: UserPlus };
 
@@ -26,6 +27,7 @@ function CampaignGroup({ group, title }) {
                             <p>{campaign.description}</p>
                             <Link href={campaign.href} className={styles.detailsLink} aria-label={`Details about ${campaign.title}`}>Details <ArrowRight size={14} aria-hidden="true" /></Link>
                         </div>
+                        <HoverOutline color="#F2C21A" />
                     </article>
                 ))}
             </div>
@@ -69,6 +71,7 @@ export default function Programs({ programs = null }) {
                                             <Link href={program.href || '/Programs'} className={styles.learnMore} aria-label={`Learn more about ${program.title}`}>Learn More <ArrowRight size={14} aria-hidden="true" /></Link>
                                         )}
                                     </div>
+                                    <HoverOutline color="#F2C21A" />
                                 </article>
                             );
                         })}
@@ -92,6 +95,7 @@ export default function Programs({ programs = null }) {
                                     <Link href={comingSoonHref('collegiate-cup')} className={styles.secondaryButton}>Learn More <ArrowRight size={16} aria-hidden="true" /></Link>
                                 </div>
                             </div>
+                            <HoverOutline color="#F2C21A" />
                         </article>
                         <CampaignGroup group="ongoing" title="Ongoing Campaigns" />
                         <CampaignGroup group="recurring" title="Recurring Campaigns" />
@@ -120,6 +124,7 @@ export default function Programs({ programs = null }) {
                                             <p><MapPin size={13} aria-hidden="true" />{tournament.school}</p>
                                             <div className={styles.tournamentAction}><span>Schedule to be announced</span><Link href={PUBLIC_ROUTES.tournaments} aria-label={`View tournaments for ${tournament.school}`}>View <ArrowRight size={13} aria-hidden="true" /></Link></div>
                                         </div>
+                                        <HoverOutline color="#F2C21A" />
                                     </article>
                                 ))}
                             </div> : <div className={styles.emptyState}>No tournament previews for {region} yet. Find your school in the community directory below.</div>}

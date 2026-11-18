@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import MainLayout from '@/Layouts/MainLayout';
 import DepartmentBadge from '@/Components/DepartmentBadge';
+import HoverOutline from '@/Components/HoverOutline';
 import SupportConfigurator from '@/Components/SupportConfigurator';
 import typography from '../ContentMedia.module.css';
 import styles from './BuffsSupport.module.css';
@@ -310,7 +311,7 @@ function AllocationFooter({ amount, selectionKey }) {
 
 function ConfigCard({ icon: Icon, title, children, amount, selectionKey }) {
     return (
-        <article className={`${styles.configCard} flex h-full flex-col gap-5 rounded-2xl border p-5 sm:p-6`}>
+        <article className={`${styles.configCard} relative flex h-full flex-col gap-5 rounded-2xl border p-5 sm:p-6`}>
             <div className="flex items-center gap-3">
                 <span
                     className={`${styles.configIcon} inline-flex h-11 w-11 items-center justify-center rounded-xl`}
@@ -321,6 +322,7 @@ function ConfigCard({ icon: Icon, title, children, amount, selectionKey }) {
             </div>
             <div className="flex flex-1 flex-col gap-4">{children}</div>
             <AllocationFooter amount={amount} selectionKey={selectionKey} />
+            <HoverOutline color="#f2c21a" />
         </article>
     );
 }
@@ -491,6 +493,7 @@ export default function BuffsAndSupportIndex() {
                                         </div>
                                     ))}
                                 </div>
+                                <HoverOutline color="#F2C21A" />
                             </article>
                         </div>
                     </div>
@@ -500,7 +503,7 @@ export default function BuffsAndSupportIndex() {
             {/* Eligible + Provide */}
             <section className="border-b border-white/10 bg-[#050505] py-12 md:py-16">
                 <div className="container-page grid grid-cols-1 gap-5 lg:grid-cols-2">
-                    <article className="rounded-2xl border border-white/10 bg-[#121212] p-6 sm:p-8">
+                    <article className="relative rounded-2xl border border-white/10 bg-[#121212] p-6 sm:p-8">
                         <div className="flex items-center gap-3">
                             <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-sky-500/20 text-sky-400">
                                 <Shield className="h-5 w-5" />
@@ -525,9 +528,10 @@ export default function BuffsAndSupportIndex() {
                                 </li>
                             ))}
                         </ul>
+                        <HoverOutline color="#38bdf8" />
                     </article>
 
-                    <article className="rounded-2xl border border-white/10 bg-[#121212] p-6 sm:p-8">
+                    <article className="relative rounded-2xl border border-white/10 bg-[#121212] p-6 sm:p-8">
                         <div className="flex flex-col items-start gap-4">
                             <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-500/10 text-brand-500">
                                 <Gift className="h-5 w-5" />
@@ -553,6 +557,7 @@ export default function BuffsAndSupportIndex() {
                                 </div>
                             ))}
                         </div>
+                        <HoverOutline color="#F2C21A" />
                     </article>
                 </div>
             </section>
@@ -616,6 +621,7 @@ export default function BuffsAndSupportIndex() {
                             loading="lazy"
                             className={styles.lobbyImage}
                         />
+                        <HoverOutline color="#F2C21A" />
                     </figure>
                 </div>
             </section>

@@ -49,6 +49,7 @@
 }
 
 .lobbyPreview {
+    position: relative;
     min-width: 0;
     overflow: hidden;
     border: 1px solid rgb(255 255 255 / 10%);
@@ -386,7 +387,7 @@
 
 @media (hover: hover) {
     .primaryButton:hover {
-        background: #f7d34c;
+        background: #F8D54B;
         color: #111;
     }
 

@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
-import { ArrowRight, CheckCircle2, Crown, Diamond, Gamepad2, MonitorPlay, Network, ShieldCheck, Star, Target, TrendingUp, Trophy, Users, X, Zap } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Crown, Diamond, Gamepad2, Gift, MonitorPlay, Network, ShieldCheck, Star, Target, TrendingUp, Trophy, Users, X, Zap } from 'lucide-react';
 import { FaDiscord } from 'react-icons/fa';
 import MainLayout from '@/Layouts/MainLayout';
 import DepartmentBadge from '@/Components/DepartmentBadge';
 import SupportApplicationButton from '@/Components/SupportApplicationButton';
+import HoverOutline from '@/Components/HoverOutline';
+import NetworkLogoWall from '@/Pages/Home/Components/NetworkLogoWall';
+import { homeData } from '@/data/homeData';
 import { LEADERBOARD, NETWORK_GALLERY, NETWORK_LINKS, NETWORK_TIERS, ORGANIZATION_BUFFS, SPOTLIGHT } from '@/data/mslNetworkData';
 import typography from './ContentMedia.module.css';
 import styles from './MSLNetwork.module.css';
@@ -13,6 +16,32 @@ import styles from './MSLNetwork.module.css';
 const number = (value) => value.toLocaleString('en-PH');
 const SHOW_PARTNER_LEADERBOARD = false;
 const BUFF_ICONS = { financial: Diamond, ecosystem: Gamepad2, industry: Trophy };
+const NETWORK_PROGRAMS = [
+    {
+        title: 'Buffs and Support',
+        description: 'Apply for diamond funding, monetary grants, and merchandise support for your community.',
+        icon: Diamond,
+        href: 'https://forms.gle/qADENJyDirsrKE6P9',
+        hoverColor: '#facc15', color: 'text-yellow-400', accent: 'bg-yellow-400',
+        frame: 'border-yellow-400/30 bg-yellow-400/10',
+    },
+    {
+        title: 'AirDrops',
+        description: 'Apply for available Airdrop packages for your community activities.',
+        icon: Gift,
+        href: 'https://forms.gle/86NPozxsxoMGBjrPA',
+        hoverColor: '#c084fc', color: 'text-purple-400', accent: 'bg-purple-400',
+        frame: 'border-purple-400/30 bg-purple-400/10',
+    },
+    {
+        title: 'Tournament Lobby',
+        description: 'Request Tournament Lobby access for your organized MLBB events.',
+        icon: MonitorPlay,
+        href: 'https://forms.gle/GQZWtpVob91riAfh6',
+        hoverColor: '#60a5fa', color: 'text-blue-400', accent: 'bg-blue-400',
+        frame: 'border-blue-400/30 bg-blue-400/10',
+    },
+];
 
 function SectionHeading({ id, badge, icon = Network, title, children }) {
     return (
@@ -65,6 +94,7 @@ function TierPanel({ tier }) {
                 <ul><li><CheckCircle2 size={16} aria-hidden="true" />Official MSL Network partner school</li><li><CheckCircle2 size={16} aria-hidden="true" />Event hosted or approved by a student organization or school administration</li></ul>
                 <p className={styles.tierSourceNote}>Maximum budgets are subject to the guide’s event allocations and approval requirements. Merchandise applications must be submitted at least 2 months before the event.</p>
             </div>
+            <HoverOutline color="var(--tier-color)" />
         </div>
     );
 }
@@ -92,9 +122,10 @@ export default function MSLNetwork() {
                     </div>
                 </section>
 
-                <div className={styles.allianceStrip} aria-label="Alliance members">
-                    <div className={`${styles.container} ${styles.allianceLogos}`}>
-                        {[1, 2, 3, 4, 5].map((index) => <img key={index} src={`/Images/Home/Logo ${index}.png`} alt={`Alliance member mark ${index}`} loading="lazy" />)}
+                <div className={styles.allianceStrip}>
+                    <div className={styles.container}>
+                        {/* Same curved 3D logo wall as the Home page */}
+                        <NetworkLogoWall logos={homeData.network.logos} />
                     </div>
                 </div>
 
@@ -105,9 +136,10 @@ export default function MSLNetwork() {
                             <figure className={styles.eventPhoto}>
                                 <img src={SPOTLIGHT.image} alt={SPOTLIGHT.event} loading="lazy" />
                                 <figcaption><h3>{SPOTLIGHT.event}</h3><p>{SPOTLIGHT.caption}</p></figcaption>
+                                <HoverOutline color="var(--gold)" />
                             </figure>
                             <div className={styles.spotlightDetails}>
-                                <article className={styles.organizationCard}><h3>{SPOTLIGHT.organization}</h3><p className={styles.school}>{SPOTLIGHT.school}</p><blockquote>“{SPOTLIGHT.quote}”</blockquote></article>
+                                <article className={styles.organizationCard}><h3>{SPOTLIGHT.organization}</h3><p className={styles.school}>{SPOTLIGHT.school}</p><blockquote>“{SPOTLIGHT.quote}”</blockquote><HoverOutline color="var(--gold)" /></article>
                                 <div className={styles.equippedCard}>
                                     <h3 className={styles.inlineLabel}><Zap size={16} aria-hidden="true" /><span className={styles.eyebrow}>Equipped buffs</span></h3>
                                     <Link href={NETWORK_LINKS.tournamentLobby}><MonitorPlay size={24} aria-hidden="true" /><span><strong>Tournament Lobby</strong><small>+ Pro production</small></span><ArrowRight size={17} aria-hidden="true" /></Link>
@@ -127,7 +159,41 @@ export default function MSLNetwork() {
                                 return <SupportApplicationButton key={buff.id} className={`${styles.buffCard} w-full cursor-pointer text-left`} style={{ '--accent': buff.color }}>
                                     <img src={buff.image} alt="" loading="lazy" /><span className={styles.buffIcon}><Icon size={23} aria-hidden="true" /></span>
                                     <div className={styles.buffCopy}><h3>{buff.title}</h3><p>{buff.description}</p><span className={styles.accentLine} aria-hidden="true" /></div>
+                                    <HoverOutline color="var(--accent)" />
                                 </SupportApplicationButton>;
+                            })}
+                        </div>
+                    </div>
+                </section>
+
+                <section className={styles.section} aria-labelledby="network-programs-title">
+                    <div className={styles.container}>
+                        <SectionHeading id="network-programs-title" title="MSL Network Programs" />
+                        <div className="mt-16 grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6 lg:mt-20">
+                            {NETWORK_PROGRAMS.map((program) => {
+                                const Icon = program.icon;
+                                return (
+                                    <a
+                                        key={program.title}
+                                        href={program.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label={`Apply for ${program.title} (opens in a new tab)`}
+                                        style={{ color: program.hoverColor }}
+                                        className={`${typography.interactiveCard} relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-neutral-800 bg-[#191919] p-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current ${program.color}`}
+                                    >
+                                        <span className={`absolute inset-x-0 top-0 h-1 ${program.accent}`} aria-hidden="true" />
+                                        <span className={`${typography.interactiveCardIcon} flex h-12 w-12 items-center justify-center rounded-lg border ${program.frame}`}>
+                                            <Icon className="h-6 w-6" aria-hidden="true" />
+                                        </span>
+                                        <h3 className="mt-6 font-inter text-xl font-bold leading-8 text-white">{program.title}</h3>
+                                        <p className="mt-3 font-inter text-sm leading-[22px] text-gray-400">{program.description}</p>
+                                        <span className="mt-auto inline-flex items-center gap-2 pt-6 text-sm font-semibold">
+                                            Apply now<ArrowRight className="h-4 w-4" aria-hidden="true" />
+                                        </span>
+                                        <HoverOutline />
+                                    </a>
+                                );
                             })}
                         </div>
                     </div>
@@ -178,7 +244,7 @@ export default function MSLNetwork() {
                 <section className={`${styles.section} ${styles.gallerySection}`} aria-labelledby="gallery-title">
                     <SectionHeading id="gallery-title" badge="Community" icon={Users} title="Life in the Network" />
                     <div className={styles.gallery}>
-                        {NETWORK_GALLERY.map((photo) => <button type="button" key={photo.image} onClick={() => setPreview(photo)} className={styles.galleryPhoto} aria-label={`Enlarge image: ${photo.alt}`}><img src={photo.image} alt={photo.alt} loading="lazy" /></button>)}
+                        {NETWORK_GALLERY.map((photo) => <button type="button" key={photo.image} onClick={() => setPreview(photo)} className={styles.galleryPhoto} aria-label={`Enlarge image: ${photo.alt}`}><img src={photo.image} alt={photo.alt} loading="lazy" /><HoverOutline color="var(--gold)" /></button>)}
                     </div>
                 </section>
 

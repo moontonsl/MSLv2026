@@ -1,11 +1,12 @@
 import { ButtonLink, HomeContainer, HomeIcon, SectionHeading } from "./HomeUI";
+import HoverOutline from "@/Components/HoverOutline";
 
 function PathCard({ path }) {
     const isStudent = path.theme === "student";
 
     return (
         <article
-            className={`flex flex-col rounded-[20px] border p-8 xl:p-10 ${
+            className={`relative flex flex-col rounded-[20px] border p-8 xl:p-10 ${
                 isStudent
                     ? "border-[#F2C21A]/25 bg-gradient-to-br from-[#19170D] via-[#111111] to-[#111111]"
                     : "border-blue-500/25 bg-gradient-to-br from-[#141B21] via-[#111111] to-[#111111]"
@@ -36,6 +37,7 @@ function PathCard({ path }) {
             >
                 {path.buttonLabel}
             </ButtonLink>
+            <HoverOutline color={isStudent ? "#F2C21A" : "#3b82f6"} />
         </article>
     );
 }

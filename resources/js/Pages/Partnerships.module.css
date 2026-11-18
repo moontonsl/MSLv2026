@@ -34,7 +34,7 @@
 .flagshipCopy h2 { margin-top: 12px; font-family: var(--font-manrope); font-size: 32px; font-weight: 800; line-height: 1.15; }
 .flagshipCopy p { margin-top: 10px; max-width: 600px; color: #d1d5db; font-size: 13px; line-height: 21px; }
 .actionPanel { padding: 24px; border: 1px solid #29291f; border-radius: 12px; background: #10100d; }
-.programLink { display: flex; align-items: flex-start; gap: 12px; min-width: 0; padding: 16px; border: 1px solid transparent; border-radius: 8px; background: #141412; transition: border-color 180ms ease-out, background-color 180ms ease-out; }
+.programLink { position: relative; display: flex; align-items: flex-start; gap: 12px; min-width: 0; padding: 16px; border: 1px solid transparent; border-radius: 8px; background: #141412; transition: border-color 180ms ease-out, background-color 180ms ease-out; }
 .programLink > span:nth-child(2) { flex: 1; min-width: 0; }
 .smallIcon { display: grid; flex-shrink: 0; width: 36px; height: 36px; place-items: center; border: 1px solid #514410; border-radius: 7px; background: #30290c; color: #e5bc25; }
 .linkArrow { flex-shrink: 0; align-self: center; color: #d3b22d; }
@@ -70,18 +70,21 @@
 .leaderCard strong { display: block; margin-top: 4px; font-size: 14px; line-height: 20px; }
 .workSection { padding-block: 64px; border-top: 1px solid #262626; background: #0d0d0d; }
 .workGrid { display: grid; gap: 20px; max-width: 680px; margin: 36px auto 0; }
-.workCard { display: flex; flex-direction: column; min-width: 0; border: 1px solid #594a12; border-radius: 12px; background: #0a0a08; padding: 24px; transition: border-color 180ms ease-out, background-color 180ms ease-out; }
+.workCard { --work-accent: #f2c21a; position: relative; display: flex; flex-direction: column; min-width: 0; border: 1px solid #594a12; border-radius: 12px; background: #0a0a08; padding: 24px; transition: border-color 180ms ease-out, background-color 180ms ease-out; }
 .workCard > svg { color: #f2c21a; }
 .workCard h3 { margin-top: 20px; font-family: 'Raleway', var(--font-inter); font-size: 18px; font-weight: 700; }
 .workCard p { margin-top: 12px; color: #9ca3af; font-size: 14px; line-height: 22px; }
 .workCard > span { display: flex; align-items: center; gap: 12px; margin-top: auto; padding-top: 20px; color: #f2c21a; font-size: 13px; font-weight: 700; }
-.brandWork { border-color: #153d25; }
+.brandWork { --work-accent: #4ade80; border-color: rgb(74 222 128 / 35%); background: #07110a; }
 .brandWork > svg, .brandWork > span { color: #4ade80; }
 .page :where(a, button):focus-visible { outline: 2px solid #f2c21a; outline-offset: 4px; }
 @media (hover: hover) and (pointer: fine) {
-    .primaryButton:hover { background: #f8d34d; color: #111; }
+    .primaryButton:hover { background: #F8D54B; color: #111; }
     .secondaryButton:hover { background: #30302b; color: #fff; }
-    .programLink:hover, .workCard:hover { border-color: #a58a24; background: #1d1b10; }
+    .programLink:hover { border-color: #a58a24; background: #1d1b10; }
+    /* Each Work With Us card hovers in its own accent (gold or green). */
+    .workCard:hover { border-color: color-mix(in srgb, var(--work-accent) 60%, transparent); background: color-mix(in srgb, var(--work-accent) 8%, #0a0a08); }
+    .brandWork:hover { background: color-mix(in srgb, var(--work-accent) 10%, #07110a); }
     .divisionCard:hover { background: #222; border-color: var(--division-accent); }
     .flagship:hover > img, .campaignCard:hover img, .leaderCard:hover img, .leaderImage:hover img { transform: scale(1.05); }
 }
