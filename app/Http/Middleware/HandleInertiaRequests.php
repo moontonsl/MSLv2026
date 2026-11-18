@@ -34,7 +34,7 @@ class HandleInertiaRequests extends Middleware
     {
         $admin = Auth::guard('admin')->user();
         $user = $admin ?? $request->user();
-        $permissions = $admin?->permissions ?? [];
+        $permissions = $admin ? $admin->effective_permissions : [];
         if ($admin?->hasPermission('access_admin_dashboard') && !in_array('access_admin_dashboard', $permissions, true)) {
             $permissions[] = 'access_admin_dashboard';
         }

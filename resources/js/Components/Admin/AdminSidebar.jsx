@@ -35,7 +35,7 @@ const NAV_SECTIONS = [
     {
         title: "Content & CMS",
         items: [
-            { id: 'home-hero-carousel', label: 'Hero Carousel', href: '/admin/home-page/hero-carousel', icon: Images, permission: 'manage_homepage' },
+            { id: 'home-hero-carousel', label: 'Hero Carousel', href: '/admin/home-page/hero-carousel', icon: Images, permission: 'manage_homepage|manage_carousel' },
             { id: 'news', label: 'News & Updates', href: '/admin/news-updates', icon: Megaphone, permission: 'manage_news' },
             { id: 'share-links', label: 'Short Links', href: '/Admin/ShareLinks', icon: Link2, permission: 'manage_share_links' },
         ],
@@ -84,7 +84,12 @@ export default function AdminSidebar({ activeId = 'dashboard', isOpen = false, o
     const isSuperAdmin = auth?.is_super_admin ?? ['Super Admin', 'super_admin', 'Core Admin', 'core_admin'].includes(role);
     const permissions = auth?.permissions ?? [];
 
-    const isPermitted = (permission) => permission === null || isSuperAdmin || permissions.includes(permission);
+    const isPermitted = (permission) => {
+        if (!permission) return true;
+        if (isSuperAdmin) return true;
+        const required = String(permission).split('|').map((p) => p.trim());
+        return required.some((perm) => permissions.includes(perm));
+    };
 
     const hasActiveChildInGroup = (group) =>
         group.id === activeId || (group.children ?? []).some((child) => child.id === activeId);

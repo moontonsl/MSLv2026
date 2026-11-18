@@ -497,44 +497,28 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
 
     Route::redirect('/admin/account-creation', '/Admin/Schools');
     Route::redirect('/admin/news-updates', '/admin/news-articles');
+    Route::get('/admin/registration-management', function () {
+       return Inertia::render('Admin/RegistrationManagement');
+    })->middleware('admin.permission:manage_accounts')->name('admin.registration-management');
+
+    Route::get('/admin/event-management', function () {
+        return Inertia::render('Admin/EventManagement');
+    })->middleware('admin.permission:manage_events')->name('admin.event-management');
+
+    Route::get('/admin/regional-admin-assignments', function () {
+        return Inertia::render('Admin/RegionalAdmin');
+    })->middleware('admin.permission:manage_regional_admins')->name('admin.regional-admin');
+    Route::redirect('/admin/regional-admin', '/admin/regional-admin-assignments');
 });
 
 Route::redirect('/admin/account-management', '/admin/administrator-accounts');
 
-Route::get('/admin/registration-management', function () {
-   return Inertia::render('Admin/RegistrationManagement');
-})->name('admin.registration-management');
-
-Route::get('/admin/event-management', function () {
-    return Inertia::render('Admin/EventManagement');
-})->name('admin.event-management');
-
-Route::get('/admin/regional-admin-assignments', function () {
-    return Inertia::render('Admin/RegionalAdmin');
-})->name('admin.regional-admin');
-Route::redirect('/admin/regional-admin', '/admin/regional-admin-assignments');
-
-
-Route::get('/SL-Admin', function () {
-    return Inertia::render('SL-Admin/Index');
-})->name('sl.admin');
-Route::redirect('/sl-admin', '/SL-Admin');
-
-Route::get('/CampusAdmin', function () {
-    return Inertia::render('SL-Admin/Index');
-})->name('campus.admin');
-
-Route::get('/CSMAdmin', function () {
-    return Inertia::render('SL-Admin/Index');
-})->name('csm.admin');
-
-Route::get('/GenAdAdmin', function () {
-    return Inertia::render('SL-Admin/Index');
-})->name('genad.admin');
-
-Route::get('/MSLNetAdmin', function () {
-    return Inertia::render('SL-Admin/Index');
-})->name('mslnet.admin');
+Route::redirect('/SL-Admin', '/StudentLeader')->name('sl.admin');
+Route::redirect('/sl-admin', '/StudentLeader');
+Route::redirect('/CampusAdmin', '/StudentLeader')->name('campus.admin');
+Route::redirect('/CSMAdmin', '/StudentLeader')->name('csm.admin');
+Route::redirect('/GenAdAdmin', '/StudentLeader')->name('genad.admin');
+Route::redirect('/MSLNetAdmin', '/StudentLeader')->name('mslnet.admin');
 
 Route::redirect('/dashboard', '/')->name('dashboard');
 
@@ -972,8 +956,11 @@ Route::post('/RegionalAdmin/background', [\App\Http\Controllers\Admin\RegionalAd
     ->name('regional.admin.background');
 
 Route::get('/CoreAdmin', function () {
+    $user = Auth::user();
+    abort_unless($user && in_array($user->user_type, ['Core Admin', 'Super Admin'], true), 403, 'Unauthorized access.');
+
     return Inertia::render('VerificationPages/CoreAdmin');
-})->name('core.admin');
+})->middleware('auth')->name('core.admin');
 
 // TEST PAGE ROUTES
 Route::get('/Testpage', function () {
