@@ -12,7 +12,7 @@ export default function CommunityVoice({
             <Head title="MSL Campus Community — Home Page" />
             <header className="mb-6 sm:mb-8">
                 <p className="text-xs font-bold uppercase tracking-wider text-brand-400">
-                    Home Page Settings
+                    Campus Community
                 </p>
                 <h1 className="mt-1 text-2xl font-bold text-white sm:text-3xl">
                     MSL Campus Community

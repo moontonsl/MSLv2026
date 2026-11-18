@@ -3,7 +3,7 @@ import {
     LayoutGrid, Megaphone, MessageSquare, Gauge, Shield, Users,
     CalendarDays, Image, Settings, Trophy, UserCog, Link2,
     AlertTriangle, ClipboardCheck, ClipboardList, School, MapPin, X,
-    ChevronDown, Home, Images, BarChart3, Building2, Layers, Quote,
+    ChevronDown, Images, BarChart3, Building2, Layers, Quote,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -15,12 +15,41 @@ const NAV_SECTIONS = [
         ],
     },
     {
-        title: "Community & Students",
+        title: "Website Management",
+        items: [
+            { id: 'sl-management', label: 'Account Management', href: '/admin/sl-management', icon: UserCog, permission: 'manage_sl' },
+            { id: 'home-statistics', label: 'About Section Statistics Counters', href: '/admin/home-page/statistics', icon: BarChart3, permission: 'manage_homepage' },
+            { id: 'home-programs', label: 'Our Programs', href: '/admin/home-page/programs', icon: Layers, permission: 'manage_homepage' },
+            { id: 'footer', label: 'Footer Links', href: '/admin/footer', icon: LayoutGrid, permission: 'manage_footer' },
+        ],
+    },
+    {
+        title: "Campus",
         items: [
             { id: 'pending-users', label: 'Pending Verification', href: '/Admin/Users/Pending', icon: ClipboardCheck, permission: 'manage_accounts' },
-            { id: 'sl-management', label: 'Account Management', href: '/admin/sl-management', icon: UserCog, permission: 'manage_sl' },
             { id: 'regional-admins', label: 'Regional Admins', href: '/admin/regional-admin-management', icon: MapPin, permission: 'manage_regional_admins' },
             { id: 'school-management', label: 'School Management', href: '/Admin/SchoolManagement', icon: School, permission: 'manage_schools' },
+            { id: 'home-community-voice', label: 'MSL Campus Community', href: '/admin/home-page/community-voice', icon: Quote, permission: 'manage_homepage' },
+        ],
+    },
+    {
+        title: "Content & CMS",
+        items: [
+            { id: 'home-hero-carousel', label: 'Hero Carousel', href: '/admin/home-page/hero-carousel', icon: Images, permission: 'manage_homepage' },
+            { id: 'news', label: 'News & Updates', href: '/admin/news-updates', icon: Megaphone, permission: 'manage_news' },
+            { id: 'share-links', label: 'Short Links', href: '/Admin/ShareLinks', icon: Link2, permission: 'manage_share_links' },
+        ],
+    },
+    {
+        title: "The MSL Network",
+        items: [
+            { id: 'home-network-organizations', label: 'MSL Network Organizations', href: '/admin/home-page/network-organizations', icon: Building2, permission: 'manage_homepage' },
+        ],
+    },
+    {
+        title: "All Department",
+        items: [
+            { id: 'faq', label: 'FAQ Manager', href: '/Admin/FAQs', icon: MessageSquare, permission: 'manage_faq' },
         ],
     },
     {
@@ -28,21 +57,13 @@ const NAV_SECTIONS = [
         items: [
             { id: 'mcc-seasons', label: 'MCC Seasons', href: '/admin/mcc-seasons', icon: Trophy, permission: 'manage_mcc_seasons' },
             { id: 'msl-events', label: 'MSL Tournaments', href: '/admin/msl-events', icon: Trophy, permission: 'manage_msl_events' },
-            { id: 'events', label: 'Event Calendar', href: '/admin/events', icon: CalendarDays, permission: 'manage_events' },
-            { id: 'event-photos', label: 'Event Gallery', href: '/admin/event-photos', icon: Image, permission: 'manage_event_photos' },
         ],
     },
     {
-        title: "Content & CMS",
+        title: "Events",
         items: [
-            { id: 'home-hero-carousel', label: 'Hero Carousel', href: '/admin/home-page/hero-carousel', icon: Images, permission: 'manage_homepage' },
-            { id: 'home-statistics', label: 'About Section Statistics Counters', href: '/admin/home-page/statistics', icon: BarChart3, permission: 'manage_homepage' },
-            { id: 'home-network-organizations', label: 'MSL Network Organizations', href: '/admin/home-page/network-organizations', icon: Building2, permission: 'manage_homepage' },
-            { id: 'home-programs', label: 'Our Programs', href: '/admin/home-page/programs', icon: Layers, permission: 'manage_homepage' },
-            { id: 'home-community-voice', label: 'MSL Campus Community', href: '/admin/home-page/community-voice', icon: Quote, permission: 'manage_homepage' },
-            { id: 'news', label: 'News & Updates', href: '/admin/news-updates', icon: Megaphone, permission: 'manage_news' },
-            { id: 'faq', label: 'FAQ Manager', href: '/Admin/FAQs', icon: MessageSquare, permission: 'manage_faq' },
-            { id: 'footer', label: 'Footer Links', href: '/admin/footer', icon: LayoutGrid, permission: 'manage_footer' },
+            { id: 'events', label: 'Event Calendar', href: '/admin/events', icon: CalendarDays, permission: 'manage_events' },
+            { id: 'event-photos', label: 'Event Gallery', href: '/admin/event-photos', icon: Image, permission: 'manage_event_photos' },
         ],
     },
     {
@@ -52,7 +73,6 @@ const NAV_SECTIONS = [
             { id: 'management', label: 'Permissions & Roles', href: '/admin/management', icon: Shield, permission: 'access_admin_management' },
             { id: 'audit-logs', label: 'Audit Trail', href: '/admin/audit-logs', icon: ClipboardList, permission: 'manage_audit_logs' },
             { id: 'violations', label: 'Violation Reports', href: '/admin/violation-reports', icon: AlertTriangle, permission: 'manage_violation_reports' },
-            { id: 'share-links', label: 'Short Links', href: '/Admin/ShareLinks', icon: Link2, permission: 'manage_share_links' },
             { id: 'settings', label: 'System Settings', href: '/admin/settings', icon: Settings, permission: 'manage_settings' },
         ],
     },
