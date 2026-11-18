@@ -40,7 +40,7 @@ export default function NewsletterSection() {
 
                     <button
                         type="submit"
-                        className="inline-flex min-h-[52px] shrink-0 items-center justify-center rounded-xl bg-[#FBBF24] px-5 text-[16px] font-semibold leading-[24px] text-black transition-colors hover:bg-[#FCD34D] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FBBF24] focus-visible:ring-offset-2 focus-visible:ring-offset-[#080808]"
+                        className="inline-flex min-h-[52px] shrink-0 items-center justify-center rounded-xl bg-[#F2C21A] px-5 text-[16px] font-semibold leading-[24px] text-black transition-colors hover:bg-[#F8D54B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FBBF24] focus-visible:ring-offset-2 focus-visible:ring-offset-[#080808]"
                     >
                         Subscribe
                     </button>

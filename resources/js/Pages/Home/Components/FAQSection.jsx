@@ -1,6 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { HomeContainer, SectionHeading } from "./HomeUI";
+import HoverOutline from "@/Components/HoverOutline";
 
 export default function FAQSection({ data }) {
     const [openIndex, setOpenIndex] = useState(0);
@@ -30,7 +31,7 @@ export default function FAQSection({ data }) {
                         return (
                             <article
                                 key={item.question}
-                                className={`overflow-hidden rounded-[10px] border bg-[#121212] ${
+                                className={`relative overflow-hidden rounded-[10px] border bg-[#121212] ${
                                     open
                                         ? "border-[#F2C21A]/30"
                                         : "border-white/10"
@@ -74,6 +75,7 @@ export default function FAQSection({ data }) {
                                         {item.answer}
                                     </p>
                                 </div>
+                                <HoverOutline color="#F2C21A" />
                             </article>
                         );
                     })}

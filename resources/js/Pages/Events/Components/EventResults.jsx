@@ -33,7 +33,7 @@ export default function EventResults({ events, activeFilterLabel, onReset }) {
             <button
                 type="button"
                 onClick={onReset}
-                className={`rounded-[10px] border border-black/5 bg-brand-400 px-6 py-2.5 text-body-xl font-semibold text-black transition-colors hover:bg-brand-300 ${focusStyles}`}
+                className={`rounded-[10px] border border-black/5 bg-[#F2C21A] px-6 py-2.5 text-body-xl font-semibold text-black transition-colors hover:bg-[#F8D54B] ${focusStyles}`}
             >
                 Show All Events
             </button>

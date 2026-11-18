@@ -1,6 +1,7 @@
 import { Link } from "@inertiajs/react";
 import { useEffect, useRef, useState } from "react";
 import { HomeContainer, HomeIcon, SectionHeading } from "./HomeUI";
+import HoverOutline from "@/Components/HoverOutline";
 
 function parseStatValue(raw) {
     if (typeof raw === "number") {
@@ -152,7 +153,7 @@ export default function AboutSection({ data }) {
                     {data.statistics.map((statistic, index) => (
                         <article
                             key={statistic.label || index}
-                            className="flex min-h-[182px] flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.025] px-3 py-6 text-center md:px-4"
+                            className="relative flex min-h-[182px] flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.025] px-3 py-6 text-center md:px-4"
                         >
                             <span className="mb-4 grid h-12 w-12 place-items-center rounded-full bg-[#F2C21A]/20 text-[#D4A810]">
                                 <HomeIcon name={statistic.icon} />
@@ -169,6 +170,7 @@ export default function AboutSection({ data }) {
                             <p className="mt-1 font-sans text-[12px] font-normal leading-[18px] text-[#9CA3AF] md:text-[14px] md:leading-[22px]">
                                 {statistic.label}
                             </p>
+                            <HoverOutline color="#F2C21A" />
                         </article>
                     ))}
                 </div>

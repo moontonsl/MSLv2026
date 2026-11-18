@@ -1,5 +1,6 @@
 import { Link } from "@inertiajs/react";
 import { ArrowRight, Calendar, Clock, Search, Tag } from "lucide-react";
+import HoverOutline from "@/Components/HoverOutline";
 import { useMemo, useState } from "react";
 
 const FILTER_OPTIONS = [
@@ -74,7 +75,7 @@ function ArticleCard({ article, layout = "grid" }) {
     const isCarousel = layout === "carousel";
     return (
         <article
-            className={`group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-neutral-800 bg-[#111111] transition-colors hover:border-neutral-600 ${
+            className={`group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-neutral-800 bg-[#111111] transition-colors hover:border-neutral-600 ${
                 isCarousel ? "w-[85vw] max-w-[400px] shrink-0 snap-center" : ""
             }`}
         >
@@ -121,6 +122,7 @@ function ArticleCard({ article, layout = "grid" }) {
                     </div>
                 </div>
             </Link>
+            <HoverOutline color="#525252" />
         </article>
     );
 }

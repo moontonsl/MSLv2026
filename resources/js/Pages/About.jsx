@@ -2,11 +2,15 @@ import {
     CORE_VALUES,
     NATIONAL_ADMINS,
     ORGANIZATION_DEPARTMENTS,
+    SOFTWARE_ENGINEERING_DIVISION,
 } from '@/data/aboutData';
 import MainLayout from '@/Layouts/MainLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { ArrowRight, ChevronLeft } from 'lucide-react';
-import { MSL_NETWORK_HREF } from '@/data/siteNavigation';
+import HoverOutline from '@/Components/HoverOutline';
+import SoftwareEngineeringTeam from '@/Components/SoftwareEngineeringTeam';
+import { ButtonLink } from '@/Pages/Home/Components/HomeUI';
+import { MSL_NETWORK_HREF, PUBLIC_ROUTES } from '@/data/siteNavigation';
 
 export default function About() {
     return (
@@ -20,7 +24,7 @@ export default function About() {
                             <button
                                 type="button"
                                 onClick={() => window.history.back()}
-                                className="flex min-h-11 items-center gap-2 text-body-sm text-gray-100 transition-colors hover:text-brand-400"
+                                className="flex min-h-11 items-center gap-2 text-body-sm text-gray-100 transition-colors hover:text-[#F2C21A]"
                             >
                                 <ChevronLeft className="h-4 w-4" />
                                 Back to Previous
@@ -44,7 +48,7 @@ export default function About() {
                     </section>
 
                     <section className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
-                        <article className="flex min-h-56 flex-col rounded-xl border border-brand-500/30 bg-bg-surface p-6 transition-colors hover:border-brand-500/50 sm:p-8 lg:p-10">
+                        <article className="relative flex min-h-56 flex-col rounded-2xl border border-white/10 bg-bg-surface transition-colors hover:bg-bg-cardHover p-6 sm:p-8 lg:p-10">
                             <h2 className="mb-3 text-body-md font-bold sm:text-card-title">
                                 Our <span className="text-[#FBBF24]">Mission</span>
                             </h2>
@@ -55,8 +59,9 @@ export default function About() {
                                 serve their communities, and represent their schools with
                                 pride.
                             </p>
+                            <HoverOutline color="#F2C21A" />
                         </article>
-                        <article className="flex min-h-56 flex-col rounded-xl border border-brand-500/30 bg-bg-surface p-6 transition-colors hover:border-brand-500/50 sm:p-8 lg:p-10">
+                        <article className="relative flex min-h-56 flex-col rounded-2xl border border-white/10 bg-bg-surface transition-colors hover:bg-bg-cardHover p-6 sm:p-8 lg:p-10">
                             <h2 className="mb-3 text-body-md font-bold sm:text-card-title">
                                 Our <span className="text-[#FBBF24]">Vision</span>
                             </h2>
@@ -66,6 +71,7 @@ export default function About() {
                                 thriving campus communities, and a culture where gaming,
                                 academics, and service move forward together.
                             </p>
+                            <HoverOutline color="#F2C21A" />
                         </article>
                     </section>
 
@@ -83,7 +89,7 @@ export default function About() {
                             {CORE_VALUES.map((value) => (
                                 <article
                                     key={value.title}
-                                    className="flex min-h-44 w-[calc(50%-0.625rem)] flex-col rounded-xl border border-brand-500/30 bg-bg-surface p-4 sm:min-h-48 sm:p-6 md:w-[calc(33.333333%-1rem)] lg:w-[calc(25%-1.125rem)]"
+                                    className="relative flex min-h-44 w-[calc(50%-0.625rem)] flex-col rounded-2xl border border-white/10 bg-bg-surface transition-colors hover:bg-bg-cardHover p-4 sm:min-h-48 sm:p-6 md:w-[calc(33.333333%-1rem)] lg:w-[calc(25%-1.125rem)]"
                                 >
                                     <h3 className="mb-3 text-body-sm font-bold text-white sm:text-body-md">
                                         {value.title}
@@ -91,6 +97,7 @@ export default function About() {
                                     <p className="text-body-xs text-gray-200 sm:text-body-sm">
                                         {value.description}
                                     </p>
+                                    <HoverOutline color="#F2C21A" />
                                 </article>
                             ))}
                         </div>
@@ -111,7 +118,8 @@ export default function About() {
                             {ORGANIZATION_DEPARTMENTS.map((dept) => (
                                 <article
                                     key={dept.title}
-                                    className="flex min-h-80 flex-col rounded-xl border border-brand-500/30 bg-bg-surface p-6 transition-colors hover:border-brand-500/50 sm:p-8"
+                                    style={{ '--dept-accent': dept.accentColor }}
+                                    className="relative flex min-h-80 flex-col rounded-2xl border border-white/10 bg-bg-surface transition-colors hover:bg-bg-cardHover p-6 sm:p-8"
                                 >
                                     <h3 className="text-body-md font-bold text-white sm:text-xl">
                                         {dept.title}
@@ -132,6 +140,7 @@ export default function About() {
                                             </li>
                                         ))}
                                     </ul>
+                                    <HoverOutline color="var(--dept-accent)" />
                                 </article>
                             ))}
                         </div>
@@ -151,7 +160,7 @@ export default function About() {
                             {NATIONAL_ADMINS.map((admin) => (
                                 <article
                                     key={`${admin.name}-${admin.roleLines.join('-')}`}
-                                    className="group overflow-hidden rounded-xl border border-brand-500/20 bg-bg-surface"
+                                    className="relative group overflow-hidden rounded-2xl border border-white/10 bg-bg-surface transition-colors hover:bg-bg-cardHover"
                                 >
                                     <div className="relative aspect-[3/4] w-full overflow-hidden bg-neutral-800">
                                         <img
@@ -175,29 +184,28 @@ export default function About() {
                                             </p>
                                         </div>
                                     </div>
+                                    <HoverOutline color="#F2C21A" />
                                 </article>
                             ))}
                         </div>
                     </section>
 
-                    <section className="relative flex min-h-44 flex-col justify-center overflow-hidden rounded-xl border border-gray-500/50 bg-gradient-to-b from-[#111111] to-[#1a0b2e] px-6 py-10 text-center sm:p-12">
+                    <section aria-label="Software Engineering Division">
+                        <SoftwareEngineeringTeam division={SOFTWARE_ENGINEERING_DIVISION} />
+                    </section>
+
+                    <section className="relative flex min-h-44 flex-col justify-center overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-[#111111] to-[#1a0b2e] px-6 py-10 text-center sm:p-12">
                         <h2 className="relative z-10 mb-4 text-body-sm font-bold text-white sm:mb-6 sm:text-card-title">
                             Ready to Lead?
                         </h2>
-                        <div className="relative z-10 mx-auto flex w-full max-w-md items-stretch justify-center gap-3">
-                            <Link
-                                href="/"
-                                className="flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-md border border-brand-400 bg-brand-400 px-2 py-2 text-body-xs font-bold text-black transition-colors hover:bg-brand-300 sm:px-6 sm:py-3 sm:text-body-sm"
-                            >
+                        <div className="relative z-10 mx-auto flex w-full max-w-md flex-col items-stretch justify-center gap-3 sm:flex-row">
+                            <ButtonLink href={PUBLIC_ROUTES.contact} className="min-w-0 flex-1">
                                 Contact Us
-                            </Link>
-                            <Link
-                                href={MSL_NETWORK_HREF}
-                                className="flex min-h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-md border border-gray-300 bg-white/5 px-2 py-2 text-body-xs font-bold text-white transition-colors hover:bg-white/10 sm:px-6 sm:py-3 sm:text-body-sm"
-                            >
+                            </ButtonLink>
+                            <ButtonLink href={MSL_NETWORK_HREF} variant="secondary" className="min-w-0 flex-1">
                                 View Programs
                                 <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
-                            </Link>
+                            </ButtonLink>
                         </div>
                     </section>
                 </div>

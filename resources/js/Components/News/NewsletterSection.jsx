@@ -27,7 +27,7 @@ export default function NewsletterSection() {
                     />
                     <button
                         type="submit"
-                        className="w-full shrink-0 rounded-xl bg-[#FFC107] px-8 py-3 font-sans font-bold text-black transition-all hover:bg-yellow-400 active:scale-95 sm:w-auto md:py-3.5"
+                        className="w-full shrink-0 rounded-xl bg-[#F2C21A] px-8 py-3 font-sans font-bold text-black transition-colors hover:bg-[#F8D54B] sm:w-auto md:py-3.5"
                     >
                         Subscribe
                     </button>

@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\LegacyContentController;
 use App\Http\Controllers\Admin\MCCSeasonController;
 use App\Http\Controllers\Admin\ViolationReportAdminController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Admin\OppoSettingsController;
 use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\FaqController;
@@ -231,6 +232,13 @@ Route::get('/About', function () {
 })->name('about');
 Route::redirect('/about', '/About', 301);
 
+Route::get('/ContactUs', [ContactController::class, 'show'])->name('contact');
+Route::post('/ContactUs', [ContactController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('contact.store');
+Route::redirect('/contact', '/ContactUs', 301);
+Route::redirect('/contact-us', '/ContactUs', 301);
+
 
 Route::get('/ReportViolation', function () {
     return Inertia::render('SafeSpaces/ReportViolation');
@@ -261,7 +269,12 @@ Route::redirect('/programs/buffs-support', '/BuffsAndSupport', 301);
 Route::redirect('/Buffs&Support', '/BuffsAndSupport', 301);
 
 Route::get('/Campus', function () {
-    return Inertia::render('Campus/Index');
+    return Inertia::render('Campus/Index', [
+        'campusMetrics' => [
+            'campus_sls' => \App\Models\Setting::getValue('campus_stat_student_leaders', 115),
+            'communities' => \App\Models\Setting::getValue('campus_stat_communities', 99),
+        ],
+    ]);
 })->name('campus');
 Route::redirect('/about/campus', '/Campus', 301);
 

@@ -1,4 +1,5 @@
 import { FileText, Newspaper, PenLine } from 'lucide-react';
+import HoverOutline from '@/Components/HoverOutline';
 import { useState } from 'react';
 import Pagination from './Admin/AdminPagination';
 import styles from '@/Pages/ContentMedia.module.css';
@@ -54,7 +55,7 @@ export default function EditorialList({ items }) {
                                 href={item.href}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={`${styles.interactiveCard} flex h-full gap-3 rounded-2xl border border-neutral-800 bg-[#111111] p-4 text-orange-400 hover:text-orange-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400 sm:gap-4 sm:p-5`}
+                                className={`${styles.interactiveCard} relative flex h-full gap-3 rounded-2xl border border-neutral-800 bg-[#111111] p-4 text-orange-400 hover:text-orange-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-400 sm:gap-4 sm:p-5`}
                             >
                                 <div className={`${styles.interactiveCardIcon} flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/5 text-gray-400`}>
                                     <Icon className="h-5 w-5" aria-hidden="true" />
@@ -66,6 +67,7 @@ export default function EditorialList({ items }) {
                                     <p className="mt-auto pt-3 font-inter text-xs leading-[18px] text-gray-400 lg:text-sm lg:leading-[22px]">By {item.writer} <span aria-hidden="true">·</span> {item.topic}</p>
                                     <span className="sr-only">Read on Facebook (opens in a new tab).</span>
                                 </div>
+                                <HoverOutline />
                             </a>
                         </article>
                     );

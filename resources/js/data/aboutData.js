@@ -42,6 +42,7 @@ export const ORGANIZATION_DEPARTMENTS = [
         description:
             'The Campus department connects student leaders across schools, empowering local communities through tournaments, campus activations, and grassroots engagement.',
         bulletColor: 'bg-blue-500',
+        accentColor: '#3B82F6',
         items: [
             'Campus tournaments and grassroots events',
             'Student leader onboarding and mentorship',
@@ -54,6 +55,7 @@ export const ORGANIZATION_DEPARTMENTS = [
         description:
             'This team shapes MSL PH’s voice online—crafting stories, campaigns, and content that celebrate student leaders and the wider MLBB community.',
         bulletColor: 'bg-purple-500',
+        accentColor: '#A855F7',
         items: [
             'Social media strategy and content creation',
             'Campaign launches and community storytelling',
@@ -66,6 +68,7 @@ export const ORGANIZATION_DEPARTMENTS = [
         description:
             'Partnerships builds bridges between MSL PH, brands, and institutions—creating opportunities that support student leaders and campus initiatives.',
         bulletColor: 'bg-[#FBBF24]',
+        accentColor: '#F2C21A',
         items: [
             'Brand and institutional partnerships',
             'Sponsorship coordination and activations',
@@ -78,6 +81,7 @@ export const ORGANIZATION_DEPARTMENTS = [
         description:
             'General Affairs keeps MSL PH running smoothly—handling operations, communications, and the day-to-day support that keeps every department aligned.',
         bulletColor: 'bg-green-500',
+        accentColor: '#22C55E',
         items: [
             'Internal operations and coordination',
             'Member communications and support',
@@ -113,3 +117,27 @@ export const NATIONAL_ADMINS = [
         image: '/profile-background.jpg',
     },
 ];
+
+// Software Engineering Division. Add `image: '/Images/About/Engineering/<name>.png'`
+// to any member to replace the monogram placeholder with their photo.
+export const SOFTWARE_ENGINEERING_DIVISION = {
+    title: 'Software Engineering Division',
+    description: 'The developers building and maintaining the MSL Philippines website and digital platforms.',
+    head: {
+        id: 'jenard',
+        name: 'Jenard',
+        role: 'Software Engineering Division Head',
+        image: null,
+        statement: 'Leads the team that designs, builds, and ships the MSL Philippines web platform.',
+    },
+    members: [
+        { id: 'shion', name: 'Shion', role: 'Content Manager', image: null },
+        { id: 'norbshii', name: 'Norbshii', role: 'UI/UX', image: null },
+        { id: 'mai', name: 'Mai', role: 'UI/UX', image: null },
+        { id: 'dave', name: 'Dave', role: 'FrontEnd', image: null },
+        { id: 'arwil', name: 'Arwil', role: 'FrontEnd', image: null },
+        { id: 'sam', name: 'Sam', role: 'BackEnd', image: null },
+        { id: 'chris', name: 'Chris', role: 'BackEnd', image: null },
+        { id: 'jabu', name: 'Jabu', role: 'Tech Support', image: null },
+    ],
+};

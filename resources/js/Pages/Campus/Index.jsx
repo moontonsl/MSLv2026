@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import { CheckCircle, Star, Wallet, Shield } from 'lucide-react';
-import { Facebook } from 'lucide-react';
+import { FaFacebook } from 'react-icons/fa';
 import {
     ArrowRight,
     Building2,
@@ -9,6 +8,7 @@ import {
     ChevronDown,
     ChevronLeft,
     ChevronRight,
+    Clock,
     Globe2,
     MapPin,
     Search,
@@ -16,22 +16,22 @@ import {
     Sparkles,
     Users,
     Trophy,
-    TrendingUp,
 } from 'lucide-react';
 import MainLayout from '@/Layouts/MainLayout';
 import DepartmentBadge from '@/Components/DepartmentBadge';
+import HoverOutline from '@/Components/HoverOutline';
 import { PUBLIC_ROUTES } from '@/data/siteNavigation';
 import typography from '../ContentMedia.module.css';
 import styles from './Campus.module.css';
+import CampusTeam from './CampusTeam';
 import {
-    accreditationBenefits,
     campusCommunities,
+    campusJoinSteps,
     campusJourney,
+    campusOpenRoles,
     campusPillars,
     campusPrograms,
     campusStats,
-    departmentHead,
-    regionalAdmins,
 } from './campusData';
 
 const PAGE_SIZE = 6;
@@ -40,9 +40,9 @@ const sectionTitleClass =
     `${typography.sectionTitle} text-white`;
 
 const tierStyles = {
-    'Tier A': 'border-purple-400/40 bg-purple-500/10 text-purple-300',
-    'Tier B': 'border-teal-400/40 bg-teal-500/10 text-teal-300',
-    'Tier C': 'border-white/15 bg-white/5 text-gray-300',
+    'Level III': 'border-purple-400/40 bg-purple-500/10 text-purple-300',
+    'Level II': 'border-teal-400/40 bg-teal-500/10 text-teal-300',
+    'Level I': 'border-white/15 bg-white/5 text-gray-300',
 };
 
 function Pagination({ currentPage, pageCount, onChange }) {
@@ -68,7 +68,7 @@ function Pagination({ currentPage, pageCount, onChange }) {
                 type="button"
                 disabled={currentPage === 1}
                 onClick={() => onChange(currentPage - 1)}
-                className="col-start-1 row-start-1 inline-flex h-9 w-fit items-center justify-center gap-1 rounded-lg border border-blue-500 bg-blue-600 px-3 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40"
+                className={`${styles.primaryButton} col-start-1 row-start-1 inline-flex h-9 w-fit items-center justify-center gap-1 rounded-lg border border-blue-500 bg-blue-600 px-3 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40`}
             >
                 <ChevronLeft className="h-5 w-5" />
                 Previous
@@ -103,7 +103,7 @@ function Pagination({ currentPage, pageCount, onChange }) {
                 type="button"
                 disabled={currentPage === pageCount}
                 onClick={() => onChange(currentPage + 1)}
-                className="col-start-2 row-start-1 inline-flex h-9 w-fit items-center justify-center justify-self-end gap-1 rounded-lg border border-blue-500 bg-blue-600 px-3 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40 lg:col-start-3"
+                className={`${styles.primaryButton} col-start-2 row-start-1 inline-flex h-9 w-fit items-center justify-center justify-self-end gap-1 rounded-lg border border-blue-500 bg-blue-600 px-3 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40 lg:col-start-3`}
             >
                 Next
                 <ChevronRight className="h-5 w-5" />
@@ -121,7 +121,13 @@ function SectionHeading({ title, description, centered = true }) {
     );
 }
 
-export default function Campus() {
+export default function Campus({ campusMetrics = {} }) {
+    // Backend keys remain stable when the visible labels or order change.
+    // Nullish fallback preserves a genuine zero supplied by the server.
+    const heroStats = campusStats.map((stat) => ({
+        ...stat,
+        value: campusMetrics[stat.id] ?? stat.value,
+    }));
     const [search, setSearch] = useState('');
     const [region, setRegion] = useState('All Regions');
     const [currentPage, setCurrentPage] = useState(1);
@@ -186,7 +192,7 @@ export default function Campus() {
                                     <span className="text-blue-500">School Spirit.</span>
                                 </h1>
                                 <p className={`mx-auto mt-6 max-w-xl text-gray-300 lg:mx-0 ${typography.heroDescription}`}>
-                                    We manage the largest network of collegiate gaming communities
+                                    We manage the largest network of Collegiate and High School gaming communities
                                     in the Philippines. From Luzon to Mindanao, we empower student
                                     leaders to build thriving esports communities.
                                 </p>
@@ -194,22 +200,24 @@ export default function Campus() {
                                 <div className="mt-6 flex flex-col gap-2.5 sm:flex-row lg:mt-8">
                                     <a
                                         href="#community-directory"
-                                        className="inline-flex min-h-[60px] w-full items-center justify-center gap-3 rounded-xl bg-blue-600 px-7 py-4 font-semibold text-white transition hover:bg-blue-500 sm:w-auto"
+                                        className={`${styles.primaryButton} inline-flex min-h-[60px] w-full items-center justify-center gap-3 rounded-xl bg-blue-600 px-7 py-4 font-semibold text-white transition hover:bg-blue-500 sm:w-auto`}
                                     >
                                         Find Your School
                                         <Search className="h-5 w-5" />
                                     </a>
                                     <a
-                                        href="#accreditation"
-                                        className="inline-flex min-h-[60px] w-full items-center justify-center rounded-xl border border-white/10 bg-[#18181b] px-7 py-4 font-semibold text-gray-200 transition hover:border-blue-500/50 hover:text-white sm:w-auto"
+                                        href="https://tally.so/r/w261dL"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={`${styles.secondaryButton} inline-flex min-h-[60px] w-full items-center justify-center rounded-xl border border-white/10 bg-[#18181b] px-7 py-4 font-semibold text-gray-200 sm:w-auto`}
                                     >
                                         Start an MSL Community
                                     </a>
                                 </div>
 
-                                <div className="mt-6 grid grid-cols-3 gap-2 border-t border-white/30 pt-8 sm:mt-10 sm:gap-4 lg:text-left">
-                                    {campusStats.map((stat) => (
-                                        <div key={stat.label} className="text-center lg:text-left">
+                                <div className="mt-6 grid grid-cols-2 gap-4 border-t border-white/30 pt-8 sm:mt-10 sm:gap-6 lg:text-left">
+                                    {heroStats.map((stat) => (
+                                        <div key={stat.id} className="text-center">
                                             <div className="font-heading text-2xl font-extrabold leading-6 sm:text-3xl sm:leading-normal">
                                                 {stat.value}
                                             </div>
@@ -224,9 +232,9 @@ export default function Campus() {
                             <div className="relative mx-auto hidden w-full max-w-lg lg:block">
                                 <div className="relative mx-auto aspect-[4/5] w-[72%] overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-900 shadow-2xl shadow-blue-950/50">
                                     <img
-                                        src="/most used hero.png"
-                                        alt="Campus esports community"
-                                        className="h-full w-full object-cover"
+                                        src="/Images/Campus/campus-hero.jpg"
+                                        alt="Students playing Mobile Legends together during a campus community match"
+                                        className={`${styles.portraitImage} h-full w-full object-cover object-[45%_center]`}
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-blue-950 via-blue-950/20 to-transparent" />
                                     <div className="absolute inset-x-0 bottom-0 p-7">
@@ -272,8 +280,8 @@ export default function Campus() {
                                     </div>
                                 </div>
 
-                                <div className="absolute top-[35px] right-[-50px] rotate-[25deg] rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-4 shadow-[0_0_25px_rgba(250,204,21,.35)] backdrop-blur-md">
-                                    <Trophy className="h-8 w-8 text-yellow-400" />
+                                <div className="absolute top-[35px] right-[-50px] rotate-[25deg] rounded-2xl border border-brand-500/30 bg-brand-500/10 p-4 shadow-[0_0_25px_rgba(242,194,26,.35)] backdrop-blur-md">
+                                    <Trophy className="h-8 w-8 text-brand-500" />
                                 </div>
                             </div>
                         </div>
@@ -289,9 +297,9 @@ export default function Campus() {
                                 {campusPillars.map(({ title, description, Icon }) => (
                                     <article
                                         key={title}
-                                        className="rounded-2xl border border-white/10 bg-[#111111] px-4 py-8 transition hover:-translate-y-1 hover:border-blue-500/40 sm:p-7"
+                                        className={`${styles.sectionCard} cursor-pointer rounded-2xl border border-white/10 bg-[#111111] px-4 py-8 sm:p-7`}
                                     >
-                                        <div className="inline-flex rounded-xl bg-blue-500/10 p-3 text-blue-400">
+                                        <div className={`${styles.cardIcon} inline-flex rounded-xl bg-blue-500/10 p-3 text-blue-400`}>
                                             <Icon className="h-7 w-7" />
                                         </div>
                                         <h3 className="mt-4 font-sans text-xl font-bold sm:mt-6 sm:font-heading">{title}</h3>
@@ -308,6 +316,7 @@ export default function Campus() {
                                                     )
                                                 )}
                                         </p>
+                                        <HoverOutline />
                                     </article>
                                 ))}
                             </div>
@@ -336,96 +345,51 @@ export default function Campus() {
                             </div>
 
                             <div className="mt-6 grid gap-5 sm:mt-12 sm:gap-6 lg:grid-cols-2">
-                                <article className="relative flex min-h-[565px] flex-col justify-between gap-6 overflow-hidden rounded-3xl border border-white/10 bg-[#0D1526] p-6 text-left sm:min-h-0 sm:flex-row sm:p-10">
-                                    {/* LEFT CONTENT */}
+                                <article className={`${styles.sectionCard} relative flex min-h-[565px] flex-col justify-between gap-6 overflow-hidden rounded-3xl border border-white/10 bg-[#0D1526] p-6 text-left sm:min-h-0 sm:flex-row sm:p-10`}>
+                                    <img src={campusPrograms[0].image} alt=""
+                                        style={{ objectPosition: campusPrograms[0].imagePosition }}
+                                        className="absolute inset-0 h-full w-full object-cover" />
+                                    <div className="absolute inset-0 bg-black/80" />
                                     <div className="relative max-w-md">
                                         <div className="inline-flex rounded-full bg-blue-900/30 px-4 py-2">
-                                            <span className="text-[12px] font-bold uppercase tracking-widest text-blue-300">
-                                                Flagship System
-                                            </span>
+                                            <span className="text-xs font-bold uppercase tracking-widest text-blue-300">Flagship System</span>
                                         </div>
-
-                                        <h3 className="mt-4 text-[24px] font-extrabold leading-[32px] text-white">
-                                            The Accreditation System
-                                        </h3>
-
-                                        <p className="mt-4 max-w-[380px] text-[14px] leading-[22px] text-white">
-                                            A tiered framework (Tier C, Tier B, Tier A, Super School) that rewards active communities.
-                                            The more active your chapter, the more support you receive—from diamond funding to official
-                                            merchandise and event logistics.
-                                        </p>
-
-                                        {/* BENEFITS */}
+                                        <h3 className="mt-4 text-2xl font-extrabold leading-8 text-white">{campusPrograms[0].title}</h3>
+                                        <p className="mt-4 max-w-[380px] text-sm leading-[22px] text-white">{campusPrograms[0].description}</p>
                                         <ul className="mt-6 space-y-3">
-                                            {accreditationBenefits.map((benefit) => {
-                                                let Icon;
-
-                                                if (benefit === 'Official Recognition') Icon = CheckCircle;
-                                                else if (benefit === 'Monthly Diamond Support') Icon = Star;
-                                                else if (benefit === 'Tournament Kits') Icon = Wallet;
-
-                                                return (
-                                                    <li key={benefit} className="flex items-center gap-3 text-[14px] leading-[20px] text-gray-300">
-                                                        <Icon className="h-5 w-5 text-blue-400" />
-                                                        <span className="text-[#D1D5DB]">{benefit}</span>
-                                                    </li>
-                                                );
-                                            })}
+                                            {campusPrograms[0].benefits.map((benefit) => (
+                                                <li key={benefit} className="flex items-center gap-3">
+                                                    <Check className="h-5 w-5 shrink-0 text-blue-300" />
+                                                    <span className="text-sm text-white">{benefit}</span>
+                                                </li>
+                                            ))}
                                         </ul>
                                     </div>
-
-                                    {/* RIGHT SIDE ICON BOX */}
-                                    <div className="relative flex items-center justify-center sm:justify-end">
-                                        <div className="mt-6 sm:mt-0 w-[180px] h-[180px] sm:w-[160px] sm:h-[160px] rounded-xl bg-blue-900/30 flex items-center justify-center">
-                                            <Shield className="h-24 w-24 sm:h-20 sm:w-20 text-blue-300" />
-                                        </div>
-                                    </div>
+                                    <HoverOutline />
                                 </article>
-
                                 <div className="grid gap-5 sm:gap-6">
-                                    {campusPrograms.map(({ title, description, action, href, Icon }) => (
-                                        <article
-                                            key={title}
-                                            className="rounded-2xl border border-white/10 bg-[#121212] p-6"
-                                        >
-                                            <div className="flex items-center gap-3">
-                                                <Icon
-                                                    className={`h-5 w-5 ${
-                                                        Icon === TrendingUp ? 'text-green-400' : 'text-yellow-400'
-                                                    }`}
-                                                />
-                                                <h3 className="text-[18px] font-bold text-white">
-                                                    {title}
-                                                </h3>
-                                            </div>
-
-                                            <p className="mt-4 text-[14px] leading-[22px] text-gray-400">
-                                                {description
-                                                    .split(/(Monthly Online Tournaments|Onsite Events)/g)
-                                                    .map((part, i) =>
-                                                        part === 'Monthly Online Tournaments' || part === 'Onsite Events' ? (
-                                                            <span key={i} className="font-semibold text-gray-200">
-                                                                {part}
-                                                            </span>
-                                                        ) : (
-                                                            part
-                                                        )
-                                                    )}
-                                            </p>
-
-                                            <Link
-                                                href={href}
-                                                className={`mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl py-3 text-[14px] font-bold ${
-                                                    action === 'Find Your Tournament'
-                                                        ? 'bg-blue-600 text-white hover:bg-blue-500'
-                                                        : 'border border-gray-700 text-gray-200 hover:bg-white/5'
-                                                }`}
-                                            >
-                                                {action}
-                                                <ArrowRight className="h-4 w-4" />
-                                            </Link>
-                                        </article>
-                                    ))}
+                                    {campusPrograms.slice(1).map((program) => {
+                                        const external = program.href.startsWith('https://');
+                                        const Action = external ? 'a' : Link;
+                                        return (
+                                            <article key={program.id} className={`${styles.sectionCard} relative overflow-hidden rounded-2xl border border-white/10 bg-[#121212] p-6`}>
+                                                <img src={program.image} alt="" style={{ objectPosition: program.imagePosition }} className="absolute inset-0 h-full w-full object-cover" />
+                                                <div className="absolute inset-0 bg-black/80" />
+                                                <div className="relative">
+                                                    <div className="flex items-center gap-3">
+                                                        <Trophy className="h-5 w-5 text-blue-300" />
+                                                        <h3 className="text-lg font-bold text-white">{program.title}</h3>
+                                                    </div>
+                                                    <p className="mt-4 text-sm leading-[22px] text-gray-300">{program.description}</p>
+                                                    <Action href={program.href} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                                                        className={`mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold ${program.id === 'monthly-tournaments' ? `${styles.primaryButton} bg-blue-600 text-white` : `${styles.secondaryButton} border border-gray-700 text-gray-200`}`}>
+                                                        {program.action}<ArrowRight className="h-4 w-4" />
+                                                    </Action>
+                                                </div>
+                                                <HoverOutline />
+                                            </article>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
@@ -434,8 +398,8 @@ export default function Campus() {
                     <section className="border-y border-white/10 bg-[#0b0b0b] py-12 sm:py-24">
                         <div className="mx-auto max-w-7xl px-4 sm:px-6">
                             <SectionHeading
-                                title="Journey to Super School"
-                                description="How your student community can grow within the MSL ecosystem."
+                                title="Journey to Level III"
+                                description="How your student community grows within the MSL ecosystem."
                             />
                             <div className="relative mt-8 grid gap-5 sm:mt-14 sm:gap-8 md:grid-cols-4 md:items-start">
                                 {/* MOBILE VERTICAL LINE */}
@@ -454,7 +418,9 @@ export default function Campus() {
                                     }}
                                 />
                                 {campusJourney.map((step) => (
-                                    <article key={step.number} className="relative rounded-2xl border border-white/10 bg-[#0f0f0f] p-6 text-center transition hover:-translate-y-1 hover:border-white/20">
+                                    <article key={step.number}
+                                        style={{ '--journey-accent': { '01': '255 255 255', '02': '59 130 246', '03': '168 85 247', '04': '242 194 26' }[step.number] }}
+                                        className={`${styles.journeyCard} relative cursor-pointer rounded-2xl border border-white/10 bg-[#0f0f0f] p-6 text-center`}>
                                         {/* NUMBER INSIDE */}
                                         <div className={`mx-auto flex h-14 w-14 items-center justify-center rounded-full border-2 bg-[#0b0b0b] font-bold ${step.accent}`}>
                                             {step.number}
@@ -469,6 +435,7 @@ export default function Campus() {
                                         <p className="mt-2 text-sm text-gray-400">
                                             {step.description}
                                         </p>
+                                        <HoverOutline />
                                     </article>
                                 ))}
                             </div>
@@ -477,94 +444,7 @@ export default function Campus() {
 
                     <section className="py-12 sm:py-24">
                         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-                            <SectionHeading
-                                title="Meet the Campus Team"
-                                description="Dedicated managers ensuring every school and region gets the support it needs."
-                            />
-
-                            <div className="mx-auto mt-6 max-w-3xl rounded-[40px] border border-white/5 bg-[#121212] p-[22px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] sm:mt-12 sm:p-5">
-                                <div className="flex flex-col overflow-hidden rounded-[30px] bg-white/5 sm:flex-row">
-                                    
-                                    {/* IMAGE */}
-                                    <div className="h-[236px] w-full shrink-0 overflow-hidden rounded-t-[30px] sm:h-auto sm:w-[280px] sm:rounded-l-[30px] sm:rounded-tr-none">
-                                        <img
-                                            src={departmentHead.image}
-                                            alt={departmentHead.name}
-                                            className="h-full w-full object-cover"
-                                        />
-                                    </div>
-
-                                    {/* CONTENT */}
-                                    <div className="flex flex-col justify-center gap-6 px-2.5 py-4 sm:p-8">
-                                        
-                                        {/* HEADER */}
-                                        <div className="space-y-1">
-                                            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-500">
-                                                {departmentHead.role}
-                                            </div>
-
-                                            <h3 className="text-2xl font-extrabold leading-8 text-white sm:text-[30px] sm:font-bold sm:leading-[38px]">
-                                                {departmentHead.name}
-                                            </h3>
-                                        </div>
-
-                                        {/* QUOTE */}
-                                        <div className="flex gap-4">
-                                            {/* LEFT GRADIENT BAR */}
-                                            <div className="w-[2px] rounded-full bg-gradient-to-b from-blue-600 to-blue-500 self-stretch" />
-
-                                            {/* TEXT WRAPPER */}
-                                            <div className="flex-1">
-                                                <p className="text-xs leading-[18px] text-white sm:text-[14px] sm:leading-[22px]">
-                                                    “{departmentHead.quote}”
-                                                </p>
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mt-10 flex gap-3 sm:mt-12 sm:justify-start">
-                                {/* BLUE VERTICAL LINE */}
-                                <div className="h-6 w-[3px] rounded-full bg-blue-500" />
-
-                                {/* TEXT */}
-                                <h3 className="font-heading text-xl font-bold uppercase tracking-wide text-gray-400">
-                                    Regional Admins
-                                </h3>
-
-                            </div>
-
-                            <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-6">
-                                {regionalAdmins.map((admin) => (
-                                    <article
-                                        key={`${admin.region}-${admin.name}`}
-                                        className="group relative flex h-[140px] flex-col justify-end overflow-hidden rounded-xl border border-white/10 p-4 sm:p-5"
-                                    >
-                                        {/* BACKGROUND IMAGE */}
-                                        <img
-                                            src="/profile-background.jpg"
-                                            alt="background"
-                                            className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-110"
-                                        />
-
-                                        {/* OVERLAY */}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-
-                                        {/* CONTENT */}
-                                        <div className="relative z-10">
-                                            <div className="text-[10px] font-bold uppercase tracking-wider text-blue-400">
-                                                {admin.region}
-                                            </div>
-                                            <div className="mt-1 font-heading text-sm font-bold text-white">
-                                                {admin.name}
-                                            </div>
-                                        </div>
-                                    </article>
-                                ))}
-                            </div>
+                            <CampusTeam />
                         </div>
                     </section>
 
@@ -579,7 +459,7 @@ export default function Campus() {
 
                                     <p className="mt-3 text-sm leading-[22px] text-gray-300 lg:mt-2 lg:text-base">
                                         Browse our{' '}
-                                        <span className="text-blue-500 underline">
+                                        <span className="text-blue-500">
                                             network of official campus communities.
                                         </span>
                                     </p>
@@ -596,7 +476,7 @@ export default function Campus() {
                                             value={search}
                                             onChange={(event) => setSearch(event.target.value)}
                                             placeholder="Search events, schools, location ..."
-                                            className="w-full rounded-xl border border-white/10 bg-[#111111] py-3 pl-12 pr-4 text-white placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500"
+                                            className="w-full rounded-xl border border-white/10 bg-[#111111] py-3 pl-12 pr-4 text-white placeholder:text-gray-500 focus:border-blue-500 focus:outline-none focus:ring-0"
                                         />
                                     </label>
 
@@ -605,7 +485,7 @@ export default function Campus() {
                                         <select
                                             value={region}
                                             onChange={(event) => setRegion(event.target.value)}
-                                            className="w-full appearance-none rounded-xl border border-white/10 bg-[#111111] px-4 py-3 pr-10 text-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                                            className="w-full appearance-none rounded-xl border-0 bg-[#111111] bg-none px-4 py-3 pr-10 text-gray-300 shadow-none outline-none focus:outline-none focus:ring-0"
                                         >
                                             {regions.map((option) => (
                                                 <option key={option}>{option}</option>
@@ -629,7 +509,7 @@ export default function Campus() {
                                         pageCommunities.map((community) => (
                                             <article
                                                 key={community.school}
-                                                className="relative grid gap-3 border-t border-white/10 bg-[#121212] px-6 py-4 first:border-t-0 md:grid-cols-[2fr_1fr_0.7fr_0.6fr_0.8fr] md:items-center md:gap-4 md:bg-[#111111] md:p-5 md:px-6"
+                                                className={`${styles.communityRow} relative cursor-pointer grid gap-3 border-t border-white/10 bg-[#121212] px-6 py-4 first:border-t-0 md:grid-cols-[2fr_1fr_0.7fr_0.6fr_0.8fr] md:items-center md:gap-4 md:bg-[#111111] md:p-5 md:px-6`}
                                             >
                                                 <div className="flex min-w-0 items-center gap-4 border-b border-white/20 pb-4 pr-20 md:border-0 md:pb-0 md:pr-0">
                                                     <div className="min-w-0">
@@ -658,7 +538,7 @@ export default function Campus() {
 
                                                 </div>
                                                 <div className="absolute right-6 top-4 md:static">
-                                                    <span className={`inline-flex rounded-md border px-2.5 py-1 text-xs font-bold uppercase ${tierStyles[community.tier] ?? tierStyles['Tier C']}`}>
+                                                    <span className={`inline-flex whitespace-nowrap rounded-md border px-2.5 py-1 text-xs font-bold uppercase ${tierStyles[community.tier] ?? tierStyles['Level I']}`}>
                                                         {community.tier}
                                                     </span>
                                                 </div>
@@ -670,13 +550,12 @@ export default function Campus() {
                                                 
                                                 <a
                                                     href={community.href}
-                                                    className="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#1877F2] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#166fe0] md:mt-0 md:w-fit"
+                                                    className={`${styles.stretchedLink} ${styles.facebookButton} mt-1 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#1877F2] px-4 py-2 text-sm font-semibold text-white md:mt-0 md:w-fit`}
                                                 >
-                                                    <span className="flex h-7 w-7 items-end justify-center rounded-full bg-white overflow-hidden">
-                                                        <Facebook className="h-6 w-6 text-[#1877F2] translate-y-[2px]" />
-                                                    </span>
+                                                    <FaFacebook className="h-5 w-5 shrink-0" aria-hidden="true" />
                                                     Join Group
                                                 </a>
+                                                <HoverOutline color="rgb(96 165 250)" />
                                             </article>
                                         ))
                                     ) : (
@@ -694,6 +573,84 @@ export default function Campus() {
                         </div>
                     </section>
 
+                    <section id="open-roles" aria-labelledby="open-roles-title" className="bg-[#0b0b0b] py-12 sm:py-24">
+                        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+                            <div id="open-roles-title">
+                                <SectionHeading
+                                    centered={false}
+                                    title="Open Roles"
+                                    description="Find your place in the Land of Dawn."
+                                />
+                            </div>
+
+                            <div className="mt-12 flex items-center gap-3 lg:mt-14">
+                                <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
+                                    <Building2 className="h-4 w-4" aria-hidden="true" />
+                                </span>
+                                <h3 className="font-heading text-lg font-bold text-white">Campus Department</h3>
+                            </div>
+
+                            <ul className="mt-5 flex flex-col gap-4">
+                                {campusOpenRoles.map((role) => (
+                                    <li
+                                        key={role.id}
+                                        className={`${styles.sectionCard} ${styles.brandCard} flex flex-col gap-6 rounded-2xl border border-white/10 bg-[#121212] p-6 sm:flex-row sm:items-center sm:justify-between sm:gap-10 sm:p-8`}
+                                    >
+                                        <div className="min-w-0">
+                                            <h4 className="text-base font-bold text-white sm:text-lg">{role.title}</h4>
+                                            <p className="mt-2 text-sm leading-[22px] text-gray-400">{role.description}</p>
+                                            <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                                                <span className="inline-flex items-center gap-1.5">
+                                                    <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
+                                                    {role.location}
+                                                </span>
+                                                <span className="inline-flex items-center gap-1.5">
+                                                    <Clock className="h-3.5 w-3.5" aria-hidden="true" />
+                                                    {role.schedule}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <a
+                                            href={role.href}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            aria-label={`Apply now for ${role.title} (opens in a new tab)`}
+                                            className={`${styles.applyButton} relative z-10 inline-flex w-full shrink-0 items-center justify-center gap-2 min-h-[44px] rounded-lg border border-[#D4A810] bg-[#F2C21A] px-6 py-2.5 text-sm font-bold text-[#18181B] hover:text-[#18181B] focus-visible:text-[#18181B] sm:w-auto`}
+                                        >
+                                            Apply Now
+                                            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                                        </a>
+                                        <HoverOutline />
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section id="how-to-join" aria-labelledby="how-to-join-title" className="border-y border-white/10 bg-black py-12 sm:py-24">
+                        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+                            <h2 id="how-to-join-title" className="text-center font-heading text-3xl font-bold text-white">
+                                How to Join
+                            </h2>
+
+                            <div className="relative mt-10 sm:mt-14">
+                                <ol className="relative grid gap-8 md:grid-cols-4 md:gap-6">
+                                    {campusJoinSteps.map((step) => (
+                                        <li key={step.number} className={`${styles.joinStep} relative flex gap-4 md:flex-col md:items-center md:gap-0 md:text-center`}>
+                                            <span className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-brand-500 bg-black text-sm font-bold text-brand-500 shadow-[0_0_16px_rgba(242,194,26,0.35)]">
+                                                {step.number}
+                                            </span>
+                                            <div className="md:mt-5">
+                                                <h3 className="text-base font-bold text-brand-500">{step.title}</h3>
+                                                <p className="mt-1 text-sm leading-[22px] text-gray-400">{step.description}</p>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ol>
+                            </div>
+                        </div>
+                    </section>
+
                     <section id="accreditation" className="relative overflow-hidden border-b border-white/30 bg-white/5 py-24 sm:py-28">
                         <div className="absolute inset-0 bg-blue-600/10" />
                         <div className="absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 bg-blue-500/20 blur-3xl" />
@@ -706,8 +663,10 @@ export default function Campus() {
                                 Establish a legacy, lead your peers, and unlock exclusive opportunities.
                             </p>
                             <a
-                                href="mailto:campus@mslphilippines.com"
-                                className="mt-8 inline-flex min-h-[60px] w-full items-center justify-center gap-3 rounded-xl bg-blue-600 px-8 py-4 font-semibold text-white transition hover:bg-blue-500 sm:w-auto"
+                                href="https://tally.so/r/w261dL"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`${styles.primaryButton} mt-8 inline-flex min-h-[60px] w-full items-center justify-center gap-3 rounded-xl bg-blue-600 px-8 py-4 font-semibold text-white sm:w-auto`}
                             >
                                 Apply for Accreditation
                                 <ArrowRight className="h-5 w-5" />

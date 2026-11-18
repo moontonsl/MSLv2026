@@ -4,6 +4,7 @@ import { ArrowRight, Building2, Gem, GraduationCap, Layers, Network, ShieldCheck
 import MainLayout from '@/Layouts/MainLayout';
 import DepartmentBadge from '@/Components/DepartmentBadge';
 import ContentDetailModal from '@/Components/ContentDetailModal';
+import HoverOutline from '@/Components/HoverOutline';
 import { CAMPAIGNS, CORE_PROGRAMS, NETWORK_BENEFITS, PARTNER_STATS, PARTNERSHIP_DIVISIONS, PARTNERSHIP_LEADERS, PARTNERSHIP_LINKS } from '@/data/partnershipsData';
 import type from './ContentMedia.module.css';
 import styles from './Partnerships.module.css';
@@ -15,6 +16,7 @@ function ProgramLink({ program }) {
             <span className={styles.smallIcon}><Icon size={20} aria-hidden="true" /></span>
             <span><strong className="block text-sm leading-5 text-white">{program.title}</strong><span className="mt-1 block text-xs leading-5 text-gray-400">{program.description}</span></span>
             <ArrowRight className={styles.linkArrow} size={16} aria-hidden="true" />
+            <HoverOutline color="#a58a24" />
         </Link>
     );
 }
@@ -63,6 +65,7 @@ export default function Partnerships() {
                             <Link href={PARTNERSHIP_LINKS.cup} className={styles.flagship}>
                                 <img src="/champ poster.jpg" alt="NU Bulldogs, MCC champions" />
                                 <div className={styles.flagshipCopy}><span className={styles.eventBadge}>Flagship Event</span><h2>MCC Season 4</h2><p>The road to the nationals starts here. Witness the pinnacle of competitive Mobile Legends: Bang Bang. Powered by Partnerships.</p></div>
+                                <HoverOutline color="#F2C21A" />
                             </Link>
                             <div className={styles.actionPanel}>
                                 <p className="text-sm font-bold text-brand-500">Spearheading the Action</p>
@@ -72,7 +75,7 @@ export default function Partnerships() {
                             </div>
                         </div>
                         <div className="mt-8"><h3 className="text-base font-bold">Active Campaigns</h3><p className="mt-1 text-sm text-gray-400">Explore upcoming feats and exclusive in-game events.</p></div>
-                        <div className={styles.campaignGrid}>{CAMPAIGNS.map((campaign) => <Link key={campaign.title} href={campaign.href} className={styles.campaignCard}><img src={campaign.image} alt="" loading="lazy" /><span>{campaign.title}</span></Link>)}</div>
+                        <div className={styles.campaignGrid}>{CAMPAIGNS.map((campaign) => <Link key={campaign.title} href={campaign.href} className={styles.campaignCard}><img src={campaign.image} alt="" loading="lazy" /><span>{campaign.title}</span><HoverOutline color="#F2C21A" /></Link>)}</div>
                     </div>
                 </section>
 
@@ -97,7 +100,7 @@ export default function Partnerships() {
                         <div className={styles.sectionIntro}><h2 id="partnership-divisions-title" className={type.sectionTitle}>Functional Divisions</h2><p className={`mt-3 text-gray-400 ${type.sectionDescription}`}>The machine behind the magic. Specialized units working in sync to power the ecosystem.</p></div>
                         <div className={styles.divisionGrid}>{PARTNERSHIP_DIVISIONS.filter((division) => ['network', 'sponsorships', 'activations'].includes(division.id)).map((division) => {
                             const Icon = division.icon;
-                            return <button key={division.id} type="button" aria-haspopup="dialog" onClick={() => setDetail({ ...division, kind: 'division' })} className={styles.divisionCard} style={{ '--division-accent': division.color }}><span className={styles.divisionIcon}><Icon size={24} aria-hidden="true" /></span><h3>{division.title}</h3><p>{division.description}</p></button>;
+                            return <button key={division.id} type="button" aria-haspopup="dialog" onClick={() => setDetail({ ...division, kind: 'division' })} className={styles.divisionCard} style={{ '--division-accent': division.color }}><span className={styles.divisionIcon}><Icon size={24} aria-hidden="true" /></span><h3>{division.title}</h3><p>{division.description}</p><HoverOutline color="var(--division-accent)" /></button>;
                         })}</div>
                     </div>
                 </section>
@@ -108,8 +111,9 @@ export default function Partnerships() {
                         <article className={styles.featuredLeader}>
                             <button type="button" onClick={() => openProfile(featured)} aria-label={`View ${featured.name}'s profile`} aria-haspopup="dialog" className={styles.leaderImage}><img src={featured.image} alt={featured.name} loading="lazy" /></button>
                             <div className={styles.leaderCopy}><p className="text-xs font-bold uppercase tracking-widest text-brand-500">{featured.role}</p><h3>{featured.name}</h3><blockquote>{featured.quote || featured.description}</blockquote></div>
+                            <HoverOutline color="#F2C21A" />
                         </article>
-                        <div className="mt-12 border-t border-neutral-800 pt-8 lg:mt-16"><h3 className="mb-6 text-sm font-bold text-gray-400">Functional Division Heads</h3><div className={styles.leaderGrid}>{PARTNERSHIP_LEADERS.slice(1).map((profile) => <button key={profile.id} type="button" aria-haspopup="dialog" onMouseEnter={() => { if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) setFeaturedId(profile.id); }} onFocus={() => setFeaturedId(profile.id)} onClick={() => openProfile(profile)} className={styles.leaderCard} aria-label={`View ${profile.name}'s profile`}><img src={profile.image} alt="" loading="lazy" /><span><small>{profile.role}</small><strong>{profile.name}</strong></span></button>)}</div></div>
+                        <div className="mt-12 border-t border-neutral-800 pt-8 lg:mt-16"><h3 className="mb-6 text-sm font-bold text-gray-400">Functional Division Heads</h3><div className={styles.leaderGrid}>{PARTNERSHIP_LEADERS.slice(1).map((profile) => <button key={profile.id} type="button" aria-haspopup="dialog" onMouseEnter={() => { if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) setFeaturedId(profile.id); }} onFocus={() => setFeaturedId(profile.id)} onClick={() => openProfile(profile)} className={styles.leaderCard} aria-label={`View ${profile.name}'s profile`}><img src={profile.image} alt="" loading="lazy" /><span><small>{profile.role}</small><strong>{profile.name}</strong></span><HoverOutline color="#F2C21A" /></button>)}</div></div>
                     </div>
                 </section>
 
@@ -117,8 +121,8 @@ export default function Partnerships() {
                     <div className={styles.container}>
                         <div className={styles.sectionIntro}><h2 id="work-with-us-title" className={type.sectionTitle}>Work With Us</h2><p className={`mt-3 text-gray-400 ${type.sectionDescription}`}>Whether you represent a student organization looking to join The MSL Network or a brand looking to sponsor, drop us a message.</p></div>
                         <div className={styles.workGrid}>
-                            <a href={PARTNERSHIP_LINKS.application} target="_blank" rel="noopener noreferrer" className={`${styles.workCard} ${styles.brandWork}`}><Building2 size={28} aria-hidden="true" /><h3>I'm a Brand/Corporation</h3><p>Looking to sponsor events, maximize brand visibility, or invest in the collegiate scene.</p><span>Explore Opportunities <ArrowRight size={17} aria-hidden="true" /></span></a>
-                            <a href={PARTNERSHIP_LINKS.application} target="_blank" rel="noopener noreferrer" className={styles.workCard}><GraduationCap size={28} aria-hidden="true" /><h3>I'm a Campus Esports Org</h3><p>Looking to join MSL Network, get accredited, and receive diamond funding.</p><span>Join The Network <ArrowRight size={17} aria-hidden="true" /></span></a>
+                            <a href={PARTNERSHIP_LINKS.application} target="_blank" rel="noopener noreferrer" className={`${styles.workCard} ${styles.brandWork}`}><Building2 size={28} aria-hidden="true" /><h3>I'm a Brand/Corporation</h3><p>Looking to sponsor events, maximize brand visibility, or invest in the collegiate scene.</p><span>Explore Opportunities <ArrowRight size={17} aria-hidden="true" /></span><HoverOutline color="var(--work-accent)" /></a>
+                            <a href={PARTNERSHIP_LINKS.application} target="_blank" rel="noopener noreferrer" className={styles.workCard}><GraduationCap size={28} aria-hidden="true" /><h3>I'm a Campus Esports Org</h3><p>Looking to join MSL Network, get accredited, and receive diamond funding.</p><span>Join The Network <ArrowRight size={17} aria-hidden="true" /></span><HoverOutline color="var(--work-accent)" /></a>
                         </div>
                     </div>
                 </section>

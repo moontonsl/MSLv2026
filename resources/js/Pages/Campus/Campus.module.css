@@ -59,3 +59,141 @@
         font-size: 60px;
     }
 }
+
+/* Match department-card feedback without moving the surrounding layout. */
+.page :where(a[href], button, select, [role='button']) { cursor: pointer; }
+.page :where(:disabled, [aria-disabled='true']) { cursor: not-allowed; }
+.page :where(a[href], button, select):focus-visible {
+    outline: 2px solid #60a5fa;
+    outline-offset: 4px;
+}
+.sectionCard, .communityRow {
+    transition: border-color 180ms cubic-bezier(0.23, 1, 0.32, 1), background-color 180ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+/* Each card's hover colour = its original hover border colour.
+   Default: blue (rgb 96 165 250) cards; .brandCard: yellow (#F2C21A) cards. */
+.sectionCard {
+    position: relative;
+    --hover-accent: 96 165 250;
+    --hover-bg: #202020;
+    /* Read by the shared <HoverOutline /> (resources/css/app.css). */
+    --hover-outline-color: rgb(var(--hover-accent));
+}
+.sectionCard.brandCard {
+    --hover-accent: 242 194 26;
+    --hover-bg: rgb(242 194 26 / 6%);
+}
+/* Team portraits: outline in their blue hover border colour. */
+.teamPortrait { --hover-outline-color: rgb(96 165 250); }
+.cardIcon { transition: transform 240ms cubic-bezier(0.23, 1, 0.32, 1); }
+.portraitImage { transition: transform 650ms cubic-bezier(0.23, 1, 0.32, 1); }
+.stretchedLink::after { content: ''; position: absolute; inset: 0; z-index: 10; border-radius: inherit; }
+.primaryButton, .secondaryButton {
+    transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+.primaryButton:focus-visible:not(:disabled) { background-color: #3b82f6; color: #fff; }
+.secondaryButton:focus-visible { border-color: #60a5fa; background-color: #172338; color: #fff; }
+.sectionCard:focus-within { border-color: rgb(var(--hover-accent) / 60%); background-color: var(--hover-bg); }
+.communityRow:focus-within { background-color: #172033; }
+
+@media (hover: hover) and (pointer: fine) {
+    .sectionCard:hover { border-color: rgb(var(--hover-accent) / 60%); background-color: var(--hover-bg); }
+    .communityRow:hover { background-color: #172033; }
+    .primaryButton:hover:not(:disabled) { background-color: #3b82f6; color: #fff; }
+    .secondaryButton:hover { border-color: #60a5fa; background-color: #172338; color: #fff; }
+}
+.primaryButton:active:not(:disabled) { background-color: #1d4ed8; }
+.secondaryButton:active { border-color: #3b82f6; background-color: #1c2d47; }
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .sectionCard:hover .cardIcon { transform: scale(1.1); }
+    .portraitCard:hover .portraitImage { transform: scale(1.05); }
+}
+@media (prefers-reduced-motion: no-preference) {
+    .sectionCard:focus-within .cardIcon { transform: scale(1.1); }
+    .portraitCard:focus-within .portraitImage { transform: scale(1.05); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .page *, .page *::before, .page *::after { transition: none !important; animation: none !important; }
+}
+
+/* Journey to Level III: hover in each Level's own colour. The tinted background is
+   mixed into the solid card colour (not transparent), so the process line behind
+   the cards never shows through. */
+.journeyCard {
+    --hover-outline-color: rgb(var(--journey-accent));
+    transition: border-color 180ms cubic-bezier(0.23, 1, 0.32, 1), background-color 180ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.journeyCard:focus-within {
+    border-color: rgb(var(--journey-accent) / 60%);
+    background-color: color-mix(in srgb, rgb(var(--journey-accent)) 8%, #0f0f0f);
+}
+@media (hover: hover) and (pointer: fine) {
+    .journeyCard:hover {
+        border-color: rgb(var(--journey-accent) / 60%);
+        background-color: color-mix(in srgb, rgb(var(--journey-accent)) 8%, #0f0f0f);
+    }
+}
+
+/* How to Join: fading #F2C21A connector between step markers (vertical on mobile, horizontal from md). */
+.joinStep:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 40px;
+    bottom: -32px;
+    width: 1px;
+    background: linear-gradient(to bottom, rgb(242 194 26 / 60%), rgb(242 194 26 / 15%));
+}
+@media (min-width: 768px) {
+    .joinStep:not(:last-child)::before {
+        left: calc(50% + 20px);
+        right: calc(-50% - 4px);
+        top: 20px;
+        bottom: auto;
+        width: auto;
+        height: 1px;
+        background: linear-gradient(to right, rgb(242 194 26 / 60%), rgb(242 194 26 / 15%));
+    }
+}
+
+/* Yellow button: same colours as the site's yellow button (Home/HomeUI.jsx):
+   #F2C21A rest, #F8D54B hover. */
+.applyButton { transition: background-color 180ms ease; }
+.applyButton:focus-visible { background-color: #F8D54B; }
+@media (hover: hover) and (pointer: fine) {
+    .applyButton:hover { background-color: #F8D54B; }
+}
+
+/* Facebook "Join Group" keeps Facebook blue on hover instead of the generic blue. */
+.facebookButton { transition: background-color 180ms ease; }
+.facebookButton:focus-visible { background-color: #166FE0; }
+@media (hover: hover) and (pointer: fine) {
+    .facebookButton:hover { background-color: #166FE0; }
+}
+.facebookButton:active { background-color: #1464CC; }
+
+.page .teamPortrait:focus-visible { border-color: rgb(96 165 250 / 60%); }
+@media (hover: hover) and (pointer: fine) {
+    .page .teamPortrait:hover { border-color: rgb(96 165 250 / 60%); }
+}
+
+/* Keep every team portrait square and protect the face during hover zoom. */
+.teamPortrait { position: relative; aspect-ratio: 1 / 1; cursor: pointer; }
+.teamPortrait img {
+    position: absolute;
+    width: var(--portrait-size, 100%);
+    height: var(--portrait-size, 100%);
+    max-width: none;
+    left: var(--portrait-left, 0%);
+    top: var(--portrait-top, 0%);
+    object-fit: cover;
+    object-position: center top;
+    transform-origin: center top;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .page .teamPortrait:hover img { transform: scale(1.03); }
+}
+@media (prefers-reduced-motion: no-preference) {
+    .page .teamPortrait:focus-visible img { transform: scale(1.03); }
+}
