@@ -39,9 +39,9 @@ class CarouselSeeder extends Seeder
             'label' => 'UP NEXT',
             'title' => 'MSL Partner Spotlight',
             'subtitle' => 'Meet our campus partners and explore resources for esports org leaders.',
-            'link' => '/events',
+            'link' => '/Partnerships',
             'start_date' => '2025-12-18',
-            'image_path' => '/champ poster.jpg',
+            'image_path' => '/Images/Home/msl-partner.jpg',
             'order' => 2,
             'is_active' => true,
         ]);

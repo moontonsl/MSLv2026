@@ -783,6 +783,8 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->middleware('admin.permission:manage_homepage')->name('admin.carousel.delete');
     Route::post('/admin/carousel/reorder', [CarouselController::class, 'reorder'])
         ->middleware('admin.permission:manage_homepage')->name('admin.carousel.reorder');
+    Route::post('/admin/carousel/load-placeholders', [CarouselController::class, 'loadPlaceholders'])
+        ->middleware('admin.permission:manage_homepage')->name('admin.carousel.load-placeholders');
 
     Route::get('/admin/event-photos', [EventPhotoController::class, 'index'])
         ->middleware('admin.permission:manage_event_photos')->name('admin.event-photos');

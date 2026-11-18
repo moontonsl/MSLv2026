@@ -135,4 +135,27 @@ class AdminCarouselTest extends TestCase
 
         $this->get(route('admin.home-page'))->assertForbidden();
     }
+
+    public function test_hero_carousel_seeds_and_loads_homepage_placeholders(): void
+    {
+        $this->signInSuperAdmin();
+
+        // 1. If database has no carousels, visiting the admin page automatically populates default placeholders
+        $this->assertEquals(0, Carousel::count());
+        $this->get(route('admin.home-page.hero-carousel'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Admin/HomePage/HeroCarousel')
+                ->has('carousels', 3)
+                ->where('carousels.0.title', 'MCC Season 4: Collegiate Clash')
+                ->where('carousels.1.title', 'Campus Scrims: Open Qualifiers')
+                ->where('carousels.2.title', 'MSL Partner Spotlight'));
+
+        $this->assertEquals(3, Carousel::count());
+
+        // 2. Explicitly calling load-placeholders endpoint syncs/restores placeholders
+        $this->post(route('admin.carousel.load-placeholders'))
+            ->assertRedirect();
+        $this->assertEquals(3, Carousel::count());
+    }
 }

@@ -4,7 +4,7 @@ import SuccessModal from '@/Components/Admin/SuccessModal';
 import ContentCard from '@/Components/Admin/ContentCard';
 import SectionCard from '@/Components/Admin/SectionCard';
 import { ADMIN_GOLD_BUTTON_CLASS } from '@/Components/Admin/adminFormStyles';
-import { Plus, ImagePlus } from 'lucide-react';
+import { Plus, ImagePlus, Sparkles } from 'lucide-react';
 import { router } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
@@ -31,10 +31,24 @@ export default function CarouselSection({ initialItems = [] }) {
     const [wasDeleteSubmit, setWasDeleteSubmit] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [pendingDeleteId, setPendingDeleteId] = useState(null);
+    const [loadingPlaceholders, setLoadingPlaceholders] = useState(false);
 
     useEffect(() => {
         setItems(mappedItems);
     }, [initialItems]);
+
+    const handleLoadPlaceholders = () => {
+        setLoadingPlaceholders(true);
+        router.post(route('admin.carousel.load-placeholders'), {}, {
+            preserveScroll: true,
+            onFinish: () => setLoadingPlaceholders(false),
+            onSuccess: () => {
+                setWasEditSubmit(false);
+                setWasDeleteSubmit(false);
+                setSuccessOpen(true);
+            },
+        });
+    };
 
     const openAddModal = () => {
         setEditingItem(null);
@@ -129,20 +143,51 @@ export default function CarouselSection({ initialItems = [] }) {
                                 Manage slides displayed in the "HAPPENING NOW" hero section of the homepage.
                             </p>
                         </div>
-                        <button
-                            type="button"
-                            className={`${ADMIN_GOLD_BUTTON_CLASS} w-full shrink-0 whitespace-nowrap sm:w-auto`}
-                            onClick={openAddModal}
-                        >
-                            <Plus className="h-4 w-4 shrink-0" />
-                            Add Slide
-                        </button>
+                        <div className="flex flex-wrap items-center gap-2.5">
+                            <button
+                                type="button"
+                                onClick={handleLoadPlaceholders}
+                                disabled={loadingPlaceholders}
+                                title="Fetch and sync default homepage placeholder slides"
+                                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3.5 py-2.5 text-xs font-semibold text-zinc-300 hover:bg-white/10 hover:text-white transition-colors cursor-pointer disabled:opacity-50"
+                            >
+                                <Sparkles className="h-4 w-4 text-brand-400" />
+                                {loadingPlaceholders ? 'Loading...' : 'Load Homepage Placeholders'}
+                            </button>
+                            <button
+                                type="button"
+                                className={`${ADMIN_GOLD_BUTTON_CLASS} shrink-0 whitespace-nowrap`}
+                                onClick={openAddModal}
+                            >
+                                <Plus className="h-4 w-4 shrink-0" />
+                                Add Slide
+                            </button>
+                        </div>
                     </div>
 
                     {items.length === 0 ? (
                         <div className="rounded-xl border border-dashed border-neutral-800 p-8 text-center">
                             <ImagePlus className="mx-auto mb-3 h-10 w-10 text-gray-600" />
-                            <p className="text-sm text-gray-400">No slides yet. Click "Add Slide" to create the first one.</p>
+                            <p className="text-sm text-gray-400 mb-4">No slides in database yet. Click "Load Homepage Placeholders" to import the default slides.</p>
+                            <div className="flex flex-wrap items-center justify-center gap-3">
+                                <button
+                                    type="button"
+                                    onClick={handleLoadPlaceholders}
+                                    disabled={loadingPlaceholders}
+                                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-2.5 text-xs font-semibold text-amber-400 hover:bg-amber-400/20 transition-colors cursor-pointer disabled:opacity-50"
+                                >
+                                    <Sparkles className="h-4 w-4 text-amber-400" />
+                                    {loadingPlaceholders ? 'Loading...' : 'Load Homepage Placeholders'}
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`${ADMIN_GOLD_BUTTON_CLASS} shrink-0 whitespace-nowrap`}
+                                    onClick={openAddModal}
+                                >
+                                    <Plus className="h-4 w-4 shrink-0" />
+                                    Add Slide
+                                </button>
+                            </div>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">

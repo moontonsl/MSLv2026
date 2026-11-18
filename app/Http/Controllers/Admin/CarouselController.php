@@ -28,12 +28,17 @@ class CarouselController extends Controller
             'link' => ['nullable', 'string', 'max:500'],
             'start_date' => ['nullable', 'date'],
             'end_date' => ['nullable', 'date'],
-            'image' => ['required', 'image', 'mimes:jpeg,jpg,png,gif,webp', 'max:5120'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif,webp', 'max:5120'],
             'order' => ['nullable', 'integer', 'min:0'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
-        $data['image_path'] = basename($request->file('image')->store('carousel', 'public'));
+        if ($request->hasFile('image')) {
+            $data['image_path'] = basename($request->file('image')->store('carousel', 'public'));
+        } else {
+            $data['image_path'] = '/champ poster.jpg';
+        }
+
         $maxOrder = Carousel::max('order');
         $data['order'] ??= $maxOrder === null ? 0 : ((int) $maxOrder) + 1;
         $data['is_active'] = $request->boolean('is_active', true);
@@ -93,6 +98,26 @@ class CarouselController extends Controller
         });
 
         return back()->with('success', 'Carousel order updated successfully.');
+    }
+
+    public function loadPlaceholders(): RedirectResponse
+    {
+        $placeholders = Carousel::defaultPlaceholders();
+
+        if (Carousel::count() === 0) {
+            foreach ($placeholders as $placeholder) {
+                Carousel::create($placeholder);
+            }
+        } else {
+            foreach ($placeholders as $placeholder) {
+                Carousel::firstOrCreate(
+                    ['title' => $placeholder['title']],
+                    $placeholder
+                );
+            }
+        }
+
+        return back()->with('success', 'Homepage placeholder slides loaded successfully.');
     }
 
     private function imageUrl(?string $image): ?string

@@ -46,6 +46,12 @@ class HomePageController extends Controller
 
     public function heroCarousel(): Response
     {
+        if (Carousel::count() === 0) {
+            foreach (Carousel::defaultPlaceholders() as $placeholder) {
+                Carousel::create($placeholder);
+            }
+        }
+
         return Inertia::render('Admin/HomePage/HeroCarousel', [
             'carousels' => Carousel::ordered()->get()->map(fn (Carousel $c) => [
                 'id' => $c->id,

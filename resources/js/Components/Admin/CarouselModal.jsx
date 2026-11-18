@@ -100,7 +100,7 @@ export default function CarouselModal({
                         type="text"
                         value={form.label}
                         onChange={handleChange}
-                        placeholder="e.g. Featured"
+                        placeholder="e.g. LIVE NOW"
                         className={MODAL_INPUT_CLASS}
                     />
                 </div>
@@ -118,7 +118,7 @@ export default function CarouselModal({
                         type="text"
                         value={form.title}
                         onChange={handleChange}
-                        placeholder="e.g. MSL Network Awards"
+                        placeholder="e.g. MCC Season 4: Collegiate Clash"
                         className={MODAL_INPUT_CLASS}
                     />
                 </div>
@@ -135,7 +135,7 @@ export default function CarouselModal({
                         name="subtitle"
                         value={form.subtitle}
                         onChange={handleChange}
-                        placeholder="Enter text here..."
+                        placeholder="e.g. The biggest inter-school MLBB tournament is back. Watch the regionals live."
                         className={MODAL_TEXTAREA_CLASS}
                     />
                 </div>
@@ -150,10 +150,10 @@ export default function CarouselModal({
                     <input
                         id="carousel-link"
                         name="link"
-                        type="url"
+                        type="text"
                         value={form.link}
                         onChange={handleChange}
-                        placeholder="https://"
+                        placeholder="e.g. /events, /Partnerships, or https://..."
                         className={MODAL_INPUT_CLASS}
                     />
                 </div>
