@@ -2,6 +2,8 @@ export const PUBLIC_ROUTES = Object.freeze({
     home: '/',
     about: '/About',
     contact: '/ContactUs',
+    faq: '/FAQ',
+    generalAffairs: '/GeneralAffairs',
     campus: '/Campus',
     contents: '/ContentsAndSocialMedia',
     partnerships: '/Partnerships',
@@ -41,7 +43,7 @@ export const ABOUT_ITEMS = [
     { label: 'Campus', href: PUBLIC_ROUTES.campus, activePaths: ['/about/campus', comingSoonHref('campus')] },
     { label: 'Contents & Social Media', href: PUBLIC_ROUTES.contents, activePaths: ['/about/contents-social-media', '/Contents&SocialMedia', '/content-media'] },
     { label: 'Partnerships', href: PUBLIC_ROUTES.partnerships, activePaths: ['/about/partnerships', '/partner', comingSoonHref('partnerships')] },
-    { label: 'General Affairs', originalHref: '/GeneralAffairs', href: comingSoonHref('general-affairs'), comingSoon: true },
+    { label: 'General Affairs', href: PUBLIC_ROUTES.generalAffairs, activePaths: ['/about/general-affairs', '/GeneralAffairs'] },
 ];
 
 export const PROGRAMS_ITEMS = [

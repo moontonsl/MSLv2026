@@ -158,17 +158,7 @@ Route::get('/', function () {
             'image' => $slide->image_path ? (\Illuminate\Support\Str::startsWith($slide->image_path, '/') ? $slide->image_path : \Illuminate\Support\Facades\Storage::disk('public')->url('carousel/' . $slide->image_path)) : '/champ poster.jpg',
         ])->values(),
         'statistics' => $statistics,
-        'networkLogos' => \App\Models\NetworkOrganization::where('is_active', true)
-            ->orderBy('order')
-            ->get()
-            ->map(fn (\App\Models\NetworkOrganization $org) => [
-                'id' => $org->id,
-                'src' => $org->logo_url,
-                'alt' => $org->name,
-                'name' => $org->name,
-                'link' => $org->link,
-            ])
-            ->values(),
+        'networkLogos' => \App\Models\NetworkOrganization::publicLogos(),
         'bookmarkedPrograms' => \Illuminate\Support\Facades\Schema::hasTable('programs')
             ? \App\Models\Program::query()
                 ->where('is_active', true)
@@ -223,7 +213,9 @@ Route::redirect('/terms-of-service', '/TermsAndConditions', 301);
 
 // Dedicated public Network page; Campus and admin routes remain separate.
 Route::get('/MSLNetwork', function () {
-    return Inertia::render('MSLNetwork');
+    return Inertia::render('MSLNetwork', [
+        'networkLogos' => \App\Models\NetworkOrganization::publicLogos(),
+    ]);
 })->name('msl.network');
 Route::redirect('/programs/msl-network', '/MSLNetwork', 301);
 
@@ -237,6 +229,18 @@ Route::post('/ContactUs', [ContactController::class, 'store'])
     ->middleware('throttle:5,1')
     ->name('contact.store');
 Route::redirect('/contact', '/ContactUs', 301);
+
+Route::get('/FAQ', function () {
+    return Inertia::render('FAQ/Index', [
+        'faqs' => Faq::query()
+            ->where('is_active', true)
+            ->orderByDesc('is_pinned')
+            ->orderBy('id')
+            ->get(['id', 'category', 'question', 'answer']),
+    ]);
+})->name('faq');
+Route::redirect('/faq', '/FAQ', 301);
+Route::redirect('/faqs', '/FAQ', 301);
 Route::redirect('/contact-us', '/ContactUs', 301);
 
 
@@ -396,7 +400,7 @@ Route::redirect('/about/partnerships', '/Partnerships', 301);
 Route::redirect('/partner', '/Partnerships', 301);
 
 Route::get('/GeneralAffairs', function () {
-    return Inertia::render('About');
+    return Inertia::render('GeneralAffairs/Index');
 })->name('general.affairs');
 Route::redirect('/about/general-affairs', '/GeneralAffairs');
 

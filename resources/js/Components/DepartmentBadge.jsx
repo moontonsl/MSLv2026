@@ -2,6 +2,7 @@ const TONES = {
     purple: 'border-purple-500/50 bg-purple-900/30 text-purple-300',
     blue: 'border-blue-500/30 bg-blue-950/40 text-blue-300',
     gold: 'border-brand-500/30 bg-brand-500/10 text-brand-500',
+    green: 'border-green-500/30 bg-green-950/40 text-green-400',
 };
 
 export default function DepartmentBadge({ icon: Icon, tone = 'purple', className = '', children }) {

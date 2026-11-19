@@ -1,0 +1,65 @@
+/* General Affairs page. Same section rhythm and type scale as the Campus page
+   (Campus.module.css .page rules), with the department's green accent. */
+.page > section {
+    padding-block: 64px;
+    scroll-margin-top: 112px;
+}
+.page > section:first-child {
+    padding-top: 32px;
+    padding-bottom: 48px;
+}
+.page h2 {
+    font-family: var(--font-manrope);
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.0002em;
+}
+.page h3 {
+    font-family: 'Raleway', var(--font-inter);
+    font-weight: 700;
+}
+@media (min-width: 1024px) {
+    .page > section { padding-block: 96px; }
+    .page > section:first-child { padding-top: 80px; padding-bottom: 64px; }
+    .page h2 { font-size: 48px; }
+}
+@media (min-width: 1280px) {
+    .page h2 { font-size: 60px; }
+}
+
+.page :where(a[href], button):focus-visible {
+    outline: 2px solid #4ade80;
+    outline-offset: 4px;
+}
+
+/* Cards: hover/focus in each card's own accent (RGB triplet in --accent). */
+.card {
+    position: relative;
+    --accent: 74 222 128;
+    --hover-outline-color: rgb(var(--accent));
+    transition: border-color 180ms cubic-bezier(0.23, 1, 0.32, 1), background-color 180ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.card:focus-within { border-color: rgb(var(--accent) / 60%); background-color: #1a1a1a; }
+@media (hover: hover) and (pointer: fine) {
+    .card:hover { border-color: rgb(var(--accent) / 60%); background-color: #1a1a1a; }
+}
+.cardIcon { transition: transform 240ms cubic-bezier(0.23, 1, 0.32, 1); }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .card:hover .cardIcon { transform: scale(1.1); }
+}
+
+/* Buttons: colour-only hover, like the other department pages. */
+.primaryButton, .secondaryButton { transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease; }
+.primaryButton:hover, .primaryButton:focus-visible { background-color: #22c55e; color: #fff; }
+.primaryButton:active { background-color: #15803d; }
+.secondaryButton:hover, .secondaryButton:focus-visible { border-color: #4ade80; background-color: #10261a; color: #fff; }
+
+.portraitImage { transition: transform 650ms cubic-bezier(0.23, 1, 0.32, 1); }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .heroPhoto:hover .portraitImage { transform: scale(1.05); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page *, .page *::before, .page *::after { transition: none !important; animation: none !important; }
+}

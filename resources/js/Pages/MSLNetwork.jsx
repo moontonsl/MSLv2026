@@ -99,7 +99,7 @@ function TierPanel({ tier }) {
     );
 }
 
-export default function MSLNetwork() {
+export default function MSLNetwork({ networkLogos = [] }) {
     const [tierId, setTierId] = useState('c');
     const [preview, setPreview] = useState(null);
     const selectedTier = NETWORK_TIERS.find((tier) => tier.id === tierId);
@@ -125,7 +125,7 @@ export default function MSLNetwork() {
                 <div className={styles.allianceStrip}>
                     <div className={styles.container}>
                         {/* Same curved 3D logo wall as the Home page */}
-                        <NetworkLogoWall logos={homeData.network.logos} />
+                        <NetworkLogoWall logos={networkLogos.length > 0 ? networkLogos : homeData.network.logos} />
                     </div>
                 </div>
 
