@@ -14,7 +14,7 @@ export const campusPillars = [
     {
         title: 'Community Management',
         description:
-            'We monitor the health of 150+ MSL Communities. This involves enforcing community guidelines, conflict resolution, and ensuring every student leader has the resources to run their local hub effectively.',
+            'We monitor the health of 100+ MSL Communities. This involves enforcing community guidelines, conflict resolution, and ensuring every student leader has the resources to run their local hub effectively.',
         Icon: Target,
     },
     {

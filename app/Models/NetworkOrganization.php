@@ -8,6 +8,22 @@ use Illuminate\Support\Str;
 
 class NetworkOrganization extends Model
 {
+    public static function publicLogos(): \Illuminate\Support\Collection
+    {
+        return static::query()
+            ->where('is_active', true)
+            ->orderBy('order')
+            ->get()
+            ->map(fn (self $org) => [
+                'id' => $org->id,
+                'src' => $org->logo_url,
+                'alt' => $org->name,
+                'name' => $org->name,
+                'link' => $org->link,
+            ])
+            ->values();
+    }
+
     protected $fillable = [
         'name',
         'logo_path',

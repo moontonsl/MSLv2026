@@ -11,6 +11,8 @@ import CommunityVoicesSection from "./Components/CommunityVoicesSection";
 import ChooseYourPathSection from "./Components/ChooseYourPathSection";
 import FAQSection from "./Components/FAQSection";
 
+const showCommunityVoicesHomepage = false;
+
 export default function Home({
     pinnedFaqs = [],
     heroSlides = [],
@@ -54,7 +56,9 @@ export default function Home({
     };
 
     const shouldShowCommunity =
-        Boolean(communityVisible) && communityData.voices.length > 0;
+        showCommunityVoicesHomepage &&
+        Boolean(communityVisible) &&
+        communityData.voices.length > 0;
 
     return (
         <MainLayout fullWidth>
