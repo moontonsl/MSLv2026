@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
-import { ArrowRight, Building2, Gem, GraduationCap, Layers, Network, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Building2, Gem, GraduationCap, Layers, Network, ShieldCheck, X } from 'lucide-react';
 import MainLayout from '@/Layouts/MainLayout';
 import DepartmentBadge from '@/Components/DepartmentBadge';
 import ContentDetailModal from '@/Components/ContentDetailModal';
 import HoverOutline from '@/Components/HoverOutline';
-import { CAMPAIGNS, CORE_PROGRAMS, NETWORK_BENEFITS, PARTNER_STATS, PARTNERSHIP_DIVISIONS, PARTNERSHIP_LEADERS, PARTNERSHIP_LINKS } from '@/data/partnershipsData';
+import { CAMPAIGNS, CORE_PROGRAMS, NETWORK_BENEFITS, PARTNER_STATS, PARTNERSHIP_DIVISIONS, PARTNERSHIP_HEAD, PARTNERSHIP_TEAM, PARTNERSHIP_TEAM_GROUPS, PARTNERSHIP_LINKS } from '@/data/partnershipsData';
 import type from './ContentMedia.module.css';
 import styles from './Partnerships.module.css';
 
@@ -21,11 +21,46 @@ function ProgramLink({ program }) {
     );
 }
 
+function TeamCard({ profile, onOpen }) {
+    return (
+        <button type="button" aria-haspopup="dialog" onClick={() => onOpen(profile)} className={`${styles.leaderCard} cursor-pointer`} aria-label={`Enlarge ${profile.name} photo`}>
+            <div className={`portrait-glass ${styles.teamPortraitFrame}`} style={profile.portraitFrame}>
+                <img src={profile.image} alt="" loading="lazy" />
+            </div>
+            <span><small>{profile.role}</small><strong>{profile.name}</strong></span>
+            <HoverOutline color="#F2C21A" />
+        </button>
+    );
+}
+
+function FeaturedTeamHead({ profile, onOpen }) {
+    return (
+        <article className={styles.featuredLeader}>
+            <button type="button" onClick={() => onOpen(profile)} aria-label={`Enlarge ${profile.name} photo`} aria-haspopup="dialog" className={`portrait-glass relative ${styles.leaderImage} cursor-pointer`}>
+                <img src={profile.image} alt={profile.name} loading="lazy" />
+            </button>
+            <div className={styles.leaderCopy}>
+                <p className="text-xs font-bold uppercase tracking-widest text-brand-500">{profile.role}</p>
+                <h3>{profile.name}</h3>
+            </div>
+            <HoverOutline color="#F2C21A" />
+        </article>
+    );
+}
+
 export default function Partnerships() {
-    const [featuredId, setFeaturedId] = useState('head');
     const [detail, setDetail] = useState(null);
-    const featured = PARTNERSHIP_LEADERS.find((profile) => profile.id === featuredId) || PARTNERSHIP_LEADERS[0];
-    const openProfile = (profile) => setDetail({ ...profile, kind: 'profile' });
+    const [portrait, setPortrait] = useState(null);
+    const portraitDialog = useRef(null);
+    const openProfile = (profile) => setPortrait(profile);
+
+    useEffect(() => {
+        if (!portrait) return;
+        if (!portraitDialog.current.open) portraitDialog.current.showModal();
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        return () => { document.body.style.overflow = previousOverflow; };
+    }, [portrait]);
 
     return (
         <MainLayout fullWidth>
@@ -105,15 +140,27 @@ export default function Partnerships() {
                     </div>
                 </section>
 
-                <section id="partnership-leadership" className={styles.section} aria-labelledby="partnership-leadership-title" onMouseLeave={() => setFeaturedId('head')}>
+                <section id="partnership-leadership" className={styles.section} aria-labelledby="partnership-leadership-title">
                     <div className={styles.container}>
-                        <div className={styles.sectionIntro}><h2 id="partnership-leadership-title" className={type.sectionTitle}>Our Leadership Team</h2><p className={`mt-3 text-gray-400 ${type.sectionDescription}`}>We build bridges between passion and profession.</p></div>
-                        <article className={styles.featuredLeader}>
-                            <button type="button" onClick={() => openProfile(featured)} aria-label={`View ${featured.name}'s profile`} aria-haspopup="dialog" className={styles.leaderImage}><img src={featured.image} alt={featured.name} loading="lazy" /></button>
-                            <div className={styles.leaderCopy}><p className="text-xs font-bold uppercase tracking-widest text-brand-500">{featured.role}</p><h3>{featured.name}</h3><blockquote>{featured.quote || featured.description}</blockquote></div>
-                            <HoverOutline color="#F2C21A" />
-                        </article>
-                        <div className="mt-12 border-t border-neutral-800 pt-8 lg:mt-16"><h3 className="mb-6 text-sm font-bold text-gray-400">Functional Division Heads</h3><div className={styles.leaderGrid}>{PARTNERSHIP_LEADERS.slice(1).map((profile) => <button key={profile.id} type="button" aria-haspopup="dialog" onMouseEnter={() => { if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) setFeaturedId(profile.id); }} onFocus={() => setFeaturedId(profile.id)} onClick={() => openProfile(profile)} className={styles.leaderCard} aria-label={`View ${profile.name}'s profile`}><img src={profile.image} alt="" loading="lazy" /><span><small>{profile.role}</small><strong>{profile.name}</strong></span><HoverOutline color="#F2C21A" /></button>)}</div></div>
+                        <div className={styles.sectionIntro}><h2 id="partnership-leadership-title" className={type.sectionTitle}>Meet the Partnership Team</h2><p className={`mt-3 text-gray-400 ${type.sectionDescription}`}>We build bridges between passion and profession.</p></div>
+                        <div className="mt-12 lg:mt-20"><FeaturedTeamHead profile={PARTNERSHIP_HEAD} onOpen={openProfile} /></div>
+                        {PARTNERSHIP_TEAM_GROUPS.map((group) => {
+                            const members = PARTNERSHIP_TEAM.filter((profile) => profile.division === group.id);
+                            const head = members.find((profile) => profile.isHead);
+                            const Icon = group.icon;
+                            return (
+                                <section key={group.id} aria-labelledby={`partnership-team-${group.id}`} className={styles.teamGroup}>
+                                    <div className={styles.teamGroupHeading}>
+                                        <span className={styles.teamGroupIcon}><Icon aria-hidden="true" /></span>
+                                        <h3 id={`partnership-team-${group.id}`} className={type.subsectionTitle}>{group.title}</h3>
+                                    </div>
+                                    {head && <FeaturedTeamHead profile={head} onOpen={openProfile} />}
+                                    <div className={styles.leaderGrid}>
+                                        {members.filter((profile) => !profile.isHead).map((profile) => <TeamCard key={profile.id} profile={profile} onOpen={openProfile} />)}
+                                    </div>
+                                </section>
+                            );
+                        })}
                     </div>
                 </section>
 
@@ -127,7 +174,21 @@ export default function Partnerships() {
                     </div>
                 </section>
             </div>
-            <ContentDetailModal open={Boolean(detail)} onClose={() => setDetail(null)} title={detail?.name || detail?.title || ''} subtitle={detail?.role || 'Partnership Department'} titleClassName="text-brand-500" renderTab={() => detail && <div className="mx-auto max-w-2xl">{detail.kind === 'profile' && <img src={detail.image} alt={detail.name} className="mx-auto mb-6 max-h-[55dvh] w-full object-contain" />}<p className="text-base leading-7 text-gray-300">{detail.quote || detail.description}</p></div>} />
+            <ContentDetailModal open={Boolean(detail)} onClose={() => setDetail(null)} title={detail?.name || detail?.title || ''} subtitle={detail?.role || 'Partnership Department'} titleClassName="text-brand-500" tabs={[{ id: 'overview', label: 'Overview' }]} renderTab={() => detail && <div className="mx-auto max-w-2xl"><p className="text-base leading-7 text-gray-300">{detail.quote || detail.description}</p></div>} />
+            <dialog
+                ref={portraitDialog}
+                onClose={() => setPortrait(null)}
+                onClick={(event) => { if (event.target === event.currentTarget) portraitDialog.current.close(); }}
+                aria-label={portrait ? `${portrait.name} photo` : 'Team photo'}
+                className="fixed inset-0 m-auto h-fit max-h-none w-fit max-w-none overflow-visible border-0 bg-transparent p-0 text-white backdrop:bg-black/90"
+            >
+                {portrait && <>
+                    <button type="button" onClick={() => portraitDialog.current.close()} aria-label="Close image preview" className="fixed right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-black/70 hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#F2C21A]">
+                        <X className="h-5 w-5" aria-hidden="true" />
+                    </button>
+                    <img src={portrait.image} alt={portrait.name} className="block h-[90dvh] w-[92vw] object-contain" />
+                </>}
+            </dialog>
         </MainLayout>
     );
 }

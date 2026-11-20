@@ -63,3 +63,21 @@
 @media (prefers-reduced-motion: reduce) {
     .page *, .page *::before, .page *::after { transition: none !important; animation: none !important; }
 }
+
+.teamPortrait { position: relative; aspect-ratio: 3 / 4; overflow: hidden; background: #f2c21a; }
+.teamPortraitImage {
+    position: absolute;
+    width: var(--portrait-width, 100%);
+    max-width: none;
+    height: auto;
+    min-height: calc(100% - var(--portrait-top, 0%));
+    object-fit: cover;
+    object-position: center top;
+    left: var(--portrait-left, 0%);
+    top: var(--portrait-top, 0%);
+    transform-origin: center 30%;
+    transition: transform 500ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .teamPortrait:hover .teamPortraitImage { transform: scale(1.02); }
+}

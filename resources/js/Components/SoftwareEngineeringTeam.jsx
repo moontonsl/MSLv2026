@@ -2,7 +2,7 @@ import HoverOutline from '@/Components/HoverOutline';
 import typography from '@/Pages/ContentMedia.module.css';
 
 // Same team layout as Campus ("Meet the Campus Team") and Contents & Social Media
-// ("Leadership"): a featured card for the division head, then square member cards.
+// ("Leadership"): a featured portrait for the division head, then member cards.
 const ACCENT = '#22D3EE'; // cyan accent for the Software Engineering Division
 
 function Portrait({ person, className = '' }) {
@@ -42,7 +42,7 @@ export default function SoftwareEngineeringTeam({ division }) {
 
             {/* Division head */}
             <article className="relative mx-auto mt-10 flex max-w-3xl flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[#111111] p-4 md:flex-row lg:mt-14 lg:p-5">
-                <div className={`${typography.zoomFrame} relative aspect-square w-full shrink-0 overflow-hidden rounded-t-2xl md:w-5/12 md:self-center md:rounded-l-2xl md:rounded-tr-none`}>
+                <div className={`${head.image ? 'portrait-glass' : ''} ${typography.zoomFrame} relative aspect-[3/4] w-full shrink-0 overflow-hidden rounded-t-2xl md:w-5/12 md:self-center md:rounded-l-2xl md:rounded-tr-none`}>
                     <Portrait person={head} />
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col justify-center rounded-b-2xl bg-[#1e1e1e] p-4 sm:p-6 md:rounded-b-none md:rounded-r-2xl">

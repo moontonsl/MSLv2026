@@ -3,7 +3,7 @@ export const campusTeamProfiles = [
         "id": "tres",
         "name": "Tres",
         "role": "Department Head",
-        "image": "/Images/Campus/Team/tres.png",
+        "image": "/Images/Campus/Team/gold/tres-head.png",
         "email": null,
         "schools": [],
         "group": "support",

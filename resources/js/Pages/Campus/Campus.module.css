@@ -84,7 +84,7 @@
     --hover-bg: rgb(242 194 26 / 6%);
 }
 /* Team portraits: outline in their blue hover border colour. */
-.teamPortrait { --hover-outline-color: rgb(96 165 250); }
+.teamPortrait { --hover-outline-color: #F2C21A; }
 .cardIcon { transition: transform 240ms cubic-bezier(0.23, 1, 0.32, 1); }
 .portraitImage { transition: transform 650ms cubic-bezier(0.23, 1, 0.32, 1); }
 .stretchedLink::after { content: ''; position: absolute; inset: 0; z-index: 10; border-radius: inherit; }
@@ -173,9 +173,9 @@
 }
 .facebookButton:active { background-color: #1464CC; }
 
-.page .teamPortrait:focus-visible { border-color: rgb(96 165 250 / 60%); }
+.page .teamPortrait:focus-visible { border-color: rgb(242 194 26 / 60%); }
 @media (hover: hover) and (pointer: fine) {
-    .page .teamPortrait:hover { border-color: rgb(96 165 250 / 60%); }
+    .page .teamPortrait:hover { border-color: rgb(242 194 26 / 60%); }
 }
 
 /* Keep every team portrait square and protect the face during hover zoom. */
@@ -200,12 +200,12 @@
 
 /* =========================================================================
    Meet the Campus Team — talent-style cards (same look as Contents & Social
-   Media "On-Air Talent"): tall 3:4 portrait, greyscale until hovered/focused,
-   name + region over a dark fade. Accent stays Campus blue.
+   Media "On-Air Talent"): tall 3:4 portrait with its gold background visible,
+   name + region over a dark fade. Accent follows the site gold.
    ========================================================================= */
 .talentCard {
     position: relative;
-    --hover-outline-color: rgb(96 165 250);
+    --hover-outline-color: rgb(242 194 26);
 }
 
 .talentFrame {
@@ -228,11 +228,10 @@
 }
 
 .page .talentCard:focus-visible,
-.page .talentCard:focus-within { border-color: rgb(96 165 250 / 60%); }
+.page .talentCard:focus-within { border-color: rgb(242 194 26 / 60%); }
 
 @media (hover: hover) and (pointer: fine) {
-    .talentFrame img { filter: grayscale(1); }
-    .page .talentCard:hover { border-color: rgb(96 165 250 / 60%); }
+    .page .talentCard:hover { border-color: rgb(242 194 26 / 60%); }
     .talentCard:hover .talentFrame img,
     .talentCard:focus-visible .talentFrame img,
     .talentCard:focus-within .talentFrame img { filter: grayscale(0); }

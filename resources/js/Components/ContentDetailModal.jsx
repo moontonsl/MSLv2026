@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import { MODAL_CLOSE_BUTTON_CLASS } from './Admin/adminModalFormStyles';
 import styles from '@/Pages/ContentMedia.module.css';
 
-export default function ContentDetailModal({ open, onClose, title, subtitle, leading, tabs = [], activeTab = 'overview', onTabChange, renderTab, titleClassName = 'text-white' }) {
+export default function ContentDetailModal({ open, onClose, onPanelLeave, title, subtitle, leading, tabs = [], activeTab = 'overview', onTabChange, renderTab, titleClassName = 'text-white' }) {
     const scrollArea = useRef(null);
     const selectedIndex = Math.max(0, tabs.findIndex((tab) => tab.id === activeTab));
 
@@ -18,7 +18,7 @@ export default function ContentDetailModal({ open, onClose, title, subtitle, lea
             <div className="fixed inset-0 bg-black/80" aria-hidden="true" />
             <div className="fixed inset-0 overflow-y-auto">
                 <div className="flex min-h-full items-center justify-center p-4 sm:p-6">
-                    <DialogPanel className="flex h-[calc(100dvh_-_2rem)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-neutral-700 bg-[#0D0D0D] text-white sm:h-[min(48rem,90dvh)]">
+                    <DialogPanel onPointerLeave={(event) => { if (event.pointerType === 'mouse') onPanelLeave?.(); }} className="flex h-[calc(100dvh_-_2rem)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-neutral-700 bg-[#0D0D0D] text-white sm:h-[min(48rem,90dvh)]">
                         <div className="flex shrink-0 items-center justify-between gap-4 border-b border-neutral-800 px-5 py-4 sm:px-8 sm:py-5">
                             <div className="flex min-w-0 items-center gap-3 sm:gap-4">
                                 {leading}
