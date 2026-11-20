@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\PendingUserController;
 use App\Http\Controllers\Admin\StudentLeaderController;
 use App\Http\Controllers\Admin\RegionalAdminManagementController;
 use App\Http\Controllers\Admin\SchoolManagementController;
+use App\Http\Controllers\Admin\CommunityDirectoryController;
 use App\Http\Controllers\Admin\CarouselController;
 use App\Http\Controllers\Admin\EventPhotoController;
 use App\Http\Controllers\Admin\EventCalendarController;
@@ -278,6 +279,9 @@ Route::get('/Campus', function () {
             'campus_sls' => \App\Models\Setting::getValue('campus_stat_student_leaders', 115),
             'communities' => \App\Models\Setting::getValue('campus_stat_communities', 99),
         ],
+        'communityDirectory' => \Illuminate\Support\Facades\Schema::hasTable('community_directory_entries')
+            ? \App\Models\CommunityDirectoryEntry::publicEntries()
+            : null,
     ]);
 })->name('campus');
 Route::redirect('/about/campus', '/Campus', 301);
@@ -365,7 +369,11 @@ Route::redirect('/member/campus-tournament', '/Tournament/MemberInvite');
 
 /** Staging campus listing page (separate from CT product UI) */
 Route::get('/CampusTournament', function () {
-    return Inertia::render('Campus/Index');
+    return Inertia::render('Campus/Index', [
+        'communityDirectory' => \Illuminate\Support\Facades\Schema::hasTable('community_directory_entries')
+            ? \App\Models\CommunityDirectoryEntry::publicEntries()
+            : null,
+    ]);
 })->name('campus.tournament.listing');
 
 Route::get('/Programs', function () {
@@ -491,6 +499,22 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
         ->middleware('admin.permission:manage_homepage')->name('admin.home-page.community-voice.update');
     Route::delete('/admin/home-page/community-voice/{communityVoice}', [HomePageController::class, 'deleteCommunityVoice'])
         ->middleware('admin.permission:manage_homepage')->name('admin.home-page.community-voice.delete');
+
+    Route::get('/admin/community-directory', [CommunityDirectoryController::class, 'index'])
+        ->middleware('admin.permission:manage_community_directory|manage_schools|manage_homepage')
+        ->name('admin.community-directory.index');
+    Route::post('/admin/community-directory', [CommunityDirectoryController::class, 'store'])
+        ->middleware('admin.permission:manage_community_directory|manage_schools|manage_homepage')
+        ->name('admin.community-directory.store');
+    Route::put('/admin/community-directory/{communityDirectoryEntry}', [CommunityDirectoryController::class, 'update'])
+        ->middleware('admin.permission:manage_community_directory|manage_schools|manage_homepage')
+        ->name('admin.community-directory.update');
+    Route::patch('/admin/community-directory/{communityDirectoryEntry}/toggle', [CommunityDirectoryController::class, 'toggleActive'])
+        ->middleware('admin.permission:manage_community_directory|manage_schools|manage_homepage')
+        ->name('admin.community-directory.toggle');
+    Route::delete('/admin/community-directory/{communityDirectoryEntry}', [CommunityDirectoryController::class, 'destroy'])
+        ->middleware('admin.permission:manage_community_directory|manage_schools|manage_homepage')
+        ->name('admin.community-directory.delete');
 
     Route::get('/Admin/FAQs', [FaqController::class, 'index'])
         ->middleware('admin.permission:manage_faq')->name('admin.faq');

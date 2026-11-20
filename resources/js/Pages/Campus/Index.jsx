@@ -121,26 +121,27 @@ function SectionHeading({ title, description, centered = true }) {
     );
 }
 
-export default function Campus({ campusMetrics = {} }) {
+export default function Campus({ campusMetrics = {}, communityDirectory = null }) {
     // Backend keys remain stable when the visible labels or order change.
     // Nullish fallback preserves a genuine zero supplied by the server.
     const heroStats = campusStats.map((stat) => ({
         ...stat,
         value: campusMetrics[stat.id] ?? stat.value,
     }));
+    const directoryEntries = Array.isArray(communityDirectory) ? communityDirectory : campusCommunities;
     const [search, setSearch] = useState('');
     const [region, setRegion] = useState('All Regions');
     const [currentPage, setCurrentPage] = useState(1);
 
     const regions = useMemo(
-        () => ['All Regions', ...new Set(campusCommunities.map((community) => community.region))],
-        [],
+        () => ['All Regions', ...new Set(directoryEntries.map((community) => community.region))],
+        [directoryEntries],
     );
 
     const filteredCommunities = useMemo(() => {
         const query = search.trim().toLowerCase();
 
-        return campusCommunities.filter((community) => {
+        return directoryEntries.filter((community) => {
             const matchesRegion = region === 'All Regions' || community.region === region;
             const matchesQuery =
                 !query ||
@@ -151,7 +152,7 @@ export default function Campus({ campusMetrics = {} }) {
 
             return matchesRegion && matchesQuery;
         });
-    }, [region, search]);
+    }, [directoryEntries, region, search]);
 
     const pageCount = Math.max(1, Math.ceil(filteredCommunities.length / PAGE_SIZE));
     const pageCommunities = filteredCommunities.slice(
@@ -506,9 +507,11 @@ export default function Campus({ campusMetrics = {} }) {
                                     </div>
 
                                     {filteredCommunities.length ? (
-                                        pageCommunities.map((community) => (
+                                        pageCommunities.map((community) => {
+                                            const isExternalHref = /^https?:\/\//i.test(community.href || '');
+                                            return (
                                             <article
-                                                key={community.school}
+                                                key={community.id ?? community.school}
                                                 className={`${styles.communityRow} relative cursor-pointer grid gap-3 border-t border-white/10 bg-[#121212] px-6 py-4 first:border-t-0 md:grid-cols-[2fr_1fr_0.7fr_0.6fr_0.8fr] md:items-center md:gap-4 md:bg-[#111111] md:p-5 md:px-6`}
                                             >
                                                 <div className="flex min-w-0 items-center gap-4 border-b border-white/20 pb-4 pr-20 md:border-0 md:pb-0 md:pr-0">
@@ -527,7 +530,7 @@ export default function Campus({ campusMetrics = {} }) {
 
                                                         <div className="flex items-center gap-2">
                                                             <Users className="h-4 w-4 text-gray-500" />
-                                                            {community.members.toLocaleString()}
+                                                            {Number(community.members || 0).toLocaleString()}
                                                         </div>
                                                     </div>
 
@@ -545,11 +548,13 @@ export default function Campus({ campusMetrics = {} }) {
                                                 
                                                 {/* MEMBERS (DESKTOP ONLY) */}
                                                 <div className="hidden md:flex items-center gap-2 text-sm font-semibold text-gray-300">
-                                                    {community.members.toLocaleString()}
+                                                    {Number(community.members || 0).toLocaleString()}
                                                 </div>
                                                 
                                                 <a
-                                                    href={community.href}
+                                                    href={community.href || '#accreditation'}
+                                                    target={isExternalHref ? '_blank' : undefined}
+                                                    rel={isExternalHref ? 'noopener noreferrer' : undefined}
                                                     className={`${styles.stretchedLink} ${styles.facebookButton} mt-1 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#1877F2] px-4 py-2 text-sm font-semibold text-white md:mt-0 md:w-fit`}
                                                 >
                                                     <FaFacebook className="h-5 w-5 shrink-0" aria-hidden="true" />
@@ -557,7 +562,8 @@ export default function Campus({ campusMetrics = {} }) {
                                                 </a>
                                                 <HoverOutline color="rgb(96 165 250)" />
                                             </article>
-                                        ))
+                                            );
+                                        })
                                     ) : (
                                         <div className="bg-[#111111] px-6 py-14 text-center text-gray-400">
                                             No campus communities match your search.

@@ -24,6 +24,7 @@ class AdminPermissionController extends Controller
             ['id' => 'manage_sl', 'name' => 'Student Leaders', 'description' => 'Appoint, assign campus chapters, and oversee student leaders', 'group' => 'Student operations'],
             ['id' => 'manage_regional_admins', 'name' => 'Regional Admin Accounts', 'description' => 'Designate regional directors and oversee island cluster territories', 'group' => 'Student operations'],
             ['id' => 'manage_schools', 'name' => 'School Directory & Management', 'description' => 'Browse, filter, edit, and oversee affiliated colleges and basic education institutions', 'group' => 'Student operations'],
+            ['id' => 'manage_community_directory', 'name' => 'Community Directory', 'description' => 'Add, edit, and manage official campus communities shown in the public Community Directory', 'group' => 'Student operations'],
 
             ['id' => 'manage_mcc_seasons', 'name' => 'MCC Seasons', 'description' => 'Manage Mobile Legends Campus Championship tournament seasons', 'group' => 'Website content'],
             ['id' => 'manage_msl_events', 'name' => 'Public MSL Events', 'description' => 'Organize collegiate cups, brackets, stages, and match scheduling', 'group' => 'Website content'],
@@ -102,6 +103,7 @@ class AdminPermissionController extends Controller
                     'manage_sl',
                     'manage_regional_admins',
                     'manage_schools',
+                    'manage_community_directory',
                     'promote_students',
                 ],
             ],

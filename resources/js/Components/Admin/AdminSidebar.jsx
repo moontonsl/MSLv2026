@@ -3,7 +3,7 @@ import {
     LayoutGrid, Megaphone, MessageSquare, Gauge, Shield, Users,
     CalendarDays, Image, Settings, Trophy, UserCog, Link2,
     AlertTriangle, ClipboardCheck, ClipboardList, School, MapPin, X,
-    ChevronDown, Images, BarChart3, Building2, Layers, Quote,
+    ChevronDown, Images, BarChart3, Building2, Layers, Quote, Globe2,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -29,6 +29,7 @@ const NAV_SECTIONS = [
             { id: 'pending-users', label: 'Pending Verification', href: '/Admin/Users/Pending', icon: ClipboardCheck, permission: 'manage_accounts' },
             { id: 'regional-admins', label: 'Regional Admins', href: '/admin/regional-admin-management', icon: MapPin, permission: 'manage_regional_admins' },
             { id: 'school-management', label: 'School Management', href: '/Admin/SchoolManagement', icon: School, permission: 'manage_schools' },
+            { id: 'community-directory', label: 'Community Directory', href: '/admin/community-directory', icon: Globe2, permission: 'manage_community_directory|manage_schools|manage_homepage' },
             { id: 'home-community-voice', label: 'MSL Campus Community', href: '/admin/home-page/community-voice', icon: Quote, permission: 'manage_homepage' },
         ],
     },
