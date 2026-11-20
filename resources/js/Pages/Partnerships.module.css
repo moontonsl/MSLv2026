@@ -56,17 +56,22 @@
 .divisionIcon { display: inline-grid; width: 48px; height: 48px; place-items: center; border: 1px solid color-mix(in srgb, var(--division-accent) 40%, transparent); border-radius: 9px; color: var(--division-accent); background: color-mix(in srgb, var(--division-accent) 10%, transparent); }
 .divisionCard h3 { margin-top: 24px; font-family: 'Raleway', var(--font-inter); font-size: 18px; font-weight: 700; }
 .divisionCard p { margin-top: 12px; color: #9ca3af; font-size: 14px; line-height: 22px; }
-.featuredLeader { display: flex; flex-direction: column; max-width: 760px; margin: 48px auto 0; padding: 16px; border: 1px solid #35301d; border-radius: 28px; background: #111; overflow: hidden; }
+.featuredLeader { position: relative; display: flex; flex-direction: column; max-width: 760px; margin: 0 auto 32px; padding: 16px; border: 1px solid #35301d; border-radius: 28px; background: #111; overflow: hidden; }
 .leaderImage { overflow: hidden; aspect-ratio: 1; border-radius: 16px 16px 0 0; }
-.leaderImage img { height: 100%; width: 100%; object-fit: cover; transition: transform 500ms ease-out; }
+.leaderImage img { height: 100%; width: 100%; object-fit: cover; object-position: center top; transition: transform 500ms ease-out; }
 .leaderCopy { padding: 24px; background: #20201d; border-radius: 0 0 16px 16px; }
 .leaderCopy h3 { margin-top: 10px; font-family: 'Raleway', var(--font-inter); font-size: 24px; font-weight: 700; line-height: 32px; }
 .leaderCopy blockquote { margin-top: 20px; padding-left: 16px; border-left: 1px solid #e5bc25; color: #d1d5db; font-size: 14px; font-style: italic; line-height: 23px; }
-.leaderGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.leaderCard { position: relative; aspect-ratio: 1; overflow: hidden; border: 1px solid #303025; border-radius: 12px; background: #141414; text-align: left; }
-.leaderCard img { width: 100%; height: 100%; object-fit: cover; transition: transform 500ms ease-out; }
-.leaderCard > span { position: absolute; inset: auto 0 0; padding: 40px 12px 12px; background: linear-gradient(transparent, #050505); }
-.leaderCard small { display: block; color: #f2c21a; font-size: 9px; line-height: 14px; text-transform: uppercase; }
+.teamGroup { margin-top: 56px; }
+.teamGroupHeading { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
+.teamGroupIcon { display: grid; flex-shrink: 0; place-items: center; width: 40px; height: 40px; border: 1px solid rgb(242 194 26 / 20%); border-radius: 8px; color: #f2c21a; background: rgb(242 194 26 / 10%); }
+.teamGroupIcon svg { width: 20px; height: 20px; }
+.leaderGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.leaderCard { position: relative; width: 100%; overflow: hidden; border: 1px solid #303025; border-radius: 16px; background: #141414; text-align: left; }
+.teamPortraitFrame { position: relative; aspect-ratio: 3 / 4; overflow: hidden; background: #f2c21a; }
+.teamPortraitFrame img { position: absolute; inset: auto; left: var(--portrait-left, 0%); top: var(--portrait-top, 0%); width: var(--portrait-width, 100%); max-width: none; height: auto; transform-origin: center 30%; transition: transform 500ms ease-out; }
+.leaderCard > span { position: absolute; inset: auto 0 0; padding: 64px 12px 12px; background: linear-gradient(transparent, rgb(0 0 0 / 70%), #050505); }
+.leaderCard small { display: block; color: #f2c21a; font-size: 10px; line-height: 16px; text-transform: uppercase; }
 .leaderCard strong { display: block; margin-top: 4px; font-size: 14px; line-height: 20px; }
 .workSection { padding-block: 64px; border-top: 1px solid #262626; background: #0d0d0d; }
 .workGrid { display: grid; gap: 20px; max-width: 680px; margin: 36px auto 0; }
@@ -86,17 +91,24 @@
     .workCard:hover { border-color: color-mix(in srgb, var(--work-accent) 60%, transparent); background: color-mix(in srgb, var(--work-accent) 8%, #0a0a08); }
     .brandWork:hover { background: color-mix(in srgb, var(--work-accent) 10%, #07110a); }
     .divisionCard:hover { background: #222; border-color: var(--division-accent); }
-    .flagship:hover > img, .campaignCard:hover img, .leaderCard:hover img, .leaderImage:hover img { transform: scale(1.05); }
+    .flagship:hover > img, .campaignCard:hover img { transform: scale(1.05); }
+    .leaderCard:hover, .leaderCard:focus-within { border-color: rgb(242 194 26 / 60%); }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .leaderCard:hover img, .leaderImage:hover img { transform: scale(1.02); }
 }
 @media (min-width: 640px) {
     .container { padding-inline: 24px; }
     .heroActions { flex-direction: row; justify-content: center; }
     .campaignGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .benefitGrid, .initiativeGrid, .divisionGrid, .workGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .leaderGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .leaderGrid { gap: 24px; }
     .featuredLeader { flex-direction: row; }
     .leaderImage { flex-shrink: 0; width: 42%; align-self: center; border-radius: 16px 0 0 16px; }
     .leaderCopy { flex: 1; display: flex; flex-direction: column; justify-content: center; border-radius: 0 16px 16px 0; }
+}
+@media (min-width: 768px) {
+    .leaderGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (min-width: 1024px) {
     .container { padding-inline: 32px; }
@@ -119,8 +131,11 @@
     .networkPanel { grid-template-columns: 1.5fr 1fr; padding: 40px; gap: 48px; }
     .networkTitle { font-size: 44px; }
     .divisionGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .featuredLeader { margin-top: 64px; }
-    .leaderGrid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .teamGroup { margin-top: 80px; }
+    .teamGroupIcon { width: 56px; height: 56px; }
+    .teamGroupIcon svg { width: 28px; height: 28px; }
+    .leaderGrid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .leaderCard strong { font-size: 18px; line-height: 28px; }
     .workSection { padding-block: 80px; }
 }
 @media (prefers-reduced-motion: reduce) {

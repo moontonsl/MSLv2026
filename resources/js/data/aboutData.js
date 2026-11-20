@@ -1,3 +1,8 @@
+import { campusTeamProfiles } from '@/Pages/Campus/campusTeamData';
+import { LEADERSHIP_PROFILES } from './leadershipData';
+import { PARTNERSHIP_HEAD } from './partnershipsData';
+import { GA_LEADERSHIP } from './generalAffairsData';
+
 export const CORE_VALUES = [
     {
         title: 'Integrity Above All',
@@ -91,32 +96,6 @@ export const ORGANIZATION_DEPARTMENTS = [
     },
 ];
 
-export const NATIONAL_ADMINS = [
-    {
-        name: 'Mary Clarence S. Pasco',
-        roleLines: ['CAMPUS', 'MANAGER'],
-        roleColor: 'text-blue-400',
-        image: '/profile-background.jpg',
-    },
-    {
-        name: 'Mary Clarence S. Pasco',
-        roleLines: ['CONTENTS & SOCIAL MEDIA', 'MANAGER'],
-        roleColor: 'text-purple-400',
-        image: '/profile-background.jpg',
-    },
-    {
-        name: 'Mary Clarence S. Pasco',
-        roleLines: ['PARTNERSHIPS', 'MANAGER'],
-        roleColor: 'text-[#FBBF24]',
-        image: '/profile-background.jpg',
-    },
-    {
-        name: 'Mary Clarence S. Pasco',
-        roleLines: ['GENERAL AFFAIRS', 'MANAGER'],
-        roleColor: 'text-green-400',
-        image: '/profile-background.jpg',
-    },
-];
 
 // Software Engineering Division. Add `image: '/Images/About/Engineering/<name>.png'`
 // to any member to replace the monogram placeholder with their photo.
@@ -127,7 +106,7 @@ export const SOFTWARE_ENGINEERING_DIVISION = {
         id: 'jenard',
         name: 'Jenard',
         role: 'Software Engineering Division Head',
-        image: null,
+        image: '/Images/About/Engineering/jenard-gold.png',
         statement: 'Leads the team that designs, builds, and ships the MSL Philippines web platform.',
     },
     members: [
@@ -141,3 +120,12 @@ export const SOFTWARE_ENGINEERING_DIVISION = {
         { id: 'jabu', name: 'Jabu', role: 'Tech Support', image: null },
     ],
 };
+
+const campusHead = campusTeamProfiles.find((profile) => profile.id === 'tres');
+const contentHead = LEADERSHIP_PROFILES.find((profile) => profile.id === 'mary');
+export const NATIONAL_ADMINS = [
+    { name: campusHead.name, image: campusHead.image, roleLines: ['CAMPUS', 'DEPARTMENT HEAD'], roleColor: 'text-[#F2C21A]' },
+    { name: contentHead.displayName || contentHead.name, image: contentHead.image, portraitFrame: { ...contentHead.portraitFrame, '--portrait-left': '-18%' }, roleLines: ['CONTENTS & SOCIAL MEDIA', 'DEPARTMENT HEAD'], roleColor: 'text-[#F2C21A]' },
+    { name: PARTNERSHIP_HEAD.name, image: PARTNERSHIP_HEAD.image, portraitFrame: { '--portrait-width': '140%', '--portrait-left': '-38%', '--portrait-top': '0%' }, roleLines: ['PARTNERSHIPS', 'DEPARTMENT HEAD'], roleColor: 'text-[#F2C21A]' },
+    { name: GA_LEADERSHIP.head.name, image: GA_LEADERSHIP.head.image, portraitFrame: GA_LEADERSHIP.head.portraitFrame, roleLines: ['GENERAL AFFAIRS', 'DEPARTMENT HEAD'], roleColor: 'text-[#F2C21A]' },
+];

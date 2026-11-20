@@ -13,9 +13,9 @@ This guide sets up MSLv2026 with PHP, Laravel, MySQL, and Vite. Run all commands
 Install the following:
 
 - Git
-- PHP 8.2 or later, with the `pdo_mysql` extension enabled
+- PHP 8.2 or later, with `pdo_mysql`, `mbstring`, `zip`, `gd`, `fileinfo`, `curl`, and `openssl` enabled (plus `pdo_sqlite` for tests)
 - Composer
-- Node.js and npm
+- Node.js 22.12 or later and npm
 - MySQL 8.0 or later
 - Laravel Herd (recommended)
 
@@ -203,10 +203,10 @@ To run a specific project seeder, use its class name:
 
 ```text
 php artisan db:seed --class=PermissionSeeder
-php artisan db:seed --class=SuperAdminSeeder
+php artisan db:seed --class=AdminUserSeeder
 ```
 
-Run `PermissionSeeder` before `SuperAdminSeeder` so the administrator can receive the available permissions.
+Set `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_NAME`, and `ADMIN_ROLE="Super Admin"` in `.env` before running `AdminUserSeeder`. Without the email and password, it skips creating an administrator. The default seeder runs both permission and administrator seeders.
 
 To delete all tables, rebuild them, and run the default seeder:
 

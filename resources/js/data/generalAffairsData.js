@@ -57,12 +57,13 @@ export const GA_LEADERSHIP = {
         id: 'zander',
         name: 'John Zander Del Valle',
         role: 'Department Head · National Admin for General Affairs',
-        image: '/Images/GeneralAffairs/Team/Zander.jpg',
+        image: '/Images/GeneralAffairs/Team/zander-gold.png',
+        portraitFrame: { '--portrait-width': '110%', '--portrait-left': '-5%', '--portrait-top': '-3%' },
         email: 'zander.generalaffairs.mslph@gmail.com',
         quote: 'Our department oversees the administrative backbone of our organization, ensuring that operations run seamlessly. Our focus is to strengthen organizational governance, optimizing internal communication systems and providing administrative support to empower our teams and foster a collaborative work environment.',
     },
     divisionHeads: [
-        { id: 'leo', name: 'Leo Angelo Calo', role: 'Dispute Manager and Support', image: '/Images/GeneralAffairs/Team/Leeyan.jpg' },
-        { id: 'gabriel', name: 'Gabriel Matawaran', role: 'Internal Reporting Division Head', image: '/Images/GeneralAffairs/Team/Gab.jpg' },
+        { id: 'leo', name: 'Leo Angelo Calo', role: 'Dispute Manager and Support', image: '/Images/GeneralAffairs/Team/leeyan-gold.png' },
+        { id: 'gabriel', name: 'Gabriel Matawaran', role: 'Internal Reporting Division Head', image: '/Images/GeneralAffairs/Team/gab-gold.png' },
     ],
 };

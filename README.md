@@ -12,6 +12,10 @@ Quick start:
 composer install
 npm install
 cp .env.example .env
+# Configure MySQL DB_* settings and optional ADMIN_* credentials in .env first.
 php artisan key:generate
 php artisan migrate --seed
 npm run dev
+```
+
+Run `php artisan serve` in another terminal to start the backend.

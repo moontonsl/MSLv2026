@@ -29,7 +29,7 @@ function Pill({ icon: Icon, children }) {
 
 function Monogram({ person, className = '' }) {
     if (person.image) {
-        return <img src={person.image} alt="" className={`${typography.posterImage} h-full w-full object-cover object-top ${className}`} />;
+        return <img src={person.image} alt="" style={person.portraitFrame} className={`${styles.teamPortraitImage} ${className}`} />;
     }
     return (
         <span
@@ -251,7 +251,7 @@ export default function GeneralAffairsIndex() {
                             </div>
 
                             <article className="relative mx-auto mt-12 flex max-w-3xl flex-col overflow-hidden rounded-[2rem] border border-neutral-800 bg-[#111111] p-4 md:flex-row lg:mt-20 lg:p-5">
-                                <div className={`${typography.zoomFrame} aspect-square w-full shrink-0 overflow-hidden rounded-t-2xl md:w-5/12 md:self-center md:rounded-l-2xl md:rounded-tr-none`}>
+                                <div className={`portrait-glass ${styles.teamPortrait} aspect-[3/4] w-full shrink-0 overflow-hidden rounded-t-2xl md:w-5/12 md:self-center md:rounded-l-2xl md:rounded-tr-none`}>
                                     <Monogram person={head} />
                                 </div>
                                 <div className="flex min-w-0 flex-1 flex-col justify-center rounded-b-2xl bg-[#1e1e1e] p-4 sm:p-6 md:rounded-b-none md:rounded-r-2xl">
@@ -266,7 +266,7 @@ export default function GeneralAffairsIndex() {
                                 <h3 className="mb-6 font-inter text-sm font-bold uppercase leading-5 text-gray-400 lg:text-xl lg:leading-7">Functional Division Heads</h3>
                                 <div className="grid grid-cols-2 gap-3 sm:gap-6 md:grid-cols-3 lg:grid-cols-5">
                                     {divisionHeads.map((person) => (
-                                        <article key={person.id} className={`${typography.zoomFrame} relative aspect-[3/4] w-full overflow-hidden rounded-2xl border border-neutral-800 bg-[#111111]`}>
+                                        <article key={person.id} className={`portrait-glass ${styles.teamPortrait} relative aspect-[3/4] w-full overflow-hidden rounded-2xl border border-neutral-800 bg-[#111111]`}>
                                             <Monogram person={person} />
                                             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/70 to-transparent p-3 pt-16 sm:p-4 sm:pt-20">
                                                 <h4 className="mb-1 font-inter text-xs font-bold leading-[18px] text-white sm:text-sm lg:text-lg lg:leading-7">{person.name}</h4>

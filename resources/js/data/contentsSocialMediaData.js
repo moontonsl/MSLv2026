@@ -173,27 +173,32 @@ export const PRODUCTION_STREAMERS = [
     {
         name: 'ZaiVyl',
         started: 'June 25, 2024',
-        image: '/Images/CSM/Streamers/zaivyl.jpg',
+        image: '/Images/CSM/Streamers/zaivyl-gold.png',
+        portraitFrame: { '--talent-width': '116%', '--talent-left': '-7%', '--talent-top': '-7%' },
     },
     {
         name: 'Prof B.',
         started: 'May 2022',
-        image: '/Images/CSM/Streamers/prof-b.png',
+        image: '/Images/CSM/Streamers/prof-b-gold.png',
+        portraitFrame: { '--talent-width': '209%', '--talent-left': '-50%', '--talent-top': '-8.5%' },
     },
     {
         name: 'KELLY',
         started: 'November 2021',
-        image: '/Images/CSM/Streamers/kelly.jpg',
+        image: '/Images/CSM/Streamers/kelly-gold.png',
+        portraitFrame: { '--talent-width': '127%', '--talent-left': '-15%', '--talent-top': '-13%' },
     },
     {
         name: 'BossKam',
         started: 'February 24, 2024',
-        image: '/Images/CSM/Streamers/bosskam.jpg',
+        image: '/Images/CSM/Streamers/bosskam-gold.png',
+        portraitFrame: { '--talent-width': '130%', '--talent-left': '-18%', '--talent-top': '-17%' },
     },
     {
         name: 'PARENG JP',
         started: 'Pandemic Era',
-        image: '/Images/CSM/Streamers/pareng-jp.jpg',
+        image: '/Images/CSM/Streamers/pareng-jp-gold.png',
+        portraitFrame: { '--talent-width': '162%', '--talent-left': '-49%', '--talent-top': '-38%' },
     },
 ];
 

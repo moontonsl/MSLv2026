@@ -306,7 +306,7 @@ export default function ContentMedia() {
                         </div>
 
                         <div className="mb-8 flex items-center gap-3">
-                            <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-green-500/20 bg-green-500/10 lg:h-14 lg:w-14"><Mic className="h-5 w-5 text-green-400 lg:h-7 lg:w-7" /></span>
+                            <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#F2C21A]/20 bg-[#F2C21A]/10 lg:h-14 lg:w-14"><Mic className="h-5 w-5 text-[#F2C21A] lg:h-7 lg:w-7" /></span>
                             <h3 className={`text-white ${styles.subsectionTitle}`}>On-Air Talent</h3>
                         </div>
                         <div className="grid grid-cols-2 gap-3 sm:gap-6 md:grid-cols-3 lg:grid-cols-5">
@@ -315,28 +315,28 @@ export default function ContentMedia() {
                                     key={streamer.name}
                                     className={`${styles.poster} ${styles.talentCard} overflow-hidden rounded-2xl border border-neutral-800 bg-[#111111]`}
                                 >
-                                    <div className="relative aspect-[3/4] w-full overflow-hidden bg-neutral-800">
+                                    <div className={styles.leadershipFrame} style={streamer.portraitFrame}>
                                         <img
                                             src={streamer.image}
                                             alt={streamer.name}
                                             loading="lazy"
-                                            className={`${styles.posterImage} ${styles.talentImage} h-full w-full object-cover object-top`}
+                                            className={styles.talentImage}
                                         />
                                         <button
                                             type="button"
                                             onClick={() => openPoster({ src: streamer.image, title: streamer.name })}
                                             aria-label={`View ${streamer.name} full size`}
-                                            className="absolute inset-0 z-10 cursor-zoom-in rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-teal-300"
+                                            className="absolute inset-0 z-10 cursor-pointer rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-[#F2C21A]"
                                         />
                                         <div className="absolute bottom-0 z-[2] w-full bg-gradient-to-t from-black via-black/70 to-transparent p-3 sm:p-4">
                                             <h3 className="mb-1 font-inter text-xs font-bold leading-[18px] text-white sm:text-sm lg:text-lg lg:leading-7">{streamer.name}</h3>
-                                            <p className="text-[10px] font-semibold uppercase leading-4 tracking-wide text-teal-300 lg:text-xs lg:leading-[18px]">
+                                            <p className="text-[10px] font-semibold uppercase leading-4 tracking-wide text-[#F2C21A] lg:text-xs lg:leading-[18px]">
                                                 <span className="block">Streamer</span>
                                                 <span className="mt-1 block text-xs font-normal normal-case text-gray-200">{streamer.started}</span>
                                             </p>
                                         </div>
                                     </div>
-                                    <HoverOutline color="rgb(45 212 191)" />
+                                    <HoverOutline color="#F2C21A" />
                                 </article>
                             ))}
                         </div>

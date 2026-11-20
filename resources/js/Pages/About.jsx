@@ -5,6 +5,7 @@ import {
     SOFTWARE_ENGINEERING_DIVISION,
 } from '@/data/aboutData';
 import MainLayout from '@/Layouts/MainLayout';
+import portraitStyles from './GeneralAffairs/GeneralAffairs.module.css';
 import { Head } from '@inertiajs/react';
 import { ArrowRight, ChevronLeft } from 'lucide-react';
 import HoverOutline from '@/Components/HoverOutline';
@@ -146,28 +147,30 @@ export default function About() {
                         </div>
                     </section>
 
-                    <section>
+                    <section id="department-heads">
                         <div className="text-center">
                             <h2 className="mb-4 text-3xl font-bold">
-                                Meet Our National Admin
+                                Meet Our Department Heads
                             </h2>
                             <p className="mx-auto mb-10 max-w-xl text-body-sm text-gray-200 sm:text-body-md">
                                 The core team dedicated to serving the student-gaming
                                 community across the Philippines.
                             </p>
                         </div>
-                        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+                        <div className="flex flex-wrap justify-center gap-6">
                             {NATIONAL_ADMINS.map((admin) => (
                                 <article
                                     key={`${admin.name}-${admin.roleLines.join('-')}`}
-                                    className="relative group overflow-hidden rounded-2xl border border-white/10 bg-bg-surface transition-colors hover:bg-bg-cardHover"
+                                    className="relative group w-[calc(50%-0.75rem)] overflow-hidden rounded-2xl border border-white/10 bg-bg-surface transition-colors hover:bg-bg-cardHover md:w-[calc(33.333333%-1rem)] lg:w-[calc(25%-1.125rem)]"
                                 >
-                                    <div className="relative aspect-[3/4] w-full overflow-hidden bg-neutral-800">
-                                        <img
+                                    <div className={`portrait-glass ${portraitStyles.teamPortrait} relative aspect-[3/4] w-full overflow-hidden`}>
+                                        {admin.image ? <img
                                             src={admin.image}
                                             alt={admin.name}
-                                            className="h-full w-full object-cover object-top"
-                                        />
+                                            style={admin.portraitFrame}
+                                            loading="lazy"
+                                            className={portraitStyles.teamPortraitImage}
+                                        /> : <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center bg-[#F2C21A] text-7xl font-extrabold text-black/70">{admin.name.charAt(0)}</span>}
                                         <div className="absolute bottom-0 w-full bg-gradient-to-t from-[#0A0A0A] to-transparent p-3 sm:p-4">
                                             <h3 className="mb-0.5 text-body-xs font-normal text-white sm:mb-1 sm:text-base sm:font-bold">
                                                 {admin.name}

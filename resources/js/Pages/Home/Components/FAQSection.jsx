@@ -98,7 +98,7 @@ export default function FAQSection({ data }) {
 
                 <div className="mt-10 flex justify-center md:mt-12">
                     <ButtonLink href={PUBLIC_ROUTES.faq} variant="outline" className="w-full sm:w-auto sm:min-w-[220px]">
-                        View More
+                        View All FAQs
                         <ArrowRight className="h-4 w-4" aria-hidden="true" />
                     </ButtonLink>
                 </div>

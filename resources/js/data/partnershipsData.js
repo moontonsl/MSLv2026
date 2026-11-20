@@ -51,10 +51,22 @@ export const NETWORK_BENEFITS = [
     { title: 'Network Perks', icon: Network, href: PARTNERSHIP_LINKS.network, items: ['Exclusive Campaign Access', 'Esports Training & Seminars', 'Education Modules', 'Partner Visibility'] },
 ];
 
-// Presentation placeholders from the supplied reference, pending approved team profiles.
-export const PARTNERSHIP_LEADERS = [
-    { id: 'head', name: 'Mary Clarence S. Pasco', role: 'Department Head', image: '/profile-background.jpg', quote: 'We are the voice and the face of the MSL network. Our mission is to tell the stories of our student leaders, amplify the excitement of our tournaments, and create content that resonates with the collegiate gaming community.' },
-    ...['Jamie Rivera', 'Mark Corpus', 'Leo Valdez', 'Nina Santos', 'Kenji Tanaka', 'Ria Jose'].map((name, index) => ({
-        id: `division-${index}`, name, role: PARTNERSHIP_DIVISIONS[index].title, image: '/profile-background.jpg', description: PARTNERSHIP_DIVISIONS[index].description,
-    })),
+const teamPortrait = (id) => `/Images/Partnerships/Team/${id}-gold.png`;
+
+export const PARTNERSHIP_HEAD = { id: 'aileen-sunga', name: 'Aileen Sunga', role: 'Partnership Department Head', image: teamPortrait('aileen-sunga') };
+
+// Region labels stand in for display names until the team provides them.
+export const PARTNERSHIP_TEAM = [
+    { id: 'pm-jm', name: 'JM', role: 'Project Manager', division: 'activations', image: teamPortrait('pm-jm'), portraitFrame: { '--portrait-width': '125%', '--portrait-left': '-12.5%', '--portrait-top': '-2%' } },
+    { id: 'pm-bonoan', name: 'Bonoan', role: 'Project Manager', division: 'activations', image: teamPortrait('pm-bonoan') },
+    { id: 'ro-south-luzon', name: 'Southern Luzon', role: 'Regional Officer', division: 'network', image: teamPortrait('ro-south-luzon') },
+    { id: 'ro-north-central-luzon', name: 'Morales', role: 'Regional Officer — Northern & Central Luzon', division: 'network', image: teamPortrait('ro-north-central-luzon') },
+    { id: 'ro-mindanao', name: 'Mindanao', role: 'Regional Officer', division: 'network', image: teamPortrait('ro-mindanao'), portraitFrame: { '--portrait-width': '140%', '--portrait-left': '-20%', '--portrait-top': '-6%' } },
+    { id: 'pulmano', name: 'Pulmano', role: 'Sponsorships Head', division: 'sponsorships', isHead: true, image: teamPortrait('pulmano') },
+    { id: 'sioson', name: 'Sioson', role: 'Sponsorships Officer', division: 'sponsorships', image: teamPortrait('sioson') },
+    { id: 'sanchez', name: 'Sanchez', role: 'Sponsorships Officer', division: 'sponsorships', image: teamPortrait('sanchez') },
+    { id: 'dolor', name: 'Dolor', role: 'Sponsorships Officer', division: 'sponsorships', image: teamPortrait('dolor') },
 ];
+
+export const PARTNERSHIP_TEAM_GROUPS = ['activations', 'network', 'sponsorships']
+    .map((id) => PARTNERSHIP_DIVISIONS.find((division) => division.id === id));

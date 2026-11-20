@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
-import { Head } from '@inertiajs/react';
-import { Search, X } from 'lucide-react';
+import { Head, Link } from '@inertiajs/react';
+import { ArrowLeft, ArrowRight, Search, X } from 'lucide-react';
 import MainLayout from '@/Layouts/MainLayout';
+import { PUBLIC_ROUTES } from '@/data/siteNavigation';
 import HoverOutline from '@/Components/HoverOutline';
 import { homeData } from '@/data/homeData';
 import { FAQ_PAGE_CATEGORIES, faqPageCategoryOf } from '@/data/faqCategories';
@@ -32,9 +33,14 @@ export default function FaqIndex({ faqs = [] }) {
 
             <section aria-labelledby="faq-page-title" className="bg-[#050505] pb-20 pt-10 font-sans text-white md:pb-28 md:pt-16">
                 <HomeContainer>
+                    <Link href={PUBLIC_ROUTES.home} className="mb-6 inline-flex min-h-11 items-center gap-2 text-sm text-gray-300 hover:text-[#F2C21A]">
+                        <ArrowLeft className="h-4 w-4" aria-hidden="true" /> Back to Home
+                    </Link>
                     <h1 id="faq-page-title" className="text-center font-heading text-[40px] font-bold leading-[1.1] text-white md:text-[64px]">
                         Frequently Asked Questions
                     </h1>
+
+                    <p className="mx-auto mt-5 max-w-2xl text-center text-base leading-7 text-gray-300">Browse all questions about joining MSL, campus activities, partnerships, and more.</p>
 
                     {/* Search */}
                     <label className="relative mx-auto mt-8 block max-w-[640px] md:mt-10">
@@ -44,7 +50,7 @@ export default function FaqIndex({ faqs = [] }) {
                             type="search"
                             value={query}
                             onChange={(event) => setQuery(event.target.value)}
-                            placeholder="Search articles..."
+                            placeholder="Search questions and answers..."
                             className="w-full rounded-xl border border-white/20 bg-[#18181b] py-3 pl-11 pr-4 text-sm text-white placeholder:text-gray-500 focus:border-[#F2C21A] focus:outline-none focus:ring-0"
                         />
                     </label>
@@ -74,8 +80,16 @@ export default function FaqIndex({ faqs = [] }) {
                         })}
                     </ul>
 
+                    <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+                        <button type="button" aria-pressed={!category} onClick={() => { setCategory(null); setQuery(''); }} className={`inline-flex min-h-11 items-center gap-2 rounded-xl border px-5 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#F2C21A] ${!category ? 'border-[#F2C21A]/60 bg-[#F2C21A]/10 text-[#F2C21A]' : 'border-white/20 text-gray-300 hover:border-[#F2C21A]/60'}`}>
+                            All FAQs <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs">{allFaqs.length}</span>
+                        </button>
+                        <p className="text-sm text-gray-400">Select a question to read its answer.</p>
+                    </div>
+
                     {/* Questions */}
                     <div className="mx-auto mt-12 max-w-[1062px] md:mt-14">
+                        <h2 className="mb-5 text-xl font-bold text-white">{activeLabel || 'All FAQs'}</h2>
                         {category || query ? (
                             <div className="mb-5 flex flex-wrap items-center justify-between gap-3 text-sm text-gray-400">
                                 <p role="status" aria-live="polite">
@@ -105,6 +119,11 @@ export default function FaqIndex({ faqs = [] }) {
                                 No questions found. Try another keyword or category.
                             </p>
                         )}
+                    </div>
+                    <div className="mx-auto mt-12 max-w-[1062px] rounded-2xl border border-[#F2C21A]/20 bg-[#121212] px-6 py-8 text-center">
+                        <h2 className="text-xl font-bold">Still have a question?</h2>
+                        <p className="mt-3 text-sm leading-6 text-gray-300">Our team can help with questions you couldn't find here.</p>
+                        <Link href={PUBLIC_ROUTES.contact} className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#F2C21A] px-6 py-3 text-sm font-bold text-black hover:bg-[#F8D54B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F2C21A]">Contact Us <ArrowRight className="h-4 w-4" aria-hidden="true" /></Link>
                     </div>
                 </HomeContainer>
             </section>
