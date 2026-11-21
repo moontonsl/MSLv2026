@@ -19,9 +19,17 @@ class CampusTournamentSeeder extends Seeder
 {
     public function run(): void
     {
-        if (app()->environment('production')) {
-            throw new RuntimeException('CampusTournamentSeeder contains development credentials and cannot run in production.');
+        $deploymentTestSeedingEnabled = (bool) config('campus-tournament.deployment_test_seeding.enabled', false);
+        $configuredPassword = (string) config('campus-tournament.deployment_test_seeding.password');
+
+        if (app()->environment('production')
+            && (! $deploymentTestSeedingEnabled || mb_strlen($configuredPassword) < 12)) {
+            throw new RuntimeException(
+                'CampusTournamentSeeder requires explicit test-seeding opt-in and a 12-character password in production.'
+            );
         }
+
+        $password = $configuredPassword ?: 'password';
 
         $this->call([
             CampusTypeSeeder::class,
@@ -30,7 +38,7 @@ class CampusTournamentSeeder extends Seeder
             PermissionSeeder::class,
         ]);
 
-        $fixtures = DB::transaction(function (): array {
+        $fixtures = DB::transaction(function () use ($password): array {
             $institution = Institution::query()->updateOrCreate(
                 ['name' => 'Laguna State Polytechnic University'],
                 ['acronym' => 'LSPU', 'status' => 'active'],
@@ -58,7 +66,7 @@ class CampusTournamentSeeder extends Seeder
                 [
                     'name' => 'Ramon Mendoza',
                     'email' => 'lspu.regional.admin@example.test',
-                    'password' => 'password',
+                    'password' => $password,
                     'status' => 'active',
                     'user_type' => 'Regional Admin',
                     'email_verified_at' => now(),
@@ -71,7 +79,7 @@ class CampusTournamentSeeder extends Seeder
                 [
                     'name' => 'Angela Reyes',
                     'email' => 'lspu.student.leader@example.test',
-                    'password' => 'password',
+                    'password' => $password,
                     'status' => 'active',
                     'user_type' => 'Student Leader',
                     'email_verified_at' => now(),
@@ -84,7 +92,7 @@ class CampusTournamentSeeder extends Seeder
                 [
                     'name' => 'Carlos Santos',
                     'email' => 'lspu.core.admin@example.test',
-                    'password' => 'password',
+                    'password' => $password,
                     'status' => 'active',
                     'user_type' => 'Super Admin',
                     'email_verified_at' => now(),
@@ -96,7 +104,7 @@ class CampusTournamentSeeder extends Seeder
                 ['email' => 'lspu.core.admin@example.test'],
                 [
                     'name' => 'Carlos Santos',
-                    'password' => 'password',
+                    'password' => $password,
                     'role' => 'Super Admin',
                     'permissions' => [],
                 ],
@@ -117,7 +125,7 @@ class CampusTournamentSeeder extends Seeder
                 ['lspu_unverified_player', 'Mark Castillo', 'SINAG', false],
             ];
 
-            $players = collect($manualTestAccounts)->map(function (array $account, int $index) use ($campus, $regionalAdmin): User {
+            $players = collect($manualTestAccounts)->map(function (array $account, int $index) use ($campus, $regionalAdmin, $password): User {
                 [$username, $name, $ign, $verified] = $account;
                 $user = User::query()->updateOrCreate(
                     ['username' => $username],
@@ -125,7 +133,7 @@ class CampusTournamentSeeder extends Seeder
                         'name' => $name,
                         'email' => str_replace('_', '.', $username).'@example.test',
                         'email_verified_at' => $verified ? now() : null,
-                        'password' => 'password',
+                        'password' => $password,
                         'status' => 'active',
                         'user_type' => 'Student',
                         'ml_id' => '99000'.str_pad((string) ($index + 1), 3, '0', STR_PAD_LEFT),
@@ -146,7 +154,7 @@ class CampusTournamentSeeder extends Seeder
                     'name' => 'Elena Torres',
                     'email' => 'campus.tournament.outsider@example.test',
                     'email_verified_at' => now(),
-                    'password' => 'password',
+                    'password' => $password,
                     'status' => 'active',
                     'user_type' => 'Student',
                     'ml_id' => '99000999',
@@ -173,14 +181,14 @@ class CampusTournamentSeeder extends Seeder
             [
                 ['Institution', $fixtures['institution']->name],
                 ['Campus ID', $fixtures['campus']->id],
-                ['Regional Admin', 'lspu_regional_admin / password'],
-                ['Student Leader', 'lspu_student_leader / password'],
-                ['Core/Super Admin (/admin/login)', 'lspu.core.admin@example.test / password'],
-                ['Premade Captain', 'lspu_premade_captain / password'],
-                ['Premade Invitees', 'lspu_premade_player_2 through lspu_premade_player_5 / password'],
-                ['Solo Players', 'lspu_solo_player_1 through lspu_solo_player_6 / password'],
-                ['Unverified Player', 'lspu_unverified_player / password'],
-                ['Unaffiliated Player', 'campus_tournament_outsider / password'],
+                ['Regional Admin', 'lspu_regional_admin / configured fixture password'],
+                ['Student Leader', 'lspu_student_leader / configured fixture password'],
+                ['Core/Super Admin (/admin/login)', 'lspu.core.admin@example.test / configured fixture password'],
+                ['Premade Captain', 'lspu_premade_captain / configured fixture password'],
+                ['Premade Invitees', 'lspu_premade_player_2 through lspu_premade_player_5 / configured fixture password'],
+                ['Solo Players', 'lspu_solo_player_1 through lspu_solo_player_6 / configured fixture password'],
+                ['Unverified Player', 'lspu_unverified_player / configured fixture password'],
+                ['Unaffiliated Player', 'campus_tournament_outsider / configured fixture password'],
             ],
         );
     }
