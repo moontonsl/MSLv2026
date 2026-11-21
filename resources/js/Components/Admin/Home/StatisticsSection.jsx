@@ -122,22 +122,20 @@ export default function StatisticsSection({ initialStatistics = {}, liveCounts =
                             <button
                                 type="button"
                                 onClick={() => handleModeChange('live')}
-                                className={`rounded-md px-3 py-1.5 text-center text-xs font-semibold transition-colors ${
-                                    mode === 'live'
+                                className={`rounded-md px-3 py-1.5 text-center text-xs font-semibold transition-colors ${mode === 'live'
                                         ? 'bg-[#FBBF24] text-black shadow'
                                         : 'text-gray-400 hover:text-white'
-                                }`}
+                                    }`}
                             >
                                 Live Database Counts
                             </button>
                             <button
                                 type="button"
                                 onClick={() => handleModeChange('custom')}
-                                className={`rounded-md px-3 py-1.5 text-center text-xs font-semibold transition-colors ${
-                                    mode === 'custom'
+                                className={`rounded-md px-3 py-1.5 text-center text-xs font-semibold transition-colors ${mode === 'custom'
                                         ? 'bg-[#FBBF24] text-black shadow'
                                         : 'text-gray-400 hover:text-white'
-                                }`}
+                                    }`}
                             >
                                 Custom Marketing Values
                             </button>
@@ -149,6 +147,10 @@ export default function StatisticsSection({ initialStatistics = {}, liveCounts =
                             const valueKey = stat.key;
                             const labelKey = `${stat.key}_label`;
                             const liveCount = liveCounts[stat.liveKey] ?? 0;
+                            const displayLiveCount =
+                                typeof liveCount === 'number'
+                                    ? liveCount.toLocaleString()
+                                    : String(liveCount);
 
                             return (
                                 <div
@@ -174,12 +176,12 @@ export default function StatisticsSection({ initialStatistics = {}, liveCounts =
                                             {/* Live DB Reference pill */}
                                             <div className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-neutral-700 bg-neutral-900/80 px-2.5 py-1 text-[11px] text-gray-300">
                                                 <Database className="h-3 w-3 shrink-0 text-emerald-400" />
-                                                <span>DB: <strong className="text-white">{Number(liveCount).toLocaleString()}</strong></span>
+                                                <span>DB: <strong className="text-white">{displayLiveCount}</strong></span>
                                                 <button
                                                     type="button"
                                                     onClick={() => handleUseLive(stat)}
                                                     className="ml-1 text-[10px] font-semibold text-[#FBBF24] hover:underline"
-                                                    title={`Copy live count (${liveCount}+) into input`}
+                                                    title={`Copy live count (${displayLiveCount}) into input`}
                                                 >
                                                     Use
                                                 </button>
