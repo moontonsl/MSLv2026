@@ -45,7 +45,7 @@ class AdminPermissionsTest extends TestCase
                 ->where('adminUsers.0.is_super_admin', false)
                 ->where('adminUsers.1.is_super_admin', true)
                 ->where('allPermissions.0.group', 'Student operations')
-                ->where('allPermissions.12.group', 'Website content')
+                ->where('allPermissions.11.group', 'Website content')
                 ->where('roleOptions', ['Admin', 'Content Manager', 'Regional Admin', 'Event Manager']));
     }
 

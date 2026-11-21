@@ -2,13 +2,17 @@ import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import {
     AlertCircle,
+    CalendarDays,
     Check,
     CheckCircle2,
     Crown,
     ExternalLink,
+    Gauge,
     Layers,
+    LayoutGrid,
     LockKeyhole,
     Megaphone,
+    MessageSquare,
     Plus,
     Save,
     Search,
