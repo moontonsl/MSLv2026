@@ -14,12 +14,13 @@ use Illuminate\Validation\Rule;
 class StudentPortalController extends Controller
 {
     /**
-     * Helper check for student privilege.
+     * Helper check for authenticated portal profile access.
      */
     protected function checkStudentPrivilege()
     {
         $user = Auth::user();
-        if (!$user || $user->user_type !== 'Student') {
+        $allowedTypes = ['Student', 'Student Leader', 'SL', 'Regional Admin', 'Core Admin', 'Super Admin'];
+        if (!$user || !in_array($user->user_type, $allowedTypes, true)) {
             abort(403, 'Unauthorized access.');
         }
     }

@@ -39,6 +39,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShortLinkController;
 use App\Http\Controllers\ComingSoonController;
 use App\Http\Controllers\Student\StudentPortalController;
+use App\Http\Controllers\StudentVerificationController;
 use App\Models\Faq;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -570,6 +571,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/Profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/Profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/Profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/Verification', [StudentVerificationController::class, 'index'])->name('verification.index');
+    Route::post('/Verification/{user}/approve', [StudentVerificationController::class, 'approve'])->name('verification.approve');
+    Route::post('/Verification/{user}/reject', [StudentVerificationController::class, 'reject'])->name('verification.reject');
 
     Route::post('/campus-tournaments', [CampusTournamentController::class, 'store'])
         ->name('campus-tournaments.store');

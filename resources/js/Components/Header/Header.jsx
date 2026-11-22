@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
 import { Menu, ChevronDown, UserRound } from 'lucide-react';
-import AccountModificationModal from './AccountModificationModal';
 import MobileNavigationDrawer from './MobileNavigationDrawer';
 import { ABOUT_ITEMS, PROGRAMS_ITEMS, MAIN_LINKS, PUBLIC_ROUTES, isNavigationItemActive, isNavigationGroupActive } from '@/data/siteNavigation';
 
@@ -129,39 +128,20 @@ function DesktopNavigation({
     );
 }
 
-function AccountMenuLinks({ user, userRole, onClose, onOpenModification }) {
+function AccountMenuLinks({ userRole, guard, onClose }) {
+    const isAdminGuard = guard === 'admin';
     const isCoreAdmin = userRole === 'Core Admin' || userRole === 'Super Admin';
-    const profileHref =
-        userRole === 'Student'
-            ? '/StudentPortal'
-            : userRole === 'Regional Admin'
-              ? '/RegionalAdmin'
-              : isCoreAdmin
-                ? '/CoreAdmin'
-                : '/Admin/Dashboard';
 
-    const showSlAdmin =
-        userRole === 'SL' ||
-        userRole === 'Student Leader' ||
-        isCoreAdmin ||
-        userRole === 'Regional Admin';
+    const profileHref = isAdminGuard ? '/Admin/Profile' : '/StudentPortal';
 
-    const showCampusTournaments =
-        userRole === 'SL' ||
-        userRole === 'Student Leader' ||
-        userRole === 'Regional Admin' ||
-        isCoreAdmin;
+    const showVerification =
+        !isAdminGuard &&
+        (userRole === 'SL' ||
+            userRole === 'Student Leader' ||
+            userRole === 'Regional Admin' ||
+            isCoreAdmin);
 
-    const showModification =
-        userRole === 'SL' ||
-        userRole === 'Student Leader' ||
-        userRole === 'Regional Admin' ||
-        isCoreAdmin;
-
-    const modificationHref =
-        userRole === 'Regional Admin' || isCoreAdmin
-            ? '/RegionalAdminApproval'
-            : '/SLAdminApproval';
+    const verificationHref = '/Verification';
 
     const linkClass =
         'block w-full rounded-lg px-3 py-2.5 text-left text-sm text-white transition-colors hover:bg-white/10';
@@ -171,51 +151,14 @@ function AccountMenuLinks({ user, userRole, onClose, onOpenModification }) {
             <Link href={profileHref} className={linkClass} onClick={onClose}>
                 Profile
             </Link>
-            {showSlAdmin && (
-                <Link
-                    href={
-                        isCoreAdmin
-                            ? '/CoreAdmin'
-                            : userRole === 'Regional Admin'
-                              ? '/RegionalAdmin'
-                              : '/StudentLeader'
-                    }
-                    className={linkClass}
-                    onClick={onClose}
-                >
-                    SL Admin
+            {showVerification && (
+                <Link href={verificationHref} className={linkClass} onClick={onClose}>
+                    Verification
                 </Link>
             )}
-            {showCampusTournaments && (
-                <Link href={PUBLIC_ROUTES.tournaments} className={linkClass} onClick={onClose}>
-                    Campus Tournaments
-                </Link>
-            )}
-            {showModification && (
-                <Link href={modificationHref} className={linkClass} onClick={onClose}>
-                    Modification
-                </Link>
-            )}
-            {userRole === 'Super Admin' && (
-                <Link href="/Admin/UserRegions" className={linkClass} onClick={onClose}>
-                    User Regions
-                </Link>
-            )}
-            {(userRole === 'Regional Admin' || userRole === 'Super Admin') && (
-                <Link href="/community/create" className={linkClass} onClick={onClose}>
-                    Communities
-                </Link>
-            )}
-            <button
-                type="button"
-                className={linkClass}
-                onClick={() => {
-                    onOpenModification();
-                    onClose();
-                }}
-            >
-                Modify Account
-            </button>
+            <Link href={PUBLIC_ROUTES.tournaments} className={linkClass} onClick={onClose}>
+                Campus Tournament
+            </Link>
         </>
     );
 }
@@ -229,7 +172,6 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
     const [openDropdown, setOpenDropdown] = useState(null);
     const [mobileSubmenu, setMobileSubmenu] = useState(null);
     const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
-    const [showModificationModal, setShowModificationModal] = useState(false);
 
     const navRef = useRef(null);
     const accountRef = useRef(null);
@@ -292,7 +234,8 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
 
     const handleLogout = () => {
         setIsAccountDropdownOpen(false);
-        router.post('/logout', {}, { replace: true });
+        const logoutUrl = auth?.guard === 'admin' ? '/admin/logout' : '/logout';
+        router.post(logoutUrl, {}, { replace: true });
     };
 
     const toggleNavDropdown = (id) => {
@@ -368,12 +311,9 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                                 <div className="absolute right-0 top-full z-[60] mt-3 w-[200px] overflow-hidden rounded-2xl bg-[#1A1A1A] p-3 shadow-2xl">
                                     <div className="flex flex-col gap-0.5">
                                         <AccountMenuLinks
-                                            user={user}
                                             userRole={userRole}
+                                            guard={auth?.guard}
                                             onClose={() => setIsAccountDropdownOpen(false)}
-                                            onOpenModification={() =>
-                                                setShowModificationModal(true)
-                                            }
                                         />
                                     </div>
                                     <button
@@ -403,13 +343,6 @@ const Header = ({ isLoggedIn: isLoggedInProp }) => {
                     {MAIN_LINKS.map((item) => <NavItemLink key={item.label} item={item} url={currentUrl} onNavigate={closeNavDropdowns} mobile />)}
                 </nav>
             </MobileNavigationDrawer>
-
-            {showModificationModal && (
-                <AccountModificationModal
-                    isOpen={showModificationModal}
-                    onClose={() => setShowModificationModal(false)}
-                />
-            )}
         </header>
     );
 };
