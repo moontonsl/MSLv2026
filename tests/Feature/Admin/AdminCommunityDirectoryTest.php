@@ -4,6 +4,8 @@ namespace Tests\Feature\Admin;
 
 use App\Models\AdminUser;
 use App\Models\CommunityDirectoryEntry;
+use App\Models\Institution;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -58,20 +60,20 @@ class AdminCommunityDirectoryTest extends TestCase
         CommunityDirectoryEntry::truncate();
         $this->signInSuperAdmin();
 
-        // Create
+        // Create (with optional empty community name)
         $this->post(route('admin.community-directory.store'), [
             'school' => 'University of the Philippines Diliman',
-            'community' => 'UPD - Fighting Maroons Esports',
+            'community' => '',
             'region' => 'NCR',
             'tier' => 'Level III',
             'members' => 950,
             'href' => 'https://facebook.com/groups/updesports',
-            'order' => 1,
             'is_active' => true,
         ])->assertRedirect();
 
         $entry = CommunityDirectoryEntry::firstOrFail();
         $this->assertSame('University of the Philippines Diliman', $entry->school);
+        $this->assertSame('', $entry->community);
         $this->assertSame(950, $entry->members);
         $this->assertTrue($entry->is_active);
 
@@ -153,5 +155,36 @@ class AdminCommunityDirectoryTest extends TestCase
         $this->actingAs($limitedAdmin, 'admin');
 
         $this->get(route('admin.community-directory.index'))->assertForbidden();
+    }
+
+    public function test_school_combobox_search_returns_db_schools_with_region_and_verified_member_counts(): void
+    {
+        $this->signInSuperAdmin();
+
+        $schoolName = 'Ateneo de Davao Test University';
+        Institution::create([
+            'name' => $schoolName,
+            'acronym' => 'AdDU-TEST',
+            'region' => 'Region XI',
+            'island' => 'Mindanao',
+            'status' => 'active',
+        ]);
+
+        // 2 verified (active) users + 1 pending-review user
+        User::factory()->count(2)->create([
+            'university' => $schoolName,
+            'status' => 'active',
+        ]);
+        User::factory()->create([
+            'university' => $schoolName,
+            'status' => 'pending-review',
+        ]);
+
+        $response = $this->getJson(route('admin.community-directory.schools', ['q' => 'Ateneo de Davao Test']));
+
+        $response->assertOk()
+            ->assertJsonPath('schools.0.name', $schoolName)
+            ->assertJsonPath('schools.0.region', 'Region XI')
+            ->assertJsonPath('schools.0.verified_members_count', 2);
     }
 }

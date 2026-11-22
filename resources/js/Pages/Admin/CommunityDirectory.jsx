@@ -381,9 +381,11 @@ export default function CommunityDirectory({
                                             <div className="font-semibold text-white">
                                                 {item.school}
                                             </div>
-                                            <div className="mt-0.5 text-xs text-gray-400">
-                                                {item.community}
-                                            </div>
+                                            {item.community ? (
+                                                <div className="mt-0.5 text-xs text-gray-400">
+                                                    {item.community}
+                                                </div>
+                                            ) : null}
                                         </td>
                                         <td className="whitespace-nowrap px-4 py-3.5 text-xs font-medium text-gray-300">
                                             {item.region}

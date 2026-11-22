@@ -517,7 +517,9 @@ export default function Campus({ campusMetrics = {}, communityDirectory = null }
                                                 <div className="flex min-w-0 items-center gap-4 border-b border-white/20 pb-4 pr-20 md:border-0 md:pb-0 md:pr-0">
                                                     <div className="min-w-0">
                                                         <h3 className="font-bold leading-6 md:truncate">{community.school}</h3>
-                                                        <p className="mt-1 truncate text-xs text-gray-400">{community.community}</p>
+                                                        {community.community ? (
+                                                            <p className="mt-1 truncate text-xs text-gray-400">{community.community}</p>
+                                                        ) : null}
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-2 text-sm font-semibold text-gray-300 md:block">

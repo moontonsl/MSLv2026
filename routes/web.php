@@ -503,6 +503,9 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
     Route::get('/admin/community-directory', [CommunityDirectoryController::class, 'index'])
         ->middleware('admin.permission:manage_community_directory|manage_schools|manage_homepage')
         ->name('admin.community-directory.index');
+    Route::get('/admin/community-directory/schools', [CommunityDirectoryController::class, 'searchSchools'])
+        ->middleware('admin.permission:manage_community_directory|manage_schools|manage_homepage')
+        ->name('admin.community-directory.schools');
     Route::post('/admin/community-directory', [CommunityDirectoryController::class, 'store'])
         ->middleware('admin.permission:manage_community_directory|manage_schools|manage_homepage')
         ->name('admin.community-directory.store');

@@ -42,7 +42,7 @@ class CommunityDirectoryEntry extends Model
     {
         return static::query()
             ->where('is_active', true)
-            ->orderBy('order')
+            ->orderBy('school')
             ->orderBy('id')
             ->get()
             ->map(fn (self $entry): array => [
