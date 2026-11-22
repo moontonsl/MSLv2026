@@ -34,7 +34,11 @@ class AdminPermissionController extends Controller
             ['id' => 'manage_carousel', 'name' => 'Hero Carousel', 'description' => 'Manage homepage hero banners, promotions, and slide order', 'group' => 'Website content'],
             ['id' => 'manage_faq', 'name' => 'FAQ Manager', 'description' => 'Create and maintain student knowledge base and FAQs', 'group' => 'Website content'],
             ['id' => 'manage_footer', 'name' => 'Footer Links', 'description' => 'Update portal footer navigation and community links', 'group' => 'Website content'],
-            ['id' => 'manage_homepage', 'name' => 'Home Page Sections', 'description' => 'Manage About Section Statistics Counters, Our Programs, MSL Campus Community, and MSL Network Organizations', 'group' => 'Website content'],
+            ['id' => 'manage_statistics', 'name' => 'About Section Statistics Counters', 'description' => 'Configure live database counts or custom milestone counters displayed in the About MSL section', 'group' => 'Website content'],
+            ['id' => 'manage_programs', 'name' => 'Our Programs', 'description' => 'Manage featured MSL programs, cards, links, and homepage bookmarks', 'group' => 'Website content'],
+            ['id' => 'manage_network_organizations', 'name' => 'MSL Network Organizations', 'description' => 'Manage partner and campus organization logos and links in the MSL Network marquee', 'group' => 'Website content'],
+            ['id' => 'manage_campus_community', 'name' => 'MSL Campus Community', 'description' => 'Manage community voice stories, quotes, and student highlights', 'group' => 'Website content'],
+            ['id' => 'manage_homepage', 'name' => 'Home Page (All Sections)', 'description' => 'Full access to all homepage sections (Statistics, Programs, MSL Campus Community, MSL Network Organizations)', 'group' => 'Website content'],
             ['id' => 'manage_share_links', 'name' => 'Short Links', 'description' => 'Manage marketing short URLs, QR codes, and tracking redirects', 'group' => 'Website content'],
             ['id' => 'manage_settings', 'name' => 'System Settings', 'description' => 'Configure global system parameters, maintenance mode, and flags', 'group' => 'Website content'],
 

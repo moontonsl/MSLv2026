@@ -18,8 +18,8 @@ const NAV_SECTIONS = [
         title: "Website Management",
         items: [
             { id: 'sl-management', label: 'Account Management', href: '/admin/sl-management', icon: UserCog, permission: 'manage_sl' },
-            { id: 'home-statistics', label: 'About Section Statistics Counters', href: '/admin/home-page/statistics', icon: BarChart3, permission: 'manage_homepage' },
-            { id: 'home-programs', label: 'Our Programs', href: '/admin/home-page/programs', icon: Layers, permission: 'manage_homepage' },
+            { id: 'home-statistics', label: 'About Section Statistics Counters', href: '/admin/home-page/statistics', icon: BarChart3, permission: 'manage_statistics|manage_homepage' },
+            { id: 'home-programs', label: 'Our Programs', href: '/admin/home-page/programs', icon: Layers, permission: 'manage_programs|manage_homepage' },
             { id: 'footer', label: 'Footer Links', href: '/admin/footer', icon: LayoutGrid, permission: 'manage_footer' },
         ],
     },
@@ -30,7 +30,7 @@ const NAV_SECTIONS = [
             { id: 'regional-admins', label: 'Regional Admins', href: '/admin/regional-admin-management', icon: MapPin, permission: 'manage_regional_admins' },
             { id: 'school-management', label: 'School Management', href: '/Admin/SchoolManagement', icon: School, permission: 'manage_schools' },
             { id: 'community-directory', label: 'Community Directory', href: '/admin/community-directory', icon: Globe2, permission: 'manage_community_directory|manage_schools|manage_homepage' },
-            { id: 'home-community-voice', label: 'MSL Campus Community', href: '/admin/home-page/community-voice', icon: Quote, permission: 'manage_homepage' },
+            { id: 'home-community-voice', label: 'MSL Campus Community', href: '/admin/home-page/community-voice', icon: Quote, permission: 'manage_campus_community|manage_homepage' },
         ],
     },
     {
@@ -44,7 +44,7 @@ const NAV_SECTIONS = [
     {
         title: "The MSL Network",
         items: [
-            { id: 'home-network-organizations', label: 'MSL Network Organizations', href: '/admin/home-page/network-organizations', icon: Building2, permission: 'manage_homepage' },
+            { id: 'home-network-organizations', label: 'MSL Network Organizations', href: '/admin/home-page/network-organizations', icon: Building2, permission: 'manage_network_organizations|manage_homepage' },
         ],
     },
     {

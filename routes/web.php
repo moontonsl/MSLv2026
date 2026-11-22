@@ -461,44 +461,44 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
     })->middleware('admin.permission:manage_accounts')->name('admin.account-creation');
 
     Route::get('/Admin/HomePage', [HomePageController::class, 'index'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.home-page');
+        ->middleware('admin.permission:manage_homepage|manage_carousel|manage_statistics|manage_programs|manage_network_organizations|manage_campus_community')->name('admin.home-page');
     Route::get('/admin/home-page/hero-carousel', [HomePageController::class, 'heroCarousel'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.hero-carousel');
+        ->middleware('admin.permission:manage_carousel|manage_homepage')->name('admin.home-page.hero-carousel');
     Route::get('/admin/home-page/statistics', [HomePageController::class, 'statistics'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.statistics.index');
+        ->middleware('admin.permission:manage_statistics|manage_homepage')->name('admin.home-page.statistics.index');
     Route::get('/admin/home-page/network-organizations', [HomePageController::class, 'networkOrganizations'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.network-organizations');
+        ->middleware('admin.permission:manage_network_organizations|manage_homepage')->name('admin.home-page.network-organizations');
     Route::get('/admin/home-page/programs', [HomePageController::class, 'programs'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.programs');
+        ->middleware('admin.permission:manage_programs|manage_homepage')->name('admin.home-page.programs');
     Route::get('/admin/home-page/community-voice', [HomePageController::class, 'communityVoice'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.community-voice');
+        ->middleware('admin.permission:manage_campus_community|manage_homepage')->name('admin.home-page.community-voice');
 
     Route::post('/admin/home-page/statistics', [HomePageController::class, 'updateStatistics'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.statistics');
+        ->middleware('admin.permission:manage_statistics|manage_homepage')->name('admin.home-page.statistics');
     Route::post('/admin/home-page/network-organizations', [HomePageController::class, 'storeNetworkOrganization'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.network-organizations.store');
+        ->middleware('admin.permission:manage_network_organizations|manage_homepage')->name('admin.home-page.network-organizations.store');
     Route::post('/admin/home-page/network-organizations/{networkOrganization}', [HomePageController::class, 'updateNetworkOrganization'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.network-organizations.update');
+        ->middleware('admin.permission:manage_network_organizations|manage_homepage')->name('admin.home-page.network-organizations.update');
     Route::delete('/admin/home-page/network-organizations/{networkOrganization}', [HomePageController::class, 'deleteNetworkOrganization'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.network-organizations.delete');
+        ->middleware('admin.permission:manage_network_organizations|manage_homepage')->name('admin.home-page.network-organizations.delete');
 
     Route::post('/admin/home-page/programs', [HomePageController::class, 'storeProgram'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.programs.store');
+        ->middleware('admin.permission:manage_programs|manage_homepage')->name('admin.home-page.programs.store');
     Route::post('/admin/home-page/programs/{program}', [HomePageController::class, 'updateProgram'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.programs.update');
+        ->middleware('admin.permission:manage_programs|manage_homepage')->name('admin.home-page.programs.update');
     Route::patch('/admin/home-page/programs/{program}/bookmark', [HomePageController::class, 'toggleProgramBookmark'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.programs.bookmark');
+        ->middleware('admin.permission:manage_programs|manage_homepage')->name('admin.home-page.programs.bookmark');
     Route::delete('/admin/home-page/programs/{program}', [HomePageController::class, 'deleteProgram'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.programs.delete');
+        ->middleware('admin.permission:manage_programs|manage_homepage')->name('admin.home-page.programs.delete');
 
     Route::post('/admin/home-page/community-voice', [HomePageController::class, 'storeCommunityVoice'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.community-voice.store');
+        ->middleware('admin.permission:manage_campus_community|manage_homepage')->name('admin.home-page.community-voice.store');
     Route::post('/admin/home-page/community-voice/visibility', [HomePageController::class, 'toggleCommunityVoiceVisibility'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.community-voice.visibility');
+        ->middleware('admin.permission:manage_campus_community|manage_homepage')->name('admin.home-page.community-voice.visibility');
     Route::post('/admin/home-page/community-voice/{communityVoice}', [HomePageController::class, 'updateCommunityVoice'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.community-voice.update');
+        ->middleware('admin.permission:manage_campus_community|manage_homepage')->name('admin.home-page.community-voice.update');
     Route::delete('/admin/home-page/community-voice/{communityVoice}', [HomePageController::class, 'deleteCommunityVoice'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.home-page.community-voice.delete');
+        ->middleware('admin.permission:manage_campus_community|manage_homepage')->name('admin.home-page.community-voice.delete');
 
     Route::get('/admin/community-directory', [CommunityDirectoryController::class, 'index'])
         ->middleware('admin.permission:manage_community_directory|manage_schools|manage_homepage')
@@ -801,15 +801,15 @@ Route::middleware(['auth:admin', 'admin', 'admin.audit'])->group(function () {
 
     Route::get('/admin/carousel', fn () => redirect()->route('admin.home-page.hero-carousel'))->name('admin.carousel');
     Route::post('/admin/carousel', [CarouselController::class, 'store'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.carousel.store');
+        ->middleware('admin.permission:manage_carousel|manage_homepage')->name('admin.carousel.store');
     Route::put('/admin/carousel/{carousel}', [CarouselController::class, 'update'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.carousel.update');
+        ->middleware('admin.permission:manage_carousel|manage_homepage')->name('admin.carousel.update');
     Route::delete('/admin/carousel/{carousel}', [CarouselController::class, 'destroy'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.carousel.delete');
+        ->middleware('admin.permission:manage_carousel|manage_homepage')->name('admin.carousel.delete');
     Route::post('/admin/carousel/reorder', [CarouselController::class, 'reorder'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.carousel.reorder');
+        ->middleware('admin.permission:manage_carousel|manage_homepage')->name('admin.carousel.reorder');
     Route::post('/admin/carousel/load-placeholders', [CarouselController::class, 'loadPlaceholders'])
-        ->middleware('admin.permission:manage_homepage')->name('admin.carousel.load-placeholders');
+        ->middleware('admin.permission:manage_carousel|manage_homepage')->name('admin.carousel.load-placeholders');
 
     Route::get('/admin/event-photos', [EventPhotoController::class, 'index'])
         ->middleware('admin.permission:manage_event_photos')->name('admin.event-photos');
