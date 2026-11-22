@@ -53,6 +53,7 @@ class User extends Authenticatable
         'proofOfEnrollment',
         // Location details
         'region',
+        'assigned_regions',
         'island',
         // Squad/Game details
         'squadAbbreviation',
@@ -100,7 +101,30 @@ class User extends Authenticatable
             'renewal_notice_dismissed_at' => 'datetime',
             'renewal_requirements' => 'array',
             'rejection_checklist' => 'array',
+            'assigned_regions' => 'array',
         ];
+    }
+
+    /**
+     * All administrative regions covered by this Regional Admin.
+     * Falls back to legacy single `region` column when `assigned_regions` is null/empty.
+     *
+     * @return array<int, string>
+     */
+    public function coveredRegions(): array
+    {
+        if (is_array($this->assigned_regions) && count($this->assigned_regions) > 0) {
+            return collect($this->assigned_regions)
+                ->map(fn ($r) => trim((string) $r))
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
+        }
+
+        $primary = trim((string) ($this->region ?? ''));
+
+        return $primary !== '' ? [$primary] : [];
     }
 
     public function isCoreAdmin(): bool

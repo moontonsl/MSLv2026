@@ -23,7 +23,10 @@ class RegionalAdminManagementController extends Controller
         $adminQuery = $this->regionalAdminsQuery()->with(['assignedSchools:id,name,acronym,region,island']);
 
         if ($region !== '') {
-            $adminQuery->where('region', $region);
+            $adminQuery->where(function ($q) use ($region) {
+                $q->where('region', $region)
+                    ->orWhereJsonContains('assigned_regions', $region);
+            });
         }
 
         $regionalAdmins = $this->search($adminQuery, $search)
@@ -95,23 +98,34 @@ class RegionalAdminManagementController extends Controller
 
         $validated = $request->validate([
             'region' => 'required|string|max:255',
+            'regions' => 'nullable|array',
+            'regions.*' => 'string|max:255',
             'division' => 'nullable|string|max:100',
             'university' => 'nullable|string|max:255',
             'school_ids' => 'nullable|array',
             'school_ids.*' => 'integer|exists:institutions,id',
         ]);
 
-        $targetRegion = trim($validated['region']);
+        $targetRegions = collect($validated['regions'] ?? [$validated['region']])
+            ->prepend($validated['region'])
+            ->map(fn ($r) => trim((string) $r))
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        $primaryRegion = $targetRegions[0] ?? trim($validated['region']);
         $schoolIds = array_values(array_unique($validated['school_ids'] ?? []));
 
         if (! empty($schoolIds)) {
-            $this->assertSchoolsMatchRegion($schoolIds, $targetRegion);
+            $this->assertSchoolsMatchRegions($schoolIds, $targetRegions);
             $this->assertSchoolsNotAssignedToOtherAdmin($schoolIds, $user->id);
         }
 
         $updates = [
             'user_type' => 'Regional Admin',
-            'region' => $targetRegion,
+            'region' => $primaryRegion,
+            'assigned_regions' => $targetRegions,
         ];
 
         if (! empty($validated['division'])) {
@@ -139,15 +153,34 @@ class RegionalAdminManagementController extends Controller
         );
 
         $validated = $request->validate([
+            'regions' => 'nullable|array|min:1',
+            'regions.*' => 'string|max:255',
             'school_ids' => 'nullable|array',
             'school_ids.*' => 'integer|exists:institutions,id',
         ]);
 
-        $adminRegion = trim((string) $user->region);
+        if (isset($validated['regions'])) {
+            $coveredRegions = collect($validated['regions'])
+                ->map(fn ($r) => trim((string) $r))
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
+
+            if (! empty($coveredRegions)) {
+                $user->update([
+                    'region' => $coveredRegions[0],
+                    'assigned_regions' => $coveredRegions,
+                ]);
+            }
+        } else {
+            $coveredRegions = $user->coveredRegions();
+        }
+
         $schoolIds = array_values(array_unique($validated['school_ids'] ?? []));
 
-        if (! empty($schoolIds) && $adminRegion !== '') {
-            $this->assertSchoolsMatchRegion($schoolIds, $adminRegion);
+        if (! empty($schoolIds) && ! empty($coveredRegions)) {
+            $this->assertSchoolsMatchRegions($schoolIds, $coveredRegions);
         }
 
         if (! empty($schoolIds)) {
@@ -159,12 +192,13 @@ class RegionalAdminManagementController extends Controller
         if ($request->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => "Assigned schools updated for {$user->name}.",
+                'message' => "Assigned regions & schools updated for {$user->name}.",
+                'assigned_regions' => $user->coveredRegions(),
                 'assigned_schools' => $user->assignedSchools()->get(['id', 'name', 'acronym', 'region', 'island']),
             ]);
         }
 
-        return back()->with('success', "Assigned schools updated successfully for {$user->name}.");
+        return back()->with('success', "Assigned regions & schools updated successfully for {$user->name}.");
     }
 
     public function demote(Request $request, User $user): RedirectResponse
@@ -182,6 +216,7 @@ class RegionalAdminManagementController extends Controller
 
         $user->update([
             'user_type' => $targetRole,
+            'assigned_regions' => null,
         ]);
 
         $user->assignedSchools()->detach();
@@ -190,24 +225,26 @@ class RegionalAdminManagementController extends Controller
     }
 
     /**
-     * Strictly verify that all given school IDs belong to the Regional Admin's tagged region.
+     * Strictly verify that all given school IDs belong to one of the Regional Admin's covered regions.
      *
      * @param  array<int, int>  $schoolIds
+     * @param  array<int, string>  $regions
      */
-    private function assertSchoolsMatchRegion(array $schoolIds, string $region): void
+    private function assertSchoolsMatchRegions(array $schoolIds, array $regions): void
     {
         $invalidSchools = Institution::query()
             ->whereIn('id', $schoolIds)
-            ->where(function ($query) use ($region) {
+            ->where(function ($query) use ($regions) {
                 $query->whereNull('region')
-                    ->orWhere('region', '!=', $region);
+                    ->orWhereNotIn('region', $regions);
             })
             ->pluck('name')
             ->all();
 
         if (! empty($invalidSchools)) {
+            $regionLabel = implode(', ', $regions);
             throw ValidationException::withMessages([
-                'school_ids' => "Only {$region} schools can be assigned to a {$region} Regional Admin. Invalid selection: ".implode(', ', array_slice($invalidSchools, 0, 3)),
+                'school_ids' => "Only schools in ({$regionLabel}) can be assigned to this Regional Admin. Invalid selection: ".implode(', ', array_slice($invalidSchools, 0, 3)),
             ]);
         }
     }
@@ -279,6 +316,7 @@ class RegionalAdminManagementController extends Controller
             'year_level',
             'studentId',
             'region',
+            'assigned_regions',
             'division',
             'ml_id',
             'ml_server',

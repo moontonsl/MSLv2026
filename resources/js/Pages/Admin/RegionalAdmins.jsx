@@ -93,6 +93,7 @@ export default function RegionalAdmins({
 
     // Manage Schools Modal States
     const [manageSchoolsAdmin, setManageSchoolsAdmin] = useState(null);
+    const [manageRegions, setManageRegions] = useState([]);
     const [assignedSchoolsList, setAssignedSchoolsList] = useState([]);
     const [schoolSearchQuery, setSchoolSearchQuery] = useState('');
     const [schoolSearchResults, setSchoolSearchResults] = useState([]);
@@ -388,16 +389,27 @@ export default function RegionalAdmins({
         });
     };
 
+    const getUserRegions = (u) => {
+        if (Array.isArray(u?.assigned_regions) && u.assigned_regions.length > 0) {
+            return Array.from(new Set(u.assigned_regions.map((r) => String(r).trim()).filter(Boolean)));
+        }
+        return u?.region ? [String(u.region).trim()] : [];
+    };
+
     // Manage Schools Handlers
-    const fetchManageSchools = async (q, region, adminId = null) => {
-        const lockedRegion = (region || '').trim();
+    const fetchManageSchools = async (q, regionsInput, adminId = null) => {
+        const regionsArr = Array.isArray(regionsInput)
+            ? regionsInput.map((r) => String(r).trim()).filter(Boolean)
+            : (regionsInput || '').trim()
+              ? [(regionsInput || '').trim()]
+              : [];
         const seq = ++manageSearchSeqRef.current;
         setIsSearchingSchools(true);
         try {
             const res = await axios.get(route('schools.search.college'), {
                 params: {
                     q: q.trim(),
-                    region: lockedRegion,
+                    regions: regionsArr.join(','),
                     exclude_assigned_ra: 1,
                     for_admin_id: adminId || manageSchoolsAdmin?.id || undefined,
                 },
@@ -405,7 +417,7 @@ export default function RegionalAdmins({
             if (seq !== manageSearchSeqRef.current) return;
             const rawList = Array.isArray(res.data) ? res.data : [];
             setSchoolSearchResults(
-                rawList.filter((school) => !lockedRegion || school.region === lockedRegion)
+                rawList.filter((school) => regionsArr.length === 0 || regionsArr.includes(school.region))
             );
         } catch (err) {
             if (seq !== manageSearchSeqRef.current) return;
@@ -420,12 +432,32 @@ export default function RegionalAdmins({
 
     const openManageSchoolsModal = (admin) => {
         if (manageSearchTimeoutRef.current) clearTimeout(manageSearchTimeoutRef.current);
+        const initialRegions = getUserRegions(admin);
         setManageSchoolsAdmin(admin);
+        setManageRegions(initialRegions);
         setAssignedSchoolsList(admin.assigned_schools ? [...admin.assigned_schools] : []);
         setSchoolSearchQuery('');
         setSchoolSearchResults([]);
         setManageSchoolsError('');
-        fetchManageSchools('', admin?.region || '', admin?.id || null);
+        fetchManageSchools('', initialRegions, admin?.id || null);
+    };
+
+    const handleAddManageRegion = (regionToAdd) => {
+        const trimmed = (regionToAdd || '').trim();
+        if (!trimmed || manageRegions.includes(trimmed)) return;
+        const nextRegions = [...manageRegions, trimmed];
+        setManageRegions(nextRegions);
+        setManageSchoolsError('');
+        fetchManageSchools(schoolSearchQuery, nextRegions, manageSchoolsAdmin?.id || null);
+    };
+
+    const handleRemoveManageRegion = (regionToRemove) => {
+        if (manageRegions.length <= 1) return;
+        const nextRegions = manageRegions.filter((r) => r !== regionToRemove);
+        setManageRegions(nextRegions);
+        setAssignedSchoolsList((prev) => prev.filter((s) => !s.region || nextRegions.includes(s.region)));
+        setManageSchoolsError('');
+        fetchManageSchools(schoolSearchQuery, nextRegions, manageSchoolsAdmin?.id || null);
     };
 
     const handleSchoolSearchInput = (value) => {
@@ -433,10 +465,9 @@ export default function RegionalAdmins({
         if (manageSearchTimeoutRef.current) clearTimeout(manageSearchTimeoutRef.current);
 
         const trimmed = value.trim();
-        const lockedRegion = manageSchoolsAdmin?.region || '';
 
         if (trimmed.length === 0) {
-            fetchManageSchools('', lockedRegion);
+            fetchManageSchools('', manageRegions, manageSchoolsAdmin?.id || null);
             return;
         }
 
@@ -444,15 +475,14 @@ export default function RegionalAdmins({
         const seqSnapshot = manageSearchSeqRef.current;
         manageSearchTimeoutRef.current = setTimeout(() => {
             if (seqSnapshot !== manageSearchSeqRef.current) return;
-            fetchManageSchools(trimmed, lockedRegion);
+            fetchManageSchools(trimmed, manageRegions, manageSchoolsAdmin?.id || null);
         }, 250);
     };
 
     const handleAddSchool = (school) => {
-        const lockedRegion = (manageSchoolsAdmin?.region || '').trim();
-        if (lockedRegion && school.region !== lockedRegion) {
+        if (manageRegions.length > 0 && !manageRegions.includes(school.region)) {
             setManageSchoolsError(
-                `Only ${lockedRegion} schools can be assigned to a ${lockedRegion} Regional Admin.`
+                `Only schools in (${manageRegions.join(', ')}) can be assigned to this Regional Admin.`
             );
             return;
         }
@@ -482,6 +512,7 @@ export default function RegionalAdmins({
         router.post(
             route('admin.users.regional-admin-schools', manageSchoolsAdmin.id),
             {
+                regions: manageRegions,
                 school_ids: assignedSchoolsList.map((s) => s.id),
             },
             {
@@ -491,8 +522,8 @@ export default function RegionalAdmins({
                     setManageSchoolsError('');
                 },
                 onError: (errs) => {
-                    if (errs?.school_ids) {
-                        setManageSchoolsError(errs.school_ids);
+                    if (errs?.school_ids || errs?.regions) {
+                        setManageSchoolsError(errs.school_ids || errs.regions);
                     }
                 },
                 onFinish: () => {
@@ -509,9 +540,9 @@ export default function RegionalAdmins({
         ...(promoteTarget?.region ? [promoteTarget.region.trim()] : []),
     ])).filter(Boolean).sort();
 
-    const lockedManageRegion = (manageSchoolsAdmin?.region || '').trim();
+    const lockedManageRegion = manageRegions.join(', ');
     const visibleManageSchoolResults = schoolSearchResults.filter(
-        (school) => !lockedManageRegion || school.region === lockedManageRegion
+        (school) => manageRegions.length === 0 || manageRegions.includes(school.region)
     );
 
     const lockedPromoteRegion = (assignedRegion || '').trim();
@@ -729,10 +760,24 @@ export default function RegionalAdmins({
                                                 </div>
                                             </div>
 
-                                            <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-400">
-                                                <MapPin className="h-3 w-3 shrink-0" />
-                                                <span>{user.region || 'Unassigned'}</span>
-                                            </span>
+                                            <div className="flex flex-wrap justify-end gap-1 shrink-0 max-w-[55%]">
+                                                {getUserRegions(user).length > 0 ? (
+                                                    getUserRegions(user).map((reg) => (
+                                                        <span
+                                                            key={reg}
+                                                            className="inline-flex shrink-0 items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-400"
+                                                        >
+                                                            <MapPin className="h-3 w-3 shrink-0" />
+                                                            <span>{reg}</span>
+                                                        </span>
+                                                    ))
+                                                ) : (
+                                                    <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-400">
+                                                        <MapPin className="h-3 w-3 shrink-0" />
+                                                        <span>Unassigned</span>
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
 
                                         {/* Info Grid: Designation, Base Campus, MLBB Identity */}
@@ -938,10 +983,24 @@ export default function RegionalAdmins({
 
                                                 {/* Jurisdiction */}
                                                 <td className="px-5 py-4">
-                                                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-400">
-                                                        <MapPin className="h-3 w-3 shrink-0" />
-                                                        <span>{user.region || 'Unassigned'}</span>
-                                                    </span>
+                                                    <div className="flex flex-wrap gap-1.5">
+                                                        {getUserRegions(user).length > 0 ? (
+                                                            getUserRegions(user).map((reg) => (
+                                                                <span
+                                                                    key={reg}
+                                                                    className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-400"
+                                                                >
+                                                                    <MapPin className="h-3 w-3 shrink-0" />
+                                                                    <span>{reg}</span>
+                                                                </span>
+                                                            ))
+                                                        ) : (
+                                                            <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-400">
+                                                                <MapPin className="h-3 w-3 shrink-0" />
+                                                                <span>Unassigned</span>
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </td>
 
                                                 {/* Designation */}
@@ -1951,6 +2010,56 @@ export default function RegionalAdmins({
                                     </div>
                                 </div>
                             )}
+
+                            {/* Covered Regions Multi-Selector */}
+                            <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.04] p-3.5">
+                                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                    <span className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                                        <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                                        Covered Regions ({manageRegions.length})
+                                    </span>
+                                    <select
+                                        value=""
+                                        onChange={(e) => {
+                                            if (e.target.value) handleAddManageRegion(e.target.value);
+                                        }}
+                                        aria-label="Add another region to this Regional Admin"
+                                        className="rounded-lg border border-emerald-500/30 bg-[#121216] px-2.5 py-1 text-[11px] font-semibold text-emerald-300 focus:border-emerald-400 focus:outline-none"
+                                    >
+                                        <option value="">+ Add Region...</option>
+                                        {availableRegions
+                                            .filter((reg) => !manageRegions.includes(reg))
+                                            .map((reg) => (
+                                                <option key={reg} value={reg} className="bg-[#121216] text-white">
+                                                    {reg}
+                                                </option>
+                                            ))}
+                                    </select>
+                                </div>
+                                <div className="flex flex-wrap gap-1.5">
+                                    {manageRegions.map((reg) => (
+                                        <span
+                                            key={reg}
+                                            className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2.5 py-1 text-xs font-bold text-emerald-300"
+                                        >
+                                            <span>{reg}</span>
+                                            {manageRegions.length > 1 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleRemoveManageRegion(reg)}
+                                                    aria-label={`Remove ${reg} from covered regions`}
+                                                    className="rounded-full p-0.5 text-emerald-300/80 hover:bg-emerald-400/20 hover:text-white"
+                                                >
+                                                    <X className="h-3 w-3" />
+                                                </button>
+                                            )}
+                                        </span>
+                                    ))}
+                                </div>
+                                <p className="mt-2 text-[11px] text-gray-400">
+                                    Adding a region automatically unlocks schools from that region below and includes its uncovered schools in this admin&apos;s Verification queue.
+                                </p>
+                            </div>
 
                             {/* Search Bar for Schools */}
                             <div>

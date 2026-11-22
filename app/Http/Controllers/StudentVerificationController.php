@@ -111,11 +111,12 @@ class StudentVerificationController extends Controller
             'stats' => $stats,
             'scope' => [
                 'role' => $actor->user_type,
-                'region' => $scopeData['region'],
+                'region' => implode(', ', $scopeData['regions']),
+                'regions' => $scopeData['regions'],
                 'schools' => $scopeData['assigned_schools'],
                 'availableSchools' => $availableSchools,
                 'isAllSchools' => $scopeData['is_all_schools'],
-                'includesUncoveredRegionSchools' => $actor->user_type === 'Regional Admin' && $scopeData['region'] !== '',
+                'includesUncoveredRegionSchools' => $actor->user_type === 'Regional Admin' && ! empty($scopeData['regions']),
             ],
         ]);
     }
@@ -212,7 +213,7 @@ class StudentVerificationController extends Controller
         if ($actor->isCoreAdmin()) {
             return [
                 'is_all_schools' => true,
-                'region' => '',
+                'regions' => [],
                 'assigned_schools' => [],
                 'region_schools_without_sl' => [],
                 'schools_with_sl' => $schoolsWithSl->all(),
@@ -245,12 +246,12 @@ class StudentVerificationController extends Controller
                 array_map(fn (string $name) => mb_strtolower($name), $schoolsAssignedToOtherRas)
             )));
 
-            $region = trim((string) ($actor->region ?? ''));
+            $regions = $actor->coveredRegions();
             $regionSchoolsWithoutSl = [];
 
-            if ($region !== '' && Schema::hasTable('institutions')) {
+            if (! empty($regions) && Schema::hasTable('institutions')) {
                 $regionSchoolsWithoutSl = Institution::query()
-                    ->where('region', $region)
+                    ->whereIn('region', $regions)
                     ->whereNotNull('name')
                     ->where('name', '!=', '')
                     ->pluck('name')
@@ -263,7 +264,7 @@ class StudentVerificationController extends Controller
 
             return [
                 'is_all_schools' => false,
-                'region' => $region,
+                'regions' => $regions,
                 'assigned_schools' => $assignedSchools,
                 'region_schools_without_sl' => $regionSchoolsWithoutSl,
                 'schools_with_sl' => array_values(array_unique(array_merge($schoolsWithSl->all(), $schoolsAssignedToOtherRas))),
@@ -294,7 +295,7 @@ class StudentVerificationController extends Controller
 
         return [
             'is_all_schools' => false,
-            'region' => trim((string) ($actor->region ?? '')),
+            'regions' => $actor->coveredRegions(),
             'assigned_schools' => $leaderSchools,
             'region_schools_without_sl' => [],
             'schools_with_sl' => $schoolsWithSl->all(),
@@ -338,24 +339,24 @@ class StudentVerificationController extends Controller
                 $scopeData['assigned_schools'],
                 $scopeData['region_schools_without_sl']
             )));
-            $region = $scopeData['region'];
+            $regions = $scopeData['regions'];
             $schoolsWithSl = $scopeData['schools_with_sl'];
 
-            if (empty($allowedExplicitSchools) && $region === '') {
+            if (empty($allowedExplicitSchools) && empty($regions)) {
                 return $query->whereRaw('1 = 0');
             }
 
-            return $query->where(function (Builder $scopeQuery) use ($allowedExplicitSchools, $region, $schoolsWithSl) {
+            return $query->where(function (Builder $scopeQuery) use ($allowedExplicitSchools, $regions, $schoolsWithSl) {
                 if (!empty($allowedExplicitSchools)) {
                     $scopeQuery->whereIn('university', $allowedExplicitSchools);
                 }
 
-                // Also catch pending students whose user.region matches the RA's region
-                // and whose school has no active Student Leader.
-                if ($region !== '') {
+                // Also catch pending students whose user.region matches any of the RA's covered regions
+                // and whose school has no active Student Leader or other Regional Admin.
+                if (!empty($regions)) {
                     $method = !empty($allowedExplicitSchools) ? 'orWhere' : 'where';
-                    $scopeQuery->{$method}(function (Builder $regionQuery) use ($region, $schoolsWithSl) {
-                        $regionQuery->where('region', $region);
+                    $scopeQuery->{$method}(function (Builder $regionQuery) use ($regions, $schoolsWithSl) {
+                        $regionQuery->whereIn('region', $regions);
                         if (!empty($schoolsWithSl)) {
                             $regionQuery->where(function (Builder $noSlQuery) use ($schoolsWithSl) {
                                 $noSlQuery->whereNull('university')

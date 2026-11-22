@@ -220,14 +220,25 @@ class SchoolSearchController extends Controller
     {
         $q = trim((string) $request->input('q', ''));
         $region = trim((string) $request->input('region', ''));
+        $regionsInput = $request->input('regions');
+        $allowedRegions = collect(
+            is_array($regionsInput)
+                ? $regionsInput
+                : explode(',', (string) ($regionsInput ?: $region))
+        )
+            ->map(fn ($r) => trim((string) $r))
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
         $searchData = $this->expandSearchTerms($q);
 
         $query = Institution::query()
             ->select(['id', 'name', 'acronym', 'region', 'island'])
             ->where('status', 'active');
 
-        if ($region !== '') {
-            $query->where('region', $region);
+        if (! empty($allowedRegions)) {
+            $query->whereIn('region', $allowedRegions);
         }
 
         if ($request->boolean('exclude_assigned_ra')) {

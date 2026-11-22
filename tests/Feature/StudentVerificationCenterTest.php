@@ -317,4 +317,88 @@ class StudentVerificationCenterTest extends TestCase
                 ->where('users.data.0.id', $student->id)
             );
     }
+
+    public function test_regional_admin_with_multiple_regions_covers_schools_from_all_assigned_regions(): void
+    {
+        $ncrSchool = Institution::create([
+            'name' => 'NCR Multi-Region School',
+            'acronym' => 'NMRS',
+            'region' => 'NCR',
+            'island' => 'Luzon',
+            'status' => 'active',
+        ]);
+
+        $calabarzonSchool = Institution::create([
+            'name' => 'Region IV-A Multi-Region School',
+            'acronym' => 'R4MRS',
+            'region' => 'Region IV-A',
+            'island' => 'Luzon',
+            'status' => 'active',
+        ]);
+
+        $visayasSchool = Institution::create([
+            'name' => 'Region VII Outside School',
+            'acronym' => 'R7OS',
+            'region' => 'Region VII',
+            'island' => 'Visayas',
+            'status' => 'active',
+        ]);
+
+        $raSam = User::factory()->create([
+            'user_type' => 'Regional Admin',
+            'status' => 'active',
+            'region' => 'NCR',
+            'assigned_regions' => ['NCR', 'Region IV-A'],
+        ]);
+
+        $ncrStudent = User::factory()->create([
+            'user_type' => 'Student',
+            'status' => 'pending',
+            'university' => $ncrSchool->name,
+            'region' => 'NCR',
+        ]);
+
+        $r4Student = User::factory()->create([
+            'user_type' => 'Student',
+            'status' => 'pending',
+            'university' => $calabarzonSchool->name,
+            'region' => 'Region IV-A',
+        ]);
+
+        $visayasStudent = User::factory()->create([
+            'user_type' => 'Student',
+            'status' => 'pending',
+            'university' => $visayasSchool->name,
+            'region' => 'Region VII',
+        ]);
+
+        // Multi-region school search returns schools from both NCR and Region IV-A
+        $this->getJson(route('schools.search.college', [
+            'q' => 'Multi-Region School',
+            'regions' => 'NCR,Region IV-A',
+            'exclude_assigned_ra' => 1,
+            'for_admin_id' => $raSam->id,
+        ]))
+            ->assertOk()
+            ->assertJsonCount(2);
+
+        // Sam sees both NCR and Region IV-A pending students, but NOT Region VII
+        $this->actingAs($raSam)
+            ->get(route('verification.index'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Verification/Index')
+                ->has('users.data', 2)
+            );
+
+        // Sam can verify the Region IV-A student, and is blocked from Region VII
+        $this->actingAs($raSam)
+            ->post(route('verification.approve', $r4Student))
+            ->assertRedirect();
+        $this->assertSame('active', $r4Student->refresh()->status);
+
+        $this->actingAs($raSam)
+            ->post(route('verification.approve', $visayasStudent))
+            ->assertForbidden();
+    }
 }
