@@ -910,12 +910,7 @@ export default function Index(props) {
                     status: 'Renewal Required',
                 }}
                 onSubmit={(payload) => {
-                    router.post(route('student.portal.renew'), {
-                        ...payload,
-                        // Include the current Laravel token in the multipart request.
-                        // This prevents a 419 when the renewal form contains a file.
-                        _token: document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                    }, {
+                    router.post(route('student.portal.renew'), payload, {
                         forceFormData: true,
                         onSuccess: () => {
                             setShowRenewalModal(false);

@@ -44,10 +44,7 @@ export default function Login(props) {
                     status: 'Renewal Required',
                 }}
                 onSubmit={(payload) => {
-                    router.post(route('student.portal.renew'), {
-                        ...payload,
-                        _token: document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-                    }, {
+                    router.post(route('student.portal.renew'), payload, {
                         forceFormData: true,
                         onSuccess: () => setShowRenewalModal(false),
                         onError: (errors) => console.error('Account renewal failed', errors),
