@@ -14,6 +14,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->redirectUsersTo(function (Request $request): string {
+            $adminDomain = config('app.admin_domain') ?: env('ADMIN_DOMAIN');
+            $isAdminHost = $adminDomain && $request->getHost() === $adminDomain;
+
+            if ($isAdminHost || $request->is('admin/*') || $request->is('Admin/*') || $request->is('admin')) {
+                return route('admin.dashboard');
+            }
+
+            return route('student.portal');
+        });
+
         $middleware->redirectGuestsTo(function (Request $request): string {
             $adminDomain = config('app.admin_domain') ?: env('ADMIN_DOMAIN');
             $isAdminHost = $adminDomain && $request->getHost() === $adminDomain;

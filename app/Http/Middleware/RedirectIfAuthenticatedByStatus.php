@@ -19,22 +19,16 @@ class RedirectIfAuthenticatedByStatus
         $user = Auth::user();
 
         if ($user) {
-            if ($user->user_type === 'Student' && $user->status === 'active') {
-                return redirect()->route('student.portal');
-            }
-
-            if ($user->user_type === 'Regional Admin') {
-                return redirect()->route('regional.admin');
-            }
-
             if ($user->user_type === 'Student' && $user->status === 'pending-review') {
                 return redirect()->route('renewal.review');
             }
 
-            if (in_array($user->user_type, ['Core Admin', 'Super Admin', 'Student Leader'], true)) {
-                return in_array($user->user_type, ['Core Admin', 'Super Admin'], true)
-                    ? redirect()->route('core.admin')
-                    : redirect()->route('student.leader');
+            if ($user->user_type === 'Student' && $user->status === 'active') {
+                return redirect()->route('student.portal');
+            }
+
+            if (in_array($user->user_type, ['Regional Admin', 'Core Admin', 'Super Admin', 'Student Leader', 'SL'], true)) {
+                return redirect()->route('student.portal');
             }
         }
 

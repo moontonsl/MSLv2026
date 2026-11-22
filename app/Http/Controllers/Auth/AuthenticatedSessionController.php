@@ -45,23 +45,11 @@ class AuthenticatedSessionController extends Controller
             ]);
         }
 
-        if ($user->user_type === 'Regional Admin') {
-            return redirect()->route('regional.admin');
-        }
-
-        if ($user->user_type === 'Core Admin') {
-            return redirect()->route('core.admin');
-        }
-
         if ($user->user_type === 'Super Admin') {
             // Website controllers must authenticate through /admin/login and the
             // dedicated admin guard, never through the student session.
             Auth::guard('web')->logout();
             return redirect()->route('admin.login')->with('status', 'Please use the administrator login.');
-        }
-
-        if ($user->user_type === 'Student Leader') {
-            return redirect()->route('student.leader');
         }
 
         if ($user->user_type === 'Student') {
@@ -74,10 +62,9 @@ class AuthenticatedSessionController extends Controller
             if ($user->status === 'rejected') {
                 return redirect()->route('rejected.verification');
             }
-            return redirect()->intended(route('student.portal'));
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->route('student.portal');
     }
 
     /**
