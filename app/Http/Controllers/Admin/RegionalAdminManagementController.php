@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\RegionalAdmins\SyncRegionalAdminAssignments;
 use App\Http\Controllers\Controller;
+use App\Models\AdminUser;
+use App\Models\Campus;
+use App\Models\Region;
+use App\Models\RegionAdmin;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -21,8 +27,8 @@ class RegionalAdminManagementController extends Controller
         $eligibleQuery = $this->eligibleUsersQuery();
 
         if ($region !== '') {
-            $adminQuery->where('region', $region);
-            $eligibleQuery->where('region', $region);
+            $adminQuery->whereHas('regionAdminAssignments', fn ($query) => $query->where('region_code', $region));
+            $eligibleQuery->where('region', Region::query()->whereKey($region)->value('name') ?? $region);
         }
 
         $regionalAdmins = $this->search($adminQuery, $search)
@@ -37,18 +43,32 @@ class RegionalAdminManagementController extends Controller
 
         $stats = [
             'total_admins' => User::query()->where('user_type', 'Regional Admin')->count(),
-            'covered_regions' => User::query()->where('user_type', 'Regional Admin')->whereNotNull('region')->where('region', '!=', '')->distinct('region')->count('region'),
+            'covered_regions' => RegionAdmin::query()->distinct('region_code')->count('region_code'),
             'total_eligible' => User::query()->whereIn('user_type', ['Student', 'Student Leader'])->where('status', 'active')->count(),
-            'total_campuses' => User::query()->where('user_type', 'Regional Admin')->whereNotNull('university')->where('university', '!=', '')->distinct('university')->count('university'),
+            'total_campuses' => DB::table('region_admin_campus_assignments')->count(),
         ];
 
-        $regionsList = User::query()
-            ->whereNotNull('region')
-            ->where('region', '!=', '')
-            ->distinct()
-            ->pluck('region')
-            ->sort()
-            ->values();
+        $regions = Region::query()
+            ->orderBy('name')
+            ->get(['code', 'name', 'acronym'])
+            ->map(fn (Region $region): array => [
+                'code' => $region->code,
+                'name' => $region->name,
+                'label' => $region->acronym ? "{$region->acronym} — {$region->name}" : $region->name,
+            ]);
+
+        $campuses = Campus::query()
+            ->where('status', 'active')
+            ->with(['institution', 'city', 'regionalAdminAssignment.regionAdmin.user'])
+            ->orderBy('id')
+            ->get()
+            ->map(fn (Campus $campus): array => [
+                'id' => $campus->id,
+                'regionCode' => $campus->city?->region_code,
+                'label' => trim(($campus->institution?->name ?? 'MSL School').($campus->name ? ' - '.$campus->name : '')),
+                'assignedUserId' => $campus->regionalAdminAssignment?->regionAdmin?->user_id,
+                'assignedAdminName' => $campus->regionalAdminAssignment?->regionAdmin?->user?->name,
+            ]);
 
         return Inertia::render('Admin/RegionalAdmins', [
             'regionalAdmins' => $regionalAdmins,
@@ -59,12 +79,16 @@ class RegionalAdminManagementController extends Controller
                 'tab' => $tab,
             ],
             'stats' => $stats,
-            'regionsList' => $regionsList,
+            'regions' => $regions,
+            'campuses' => $campuses,
         ]);
     }
 
-    public function promote(Request $request, User $user): RedirectResponse
-    {
+    public function promote(
+        Request $request,
+        User $user,
+        SyncRegionalAdminAssignments $assignments,
+    ): RedirectResponse {
         abort_unless(
             in_array($user->user_type, ['Student', 'Student Leader'], true)
                 && $user->status === 'active',
@@ -72,53 +96,80 @@ class RegionalAdminManagementController extends Controller
             'Only active users can become Regional Admins.'
         );
 
-        $validated = $request->validate([
-            'region' => 'required|string|max:255',
-            'division' => 'nullable|string|max:100',
-            'university' => 'nullable|string|max:255',
-        ]);
+        $validated = $this->validateAssignments($request);
+        $actor = $request->user();
+        abort_unless($actor instanceof AdminUser, 403);
 
-        $updates = [
-            'user_type' => 'Regional Admin',
-            'region' => $validated['region'],
-        ];
-
-        if (!empty($validated['division'])) {
-            $updates['division'] = $validated['division'];
-        }
-        if (!empty($validated['university'])) {
-            $updates['university'] = $validated['university'];
-        }
-
-        $user->update($updates);
-
-        return back()->with('success', "User {$user->name} has been appointed as Regional Admin for {$user->region}.");
-    }
-
-    public function demote(Request $request, User $user): RedirectResponse
-    {
-        abort_unless(
-            $user->user_type === 'Regional Admin',
-            422,
-            'User is not a Regional Admin.'
+        $assignments->handle(
+            $user,
+            $validated['region_codes'],
+            $validated['campus_ids'] ?? [],
+            $actor,
+            $validated['division'] ?? null,
         );
 
-        $targetRole = $request->input('target_role', 'Student');
-        if (!in_array($targetRole, ['Student', 'Student Leader'], true)) {
-            $targetRole = 'Student';
-        }
+        return back()->with('success', "User {$user->name} has been appointed as Regional Admin.");
+    }
 
-        $user->update([
-            'user_type' => $targetRole,
+    public function update(
+        Request $request,
+        User $user,
+        SyncRegionalAdminAssignments $assignments,
+    ): RedirectResponse {
+        abort_unless($user->user_type === 'Regional Admin' && $user->status === 'active', 422);
+        $validated = $this->validateAssignments($request);
+        $actor = $request->user();
+        abort_unless($actor instanceof AdminUser, 403);
+
+        $assignments->handle(
+            $user,
+            $validated['region_codes'],
+            $validated['campus_ids'] ?? [],
+            $actor,
+            $validated['division'] ?? null,
+        );
+
+        return back()->with('success', "Regional Admin assignments for {$user->name} were updated.");
+    }
+
+    public function demote(
+        Request $request,
+        User $user,
+        SyncRegionalAdminAssignments $assignments,
+    ): RedirectResponse {
+        abort_unless($user->user_type === 'Regional Admin', 422, 'User is not a Regional Admin.');
+
+        $validated = $request->validate([
+            'target_role' => ['nullable', 'in:Student,Student Leader'],
         ]);
+        $actor = $request->user();
+        abort_unless($actor instanceof AdminUser, 403);
+        $targetRole = $validated['target_role'] ?? 'Student';
+
+        $assignments->demote($user, $targetRole, $actor);
 
         return back()->with('success', "Regional Admin {$user->name} has been reverted to {$targetRole}.");
+    }
+
+    private function validateAssignments(Request $request): array
+    {
+        return $request->validate([
+            'region_codes' => ['required', 'array', 'min:1'],
+            'region_codes.*' => ['required', 'string', 'distinct', 'exists:regions,code'],
+            'campus_ids' => ['sometimes', 'array'],
+            'campus_ids.*' => ['integer', 'distinct', 'exists:campuses,id'],
+            'division' => 'nullable|string|max:100',
+        ]);
     }
 
     private function regionalAdminsQuery()
     {
         return User::query()
             ->where('user_type', 'Regional Admin')
+            ->with([
+                'regionAdminAssignments.region',
+                'regionAdminAssignments.campusAssignments.campus.institution',
+            ])
             ->select($this->columns());
     }
 
@@ -144,7 +195,10 @@ class RegionalAdminManagementController extends Controller
                 ->orWhere('ml_ign', 'like', "%{$search}%")
                 ->orWhere('studentId', 'like', "%{$search}%")
                 ->orWhere('university', 'like', "%{$search}%")
-                ->orWhere('region', 'like', "%{$search}%");
+                ->orWhere('region', 'like', "%{$search}%")
+                ->orWhereHas('regionAdminAssignments.region', fn ($regionQuery) => $regionQuery
+                    ->where('name', 'like', "%{$search}%")
+                    ->orWhere('acronym', 'like', "%{$search}%"));
         });
     }
 

@@ -17,6 +17,7 @@ use App\Models\TournamentParticipant;
 use App\Models\TournamentPlacement;
 use App\Models\TournamentResultEntry;
 use App\Models\TournamentTeam;
+use App\Support\RegionalAdminScope;
 use App\Support\RegionalTournamentRegistrationWorkbook;
 use App\Support\TournamentResultsWorkbook;
 use Carbon\CarbonImmutable;
@@ -197,11 +198,9 @@ class CampusTournamentReportController extends Controller
     public function exportRegistrations(
         ExportRegionalTournamentRegistrationsRequest $request,
         RegionalTournamentRegistrationWorkbook $workbook,
+        RegionalAdminScope $regionalAdminScope,
     ): JsonResponse|StreamedResponse {
         $validated = $request->validated();
-        $regionCodes = RegionAdmin::query()
-            ->where('user_id', $request->user()->id)
-            ->pluck('region_code');
         $startDate = CarbonImmutable::createFromFormat('!Y-m-d', $validated['start_date'], 'Asia/Manila');
         $endDate = CarbonImmutable::createFromFormat('!Y-m-d', $validated['end_date'], 'Asia/Manila');
         $startUtc = $startDate->utc();
@@ -219,10 +218,9 @@ class CampusTournamentReportController extends Controller
                 TeamStatus::Assembling->value,
                 TeamStatus::Registered->value,
             ]))
-            ->whereHas('tournament', function ($query) use ($regionCodes, $campus): void {
-                $query
-                    ->where('approval_status', CampusTournamentApprovalStatus::Approved->value)
-                    ->whereHas('campus.city', fn ($cityQuery) => $cityQuery->whereIn('region_code', $regionCodes));
+            ->whereHas('tournament', function ($query) use ($regionalAdminScope, $request, $campus): void {
+                $query->where('approval_status', CampusTournamentApprovalStatus::Approved->value);
+                $regionalAdminScope->applyToTournaments($query, $request->user());
 
                 if ($campus !== null) {
                     $query->where('campus_id', $campus->id);

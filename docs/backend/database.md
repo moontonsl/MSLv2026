@@ -1,6 +1,6 @@
 # Campus and Tournament Database
 
-Last updated: 2026-08-21
+Last updated: 2026-11-22
 
 This document describes the normalized campus and campus-tournament database
 implemented in MSLv2026.
@@ -41,6 +41,7 @@ MySQL `mslv2026` database through these migrations:
 | `2026_07_30_000008_create_tournament_result_tables` | Result revisions, result entries, and the current-result pointer |
 | `2026_08_07_000001_add_campus_tournament_submission_history` | Immutable request submissions, current-submission pointer, and review-to-submission linkage |
 | `2026_08_20_000001_add_intended_lane_role_to_tournament_team_invitations` | Intended fixed-lane assignment for premade-team invitations |
+| `2026_11_22_000001_expand_regional_admin_assignments` | Multi-region Regional Admin coverage, exclusive campus assignments, and campus-assignment history |
 
 Verification on 2026-07-30 confirmed:
 
@@ -76,9 +77,12 @@ erDiagram
     USERS ||--o{ CAMPUS_AFFILIATIONS : receives
     USERS o|--o{ CAMPUS_AFFILIATIONS : approves
 
-    REGIONS ||--o| REGION_ADMINS : has_current_admin
+    REGIONS ||--o{ REGION_ADMINS : has_current_admins
     REGIONS ||--o{ REGION_ADMIN_ASSIGNMENT_HISTORY : records
     USERS ||--o{ REGION_ADMINS : assigned
+    REGION_ADMINS ||--o{ REGION_ADMIN_CAMPUS_ASSIGNMENTS : receives
+    CAMPUSES ||--o| REGION_ADMIN_CAMPUS_ASSIGNMENTS : optionally_assigned
+    CAMPUSES ||--o{ REGION_ADMIN_CAMPUS_ASSIGNMENT_HISTORY : records
 
     CAMPUSES ||--o{ CAMPUS_TOURNAMENTS : hosts
     USERS ||--o{ CAMPUS_TOURNAMENTS : creates
@@ -116,7 +120,11 @@ Relationship summary:
 - A campus may have multiple affiliated users.
 - An affiliation may be approved by another user.
 - A campus derives its official region through its required city.
-- Each official region has at most one current Regional Admin.
+- An active Regional Admin may cover multiple official regions, and an
+  official region may have multiple current Regional Admins.
+- A campus may be assigned exclusively to one Regional Admin covering its
+  official region. Unassigned campuses are shared by all active RAs covering
+  that region.
 - A campus tournament has separate registration and event periods.
 - A tournament has immutable numbered submissions and points to its current
   submission.
@@ -329,12 +337,12 @@ repeated as free text.
 
 ### `region_admins`
 
-Stores only the authoritative current Regional Admin for an official region.
-`region_code` is both the primary key and a foreign key to `regions.code`, which
-enforces at most one current administrator per region.
+Stores the authoritative current user-to-region assignments. The table uses a
+surrogate primary key and a unique `(user_id, region_code)` pair, allowing one
+user to cover multiple official regions and one region to have multiple RAs.
 
-The table also stores `user_id`, optional `assigned_by_user_id`, `assigned_at`,
-and Laravel timestamps. User and region deletion is restricted.
+The table also stores optional user/admin assignment actors, `assigned_at`, and
+Laravel timestamps. User and region deletion is restricted.
 
 A campus does not duplicate a region foreign key. Its review region is:
 
@@ -346,8 +354,23 @@ campuses.city_code -> cities.code -> cities.region_code -> regions.code
 
 Retains every regional assignment using `region_code`, `user_id`,
 `assigned_by_user_id`, `started_at`, and nullable `ended_at`. Replacing the
-current row in `region_admins` must also close the previous history row and
-create the new one in the same transaction.
+removing a current user-region row closes its open history row in the same
+transaction.
+
+### `region_admin_campus_assignments`
+
+Stores optional current campus ownership under a specific user-region
+assignment. A unique `campus_id` enforces at most one assigned RA per campus.
+The selected campus must derive the same official region as its parent
+`region_admins` row. Campuses without a current active assignment remain
+visible to every active RA covering their official region.
+
+### `region_admin_campus_assignment_history`
+
+Retains the user, official region, campus, assignment actor, start time, and
+nullable end time for every campus assignment. Releasing a campus, removing a
+region, or demoting an RA closes the open history row instead of deleting the
+audit trail.
 
 ## Campus tournaments
 
@@ -532,7 +555,8 @@ recorded submitter name and the selected current revision's roster snapshot.
 | `CampusTournament` | belongs to campus, creator, type, current submission, and current result revision; has many submissions, reviews, schedule revisions, and result revisions |
 | `CampusTournamentSubmission` | belongs to tournament, submitter, campus, and type; has one review |
 | `CampusTournamentReview` | belongs to tournament, submission, and reviewer |
-| `RegionAdmin` | belongs to its official region, assigned user, and assigning user |
+| `RegionAdmin` | belongs to its official region and assigned user; has many campus assignments |
+| `RegionAdminCampusAssignment` | belongs to one RA-region assignment and one exclusively assigned campus |
 | `TournamentResultRevision` | belongs to tournament, optional user submitter, and optional admin submitter; has many immutable result entries |
 | `TournamentResultEntry` | belongs to revision and team; stores immutable team and roster snapshots |
 
@@ -562,11 +586,12 @@ deferred.
   boundaries are allowed.
 - Only the original creator may resubmit a rejected request or cancel a pending
   request, and both actions require reasons.
-- Review authority comes from the current `region_admins` row for the region
-  reached through `campus -> city -> region`. An active Super Admin is the only
-  override.
-- The `pendingForReviewer` query scope applies the same official-region rule
-  when loading a Regional Admin's pending queue.
+- Review authority requires current coverage of the official region reached
+  through `campus -> city -> region`, plus either the campus's explicit
+  assignment to that RA or no active campus assignment. An active Super Admin
+  is the global override.
+- Pending queues, managed tournaments, operations, reports, and exports use
+  the same centralized Regional Admin campus scope.
 - Rejection requires a reason; approval notes are optional.
 - Approval rechecks campus state, creator affiliation, and schedule conflicts.
 - Mutations use transactions and row locks. Status conflicts return HTTP 409.
@@ -579,7 +604,8 @@ Approval remains a separate stored state.
 
 The implemented tournament schema currently enforces:
 
-- one current Regional Admin row per official region;
+- one current assignment per `(Regional Admin, official region)` pair;
+- at most one current explicit Regional Admin assignment per campus;
 - foreign-key references to official regions, campuses, users, teams, lookup
   values, revisions, and history records;
 - restrictive deletion for tournament and administrative history;

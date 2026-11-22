@@ -56,4 +56,9 @@ class Campus extends Model
     {
         return $this->hasMany(CampusTournament::class);
     }
+
+    public function regionalAdminAssignment(): HasOne
+    {
+        return $this->hasOne(RegionAdminCampusAssignment::class);
+    }
 }

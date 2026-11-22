@@ -216,23 +216,11 @@ class CampusTournamentSeeder extends Seeder
 
     private function assignRegionalAdmin(string $regionCode, User $regionalAdmin): void
     {
-        $current = RegionAdmin::query()->find($regionCode);
-
-        if ($current && $current->user_id !== $regionalAdmin->id) {
-            DB::table('region_admin_assignment_history')
-                ->where('region_code', $regionCode)
-                ->whereNull('ended_at')
-                ->update(['ended_at' => now(), 'updated_at' => now()]);
-        }
-
         $assignment = RegionAdmin::query()->updateOrCreate(
-            ['region_code' => $regionCode],
+            ['region_code' => $regionCode, 'user_id' => $regionalAdmin->id],
             [
-                'user_id' => $regionalAdmin->id,
                 'assigned_by_user_id' => null,
-                'assigned_at' => $current?->user_id === $regionalAdmin->id
-                    ? $current->assigned_at
-                    : now(),
+                'assigned_at' => now(),
             ],
         );
 

@@ -62,7 +62,10 @@ class CampusTournamentSeederTest extends TestCase
             ->where('campus_id', $campus->id)
             ->where('user_id', $studentLeader->id)
             ->count());
-        $this->assertSame($regionalAdmin->id, RegionAdmin::query()->findOrFail('040000000')->user_id);
+        $this->assertTrue(RegionAdmin::query()
+            ->where('region_code', '040000000')
+            ->where('user_id', $regionalAdmin->id)
+            ->exists());
         $this->assertSame(12, User::query()
             ->where(function ($query): void {
                 $query->where('username', 'like', 'lspu_premade_%')

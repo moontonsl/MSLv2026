@@ -4,16 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RegionAdmin extends Model
 {
-    protected $primaryKey = 'region_code';
-
-    protected $keyType = 'string';
-
-    public $incrementing = false;
-
-    protected $fillable = ['region_code', 'user_id', 'assigned_by_user_id', 'assigned_at'];
+    protected $fillable = [
+        'region_code',
+        'user_id',
+        'assigned_by_user_id',
+        'assigned_by_admin_user_id',
+        'assigned_at',
+    ];
 
     protected function casts(): array
     {
@@ -33,5 +34,15 @@ class RegionAdmin extends Model
     public function assignedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_by_user_id');
+    }
+
+    public function assignedByAdmin(): BelongsTo
+    {
+        return $this->belongsTo(AdminUser::class, 'assigned_by_admin_user_id');
+    }
+
+    public function campusAssignments(): HasMany
+    {
+        return $this->hasMany(RegionAdminCampusAssignment::class);
     }
 }

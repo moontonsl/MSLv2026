@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Campus;
 use App\Models\RegionAdmin;
+use App\Support\RegionalAdminScope;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
@@ -43,13 +44,9 @@ class ExportRegionalTournamentRegistrationsRequest extends FormRequest
                     return;
                 }
 
-                $regionCodes = RegionAdmin::query()
-                    ->where('user_id', $this->user()->id)
-                    ->pluck('region_code');
-
-                $authorized = Campus::query()
-                    ->whereKey((int) $campusId)
-                    ->whereHas('city', fn ($query) => $query->whereIn('region_code', $regionCodes))
+                $query = Campus::query()->whereKey((int) $campusId);
+                $authorized = app(RegionalAdminScope::class)
+                    ->applyToCampuses($query, $this->user())
                     ->exists();
 
                 if (! $authorized) {

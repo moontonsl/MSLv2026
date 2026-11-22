@@ -8,6 +8,8 @@ use App\Models\User;
 
 class CampusTournamentAuthorization
 {
+    public function __construct(private RegionalAdminScope $regionalAdminScope) {}
+
     public function hasActiveStudentLeaderAffiliation(User $user): bool
     {
         return $user->status === 'active'
@@ -61,12 +63,6 @@ class CampusTournamentAuthorization
             return true;
         }
 
-        $regionCode = $campus->city()->value('region_code');
-
-        return $regionCode !== null
-            && RegionAdmin::query()
-                ->where('region_code', $regionCode)
-                ->where('user_id', $user->id)
-                ->exists();
+        return $this->regionalAdminScope->canAccessCampus($user, $campus);
     }
 }

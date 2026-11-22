@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\CampusTournamentApprovalStatus;
 use App\Enums\CampusTournamentLifecycle;
+use App\Support\RegionalAdminScope;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -58,11 +59,7 @@ class CampusTournament extends Model
             return $query;
         }
 
-        return $query->whereHas('campus.city', function (Builder $cityQuery) use ($user): void {
-            $cityQuery->whereIn('region_code', RegionAdmin::query()
-                ->select('region_code')
-                ->where('user_id', $user->id));
-        });
+        return app(RegionalAdminScope::class)->applyToTournaments($query, $user);
     }
 
     public function lifecycle(?CarbonInterface $at = null): string

@@ -38,8 +38,8 @@ class Region extends Model
         return $this->hasMany(City::class, 'region_code', 'code');
     }
 
-    public function currentAdmin()
+    public function currentAdmins()
     {
-        return $this->hasOne(RegionAdmin::class, 'region_code', 'code');
+        return $this->hasMany(RegionAdmin::class, 'region_code', 'code');
     }
 }

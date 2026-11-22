@@ -1,5 +1,5 @@
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
     ShieldCheck, UserRound, Building2, MapPin, Search,
     Mail, CalendarDays, ArrowUp, ArrowDown, Eye, Phone,
@@ -17,26 +17,6 @@ const REGIONAL_DESIGNATIONS = [
     'Regional Tournament Officer',
     'Regional Esports & Community Head',
     'Regional Logistics Coordinator',
-];
-
-const PHILIPPINE_REGIONS = [
-    'NCR',
-    'Region I',
-    'Region II',
-    'Region III',
-    'Region IV-A',
-    'Region IV-B',
-    'Region V',
-    'Region VI',
-    'Region VII',
-    'Region VIII',
-    'Region IX',
-    'Region X',
-    'Region XI',
-    'Region XII',
-    'CARAGA',
-    'CAR',
-    'BARMM',
 ];
 
 function formatDate(value) {
@@ -69,8 +49,10 @@ export default function RegionalAdmins({
     eligibleUsers,
     filters = {},
     stats = {},
-    regionsList = [],
+    regions = [],
+    campuses = [],
 }) {
+    const { errors = {} } = usePage().props;
     const [activeTab, setActiveTab] = useState(filters.tab ?? 'admins');
     const [search, setSearch] = useState(filters.search ?? '');
     const [selectedRegion, setSelectedRegion] = useState(filters.region ?? '');
@@ -81,9 +63,10 @@ export default function RegionalAdmins({
     const [demoteTarget, setDemoteTarget] = useState(null);
 
     // Form states for promotion
-    const [assignedRegion, setAssignedRegion] = useState(PHILIPPINE_REGIONS[0]);
+    const [assignedRegions, setAssignedRegions] = useState([]);
     const [assignedDesignation, setAssignedDesignation] = useState(REGIONAL_DESIGNATIONS[0]);
-    const [assignedCampus, setAssignedCampus] = useState('');
+    const [assignedCampuses, setAssignedCampuses] = useState([]);
+    const [editingAssignments, setEditingAssignments] = useState(false);
     const [demoteTargetRole, setDemoteTargetRole] = useState('Student');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -141,14 +124,17 @@ export default function RegionalAdmins({
         });
     };
 
-    const openPromoteModal = (user) => {
+    const openPromoteModal = (user, editing = false) => {
         setPromoteTarget(user);
-        setAssignedCampus(user.university || '');
+        setEditingAssignments(editing);
+        setAssignedRegions((user.region_admin_assignments ?? []).map((assignment) => assignment.region_code));
+        setAssignedCampuses((user.region_admin_assignments ?? []).flatMap((assignment) =>
+            (assignment.campus_assignments ?? []).map((campusAssignment) => campusAssignment.campus_id)
+        ));
         const validDesignation = REGIONAL_DESIGNATIONS.includes(user.division)
             ? user.division
             : REGIONAL_DESIGNATIONS[0];
         setAssignedDesignation(validDesignation);
-        setAssignedRegion(user.region || 'NCR');
     };
 
     const openDemoteModal = (user) => {
@@ -161,15 +147,19 @@ export default function RegionalAdmins({
         if (!promoteTarget || isSubmitting) return;
 
         setIsSubmitting(true);
-        router.post(route('admin.users.promote-regional-admin', promoteTarget.id), {
-            region: assignedRegion,
+        const method = editingAssignments ? 'put' : 'post';
+        const targetRoute = editingAssignments
+            ? route('admin.users.update-regional-admin', promoteTarget.id)
+            : route('admin.users.promote-regional-admin', promoteTarget.id);
+        router[method](targetRoute, {
+            region_codes: assignedRegions,
+            campus_ids: assignedCampuses,
             division: assignedDesignation,
-            university: assignedCampus,
         }, {
             preserveScroll: true,
+            onSuccess: () => setPromoteTarget(null),
             onFinish: () => {
                 setIsSubmitting(false);
-                setPromoteTarget(null);
             },
         });
     };
@@ -189,11 +179,27 @@ export default function RegionalAdmins({
         });
     };
 
-    // Combine distinct regions for filtering
-    const availableRegions = Array.from(new Set([
-        ...regionsList,
-        ...PHILIPPINE_REGIONS,
-    ])).filter(Boolean).sort();
+    const availableRegions = regions;
+    const availableCampuses = campuses.filter((campus) => assignedRegions.includes(campus.regionCode));
+
+    const toggleRegion = (regionCode) => {
+        setAssignedRegions((current) => {
+            const next = current.includes(regionCode)
+                ? current.filter((code) => code !== regionCode)
+                : [...current, regionCode];
+            setAssignedCampuses((selected) => selected.filter((campusId) => {
+                const campus = campuses.find((item) => item.id === campusId);
+                return campus && next.includes(campus.regionCode);
+            }));
+            return next;
+        });
+    };
+
+    const toggleCampus = (campusId) => {
+        setAssignedCampuses((current) => current.includes(campusId)
+            ? current.filter((id) => id !== campusId)
+            : [...current, campusId]);
+    };
 
     return (
         <AdminLayout activeNavId="regional-admins" showGlobalSearch>
@@ -330,8 +336,8 @@ export default function RegionalAdmins({
                     >
                         <option value="">All Regions</option>
                         {availableRegions.map((reg) => (
-                            <option key={reg} value={reg}>
-                                {reg}
+                            <option key={reg.code} value={reg.code}>
+                                {reg.label}
                             </option>
                         ))}
                     </select>
@@ -411,26 +417,29 @@ export default function RegionalAdmins({
 
                                             {/* Jurisdiction */}
                                             <td className="px-5 py-4">
-                                                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-400">
-                                                    <MapPin className="h-3 w-3" />
-                                                    <span>{user.region || 'Unassigned'}</span>
-                                                </span>
+                                                <div className="flex max-w-[240px] flex-wrap gap-1.5">
+                                                    {(user.region_admin_assignments ?? []).length > 0 ? (
+                                                        user.region_admin_assignments.map((assignment) => (
+                                                            <span key={assignment.id} className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-400">
+                                                                <MapPin className="h-3 w-3" />
+                                                                <span>{assignment.region?.acronym || assignment.region?.name || assignment.region_code}</span>
+                                                            </span>
+                                                        ))
+                                                    ) : <span className="text-gray-500">Unassigned</span>}
+                                                </div>
                                             </td>
 
                                             {/* Campus */}
                                             <td className="px-5 py-4">
-                                                <div className="space-y-0.5">
-                                                    <div className="flex items-center gap-1.5 font-medium text-gray-200">
-                                                        <Building2 className="h-3.5 w-3.5 text-amber-400 shrink-0" />
-                                                        <span className="truncate max-w-[200px]" title={user.university}>
-                                                            {user.university || 'Unassigned Campus'}
-                                                        </span>
-                                                    </div>
-                                                    {user.course && (
-                                                        <span className="text-[11px] text-gray-400">
-                                                            {user.course} {user.year_level ? `• ${user.year_level}` : ''}
-                                                        </span>
-                                                    )}
+                                                <div className="max-w-[240px] space-y-1">
+                                                    {(user.region_admin_assignments ?? []).flatMap((assignment) => assignment.campus_assignments ?? []).length > 0 ? (
+                                                        (user.region_admin_assignments ?? []).flatMap((assignment) => assignment.campus_assignments ?? []).map((campusAssignment) => (
+                                                            <div key={campusAssignment.id} className="flex items-start gap-1.5 text-gray-200">
+                                                                <Building2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-400" />
+                                                                <span>{campusAssignment.campus?.institution?.name || campusAssignment.campus?.name || 'Campus'}</span>
+                                                            </div>
+                                                        ))
+                                                    ) : <span className="text-gray-500">Shared unassigned campuses only</span>}
                                                 </div>
                                             </td>
 
@@ -483,15 +492,25 @@ export default function RegionalAdmins({
                                                     </button>
 
                                                     {isRA ? (
-                                                        <button
-                                                            type="button"
-                                                            id={`demote-ra-btn-${user.id}`}
-                                                            onClick={() => openDemoteModal(user)}
-                                                            className="inline-flex min-h-[36px] items-center gap-1.5 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-400 transition-colors hover:bg-red-500/20"
-                                                        >
-                                                            <ArrowDown className="h-3.5 w-3.5" />
-                                                            <span>Demote</span>
-                                                        </button>
+                                                        <>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => openPromoteModal(user, true)}
+                                                                className="inline-flex min-h-[36px] items-center gap-1.5 rounded-xl border border-amber-400/30 bg-amber-400/10 px-3 py-1.5 text-xs font-bold text-amber-400 transition-colors hover:bg-amber-400/20"
+                                                            >
+                                                                <MapPin className="h-3.5 w-3.5" />
+                                                                <span>Assignments</span>
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                id={`demote-ra-btn-${user.id}`}
+                                                                onClick={() => openDemoteModal(user)}
+                                                                className="inline-flex min-h-[36px] items-center gap-1.5 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-400 transition-colors hover:bg-red-500/20"
+                                                            >
+                                                                <ArrowDown className="h-3.5 w-3.5" />
+                                                                <span>Demote</span>
+                                                            </button>
+                                                        </>
                                                     ) : (
                                                         <button
                                                             type="button"
@@ -554,9 +573,9 @@ export default function RegionalAdmins({
                                 </div>
                                 <div>
                                     <h3 id="appoint-ra-modal-title" className="text-base font-bold text-white">
-                                        Appoint Regional Admin
+                                        {editingAssignments ? 'Manage Regional Admin Assignments' : 'Appoint Regional Admin'}
                                     </h3>
-                                    <p className="text-xs text-gray-400">Assign territorial jurisdiction and operational role</p>
+                                    <p className="text-xs text-gray-400">Assign official regions and exclusive campuses</p>
                                 </div>
                             </div>
                             <button
@@ -580,22 +599,28 @@ export default function RegionalAdmins({
                         </div>
 
                         <form onSubmit={handlePromoteSubmit} className="mt-5 space-y-4">
+                            {(errors.region_codes || errors.campus_ids) && (
+                                <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+                                    {errors.region_codes || errors.campus_ids}
+                                </div>
+                            )}
                             <div>
                                 <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">
-                                    Territorial Jurisdiction / Regional Hub <span className="text-amber-400">*</span>
+                                    Official Regions <span className="text-amber-400">*</span>
                                 </label>
-                                <select
-                                    required
-                                    value={assignedRegion}
-                                    onChange={(e) => setAssignedRegion(e.target.value)}
-                                    className="w-full rounded-xl border border-white/10 bg-black/60 p-3 text-xs text-white focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 focus:outline-none"
-                                >
-                                    {availableRegions.map((reg) => (
-                                        <option key={reg} value={reg}>
-                                            {reg}
-                                        </option>
+                                <div className="max-h-44 space-y-1 overflow-y-auto rounded-xl border border-white/10 bg-black/60 p-2">
+                                    {availableRegions.map((region) => (
+                                        <label key={region.code} className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2 text-xs text-gray-200 hover:bg-white/5">
+                                            <input
+                                                type="checkbox"
+                                                checked={assignedRegions.includes(region.code)}
+                                                onChange={() => toggleRegion(region.code)}
+                                                className="rounded border-white/20 bg-black text-amber-400 focus:ring-amber-400"
+                                            />
+                                            <span>{region.label}</span>
+                                        </label>
                                     ))}
-                                </select>
+                                </div>
                             </div>
 
                             <div>
@@ -617,15 +642,31 @@ export default function RegionalAdmins({
 
                             <div>
                                 <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">
-                                    Affiliated University / Mother Institution
+                                    Exclusive Campus Assignments
                                 </label>
-                                <input
-                                    type="text"
-                                    value={assignedCampus}
-                                    onChange={(e) => setAssignedCampus(e.target.value)}
-                                    placeholder="e.g. University of the Philippines Diliman"
-                                    className="w-full rounded-xl border border-white/10 bg-black/60 p-3 text-xs text-white placeholder:text-gray-500 focus:border-amber-400/50 focus:ring-1 focus:ring-amber-400/50 focus:outline-none"
-                                />
+                                <p className="mb-2 text-[11px] text-gray-500">Unselected campuses remain visible to every RA covering their region.</p>
+                                <div className="max-h-44 space-y-1 overflow-y-auto rounded-xl border border-white/10 bg-black/60 p-2">
+                                    {availableCampuses.length === 0 ? (
+                                        <p className="px-2 py-3 text-xs text-gray-500">Select a region to view its campuses.</p>
+                                    ) : availableCampuses.map((campus) => {
+                                        const assignedElsewhere = campus.assignedUserId && campus.assignedUserId !== promoteTarget.id;
+                                        return (
+                                            <label key={campus.id} className={`flex items-start gap-2 rounded-lg px-2 py-2 text-xs ${assignedElsewhere ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:bg-white/5'}`}>
+                                                <input
+                                                    type="checkbox"
+                                                    disabled={assignedElsewhere}
+                                                    checked={assignedCampuses.includes(campus.id)}
+                                                    onChange={() => toggleCampus(campus.id)}
+                                                    className="mt-0.5 rounded border-white/20 bg-black text-amber-400 focus:ring-amber-400"
+                                                />
+                                                <span className="text-gray-200">
+                                                    {campus.label}
+                                                    {assignedElsewhere && <span className="block text-[10px] text-red-300">Assigned to {campus.assignedAdminName}</span>}
+                                                </span>
+                                            </label>
+                                        );
+                                    })}
+                                </div>
                             </div>
 
                             <div className="flex items-center justify-end gap-3 pt-2">
@@ -638,7 +679,7 @@ export default function RegionalAdmins({
                                 </button>
                                 <button
                                     type="submit"
-                                    disabled={isSubmitting || !assignedRegion}
+                                    disabled={isSubmitting || assignedRegions.length === 0}
                                     className="inline-flex items-center gap-2 rounded-xl bg-amber-400 px-5 py-2.5 text-xs font-bold text-black transition-colors hover:bg-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.2)] disabled:opacity-50"
                                 >
                                     {isSubmitting ? (
@@ -646,7 +687,7 @@ export default function RegionalAdmins({
                                     ) : (
                                         <ShieldCheck className="h-4 w-4" />
                                     )}
-                                    <span>Appoint Regional Admin</span>
+                                    <span>{editingAssignments ? 'Save Assignments' : 'Appoint Regional Admin'}</span>
                                 </button>
                             </div>
                         </form>
@@ -678,7 +719,7 @@ export default function RegionalAdmins({
                         </div>
 
                         <p className="text-xs leading-relaxed text-gray-300">
-                            Are you sure you want to demote <strong className="text-white font-semibold">{demoteTarget.name}</strong> from their Regional Admin position for <strong className="text-amber-400 font-semibold">{demoteTarget.region || 'their region'}</strong>?
+                            Are you sure you want to demote <strong className="text-white font-semibold">{demoteTarget.name}</strong> and release all of their region and campus assignments?
                         </p>
 
                         <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-3 space-y-2">
@@ -790,7 +831,9 @@ export default function RegionalAdmins({
                                 </h4>
                                 <div>
                                     <span className="text-gray-500">Assigned Regional Hub:</span>
-                                    <p className="font-bold text-white mt-0.5 text-sm">{inspectAdmin.region || 'Unassigned'}</p>
+                                    <p className="font-bold text-white mt-0.5 text-sm">
+                                        {(inspectAdmin.region_admin_assignments ?? []).map((assignment) => assignment.region?.acronym || assignment.region?.name || assignment.region_code).join(', ') || 'Unassigned'}
+                                    </p>
                                 </div>
                                 <div>
                                     <span className="text-gray-500">Designation / Role:</span>
@@ -809,7 +852,9 @@ export default function RegionalAdmins({
                                 </h4>
                                 <div>
                                     <span className="text-gray-500">School / University:</span>
-                                    <p className="font-semibold text-white mt-0.5">{inspectAdmin.university || 'Unspecified'}</p>
+                                    <p className="font-semibold text-white mt-0.5">
+                                        {(inspectAdmin.region_admin_assignments ?? []).flatMap((assignment) => assignment.campus_assignments ?? []).map((campusAssignment) => campusAssignment.campus?.institution?.name || campusAssignment.campus?.name).filter(Boolean).join(', ') || 'No exclusive campuses'}
+                                    </p>
                                 </div>
                                 <div>
                                     <span className="text-gray-500">Course & Year Level:</span>

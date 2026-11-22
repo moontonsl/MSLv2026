@@ -24,6 +24,7 @@ use App\Models\TournamentParticipant;
 use App\Models\TournamentTeam;
 use App\Models\TournamentTeamInvitation;
 use App\Support\CampusTournamentAuthorization;
+use App\Support\RegionalAdminScope;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -208,8 +209,11 @@ class CampusTournamentController extends Controller
     /**
      * Student Leader / Regional Admin manage view: /Tournament/SL & /Tournament/RegionalAdmin.
      */
-    public function indexSl(Request $request, CampusTournamentAuthorization $authorization): Response
-    {
+    public function indexSl(
+        Request $request,
+        CampusTournamentAuthorization $authorization,
+        RegionalAdminScope $regionalAdminScope,
+    ): Response {
         $user = $request->user();
         $isReviewer = $authorization->canAccessReviewerPage($user);
 
@@ -241,13 +245,9 @@ class CampusTournamentController extends Controller
 
         $rejectedRequests = CampusTournament::query()
             ->where('approval_status', CampusTournamentApprovalStatus::Rejected)
-            ->when($user->user_type !== 'Super Admin', function ($q) use ($user, $isReviewer) {
+            ->when($user->user_type !== 'Super Admin', function ($q) use ($user, $isReviewer, $regionalAdminScope) {
                 if ($isReviewer) {
-                    $q->whereHas('campus.city', function ($cityQuery) use ($user): void {
-                        $cityQuery->whereIn('region_code', RegionAdmin::query()
-                            ->select('region_code')
-                            ->where('user_id', $user->id));
-                    });
+                    $regionalAdminScope->applyToTournaments($q, $user);
 
                     return;
                 }
@@ -275,11 +275,7 @@ class CampusTournamentController extends Controller
             ->where('approval_status', CampusTournamentApprovalStatus::Approved);
 
         if ($user->user_type !== 'Super Admin' && $isReviewer) {
-            $managedTournamentsQuery->whereHas('campus.city', function ($cityQuery) use ($user): void {
-                $cityQuery->whereIn('region_code', RegionAdmin::query()
-                    ->select('region_code')
-                    ->where('user_id', $user->id));
-            });
+            $regionalAdminScope->applyToTournaments($managedTournamentsQuery, $user);
         } elseif (! $isReviewer) {
             $campusIds = $user->campusAffiliations()
                 ->where('role', 'student_leader')
@@ -390,14 +386,13 @@ class CampusTournamentController extends Controller
         $canExportRegistrations = false;
         $registrationExportCampuses = collect();
         if ($request->routeIs('campus.tournament.regionaladmin')) {
-            $regionCodes = RegionAdmin::query()
-                ->where('user_id', $user->id)
-                ->pluck('region_code');
-            $canExportRegistrations = $user->status === 'active' && $regionCodes->isNotEmpty();
+            $regionCodes = $regionalAdminScope->regionCodes($user);
+            $canExportRegistrations = $regionCodes->isNotEmpty();
 
             if ($canExportRegistrations) {
-                $registrationExportCampuses = Campus::query()
-                    ->whereHas('city', fn ($query) => $query->whereIn('region_code', $regionCodes))
+                $registrationExportCampusesQuery = Campus::query();
+                $regionalAdminScope->applyToCampuses($registrationExportCampusesQuery, $user);
+                $registrationExportCampuses = $registrationExportCampusesQuery
                     ->with('institution')
                     ->get()
                     ->map(fn (Campus $campus): array => [
