@@ -158,4 +158,51 @@ class AdminCarouselTest extends TestCase
             ->assertRedirect();
         $this->assertEquals(3, Carousel::count());
     }
+
+    public function test_homepage_respects_carousel_start_and_end_date_and_passes_configured_link(): void
+    {
+        Carousel::create([
+            'title' => 'Active Scheduled Slide',
+            'label' => 'FEATURED',
+            'subtitle' => 'Currently running',
+            'link' => 'https://www.facebook.com/MSLPhilippines',
+            'start_date' => now()->subDay()->toDateString(),
+            'end_date' => now()->addDays(3)->toDateString(),
+            'image_path' => '/champ poster.jpg',
+            'order' => 1,
+            'is_active' => true,
+        ]);
+
+        Carousel::create([
+            'title' => 'Future Slide',
+            'label' => 'UPCOMING',
+            'subtitle' => 'Starts tomorrow',
+            'link' => 'https://example.com/future',
+            'start_date' => now()->addDay()->toDateString(),
+            'end_date' => now()->addDays(5)->toDateString(),
+            'image_path' => '/champ poster.jpg',
+            'order' => 2,
+            'is_active' => true,
+        ]);
+
+        Carousel::create([
+            'title' => 'Ended Today Slide',
+            'label' => 'ENDED',
+            'subtitle' => 'Should no longer appear on end_date',
+            'link' => 'https://example.com/ended',
+            'start_date' => now()->subDays(5)->toDateString(),
+            'end_date' => now()->toDateString(),
+            'image_path' => '/champ poster.jpg',
+            'order' => 3,
+            'is_active' => true,
+        ]);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Home/Index')
+                ->has('heroSlides', 1)
+                ->where('heroSlides.0.title', 'Active Scheduled Slide')
+                ->where('heroSlides.0.href', 'https://www.facebook.com/MSLPhilippines'));
+    }
 }

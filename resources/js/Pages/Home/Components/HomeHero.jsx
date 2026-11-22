@@ -9,6 +9,12 @@ export default function HomeHero({ data }) {
     const [paused, setPaused] = useState(false);
 
     const activeSlide = slides[activeIndex] || slides[0];
+    const rawHref = (activeSlide?.href || "").trim();
+    const resolvedHref =
+        rawHref && !rawHref.startsWith("/") && !rawHref.startsWith("#") && !/^https?:\/\//i.test(rawHref)
+            ? `https://${rawHref}`
+            : rawHref;
+    const isExternalHref = /^https?:\/\//i.test(resolvedHref);
 
     useEffect(() => {
         if (slides.length < 2) return;
@@ -155,16 +161,33 @@ export default function HomeHero({ data }) {
                                         {activeSlide.date}
                                     </span>
 
-                                    <Link
-                                        href={activeSlide.href}
-                                        className="inline-flex min-h-[38px] items-center gap-1 rounded-md border border-[#D4A810] bg-[#F2C21A] px-3 py-[7px] font-['Figtree'] text-[14px] font-semibold leading-[22px] text-[#18181B] hover:bg-[#F8D54B] hover:text-[#18181B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                                    >
-                                        View Details
-                                        <ArrowRight
-                                            size={18}
-                                            aria-hidden="true"
-                                        />
-                                    </Link>
+                                    {resolvedHref ? (
+                                        isExternalHref ? (
+                                            <a
+                                                href={resolvedHref}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex min-h-[38px] items-center gap-1 rounded-md border border-[#D4A810] bg-[#F2C21A] px-3 py-[7px] font-['Figtree'] text-[14px] font-semibold leading-[22px] text-[#18181B] hover:bg-[#F8D54B] hover:text-[#18181B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                                            >
+                                                View Details
+                                                <ArrowRight
+                                                    size={18}
+                                                    aria-hidden="true"
+                                                />
+                                            </a>
+                                        ) : (
+                                            <Link
+                                                href={resolvedHref}
+                                                className="inline-flex min-h-[38px] items-center gap-1 rounded-md border border-[#D4A810] bg-[#F2C21A] px-3 py-[7px] font-['Figtree'] text-[14px] font-semibold leading-[22px] text-[#18181B] hover:bg-[#F8D54B] hover:text-[#18181B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                                            >
+                                                View Details
+                                                <ArrowRight
+                                                    size={18}
+                                                    aria-hidden="true"
+                                                />
+                                            </Link>
+                                        )
+                                    ) : null}
                                 </div>
                             </div>
 

@@ -34,6 +34,25 @@ class Carousel extends Model
     }
 
     /**
+     * Slides that are active and currently within their scheduled [start_date, end_date) window.
+     */
+    public function scopeScheduledActive($query, ?\Carbon\CarbonInterface $now = null)
+    {
+        $today = ($now ?? now())->toDateString();
+
+        return $query
+            ->where('is_active', true)
+            ->where(function ($q) use ($today) {
+                $q->whereNull('start_date')
+                    ->orWhereDate('start_date', '<=', $today);
+            })
+            ->where(function ($q) use ($today) {
+                $q->whereNull('end_date')
+                    ->orWhereDate('end_date', '>', $today);
+            });
+    }
+
+    /**
      * Homepage default hero carousel placeholders.
      */
     public static function defaultPlaceholders(): array

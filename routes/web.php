@@ -72,8 +72,8 @@ if (!empty($adminDomain)) {
 
 Route::get('/', function () {
     $heroSlides = \App\Models\Carousel::query()
-        ->where('is_active', true)
-        ->orderBy('order')
+        ->scheduledActive()
+        ->ordered()
         ->get();
 
     $statMode = \App\Models\Setting::getValue('homepage_stat_mode', 'live');
