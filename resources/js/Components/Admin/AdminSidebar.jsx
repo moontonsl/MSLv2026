@@ -5,7 +5,37 @@ import {
     AlertTriangle, ClipboardCheck, ClipboardList, School, MapPin, X,
     ChevronDown, Images, BarChart3, Building2, Layers, Quote, Globe2,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+
+const SIDEBAR_SCROLL_KEY = 'msl_admin_sidebar_scroll_top';
+let cachedSidebarScrollTop = null;
+
+const getSavedSidebarScroll = () => {
+    if (cachedSidebarScrollTop !== null) return cachedSidebarScrollTop;
+    if (typeof window === 'undefined') return 0;
+    try {
+        const stored = window.sessionStorage.getItem(SIDEBAR_SCROLL_KEY);
+        const parsed = stored ? Number(stored) : 0;
+        return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+    } catch {
+        return 0;
+    }
+};
+
+const saveSidebarScroll = (scrollTop) => {
+    cachedSidebarScrollTop = scrollTop;
+    if (typeof window === 'undefined') return;
+    try {
+        window.sessionStorage.setItem(SIDEBAR_SCROLL_KEY, String(scrollTop));
+    } catch {
+        // Ignore storage quota/privacy mode errors
+    }
+};
+
+const normalizePath = (url = '') => {
+    const path = String(url).split('?')[0].split('#')[0].replace(/\/+$/, '').toLowerCase();
+    return path || '/';
+};
 
 const NAV_SECTIONS = [
     {
@@ -80,7 +110,12 @@ const NAV_SECTIONS = [
 ];
 
 export default function AdminSidebar({ activeId = 'dashboard', isOpen = false, onClose = () => {} }) {
-    const { auth, admin_notifications_unread_count: unreadCount = 0 } = usePage().props;
+    const page = usePage();
+    const { auth, admin_notifications_unread_count: unreadCount = 0 } = page.props;
+    const currentPath = normalizePath(page.url || (typeof window !== 'undefined' ? window.location.pathname : ''));
+    const navRef = useRef(null);
+    const activeItemRef = useRef(null);
+
     const role = auth?.user?.role;
     const isSuperAdmin = auth?.is_super_admin ?? ['Super Admin', 'super_admin', 'Core Admin', 'core_admin'].includes(role);
     const permissions = auth?.permissions ?? [];
@@ -92,8 +127,31 @@ export default function AdminSidebar({ activeId = 'dashboard', isOpen = false, o
         return required.some((perm) => permissions.includes(perm));
     };
 
+    // Resolve persistent active nav item: prioritize URL match if activeId is default/omitted,
+    // otherwise honor explicit activeId and fall back to URL path matching.
+    const resolvedActiveId = useMemo(() => {
+        const allItems = NAV_SECTIONS.flatMap((section) =>
+            section.items.flatMap((item) => (item.children ? [item, ...item.children] : [item]))
+        );
+
+        const urlMatch = allItems.find((item) => {
+            if (!item.href) return false;
+            const itemPath = normalizePath(item.href);
+            return currentPath === itemPath || (itemPath !== '/' && currentPath.startsWith(`${itemPath}/`));
+        });
+
+        if (activeId && allItems.some((item) => item.id === activeId)) {
+            if (activeId === 'dashboard' && urlMatch && urlMatch.id !== 'dashboard') {
+                return urlMatch.id;
+            }
+            return activeId;
+        }
+
+        return urlMatch?.id ?? activeId;
+    }, [activeId, currentPath]);
+
     const hasActiveChildInGroup = (group) =>
-        group.id === activeId || (group.children ?? []).some((child) => child.id === activeId);
+        group.id === resolvedActiveId || (group.children ?? []).some((child) => child.id === resolvedActiveId);
 
     const [expandedGroups, setExpandedGroups] = useState(() => {
         const initial = {};
@@ -115,7 +173,35 @@ export default function AdminSidebar({ activeId = 'dashboard', isOpen = false, o
                 }
             });
         });
-    }, [activeId]);
+    }, [resolvedActiveId]);
+
+    // Restore sidebar scroll position immediately before paint so navigation never jumps to top,
+    // and ensure the active link remains visible inside the fixed sidebar viewport.
+    useLayoutEffect(() => {
+        const navEl = navRef.current;
+        if (!navEl) return;
+
+        const savedTop = getSavedSidebarScroll();
+        if (savedTop > 0) {
+            navEl.scrollTop = savedTop;
+        }
+
+        const activeEl = activeItemRef.current;
+        if (activeEl) {
+            const navRect = navEl.getBoundingClientRect();
+            const itemRect = activeEl.getBoundingClientRect();
+            const isAbove = itemRect.top < navRect.top + 8;
+            const isBelow = itemRect.bottom > navRect.bottom - 8;
+            if (isAbove || isBelow) {
+                activeEl.scrollIntoView({ block: 'nearest', behavior: 'auto' });
+                saveSidebarScroll(navEl.scrollTop);
+            }
+        }
+    }, [resolvedActiveId]);
+
+    const handleNavScroll = (e) => {
+        saveSidebarScroll(e.currentTarget.scrollTop);
+    };
 
     useEffect(() => {
         if (!isOpen) return undefined;
@@ -144,9 +230,9 @@ export default function AdminSidebar({ activeId = 'dashboard', isOpen = false, o
                 onClick={onClose}
             />
 
-            {/* Sidebar Aside */}
+            {/* Fixed Sidebar Aside */}
             <aside
-                className={`fixed left-0 top-0 z-50 flex h-dvh w-[min(16rem,85vw)] lg:w-64 shrink-0 flex-col border-r border-white/10 bg-[#0e0e12] transition-transform duration-200 ease-in-out lg:translate-x-0 ${
+                className={`fixed inset-y-0 left-0 z-50 flex h-dvh w-[min(16rem,85vw)] lg:w-64 shrink-0 flex-col border-r border-white/10 bg-[#0e0e12] transition-transform duration-200 ease-in-out lg:translate-x-0 ${
                     isOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}
             >
@@ -183,6 +269,8 @@ export default function AdminSidebar({ activeId = 'dashboard', isOpen = false, o
 
                 {/* Grouped Navigation Links */}
                 <nav
+                    ref={navRef}
+                    onScroll={handleNavScroll}
                     aria-label="Admin navigation"
                     className="flex flex-1 flex-col gap-5 overflow-y-auto overscroll-contain px-3 py-4 text-xs font-medium scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent"
                 >
@@ -239,14 +327,17 @@ export default function AdminSidebar({ activeId = 'dashboard', isOpen = false, o
                                                         className="ml-4 space-y-0.5 border-l border-white/10 pl-2.5 pt-0.5"
                                                     >
                                                         {children.map(({ id: childId, label: childLabel, href: childHref, icon: ChildIcon }) => {
-                                                            const isChildActive = childId === activeId;
+                                                            const isChildActive = childId === resolvedActiveId;
                                                             return (
-                                                                <li key={childId}>
+                                                                <li key={childId} ref={isChildActive ? activeItemRef : null}>
                                                                     <Link
                                                                         href={childHref}
-                                                                        onClick={onClose}
+                                                                        onClick={() => {
+                                                                            if (navRef.current) saveSidebarScroll(navRef.current.scrollTop);
+                                                                            onClose();
+                                                                        }}
                                                                         aria-current={isChildActive ? 'page' : undefined}
-                                                                        className={`group flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[11px] font-semibold leading-snug transition-all duration-150 ${
+                                                                        className={`group relative flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[11px] font-semibold leading-snug transition-all duration-150 ${
                                                                             isChildActive
                                                                                 ? 'bg-brand-500/15 text-brand-400 border border-brand-500/30 shadow-[0_0_10px_rgba(242,194,26,0.1)]'
                                                                                 : 'text-zinc-400 hover:bg-white/5 hover:text-zinc-200 border border-transparent'
@@ -273,20 +364,29 @@ export default function AdminSidebar({ activeId = 'dashboard', isOpen = false, o
                                             );
                                         }
 
-                                        const isActive = id === activeId;
+                                        const isActive = id === resolvedActiveId;
 
                                         return (
-                                            <li key={id}>
+                                            <li key={id} ref={isActive ? activeItemRef : null}>
                                                 <Link
                                                     href={href}
-                                                    onClick={onClose}
+                                                    onClick={() => {
+                                                        if (navRef.current) saveSidebarScroll(navRef.current.scrollTop);
+                                                        onClose();
+                                                    }}
                                                     aria-current={isActive ? 'page' : undefined}
-                                                    className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold transition-all duration-150 ${
+                                                    className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-semibold transition-all duration-150 ${
                                                         isActive
-                                                            ? 'bg-brand-500/15 text-brand-400 border border-brand-500/30 shadow-[0_0_12px_rgba(242,194,26,0.1)]'
+                                                            ? 'bg-brand-500/15 text-brand-400 border border-brand-500/35 shadow-[0_0_14px_rgba(242,194,26,0.14)]'
                                                             : 'text-zinc-400 hover:bg-white/5 hover:text-zinc-200 border border-transparent'
                                                     }`}
                                                 >
+                                                    {isActive && (
+                                                        <span
+                                                            aria-hidden="true"
+                                                            className="absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-brand-400 shadow-[0_0_8px_#F2C21A]"
+                                                        />
+                                                    )}
                                                     <Icon
                                                         aria-hidden="true"
                                                         className={`h-4 w-4 shrink-0 transition-transform duration-150 group-hover:scale-105 ${
