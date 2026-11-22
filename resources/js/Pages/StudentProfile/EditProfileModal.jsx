@@ -764,19 +764,24 @@ export default function EditProfileModal({ profile, onClose, onSave }) {
                                     </button>
                                 ))}
                             </div>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        // apply the currently selected cover as the one to save
-                                        setAppliedCoverId(selectedCoverId);
-                                    }}
-                                    className="w-36 rounded-xl border border-brand-500 bg-brand-500/10 px-3 py-2 text-sm font-semibold text-brand-500 transition hover:bg-brand-500/20"
-                                >
-                                    USE
-                                </button>
                         </div>
                     )}
                 </div>
+
+                {activeTab === 'cover' && (
+                    <div className="flex shrink-0 justify-center border-t border-white/10 px-7 pt-3 md:px-11">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                // apply the currently selected cover as the one to save
+                                setAppliedCoverId(selectedCoverId);
+                            }}
+                            className="w-36 rounded-xl border border-brand-500 bg-brand-500/10 px-3 py-2 text-sm font-semibold text-brand-500 transition hover:bg-brand-500/20"
+                        >
+                            USE
+                        </button>
+                    </div>
+                )}
 
                 <div className="grid grid-cols-2 gap-2.5 px-7 pt-3 md:px-11">
                     <button
