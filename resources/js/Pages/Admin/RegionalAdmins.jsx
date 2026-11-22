@@ -219,6 +219,7 @@ export default function RegionalAdmins({
                 params: {
                     q: q.trim(),
                     region: lockedRegion,
+                    exclude_assigned_ra: 1,
                 },
             });
             if (seq !== promoteSearchSeqRef.current) return;
@@ -388,7 +389,7 @@ export default function RegionalAdmins({
     };
 
     // Manage Schools Handlers
-    const fetchManageSchools = async (q, region) => {
+    const fetchManageSchools = async (q, region, adminId = null) => {
         const lockedRegion = (region || '').trim();
         const seq = ++manageSearchSeqRef.current;
         setIsSearchingSchools(true);
@@ -397,6 +398,8 @@ export default function RegionalAdmins({
                 params: {
                     q: q.trim(),
                     region: lockedRegion,
+                    exclude_assigned_ra: 1,
+                    for_admin_id: adminId || manageSchoolsAdmin?.id || undefined,
                 },
             });
             if (seq !== manageSearchSeqRef.current) return;
@@ -422,7 +425,7 @@ export default function RegionalAdmins({
         setSchoolSearchQuery('');
         setSchoolSearchResults([]);
         setManageSchoolsError('');
-        fetchManageSchools('', admin?.region || '');
+        fetchManageSchools('', admin?.region || '', admin?.id || null);
     };
 
     const handleSchoolSearchInput = (value) => {

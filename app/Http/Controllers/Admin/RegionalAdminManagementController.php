@@ -106,6 +106,7 @@ class RegionalAdminManagementController extends Controller
 
         if (! empty($schoolIds)) {
             $this->assertSchoolsMatchRegion($schoolIds, $targetRegion);
+            $this->assertSchoolsNotAssignedToOtherAdmin($schoolIds, $user->id);
         }
 
         $updates = [
@@ -147,6 +148,10 @@ class RegionalAdminManagementController extends Controller
 
         if (! empty($schoolIds) && $adminRegion !== '') {
             $this->assertSchoolsMatchRegion($schoolIds, $adminRegion);
+        }
+
+        if (! empty($schoolIds)) {
+            $this->assertSchoolsNotAssignedToOtherAdmin($schoolIds, $user->id);
         }
 
         $user->assignedSchools()->sync($schoolIds);
@@ -203,6 +208,34 @@ class RegionalAdminManagementController extends Controller
         if (! empty($invalidSchools)) {
             throw ValidationException::withMessages([
                 'school_ids' => "Only {$region} schools can be assigned to a {$region} Regional Admin. Invalid selection: ".implode(', ', array_slice($invalidSchools, 0, 3)),
+            ]);
+        }
+    }
+
+    /**
+     * Prevent assigning a school that is already assigned to another Regional Admin.
+     *
+     * @param  array<int, int>  $schoolIds
+     */
+    private function assertSchoolsNotAssignedToOtherAdmin(array $schoolIds, ?int $ignoreUserId = null): void
+    {
+        $conflictIdsQuery = DB::table('regional_admin_schools')
+            ->whereIn('institution_id', $schoolIds);
+
+        if ($ignoreUserId !== null) {
+            $conflictIdsQuery->where('user_id', '!=', $ignoreUserId);
+        }
+
+        $conflictIds = $conflictIdsQuery->pluck('institution_id')->unique()->all();
+
+        if (! empty($conflictIds)) {
+            $conflictNames = Institution::query()
+                ->whereIn('id', $conflictIds)
+                ->pluck('name')
+                ->all();
+
+            throw ValidationException::withMessages([
+                'school_ids' => 'The following school(s) are already assigned to another Regional Admin: '.implode(', ', array_slice($conflictNames, 0, 3)),
             ]);
         }
     }

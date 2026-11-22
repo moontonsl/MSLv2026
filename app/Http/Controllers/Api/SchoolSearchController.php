@@ -230,6 +230,18 @@ class SchoolSearchController extends Controller
             $query->where('region', $region);
         }
 
+        if ($request->boolean('exclude_assigned_ra')) {
+            $forAdminId = $request->integer('for_admin_id');
+            $assignedQuery = DB::table('regional_admin_schools');
+            if ($forAdminId > 0) {
+                $assignedQuery->where('user_id', '!=', $forAdminId);
+            }
+            $assignedIds = $assignedQuery->pluck('institution_id')->all();
+            if (! empty($assignedIds)) {
+                $query->whereNotIn('id', $assignedIds);
+            }
+        }
+
         if (! empty($q)) {
             $query->where(function ($sub) use ($q, $searchData) {
                 // Exact or substring match on name or acronym

@@ -248,4 +248,73 @@ class StudentVerificationCenterTest extends TestCase
             ->assertRedirect();
         $this->assertSame('active', $uncoveredStudent->refresh()->status);
     }
+
+    public function test_school_assigned_to_one_regional_admin_is_hidden_from_other_regional_admins(): void
+    {
+        $school = Institution::create([
+            'name' => 'National University - Manila Test',
+            'acronym' => 'NU-MNL-TEST',
+            'region' => 'NCR',
+            'island' => 'Luzon',
+            'status' => 'active',
+        ]);
+
+        $raSam = User::factory()->create([
+            'user_type' => 'Regional Admin',
+            'status' => 'active',
+            'region' => 'NCR',
+        ]);
+        $raSam->assignedSchools()->attach($school->id);
+
+        $raDiana = User::factory()->create([
+            'user_type' => 'Regional Admin',
+            'status' => 'active',
+            'region' => 'NCR',
+        ]);
+
+        // 1. Search endpoint excludes schools already assigned to another RA
+        $this->getJson(route('schools.search.college', [
+            'q' => 'National University - Manila Test',
+            'region' => 'NCR',
+            'exclude_assigned_ra' => 1,
+            'for_admin_id' => $raDiana->id,
+        ]))
+            ->assertOk()
+            ->assertJsonCount(0);
+
+        // 2. Search endpoint STILL includes the school for the RA who owns it
+        $this->getJson(route('schools.search.college', [
+            'q' => 'National University - Manila Test',
+            'region' => 'NCR',
+            'exclude_assigned_ra' => 1,
+            'for_admin_id' => $raSam->id,
+        ]))
+            ->assertOk()
+            ->assertJsonCount(1);
+
+        // 3. Verification page hides students of that school from Diana (even if school has no SL)
+        $student = User::factory()->create([
+            'user_type' => 'Student',
+            'status' => 'pending',
+            'university' => $school->name,
+            'region' => 'NCR',
+        ]);
+
+        $this->actingAs($raDiana)
+            ->get(route('verification.index'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Verification/Index')
+                ->has('users.data', 0)
+            );
+
+        $this->actingAs($raSam)
+            ->get(route('verification.index'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('Verification/Index')
+                ->has('users.data', 1)
+                ->where('users.data.0.id', $student->id)
+            );
+    }
 }

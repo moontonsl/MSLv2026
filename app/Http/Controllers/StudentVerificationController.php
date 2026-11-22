@@ -229,18 +229,33 @@ class StudentVerificationController extends Controller
                 ->values()
                 ->all();
 
+            // Schools already assigned to OTHER Regional Admins should not appear as uncovered
+            $schoolsAssignedToOtherRas = \Illuminate\Support\Facades\DB::table('regional_admin_schools')
+                ->join('institutions', 'institutions.id', '=', 'regional_admin_schools.institution_id')
+                ->where('regional_admin_schools.user_id', '!=', $actor->id)
+                ->pluck('institutions.name')
+                ->map(fn ($name) => trim((string) $name))
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
+
+            $excludedFromUncoveredLower = array_flip(array_unique(array_merge(
+                $schoolsWithSlLower,
+                array_map(fn (string $name) => mb_strtolower($name), $schoolsAssignedToOtherRas)
+            )));
+
             $region = trim((string) ($actor->region ?? ''));
             $regionSchoolsWithoutSl = [];
 
             if ($region !== '' && Schema::hasTable('institutions')) {
-                $slLookup = array_flip($schoolsWithSlLower);
                 $regionSchoolsWithoutSl = Institution::query()
                     ->where('region', $region)
                     ->whereNotNull('name')
                     ->where('name', '!=', '')
                     ->pluck('name')
                     ->map(fn ($name) => trim((string) $name))
-                    ->filter(fn (string $name) => $name !== '' && !isset($slLookup[mb_strtolower($name)]))
+                    ->filter(fn (string $name) => $name !== '' && !isset($excludedFromUncoveredLower[mb_strtolower($name)]))
                     ->unique()
                     ->values()
                     ->all();
@@ -251,7 +266,7 @@ class StudentVerificationController extends Controller
                 'region' => $region,
                 'assigned_schools' => $assignedSchools,
                 'region_schools_without_sl' => $regionSchoolsWithoutSl,
-                'schools_with_sl' => $schoolsWithSl->all(),
+                'schools_with_sl' => array_values(array_unique(array_merge($schoolsWithSl->all(), $schoolsAssignedToOtherRas))),
                 'schools_with_sl_lower' => $schoolsWithSlLower,
             ];
         }
